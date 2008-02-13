@@ -1505,7 +1505,10 @@ If in a string, move the opening double-quote forward by one
         (paredit-handle-sexp-errors     ;   list if it's not in this,
             (progn (paredit-forward-and-indent)
                    (throw 'return nil))
-          (up-list))))
+          (insert close)
+          (up-list)
+          (setq close (char-before))
+          (backward-delete-char 1))))
     (insert close)))                    ; to insert that delimiter.
 
 (defun paredit-forward-slurp-into-string ()
@@ -1566,7 +1569,11 @@ If in a string, move the opening double-quote backward by one
         (paredit-handle-sexp-errors
             (progn (backward-sexp)
                    (throw 'return nil))
-          (backward-up-list))))
+          (insert open)
+          (backward-char 1)
+          (backward-up-list)
+          (setq open (char-after))
+          (delete-char 1))))
     (insert open))
   ;; Reindent the line at the beginning of wherever we inserted the
   ;; opening parenthesis, and then indent the whole S-expression.
