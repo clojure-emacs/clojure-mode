@@ -332,6 +332,9 @@ Deprecated: use `paredit-mode' instead."
    ("M-("       paredit-wrap-sexp
                 ("(foo |bar baz)"
                  "(foo (|bar) baz)"))
+   ("M-["       paredit-bracket-wrap-sexp
+                ("(foo |bar baz)"
+                 "(foo [|bar] baz)"))
    ("M-s"       paredit-splice-sexp
                 ("(foo (bar| baz) quux)"
                  "(foo bar| baz quux)"))
@@ -563,7 +566,11 @@ If in a character literal, do nothing.  This prevents changing what was
 If there was a margin comment after the closing delimiter, preserve it
   on the same line.")
          (interactive)
-         (paredit-move-past-close-and-newline ,close)))))
+         (paredit-move-past-close-and-newline ,close))
+       (defun ,(paredit-conc-name "paredit-" name "-wrap-sexp") (&optional n)
+         ,(concat "Wrap a pair of " name " around a sexp")
+         (interactive "P")
+         (paredit-wrap-sexp n ,open ,close)))))
 
 (define-paredit-pair ?\( ?\) "parenthesis")
 (define-paredit-pair ?\[ ?\] "bracket")
@@ -1358,7 +1365,7 @@ With a prefix argument N, encompass all N S-expressions forward."
 
 ;;;; Depth-Changing Commands:  Wrapping, Splicing, & Raising
 
-(defun paredit-wrap-sexp (&optional n)
+(defun paredit-wrap-sexp (&optional n open close)
   "Wrap the following S-expression in a list.
 If a prefix argument N is given, wrap N S-expressions.
 Automatically indent the newly wrapped S-expression.
@@ -1366,15 +1373,17 @@ As a special case, if the point is at the end of a list, simply insert
   a pair of parentheses, rather than insert a lone opening parenthesis
   and then signal an error, in the interest of preserving structure."
   (interactive "P")
-  (paredit-handle-sexp-errors
-      (paredit-insert-pair (or n
-                               (and (not (paredit-region-active-p))
-                                    1))
-                           ?\( ?\)
-                           'goto-char)
-    (insert ?\) )
-    (backward-char))
-  (save-excursion (backward-up-list) (indent-sexp)))
+  (let ((open (or open ?\())
+        (close (or close ?\))))
+   (paredit-handle-sexp-errors
+       (paredit-insert-pair (or n
+                                (and (not (paredit-region-active-p))
+                                     1))
+                            open close
+                            'goto-char)
+     (insert close)
+     (backward-char))
+   (save-excursion (backward-up-list) (indent-sexp))))
 
 ;;; Thanks to Marco Baringer for the suggestion of a prefix argument
 ;;; for PAREDIT-SPLICE-SEXP.  (I, Taylor R. Campbell, however, still
