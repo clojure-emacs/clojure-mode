@@ -58,6 +58,10 @@ All commands in `lisp-mode-shared-map' are inherited by this map.")
   (let ((table (copy-syntax-table emacs-lisp-mode-syntax-table)))
     (modify-syntax-entry ?~ "'   " table)
     (modify-syntax-entry ?, "    " table)
+    (modify-syntax-entry ?\{ "(}" table)
+    (modify-syntax-entry ?\} "){" table)
+    (modify-syntax-entry ?\[ "(]" table)
+    (modify-syntax-entry ?\] ")[" table)
     table))
 
 
