@@ -94,14 +94,62 @@ if that value is non-nil."
        "\\(\\(^\\|[^\\\\\n]\\)\\(\\\\\\\\\\)*\\)\\(;+\\|#|\\) *")
   (make-local-variable 'lisp-indent-function)
   (setq lisp-indent-function 'clojure-indent-function)
+  (set (make-local-variable 'font-lock-multiline) t)
+  
+  (setq font-lock-extend-region-functions
+        (append font-lock-extend-region-functions '(clojure-font-lock-extend-region-list)))
+  
   (setq font-lock-defaults
-	'(clojure-font-lock-keywords
-	  nil nil (("+-*/.<>=!?$%_&~^:@" . "w")) nil
+	'(clojure-font-lock-keywords ; keywords
+	  nil nil
+          (("+-*/.<>=!?$%_&~^:@" . "w")) ; syntax alist
+          nil
 	  (font-lock-mark-block-function . mark-defun)
-	  (font-lock-syntactic-face-function
-	   . lisp-font-lock-syntactic-face-function)))
+	  (font-lock-syntactic-face-function . lisp-font-lock-syntactic-face-function)))
   (run-mode-hooks 'clojure-mode-hook))
 
+(defun clojure-font-lock-def-at-point (point)
+  "Find the position range between the top-most def* and the
+fourth element afterwards. Note that this means there's no
+gaurantee of proper font locking in def* forms that are not at
+top-level."
+  (goto-char point)
+  (condition-case nil
+      (beginning-of-defun)
+    (error nil))
+  
+  (let ((beg-def (point)))
+    (when (and (not (= point beg-def))
+               (string= (buffer-substring-no-properties beg-def (+ beg-def 4))
+                        "(def"))
+      (condition-case nil
+       (progn
+         ;; move forward as much as possible until failure (or success)
+         (forward-char)
+         (dotimes (i 4)
+           (forward-sexp)))
+       (error nil))
+      (cons beg-def (point)))))
+
+(defun clojure-font-lock-extend-region-list ()
+  "Move fontification boundaries to always include the first four
+elements of a def* forms."
+  (let ((changed nil))
+    (let ((def (clojure-font-lock-def-at-point font-lock-beg)))
+      (when def
+       (destructuring-bind (def-beg . def-end) def
+         (when (and (< def-beg font-lock-beg)
+                    (< font-lock-beg def-end))
+           (setq font-lock-beg def-beg
+                 changed t)))))
+
+    (let ((def (clojure-font-lock-def-at-point font-lock-end)))
+      (when def
+       (destructuring-bind (def-beg . def-end) def
+         (when (and (< def-beg font-lock-end)
+                    (< font-lock-end def-end))
+           (setq font-lock-end def-end
+                 changed t)))))))
 
 (defconst clojure-font-lock-keywords
   (eval-when-compile
@@ -113,9 +161,10 @@ if that value is non-nil."
                 ""
 		"\\)\\)\\>"
 		;; Any whitespace
-		"[ \t]*"
-                ;; Possibly type
-                "\\(?:#^\\sw+[ \t]*\\)?"
+		"[ \r\n\t]*"
+                ;; Possibly type or metadata
+                "\\(?:#^\\(?:{[^}]*}\\|\\sw+\\)[ \r\n\t]*\\)?"
+                
                 "\\(\\sw+\\)?")
         (1 font-lock-keyword-face)
         (3 font-lock-function-name-face nil t))
