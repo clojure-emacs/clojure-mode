@@ -156,7 +156,7 @@ elements of a def* forms."
     `( ;; Definitions.
       (,(concat "(\\(def"
 		;; Function declarations.
-		"\\(n\\|multi\\|macro\\|method\\|"
+		"\\(n-?\\|multi\\|macro\\|method\\|"
 		;; Variable declarations.
                 ""
 		"\\)\\)\\>"
