@@ -120,8 +120,7 @@ top-level."
   
   (let ((beg-def (point)))
     (when (and (not (= point beg-def))
-               (string= (buffer-substring-no-properties beg-def (+ beg-def 4))
-                        "(def"))
+               (looking-at "(def"))
       (condition-case nil
        (progn
          ;; move forward as much as possible until failure (or success)
