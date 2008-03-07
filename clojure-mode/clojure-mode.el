@@ -19,6 +19,7 @@
 ;; Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ;; Boston, MA 02110-1301, USA.
 
+(require 'cl)
 
 (defvar clojure-load-command "(load-file \"%s\")\n"
   "*Format-string for building a Clojure expression to load a file.
