@@ -99,7 +99,7 @@ if that value is non-nil."
   (set (make-local-variable 'font-lock-multiline) t)
   
   (setq font-lock-extend-region-functions
-        (append font-lock-extend-region-functions '(clojure-font-lock-extend-region-list)))
+        (append font-lock-extend-region-functions '(clojure-font-lock-extend-region-def)))
   
   (setq font-lock-defaults
 	'(clojure-font-lock-keywords ; keywords
@@ -132,7 +132,7 @@ top-level."
        (error nil))
       (cons beg-def (point)))))
 
-(defun clojure-font-lock-extend-region-list ()
+(defun clojure-font-lock-extend-region-def ()
   "Move fontification boundaries to always include the first four
 elements of a def* forms."
   (let ((changed nil))
@@ -150,7 +150,8 @@ elements of a def* forms."
          (when (and (< def-beg font-lock-end)
                     (< font-lock-end def-end))
            (setq font-lock-end def-end
-                 changed t)))))))
+                 changed t)))))
+    changed))
 
 (defconst clojure-font-lock-keywords
   (eval-when-compile
