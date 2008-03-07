@@ -1,9 +1,12 @@
 ;;; clojure-mode.el -- Major mode for Clojure code
 
-;; Copyright (C) 2007, 2008 Lennart Staflin
-
-;; Author: Lennart Staflin <lenst@lysator.liu.se>
-
+;; Copyright (C) 2008 Jeffrey Chu
+;;
+;; Author: Jeffrey Chu <jochu0@gmail.com>
+;; 
+;;   Originally by: Lennart Staflin <lenst@lysator.liu.se>
+;;                  Copyright (C) 2007, 2008 Lennart Staflin
+;;
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License
 ;; as published by the Free Software Foundation; either version 3
