@@ -48,14 +48,14 @@ All commands in `lisp-mode-shared-map' are inherited by this map.")
 
 
 (easy-menu-define clojure-menu clojure-mode-map "Menu used in `clojure-mode'."
-                  '("Clojure"
-                    ["Eval defun"        lisp-eval-defun         t]
-                    ["Eval defun and go" lisp-eval-defun-and-go  t]
-                    ["Eval last sexp"    lisp-eval-last-sexp     t]
-                    ["Eval region"       lisp-eval-region        t]
-                    ["Eval region and go" lisp-eval-region-go    t]
-                    ["Load file..."      clojure-load-file       t]
-                    ["Run Lisp"          run-lisp                t]))
+  '("Clojure"
+    ["Eval defun"         lisp-eval-defun         t]
+    ["Eval defun and go"  lisp-eval-defun-and-go  t]
+    ["Eval last sexp"     lisp-eval-last-sexp     t]
+    ["Eval region"        lisp-eval-region        t]
+    ["Eval region and go" lisp-eval-region-and-go t]
+    ["Load file..."       clojure-load-file       t]
+    ["Run Lisp"           run-lisp                t]))
 
 
 (defvar clojure-mode-syntax-table
