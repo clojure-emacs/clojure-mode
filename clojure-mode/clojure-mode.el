@@ -30,13 +30,16 @@
   :group 'applications)
 
 (defcustom clojure-mode-font-lock-multine-def t
-  "Set to non-nil in order to enable font-lock of multi-line (def...) forms"
+  "Set to non-nil in order to enable font-lock of
+multi-line (def...) forms. Changing this will require a
+restart (ie. M-x clojure-mode) of existing clojure mode buffers."
   :type 'boolean
   :group 'clojure-mode)
 
 (defcustom clojure-mode-font-lock-comment-sexp nil
   "Set to non-nil in order to enable font-lock of (comment...)
-forms. This option is experimental."
+forms. This option is experimental. Changing this will require a
+restart (ie. M-x clojure-mode) of existing clojure mode buffers."
   :type 'boolean
   :group 'clojure-mode)
 
