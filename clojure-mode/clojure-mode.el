@@ -24,13 +24,29 @@
 
 (require 'cl)
 
-(defvar clojure-load-command "(load-file \"%s\")\n"
+(defgroup clojure-mode nil
+  "A mode for Clojure"
+  :prefix "clojure-mode-"
+  :group 'applications)
+
+(defcustom clojure-mode-font-lock-multine-def t
+  "Set to non-nil in order to enable font-lock of multi-line (def...) forms"
+  :type 'boolean
+  :group 'clojure-mode)
+
+(defcustom clojure-mode-font-lock-comment-sexp nil
+  "Set to non-nil in order to enable font-lock of (comment...)
+forms. This option is experimental."
+  :type 'boolean
+  :group 'clojure-mode)
+
+(defcustom clojure-mode-load-command  "(load-file \"%s\")\n"
   "*Format-string for building a Clojure expression to load a file.
 This format string should use `%s' to substitute a file name
 and should result in a Clojure expression that will command the inferior Clojure
 to load that file."
-;;  :type 'string :group 'clojure-mode
-)
+  :type 'string
+  :group 'clojure-mode)
 
 
 (defvar clojure-mode-map
@@ -94,18 +110,24 @@ if that value is non-nil."
   (setq mode-name "Clojure")
   (lisp-mode-variables)
   (set-syntax-table clojure-mode-syntax-table)
-  (make-local-variable 'comment-start-skip)
-  (setq comment-start-skip
+  
+  (set (make-local-variable 'comment-start-skip)
        "\\(\\(^\\|[^\\\\\n]\\)\\(\\\\\\\\\\)*\\)\\(;+\\|#|\\) *")
-  (make-local-variable 'lisp-indent-function)
-  (setq lisp-indent-function 'clojure-indent-function)
+  (set (make-local-variable 'lisp-indent-function)
+       'clojure-indent-function)
   (set (make-local-variable 'font-lock-multiline) t)
+
+  (when clojure-mode-font-lock-multine-def
+    (add-to-list 'font-lock-extend-region-functions 'clojure-font-lock-extend-region-def t))
   
-  (setq font-lock-extend-region-functions
-        (append font-lock-extend-region-functions '(clojure-font-lock-extend-region-def)))
-  
+  (when clojure-mode-font-lock-comment-sexp
+    (add-to-list 'font-lock-extend-region-functions 'clojure-font-lock-extend-region-comment t)
+    (make-local-variable 'clojure-font-lock-keywords)
+    (add-to-list 'clojure-font-lock-keywords  'clojure-font-lock-mark-comment t)
+    (set (make-local-variable 'open-paren-in-column-0-is-defun-start) nil))
+
   (setq font-lock-defaults
-	'(clojure-font-lock-keywords ; keywords
+	'(clojure-font-lock-keywords    ; keywords
 	  nil nil
           (("+-*/.<>=!?$%_&~^:@" . "w")) ; syntax alist
           nil
@@ -155,6 +177,40 @@ elements of a def* forms."
            (setq font-lock-end def-end
                  changed t)))))
     changed))
+
+(defun clojure-font-lock-extend-region-comment ()
+  "Move fontification boundaries to always contain
+  entire (comment ..) sexp. Does not work if you have a
+  white-space between ( and comment, but that is omitted to make
+  this run faster."
+  (let ((changed nil))
+    (goto-char font-lock-beg)
+    (condition-case nil (beginning-of-defun) (error nil))
+    (let ((pos (search-forward "(comment" font-lock-end t)))
+      (when pos
+        (forward-char -8)
+        (when (< (point) font-lock-beg)
+          (setq font-lock-beg (point)
+                changed t))
+        (condition-case nil (forward-sexp) (error nil))
+        (when (> (point) font-lock-end)
+          (setq font-lock-end (point)
+                changed t))))
+    changed))
+        
+
+(defun clojure-font-lock-mark-comment (limit)
+  "Marks all (comment ..) forms with font-lock-comment-face."
+  (let (pos)
+    (while (and (< (point) limit)
+                (setq pos (search-forward "(comment" limit t)))
+      (when pos
+        (forward-char -8)
+        (condition-case nil
+            (add-text-properties (1+ (point)) (progn (forward-sexp) (1- (point)))
+                                 '(face font-lock-comment-face multiline t))
+          (error (forward-char 8))))))
+  nil)
 
 (defconst clojure-font-lock-keywords
   (eval-when-compile
@@ -208,7 +264,7 @@ elements of a def* forms."
   (setq clojure-prev-l/c-dir/file (cons (file-name-directory file-name)
 				     (file-name-nondirectory file-name)))
   (comint-send-string (inferior-lisp-proc)
-		      (format clojure-load-command file-name))
+		      (format clojure-mode-load-command file-name))
   (switch-to-lisp t))
 
 
