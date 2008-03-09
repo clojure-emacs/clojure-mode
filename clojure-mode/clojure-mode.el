@@ -51,6 +51,17 @@ to load that file."
   :type 'string
   :group 'clojure-mode)
 
+(defcustom clojure-mode-use-backtracking-indent nil
+  "Set to non-nil to enable backtracking/context sensitive
+indentation."
+  :type 'boolean
+  :group 'clojure-mode)
+
+(defcustom clojure-max-backtracking 3
+  "Maximum amount to backtrack up a list to check for context."
+  :type 'integer
+  :group 'clojure-mode)
+
 
 (defvar clojure-mode-map
   (let ((map (make-sparse-keymap)))
@@ -329,7 +340,54 @@ This function also returns nil meaning don't specify the indentation."
 	       (lisp-indent-specform method state
 				     indent-point normal-indent))
 	      (method
-		(funcall method indent-point state)))))))
+		(funcall method indent-point state))
+              (clojure-mode-use-backtracking-indent
+               (clojure-backtracking-indent indent-point state normal-indent)))))))
+
+(defun clojure-backtracking-indent (indent-point state normal-indent)
+  "Experimental backtracking support. Will upwards in an sexp to
+check for contextual indenting."
+  (let (indent (path) (depth 0))
+    (goto-char (elt state 1))
+    (while (and (not indent)
+                (< depth clojure-max-backtracking))
+      (let ((containing-sexp (point)))
+        (parse-partial-sexp (1+ containing-sexp) indent-point 1 t)
+        (when (looking-at "\\sw\\|\\s_")
+          (let* ((start (point))
+                 (fn (buffer-substring start (progn (forward-sexp 1) (point))))
+                 (meth (get (intern-soft fn) 'clojure-backtracking-indent)))
+            (let ((n 0))
+              (when (< (point) indent-point)
+                (condition-case ()
+                    (progn
+                     (forward-sexp 1)
+                     (while (< (point) indent-point)
+                       (parse-partial-sexp (point) indent-point 1 t)
+                       (incf n)
+                       (forward-sexp 1)))
+                  (error nil)))
+              (push n path))
+            (when meth
+              (let ((def meth))
+                (dolist (p path)
+                  (if (< p (length def))
+                      (setq def (nth p def))
+                    (setq def (car (last def)))))
+                (goto-char (elt state 1))
+                (setq indent (+ (current-column) def))))))
+        (goto-char containing-sexp)
+        (condition-case ()
+            (progn
+              (backward-up-list 1)
+              (incf depth))
+          (error (setq depth clojure-max-backtracking)))))
+    indent))
+
+;; clojure backtracking indent is experimental and the format for these
+;; entries are subject to change
+(put 'implement 'clojure-backtracking-indent '(4 (2)))
+(put 'proxy 'clojure-backtracking-indent '(4 4 (2)))
 
 ;; built-ins
 (put 'catch 'clojure-indent-function 2)
