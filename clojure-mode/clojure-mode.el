@@ -111,7 +111,7 @@ if that value is non-nil."
   (use-local-map clojure-mode-map)
   (setq major-mode 'clojure-mode)
   (setq mode-name "Clojure")
-  (lisp-mode-variables)
+  (lisp-mode-variables nil)
   (set-syntax-table clojure-mode-syntax-table)
   
   (set (make-local-variable 'comment-start-skip)
