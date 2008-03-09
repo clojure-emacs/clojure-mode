@@ -131,14 +131,19 @@ if that value is non-nil."
        'clojure-indent-function)
   (set (make-local-variable 'font-lock-multiline) t)
 
-  (when clojure-mode-font-lock-multine-def
-    (add-to-list 'font-lock-extend-region-functions 'clojure-font-lock-extend-region-def t))
-  
-  (when clojure-mode-font-lock-comment-sexp
-    (add-to-list 'font-lock-extend-region-functions 'clojure-font-lock-extend-region-comment t)
-    (make-local-variable 'clojure-font-lock-keywords)
-    (add-to-list 'clojure-font-lock-keywords  'clojure-font-lock-mark-comment t)
-    (set (make-local-variable 'open-paren-in-column-0-is-defun-start) nil))
+  (if (and (not (boundp 'font-lock-extend-region-functions))
+           (or clojure-mode-font-lock-multiline-def
+               clojure-mode-font-lock-comment-sexp))
+      (message "Clojure mode font lock extras are unavailable, please upgrade to atleast version 22 ")
+    
+   (when clojure-mode-font-lock-multine-def
+     (add-to-list 'font-lock-extend-region-functions 'clojure-font-lock-extend-region-def t))
+   
+   (when clojure-mode-font-lock-comment-sexp
+     (add-to-list 'font-lock-extend-region-functions 'clojure-font-lock-extend-region-comment t)
+     (make-local-variable 'clojure-font-lock-keywords)
+     (add-to-list 'clojure-font-lock-keywords  'clojure-font-lock-mark-comment t)
+     (set (make-local-variable 'open-paren-in-column-0-is-defun-start) nil)))
 
   (setq font-lock-defaults
 	'(clojure-font-lock-keywords    ; keywords
