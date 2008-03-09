@@ -239,7 +239,7 @@ elements of a def* forms."
           '("cond" "for" "if" "loop" "let" "recur" "do" "binding" "with-meta" "when"
             "when-not" "delay" "lazy-cons" "." ".." "->" "and" "or" "locking"
             "sync" "doseq" "dotimes" "import" "unimport" "in-ns" "refer"
-            "implement" "time" "try" "catch" "finally"
+            "implement" "proxy" "time" "try" "catch" "finally"
             "doto" "with-open" "with-local-vars" ) t)
          "\\>")
         .  1)
