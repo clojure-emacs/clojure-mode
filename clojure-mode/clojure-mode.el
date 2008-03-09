@@ -371,11 +371,15 @@ check for contextual indenting."
             (when meth
               (let ((def meth))
                 (dolist (p path)
-                  (if (< p (length def))
+                  (if (and (listp def)
+                           (< p (length def)))
                       (setq def (nth p def))
-                    (setq def (car (last def)))))
+                    (if (listp def)
+                        (setq def (car (last def)))
+                      (setq def nil))))
                 (goto-char (elt state 1))
-                (setq indent (+ (current-column) def))))))
+                (when def
+                  (setq indent (+ (current-column) def)))))))
         (goto-char containing-sexp)
         (condition-case ()
             (progn
