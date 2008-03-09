@@ -29,7 +29,7 @@
   :prefix "clojure-mode-"
   :group 'applications)
 
-(defcustom clojure-mode-font-lock-multine-def t
+(defcustom clojure-mode-font-lock-multiline-def t
   "Set to non-nil in order to enable font-lock of
 multi-line (def...) forms. Changing this will require a
 restart (ie. M-x clojure-mode) of existing clojure mode buffers."
@@ -136,7 +136,7 @@ if that value is non-nil."
                clojure-mode-font-lock-comment-sexp))
       (message "Clojure mode font lock extras are unavailable, please upgrade to atleast version 22 ")
     
-   (when clojure-mode-font-lock-multine-def
+   (when clojure-mode-font-lock-multiline-def
      (add-to-list 'font-lock-extend-region-functions 'clojure-font-lock-extend-region-def t))
    
    (when clojure-mode-font-lock-comment-sexp
