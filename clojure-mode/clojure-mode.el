@@ -152,6 +152,7 @@ if that value is non-nil."
           nil
 	  (font-lock-mark-block-function . mark-defun)
 	  (font-lock-syntactic-face-function . lisp-font-lock-syntactic-face-function)))
+  
   (run-mode-hooks 'clojure-mode-hook))
 
 (defun clojure-font-lock-def-at-point (point)
@@ -238,7 +239,7 @@ elements of a def* forms."
 		;; Function declarations.
 		"\\(n-?\\|multi\\|macro\\|method\\|"
 		;; Variable declarations.
-                ""
+                "struct\\|"
 		"\\)\\)\\>"
 		;; Any whitespace
 		"[ \r\n\t]*"
@@ -252,11 +253,12 @@ elements of a def* forms."
       (,(concat
          "(\\(?:clojure/\\)?" 
          (regexp-opt
-          '("cond" "for" "if" "loop" "let" "recur" "do" "binding" "with-meta" "when"
-            "when-not" "delay" "lazy-cons" "." ".." "->" "and" "or" "locking"
+          '("cond" "for" "loop" "let" "recur" "do" "binding" "with-meta"
+            "when" "when-not" "when-let" "when-first" "if" "if-let"
+            "delay" "lazy-cons" "." ".." "->" "and" "or" "locking"
             "sync" "doseq" "dotimes" "import" "unimport" "in-ns" "refer"
             "implement" "proxy" "time" "try" "catch" "finally"
-            "doto" "with-open" "with-local-vars" ) t)
+            "doto" "with-open" "with-local-vars" "struct-map" ) t)
          "\\>")
         .  1)
       ;; (fn name? args ...)
@@ -327,7 +329,9 @@ This function also returns nil meaning don't specify the indentation."
 	    ;; thing on that line has to be complete sexp since we are
           ;; inside the innermost containing sexp.
           (backward-prefix-chars)
-          (current-column))
+          (if (eq (char-after (point)) ?\[)
+              (+ (current-column) 2) ;; this is probably inside a defn
+            (current-column)))
       (let ((function (buffer-substring (point)
 					(progn (forward-sexp 1) (point))))
             (open-paren (elt state 1))
@@ -341,6 +345,7 @@ This function also returns nil meaning don't specify the indentation."
 			(> (length function) 3)
 			(string-match "\\`def" function)))
 	       (lisp-indent-defform state indent-point))
+              
 	      ((integerp method)
 	       (lisp-indent-specform method state
 				     indent-point normal-indent))
@@ -393,6 +398,22 @@ check for contextual indenting."
           (error (setq depth clojure-max-backtracking)))))
     indent))
 
+
+;; (defun clojure-indent-defn (indent-point state)
+;;   "Indent by 2 if after a [] clause that's at the beginning of a
+;; line"
+;;   (if (not (eq (char-after (elt state 2)) ?\[))
+;;       (lisp-indent-defform state indent-point)
+;;     (goto-char (elt state 2))
+;;     (beginning-of-line)
+;;     (skip-syntax-forward " ")
+;;     (if (= (point) (elt state 2))
+;;         (+ (current-column) 2)
+;;       (lisp-indent-defform state indent-point))))
+
+;; (put 'defn 'clojure-indent-function 'clojure-indent-defn)
+;; (put 'defmacro 'clojure-indent-function 'clojure-indent-defn)
+
 ;; clojure backtracking indent is experimental and the format for these
 ;; entries are subject to change
 (put 'implement 'clojure-backtracking-indent '(4 (2)))
@@ -406,6 +427,9 @@ check for contextual indenting."
 (put 'if 'clojure-indent-function 1)
 (put 'let 'clojure-indent-function 1)
 (put 'loop 'clojure-indent-function 1)
+(put 'struct-map 'clojure-indent-function 1)
+(put 'assoc 'clojure-indent-function 1)
+(put 'fn 'clojure-indent-function 2)
 
 ;; macro indent (auto generated)
 (put 'binding 'clojure-indent-function 1)
@@ -417,11 +441,14 @@ check for contextual indenting."
 (put 'implement 'clojure-indent-function 1)
 (put 'lazy-cons 'clojure-indent-function 1)
 (put 'let 'clojure-indent-function 1)
+(put 'when-let 'clojure-indent-function 2)
+(put 'if-let 'clojure-indent-function 2)
 (put 'locking 'clojure-indent-function 1)
 (put 'proxy 'clojure-indent-function 2)
 (put 'sync 'clojure-indent-function 1)
 (put 'when 'clojure-indent-function 1)
 (put 'when-first 'clojure-indent-function 2)
+(put 'when-let 'clojure-indent-function 2)
 (put 'when-not 'clojure-indent-function 1)
 (put 'with-local-vars 'clojure-indent-function 1)
 (put 'with-open 'clojure-indent-function 2)
