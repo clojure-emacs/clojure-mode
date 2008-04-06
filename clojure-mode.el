@@ -329,7 +329,8 @@ This function also returns nil meaning don't specify the indentation."
 	    ;; thing on that line has to be complete sexp since we are
           ;; inside the innermost containing sexp.
           (backward-prefix-chars)
-          (if (eq (char-after (point)) ?\[)
+          (if (and (eq (char-after (point)) ?\[)
+                   (eq (char-after (elt state 1)) ?\())
               (+ (current-column) 2) ;; this is probably inside a defn
             (current-column)))
       (let ((function (buffer-substring (point)
