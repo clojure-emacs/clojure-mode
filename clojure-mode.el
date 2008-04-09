@@ -43,7 +43,7 @@ restart (ie. M-x clojure-mode) of existing clojure mode buffers."
   :type 'boolean
   :group 'clojure-mode)
 
-(defcustom clojure-mode-load-command  "(load-file \"%s\")\n"
+(defcustom clojure-mode-load-command  "(clojure/load-file \"%s\")\n"
   "*Format-string for building a Clojure expression to load a file.
 This format string should use `%s' to substitute a file name
 and should result in a Clojure expression that will command the inferior Clojure
