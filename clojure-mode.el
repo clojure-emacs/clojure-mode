@@ -206,7 +206,7 @@ elements of a def* forms."
   (let ((changed nil))
     (goto-char font-lock-beg)
     (condition-case nil (beginning-of-defun) (error nil))
-    (let ((pos (search-forward "(comment" font-lock-end t)))
+    (let ((pos (re-search-forward "(comment\\>" font-lock-end t)))
       (when pos
         (forward-char -8)
         (when (< (point) font-lock-beg)
@@ -223,7 +223,7 @@ elements of a def* forms."
   "Marks all (comment ..) forms with font-lock-comment-face."
   (let (pos)
     (while (and (< (point) limit)
-                (setq pos (search-forward "(comment" limit t)))
+                (setq pos (re-search-forward "(comment\\>" limit t)))
       (when pos
         (forward-char -8)
         (condition-case nil
