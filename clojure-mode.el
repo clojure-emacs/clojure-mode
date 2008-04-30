@@ -430,7 +430,8 @@ check for contextual indenting."
 (put 'loop 'clojure-indent-function 1)
 (put 'struct-map 'clojure-indent-function 1)
 (put 'assoc 'clojure-indent-function 1)
-(put 'fn 'clojure-indent-function 2)
+
+(put 'fn 'clojure-indent-function 'defun)
 
 ;; macro indent (auto generated)
 (put 'binding 'clojure-indent-function 1)
