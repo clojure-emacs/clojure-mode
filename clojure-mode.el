@@ -235,7 +235,7 @@ elements of a def* forms."
 (defconst clojure-font-lock-keywords
   (eval-when-compile
     `( ;; Definitions.
-      (,(concat "(\\(def"
+      (,(concat "(\\(?:clojure/\\)?\\(def"
 		;; Function declarations.
 		"\\(n-?\\|multi\\|macro\\|method\\|"
 		;; Variable declarations.
@@ -262,7 +262,7 @@ elements of a def* forms."
          "\\>")
         .  1)
       ;; (fn name? args ...)
-      (,(concat "(\\(fn\\)[ \t]+"
+      (,(concat "(\\(?:clojure/\\)?\\(fn\\)[ \t]+"
                 ;; Possibly type
                 "\\(?:#^\\sw+[ \t]*\\)?"
                 ;; Possibly name
@@ -338,13 +338,14 @@ This function also returns nil meaning don't specify the indentation."
             (open-paren (elt state 1))
 	    method)
 	(setq method (get (intern-soft function) 'clojure-indent-function))
+        
 	(cond ((member (char-after open-paren) '(?\[ ?\{))
 	       (goto-char open-paren)
                (1+ (current-column)))
 	      ((or (eq method 'defun)
 		   (and (null method)
 			(> (length function) 3)
-			(string-match "\\`def" function)))
+			(string-match "\\`\\(?:clojure/\\)?def" function)))
 	       (lisp-indent-defform state indent-point))
               
 	      ((integerp method)
@@ -399,7 +400,6 @@ check for contextual indenting."
           (error (setq depth clojure-max-backtracking)))))
     indent))
 
-
 ;; (defun clojure-indent-defn (indent-point state)
 ;;   "Indent by 2 if after a [] clause that's at the beginning of a
 ;; line"
@@ -416,44 +416,57 @@ check for contextual indenting."
 ;; (put 'defmacro 'clojure-indent-function 'clojure-indent-defn)
 
 ;; clojure backtracking indent is experimental and the format for these
+
 ;; entries are subject to change
 (put 'implement 'clojure-backtracking-indent '(4 (2)))
 (put 'proxy 'clojure-backtracking-indent '(4 4 (2)))
 
-;; built-ins
-(put 'catch 'clojure-indent-function 2)
-(put 'defmulti 'clojure-indent-function 1)
-(put 'do 'clojure-indent-function 0)
-(put 'for 'clojure-indent-function 1)   ; FIXME (for seqs expr) and (for seqs filter expr)
-(put 'if 'clojure-indent-function 1)
-(put 'let 'clojure-indent-function 1)
-(put 'loop 'clojure-indent-function 1)
-(put 'struct-map 'clojure-indent-function 1)
-(put 'assoc 'clojure-indent-function 1)
 
-(put 'fn 'clojure-indent-function 'defun)
+(defun put-clojure-indent (sym indent)
+  (put sym 'clojure-indent-function indent)
+  (put (intern (format "clojure/%s" (symbol-name sym))) 'clojure-indent-function indent))
+
+(defmacro define-clojure-indent (&rest kvs)
+  `(progn
+     ,@(mapcar (lambda (x) `(put-clojure-indent (quote ,(first x)) ,(second x))) kvs)))
+
+(define-clojure-indent
+  (catch 2)
+  (defmuti 1)
+  (do 0)
+  (for 1)    ; FIXME (for seqs expr) and (for seqs filter expr)
+  (if 1)
+  (let 1)
+  (loop 1)
+  (struct-map 1)
+  (assoc 1)
+
+  (fn 'defun))
+
+;; built-ins
+(define-clojure-indent
+  (binding 1)
+  (comment 0)
+  (defstruct 1)
+  (doseq 2)
+  (dotimes 2)
+  (doto 1)
+  (implement 1)
+  (lazy-cons 1)
+  (let 1)
+  (when-let 2)
+  (if-let 2)
+  (locking 1)
+  (proxy 2)
+  (sync 1)
+  (when 1)
+  (when-first 2)
+  (when-let 2)
+  (when-not 1)
+  (with-local-vars 1)
+  (with-open 2))
 
 ;; macro indent (auto generated)
-(put 'binding 'clojure-indent-function 1)
-(put 'comment 'clojure-indent-function 0)
-(put 'defstruct 'clojure-indent-function 1)
-(put 'doseq 'clojure-indent-function 2)
-(put 'dotimes 'clojure-indent-function 2)
-(put 'doto 'clojure-indent-function 1)
-(put 'implement 'clojure-indent-function 1)
-(put 'lazy-cons 'clojure-indent-function 1)
-(put 'let 'clojure-indent-function 1)
-(put 'when-let 'clojure-indent-function 2)
-(put 'if-let 'clojure-indent-function 2)
-(put 'locking 'clojure-indent-function 1)
-(put 'proxy 'clojure-indent-function 2)
-(put 'sync 'clojure-indent-function 1)
-(put 'when 'clojure-indent-function 1)
-(put 'when-first 'clojure-indent-function 2)
-(put 'when-let 'clojure-indent-function 2)
-(put 'when-not 'clojure-indent-function 1)
-(put 'with-local-vars 'clojure-indent-function 1)
-(put 'with-open 'clojure-indent-function 2)
 
 ;; Things that just aren't right (manually removed)
 ; (put '-> 'clojure-indent-function 2)
