@@ -452,7 +452,6 @@ check for contextual indenting."
   (dotimes 2)
   (doto 1)
   (implement 1)
-  (lazy-cons 1)
   (let 1)
   (when-let 2)
   (if-let 2)
@@ -477,6 +476,7 @@ check for contextual indenting."
 ; (put 'memfn 'clojure-indent-function 1)
 ; (put 'or 'clojure-indent-function 1)
 ; (put 'lazy-cat 'clojure-indent-function 1)
+; (put 'lazy-cons 'clojure-indent-function 1)
 
 (provide 'clojure-mode)
 
