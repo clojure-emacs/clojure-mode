@@ -257,7 +257,7 @@ elements of a def* forms."
             "when" "when-not" "when-let" "when-first" "if" "if-let"
             "delay" "lazy-cons" "." ".." "->" "and" "or" "locking"
             "dosync"
-            "sync" "doseq" "dotimes" "import" "unimport" "in-ns" "refer"
+            "sync" "doseq" "dotimes" "import" "unimport" "ns" "in-ns" "refer"
             "implement" "proxy" "time" "try" "catch" "finally" "throw"
             "doto" "with-open" "with-local-vars" "struct-map" ) t)
          "\\>")
