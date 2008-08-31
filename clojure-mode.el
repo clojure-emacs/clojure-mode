@@ -239,7 +239,7 @@ elements of a def* forms."
 		;; Function declarations.
 		"\\(n-?\\|multi\\|macro\\|method\\|"
 		;; Variable declarations.
-                "struct\\|"
+                "struct\\|once\\|"
 		"\\)\\)\\>"
 		;; Any whitespace
 		"[ \r\n\t]*"
