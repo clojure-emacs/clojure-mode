@@ -257,7 +257,7 @@ elements of a def* forms."
             "when" "when-not" "when-let" "when-first" "if" "if-let"
             "delay" "lazy-cons" "." ".." "->" "and" "or" "locking"
             "dosync"
-            "sync" "doseq" "dotimes" "import" "unimport" "in-ns" "refer"
+            "sync" "doseq" "dotimes" "import" "unimport" "ns" "refer"
             "implement" "proxy" "time" "try" "catch" "finally" "throw"
             "doto" "with-open" "with-local-vars" "struct-map" ) t)
          "\\>")
@@ -446,6 +446,7 @@ check for contextual indenting."
 
 ;; built-ins
 (define-clojure-indent
+  (ns 1)
   (binding 1)
   (comment 0)
   (defstruct 1)
@@ -464,7 +465,8 @@ check for contextual indenting."
   (when-let 2)
   (when-not 1)
   (with-local-vars 1)
-  (with-open 2))
+  (with-open 2)
+  (with-precision 1))
 
 ;; macro indent (auto generated)
 
