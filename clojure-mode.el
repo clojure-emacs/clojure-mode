@@ -259,7 +259,8 @@ elements of a def* forms."
             "dosync" "load"
             "sync" "doseq" "dotimes" "import" "unimport" "ns" "in-ns" "refer"
             "implement" "proxy" "time" "try" "catch" "finally" "throw"
-            "doto" "with-open" "with-local-vars" "struct-map") t)
+            "doto" "with-open" "with-local-vars" "struct-map"
+            "gen-class" "gen-and-load-class" "gen-and-save-class") t)
          "\\>")
         .  1)
       ;; (fn name? args ...)
