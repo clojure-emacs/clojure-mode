@@ -239,7 +239,7 @@ elements of a def* forms."
 		;; Function declarations.
 		"\\(n-?\\|multi\\|macro\\|method\\|"
 		;; Variable declarations.
-                "struct\\|"
+                "struct\\|once\\|"
 		"\\)\\)\\>"
 		;; Any whitespace
 		"[ \r\n\t]*"
@@ -256,10 +256,11 @@ elements of a def* forms."
           '("cond" "for" "loop" "let" "recur" "do" "binding" "with-meta"
             "when" "when-not" "when-let" "when-first" "if" "if-let"
             "delay" "lazy-cons" "." ".." "->" "and" "or" "locking"
-            "dosync"
-            "sync" "doseq" "dotimes" "import" "unimport" "in-ns" "ns" "refer"
+            "dosync" "load"
+            "sync" "doseq" "dotimes" "import" "unimport" "ns" "in-ns" "refer"
             "implement" "proxy" "time" "try" "catch" "finally" "throw"
-            "doto" "with-open" "with-local-vars" "struct-map" ) t)
+            "doto" "with-open" "with-local-vars" "struct-map"
+            "gen-class" "gen-and-load-class" "gen-and-save-class") t)
          "\\>")
         .  1)
       ;; (fn name? args ...)
