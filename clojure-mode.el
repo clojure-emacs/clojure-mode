@@ -1,12 +1,32 @@
-;;; clojure-mode.el -- Major mode for Clojure code
+;;; clojure-mode.el --- Major mode for Clojure code
 
-;; Copyright (C) 2008 Jeffrey Chu
+;; Copyright (C) 2007, 2008 Jeffrey Chu and Lennart Staflin
 ;;
-;; Author: Jeffrey Chu <jochu0@gmail.com>
-;; 
-;;   Originally by: Lennart Staflin <lenst@lysator.liu.se>
-;;                  Copyright (C) 2007, 2008 Lennart Staflin
-;;
+;; Authors: Jeffrey Chu <jochu0@gmail.com>
+;;          Lennart Staflin <lenst@lysator.liu.se>
+;; URL: http://www.emacswiki.org/cgi-bin/wiki/ClojureMode
+;; Version: 1.0
+;; Created: Tue Feb 12 22:51:41 2008 -0800
+;; Keywords: languages, lisp
+
+;; This file is not part of GNU Emacs.
+
+;;; Commentary:
+
+;; Provides font-lock, indentation, and functions for communication
+;; with subprocesses for Clojure. (http://clojure.org)
+
+;;; Installation:
+
+;; (0) Add this file to your load-path.
+;; (1) Either:
+;;     Add these lines to your .emacs:
+;;       (autoload 'clojure-mode "clojure-mode" "A major mode for Clojure" t)
+;;       (add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
+;;     Or generate autoloads with the `update-directory-autoloads' function.
+
+;;; License:
+
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License
 ;; as published by the Free Software Foundation; either version 3

@@ -1,7 +1,0 @@
-Add the following to your .emacs:
-
-  (add-to-list 'load-path "/path/to/clojure-mode")
-
-  (require 'clojure-auto)
-  ;; or if you use paredit, uncomment the following
-  ; (require 'clojure-paredit) 
