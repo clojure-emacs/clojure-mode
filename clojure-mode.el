@@ -255,13 +255,26 @@ elements of a def* forms."
          "(\\(?:clojure/\\)?" 
          (regexp-opt
           '("cond" "for" "loop" "let" "recur" "do" "binding" "with-meta"
-            "when" "when-not" "when-let" "when-first" "if" "if-let"
+            "when" "when-not" "when-let" "when-first" "if" "if-let" "if-not"
             "delay" "lazy-cons" "." ".." "->" "and" "or" "locking"
             "dosync" "load"
             "sync" "doseq" "dotimes" "import" "unimport" "ns" "in-ns" "refer"
             "implement" "proxy" "time" "try" "catch" "finally" "throw"
             "doto" "with-open" "with-local-vars" "struct-map"
-            "gen-class" "gen-and-load-class" "gen-and-save-class") t)
+            "gen-class" "gen-and-load-class" "gen-and-save-class" "apply"
+            "map" "mapcat" "vector?" "list?" "hash-map" "reduce" "filter"
+            "remove" "merge" "interleave" "interpose" "distinct" "for"
+            "cons" "concat" "lazy-cat" "cycle" "rest" "frest" "drop" "drop-while"
+            "nthrest" "take" "take-while" "take-nth" "butlast" "drop-last"
+            "reverse" "sort" "sort-by" "split-at" "partition" "split-with"
+            "first" "ffirst" "rfirst" "when-first" "zipmap" "into" "set" "vec" "into-array"
+            "to-array-2d" "not-empty" "seq?" "not-every?" "every?" "not-any?" "empty?"
+            "doseq" "dorun" "doall"
+            "vals" "keys" "rseq" "subseq" "rsubseq"
+            "fnseq" "lazy-cons" "repeatedly" "iterate"
+            "repeat" "replicate" "range"
+            "line-seq" "resultset-seq" "re-seq" "re-find" "tree-seq" "file-seq" "xml-seq"
+            "iterator-seq" "enumeration-seq") t)
          "\\>")
         .  1)
       ;; (fn name? args ...)
