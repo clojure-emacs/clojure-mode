@@ -106,7 +106,7 @@ All commands in `lisp-mode-shared-map' are inherited by this map.")
 This holds a cons cell of the form `(DIRECTORY . FILE)'
 describing the last `clojure-load-file' or `clojure-compile-file' command.")
 
-
+;;;###autoload
 (defun clojure-mode ()
   "Major mode for editing Clojure code - similar to Lisp mode..
 Commands:
@@ -483,6 +483,8 @@ check for contextual indenting."
 ; (put 'lazy-cat 'clojure-indent-function 1)
 ; (put 'lazy-cons 'clojure-indent-function 1)
 
-(provide 'clojure-mode)
+;;;###autoload
+(add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
 
+(provide 'clojure-mode)
 ;;; clojure-mode.el ends here
