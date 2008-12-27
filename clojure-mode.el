@@ -1,12 +1,37 @@
-;;; clojure-mode.el -- Major mode for Clojure code
+;;; clojure-mode.el --- Major mode for Clojure code
 
-;; Copyright (C) 2008 Jeffrey Chu
+;; Copyright (C) 2007, 2008 Jeffrey Chu and Lennart Staflin
 ;;
-;; Author: Jeffrey Chu <jochu0@gmail.com>
-;; 
-;;   Originally by: Lennart Staflin <lenst@lysator.liu.se>
-;;                  Copyright (C) 2007, 2008 Lennart Staflin
-;;
+;; Authors: Jeffrey Chu <jochu0@gmail.com>
+;;          Lennart Staflin <lenst@lysator.liu.se>
+;; URL: http://www.emacswiki.org/cgi-bin/wiki/ClojureMode
+;; Version: 1.0
+;; Created: Tue Feb 12 22:51:41 2008 -0800
+;; Keywords: languages, lisp
+
+;; This file is not part of GNU Emacs.
+
+;;; Commentary:
+
+;; Provides font-lock, indentation, and functions for communication
+;; with subprocesses for Clojure. (http://clojure.org)
+
+;; Set the clojure-enable-paredit flag to non-nil to enable paredit
+;; when editing clojure code. You will need paredit.el on your path. A
+;; copy is bundled, but you can download the latest version at
+;; http://mumble.net/~campbell/emacs/paredit.el
+
+;;; Installation:
+
+;; (0) Add this file to your load-path.
+;; (1) Either:
+;;     Add these lines to your .emacs:
+;;       (autoload 'clojure-mode "clojure-mode" "A major mode for Clojure" t)
+;;       (add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
+;;     Or generate autoloads with the `update-directory-autoloads' function.
+
+;;; License:
+
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License
 ;; as published by the Free Software Foundation; either version 3
@@ -62,6 +87,10 @@ indentation."
   :type 'integer
   :group 'clojure-mode)
 
+(defcustom clojure-enable-paredit nil
+  "Set to non-nil to enable paredit when using clojure-mode."
+  :type 'boolean
+  :group 'clojure-mode)
 
 (defvar clojure-mode-map
   (let ((map (make-sparse-keymap)))
@@ -106,7 +135,7 @@ All commands in `lisp-mode-shared-map' are inherited by this map.")
 This holds a cons cell of the form `(DIRECTORY . FILE)'
 describing the last `clojure-load-file' or `clojure-compile-file' command.")
 
-
+;;;###autoload
 (defun clojure-mode ()
   "Major mode for editing Clojure code - similar to Lisp mode..
 Commands:
@@ -465,22 +494,22 @@ check for contextual indenting."
   (binding 1)
   (comment 0)
   (defstruct 1)
-  (doseq 2)
-  (dotimes 2)
+  (doseq 1)
+  (dotimes 1)
   (doto 1)
   (implement 1)
   (let 1)
-  (when-let 2)
-  (if-let 2)
+  (when-let 1)
+  (if-let 1)
   (locking 1)
   (proxy 2)
   (sync 1)
   (when 1)
-  (when-first 2)
-  (when-let 2)
+  (when-first 1)
+  (when-let 1)
   (when-not 1)
   (with-local-vars 1)
-  (with-open 2)
+  (with-open 1)
   (with-precision 1))
 
 ;; macro indent (auto generated)
@@ -496,6 +525,15 @@ check for contextual indenting."
 ; (put 'lazy-cat 'clojure-indent-function 1)
 ; (put 'lazy-cons 'clojure-indent-function 1)
 
-(provide 'clojure-mode)
+;;;###autoload
+(add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
 
+(when clojure-enable-paredit
+  (defun clojure-paredit-hook () (require 'paredit) (paredit-mode +1))
+  (add-hook 'clojure-mode-hook 'clojure-paredit-hook)
+
+  (define-key clojure-mode-map "{" 'paredit-open-brace)
+  (define-key clojure-mode-map "}" 'paredit-close-brace))
+
+(provide 'clojure-mode)
 ;;; clojure-mode.el ends here
