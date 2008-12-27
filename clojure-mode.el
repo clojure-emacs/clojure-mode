@@ -16,6 +16,11 @@
 ;; Provides font-lock, indentation, and functions for communication
 ;; with subprocesses for Clojure. (http://clojure.org)
 
+;; Set the clojure-enable-paredit flag to non-nil to enable paredit
+;; when editing clojure code. You will need paredit.el on your path. A
+;; copy is bundled, but you can download the latest version at
+;; http://mumble.net/~campbell/emacs/paredit.el
+
 ;;; Installation:
 
 ;; (0) Add this file to your load-path.
@@ -82,6 +87,10 @@ indentation."
   :type 'integer
   :group 'clojure-mode)
 
+(defcustom clojure-enable-paredit nil
+  "Set to non-nil to enable paredit when using clojure-mode."
+  :type 'boolean
+  :group 'clojure-mode)
 
 (defvar clojure-mode-map
   (let ((map (make-sparse-keymap)))
@@ -505,6 +514,13 @@ check for contextual indenting."
 
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
+
+(when clojure-enable-paredit
+  (defun clojure-paredit-hook () (require 'paredit) (paredit-mode +1))
+  (add-hook 'clojure-mode-hook 'clojure-paredit-hook)
+
+  (define-key clojure-mode-map "{" 'paredit-open-brace)
+  (define-key clojure-mode-map "}" 'paredit-close-brace))
 
 (provide 'clojure-mode)
 ;;; clojure-mode.el ends here
