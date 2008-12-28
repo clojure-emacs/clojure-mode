@@ -303,7 +303,10 @@ elements of a def* forms."
             "fnseq" "lazy-cons" "repeatedly" "iterate"
             "repeat" "replicate" "range"
             "line-seq" "resultset-seq" "re-seq" "re-find" "tree-seq" "file-seq" "xml-seq"
-            "iterator-seq" "enumeration-seq") t)
+            "iterator-seq" "enumeration-seq"
+            "symbol?" "string?" "vector" "conj" "str"
+            "pos?" "neg?" "zero?" "nil?" "inc" "format"
+            "alter" "commute" "ref-set" "floor" "assoc" "send" "send-off" ) t)
          "\\>")
         .  1)
       ;; (fn name? args ...)
