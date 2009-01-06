@@ -283,23 +283,35 @@ elements of a def* forms."
       (,(concat
          "(\\(?:clojure/\\)?" 
          (regexp-opt
-          '("cond" "for" "loop" "let" "recur" "do" "binding" "with-meta"
-            "when" "when-not" "when-let" "when-first" "if" "if-let" "if-not"
-            "delay" "lazy-cons" "." ".." "->" "and" "or" "locking"
-            "dosync" "load"
-            "sync" "doseq" "dotimes" "import" "unimport" "ns" "in-ns" "refer"
-            "implement" "proxy" "time" "try" "catch" "finally" "throw"
-            "doto" "with-open" "with-local-vars" "struct-map"
-            "gen-class" "gen-and-load-class" "gen-and-save-class" "apply"
-            "map" "mapcat" "vector?" "list?" "hash-map" "reduce" "filter"
+          '("let" "do"
+            "cond" "condp"
+            "for" "loop" "recur"
+            "when" "when-not" "when-let" "when-first"
+            "if" "if-let" "if-not"
+            "." ".." "->" "doto"
+            "and" "or"
+            "dosync" "doseq" "dotimes" "dorun" "doall"
+            "load" "import" "unimport" "ns" "in-ns" "refer"
+            "try" "catch" "finally" "throw"
+            "with-open" "with-local-vars" "binding" 
+            "gen-class" "gen-and-load-class" "gen-and-save-class") t)
+         "\\>")
+        .  1)
+      ;; Built-ins
+      (,(concat
+         "(\\(?:clojure/\\)?" 
+         (regexp-opt
+          '(
+            "implement" "proxy" "lazy-cons" "with-meta"
+            "struct" "struct-map" "delay" "locking" "sync" "time" "apply"
             "remove" "merge" "interleave" "interpose" "distinct" "for"
             "cons" "concat" "lazy-cat" "cycle" "rest" "frest" "drop" "drop-while"
             "nthrest" "take" "take-while" "take-nth" "butlast" "drop-last"
             "reverse" "sort" "sort-by" "split-at" "partition" "split-with"
             "first" "ffirst" "rfirst" "when-first" "zipmap" "into" "set" "vec" "into-array"
             "to-array-2d" "not-empty" "seq?" "not-every?" "every?" "not-any?" "empty?"
-            "doseq" "dorun" "doall"
-            "vals" "keys" "rseq" "subseq" "rsubseq"
+            "map" "mapcat" "vector?" "list?" "hash-map" "reduce" "filter"
+            "vals" "keys" "rseq" "subseq" "rsubseq" "count"
             "fnseq" "lazy-cons" "repeatedly" "iterate"
             "repeat" "replicate" "range"
             "line-seq" "resultset-seq" "re-seq" "re-find" "tree-seq" "file-seq" "xml-seq"
@@ -308,7 +320,7 @@ elements of a def* forms."
             "pos?" "neg?" "zero?" "nil?" "inc" "format"
             "alter" "commute" "ref-set" "floor" "assoc" "send" "send-off" ) t)
          "\\>")
-        .  1)
+       1 font-lock-builtin-face)
       ;; (fn name? args ...)
       (,(concat "(\\(?:clojure/\\)?\\(fn\\)[ \t]+"
                 ;; Possibly type
