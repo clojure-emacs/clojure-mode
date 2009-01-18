@@ -6,7 +6,6 @@
 ;;          Lennart Staflin <lenst@lysator.liu.se>
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki/ClojureMode
 ;; Version: 1.0
-;; Created: Tue Feb 12 22:51:41 2008 -0800
 ;; Keywords: languages, lisp
 
 ;; This file is not part of GNU Emacs.
@@ -46,6 +45,8 @@
 ;; along with GNU Emacs; see the file COPYING.  If not, write to the
 ;; Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ;; Boston, MA 02110-1301, USA.
+
+;;; Code:
 
 (require 'cl)
 
@@ -322,7 +323,7 @@ elements of a def* forms."
       ("\\<:\\sw+\\>" 0 font-lock-builtin-face)
       ;; Meta type annotation #^Type
       ("#^\\sw+" 0 font-lock-type-face)
-      ))
+      ("\\<io!\\>" 0 font-lock-warning-face)))
   "Default expressions to highlight in Clojure mode.")
 
 
