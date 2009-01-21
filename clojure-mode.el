@@ -534,7 +534,10 @@ check for contextual indenting."
 (add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
 
 (when clojure-enable-paredit
-  (defun clojure-paredit-hook () (require 'paredit) (paredit-mode +1))
+  (autoload 'paredit-mode "paredit"
+    "Minor mode for pseudo-structurally editing Lisp code." t)
+
+  (defun clojure-paredit-hook () (paredit-mode +1))
   (add-hook 'clojure-mode-hook 'clojure-paredit-hook)
 
   (define-key clojure-mode-map "{" 'paredit-open-brace)
