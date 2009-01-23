@@ -16,11 +16,6 @@
 ;; Provides font-lock, indentation, and functions for communication
 ;; with subprocesses for Clojure. (http://clojure.org)
 
-;; Set the clojure-enable-paredit flag to non-nil to enable paredit
-;; when editing clojure code. You will need paredit.el on your path. A
-;; copy is bundled, but you can download the latest version at
-;; http://mumble.net/~campbell/emacs/paredit.el
-
 ;;; Installation:
 
 ;; (0) Add this file to your load-path.
@@ -29,6 +24,16 @@
 ;;       (autoload 'clojure-mode "clojure-mode" "A major mode for Clojure" t)
 ;;       (add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
 ;;     Or generate autoloads with the `update-directory-autoloads' function.
+
+;; Paredit users:
+
+;; Download paredit v22 (currently beta)
+;;    http://mumble.net/~campbell/emacs/paredit-beta.el
+
+;; Use paredit as you normally would any other mode.
+;; Example:
+;;   (defun lisp-enable-paredit-hook () (paredit-mode 1))
+;;   (add-hook 'clojure-mode-hook 'lisp-enable-paredit-hook)
 
 ;;; License:
 
@@ -85,11 +90,6 @@ indentation."
 (defcustom clojure-max-backtracking 3
   "Maximum amount to backtrack up a list to check for context."
   :type 'integer
-  :group 'clojure-mode)
-
-(defcustom clojure-enable-paredit nil
-  "Set to non-nil to enable paredit when using clojure-mode."
-  :type 'boolean
   :group 'clojure-mode)
 
 (defvar clojure-mode-map
@@ -183,7 +183,12 @@ if that value is non-nil."
 	  (font-lock-mark-block-function . mark-defun)
 	  (font-lock-syntactic-face-function . lisp-font-lock-syntactic-face-function)))
   
-  (run-mode-hooks 'clojure-mode-hook))
+  (run-mode-hooks 'clojure-mode-hook)
+  
+  ;; Enable curly braces when paredit is enabled in clojure-mode-hook
+  (when (and (featurep 'paredit) paredit-mode (>= paredit-version 22))
+    (define-key clojure-mode-map "{" 'paredit-open-curly)
+    (define-key clojure-mode-map "}" 'paredit-close-curly)))
 
 (defun clojure-font-lock-def-at-point (point)
   "Find the position range between the top-most def* and the
@@ -542,13 +547,6 @@ check for contextual indenting."
 
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
-
-(when clojure-enable-paredit
-  (defun clojure-paredit-hook () (require 'paredit) (paredit-mode +1))
-  (add-hook 'clojure-mode-hook 'clojure-paredit-hook)
-
-  (define-key clojure-mode-map "{" 'paredit-open-brace)
-  (define-key clojure-mode-map "}" 'paredit-close-brace))
 
 (provide 'clojure-mode)
 ;;; clojure-mode.el ends here
