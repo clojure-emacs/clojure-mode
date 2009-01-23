@@ -323,7 +323,7 @@ elements of a def* forms."
       ("\\<:\\sw+\\>" 0 font-lock-builtin-face)
       ;; Meta type annotation #^Type
       ("#^\\sw+" 0 font-lock-type-face)
-      ("\\<io!\\>" 0 font-lock-warning-face)))
+      ("\\<io\\!\\>" 0 font-lock-warning-face)))
   "Default expressions to highlight in Clojure mode.")
 
 
