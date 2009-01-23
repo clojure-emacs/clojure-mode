@@ -32,6 +32,7 @@
 
 ;; Use paredit as you normally would any other mode.
 ;; Example:
+;;   ;; require or autoload paredit-mode
 ;;   (defun lisp-enable-paredit-hook () (paredit-mode 1))
 ;;   (add-hook 'clojure-mode-hook 'lisp-enable-paredit-hook)
 
@@ -531,19 +532,6 @@ check for contextual indenting."
   (with-local-vars 1)
   (with-open 1)
   (with-precision 1))
-
-;; macro indent (auto generated)
-
-;; Things that just aren't right (manually removed)
-; (put '-> 'clojure-indent-function 2)
-; (put '.. 'clojure-indent-function 2)
-; (put 'and 'clojure-indent-function 1)
-; (put 'defmethod 'clojure-indent-function 2)
-; (put 'defn- 'clojure-indent-function 1)
-; (put 'memfn 'clojure-indent-function 1)
-; (put 'or 'clojure-indent-function 1)
-; (put 'lazy-cat 'clojure-indent-function 1)
-; (put 'lazy-cons 'clojure-indent-function 1)
 
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
