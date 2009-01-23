@@ -15,11 +15,6 @@
 ;; Provides font-lock, indentation, and functions for communication
 ;; with subprocesses for Clojure. (http://clojure.org)
 
-;; Set the clojure-enable-paredit flag to non-nil to enable paredit
-;; when editing clojure code. You will need paredit.el on your path. A
-;; copy is bundled, but you can download the latest version at
-;; http://mumble.net/~campbell/emacs/paredit.el
-
 ;;; Installation:
 
 ;; (0) Add this file to your load-path.
@@ -28,6 +23,17 @@
 ;;       (autoload 'clojure-mode "clojure-mode" "A major mode for Clojure" t)
 ;;       (add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
 ;;     Or generate autoloads with the `update-directory-autoloads' function.
+
+;; Paredit users:
+
+;; Download paredit v22 (currently beta)
+;;    http://mumble.net/~campbell/emacs/paredit-beta.el
+
+;; Use paredit as you normally would any other mode.
+;; Example:
+;;   ;; require or autoload paredit-mode
+;;   (defun lisp-enable-paredit-hook () (paredit-mode 1))
+;;   (add-hook 'clojure-mode-hook 'lisp-enable-paredit-hook)
 
 ;;; License:
 
@@ -86,11 +92,6 @@ indentation."
 (defcustom clojure-max-backtracking 3
   "Maximum amount to backtrack up a list to check for context."
   :type 'integer
-  :group 'clojure-mode)
-
-(defcustom clojure-enable-paredit nil
-  "Set to non-nil to enable paredit when using clojure-mode."
-  :type 'boolean
   :group 'clojure-mode)
 
 (defvar clojure-mode-map
@@ -184,7 +185,12 @@ if that value is non-nil."
 	  (font-lock-mark-block-function . mark-defun)
 	  (font-lock-syntactic-face-function . lisp-font-lock-syntactic-face-function)))
   
-  (run-mode-hooks 'clojure-mode-hook))
+  (run-mode-hooks 'clojure-mode-hook)
+  
+  ;; Enable curly braces when paredit is enabled in clojure-mode-hook
+  (when (and (featurep 'paredit) paredit-mode (>= paredit-version 22))
+    (define-key clojure-mode-map "{" 'paredit-open-curly)
+    (define-key clojure-mode-map "}" 'paredit-close-curly)))
 
 (defun clojure-font-lock-def-at-point (point)
   "Find the position range between the top-most def* and the
@@ -284,24 +290,35 @@ elements of a def* forms."
       (,(concat
          "(\\(?:clojure/\\)?" 
          (regexp-opt
-          '("cond" "condp" "for" "loop" "let" "recur" "do" "binding" "with-meta"
-            "when" "when-not" "when-let" "when-first" "if" "if-let" "if-not"
-            "delay" "lazy-cons" "." ".." "->" "and" "or" "locking" "list*"
-            "dosync" "load" "symbol" "keyword?" "number?" "instance?"
-            "sync" "doseq" "dotimes" "import" "unimport" "ns" "in-ns" "refer"
-            "implement" "proxy" "time" "try" "catch" "finally" "throw"
-            "doto" "with-open" "with-local-vars" "struct-map"
-            "gen-class" "gen-and-load-class" "gen-and-save-class" "apply"
-            "map" "mapcat" "vector?" "list?" "hash-map" "reduce" "filter"
+          '("let" "do"
+            "cond" "condp"
+            "for" "loop" "recur"
+            "when" "when-not" "when-let" "when-first"
+            "if" "if-let" "if-not"
+            "." ".." "->" "doto"
+            "and" "or"
+            "dosync" "doseq" "dotimes" "dorun" "doall"
+            "load" "import" "unimport" "ns" "in-ns" "refer"
+            "try" "catch" "finally" "throw"
+            "with-open" "with-local-vars" "binding" 
+            "gen-class" "gen-and-load-class" "gen-and-save-class") t)
+         "\\>")
+        .  1)
+      ;; Built-ins
+      (,(concat
+         "(\\(?:clojure/\\)?" 
+         (regexp-opt
+          '(
+            "implement" "proxy" "lazy-cons" "with-meta"
+            "struct" "struct-map" "delay" "locking" "sync" "time" "apply"
             "remove" "merge" "interleave" "interpose" "distinct" "for"
             "cons" "concat" "lazy-cat" "cycle" "rest" "frest" "drop" "drop-while"
             "nthrest" "take" "take-while" "take-nth" "butlast" "drop-last"
             "reverse" "sort" "sort-by" "split-at" "partition" "split-with"
             "first" "ffirst" "rfirst" "when-first" "zipmap" "into" "set" "vec" "into-array"
             "to-array-2d" "not-empty" "seq?" "not-every?" "every?" "not-any?" "empty?"
-            "map?" "set?" "list?" "seq?" "unquote?" "self-eval?" "str" "int" "println"
-            "doseq" "dorun" "doall" "even?" "first" "second" "last" "list" 
-            "vals" "keys" "keyword" "rseq" "subseq" "rsubseq"
+            "map" "mapcat" "vector?" "list?" "hash-map" "reduce" "filter"
+            "vals" "keys" "rseq" "subseq" "rsubseq" "count"
             "fnseq" "lazy-cons" "repeatedly" "iterate"
             "repeat" "replicate" "range"
             "line-seq" "resultset-seq" "re-seq" "re-find" "tree-seq" "file-seq" "xml-seq"
@@ -310,7 +327,7 @@ elements of a def* forms."
             "pos?" "neg?" "zero?" "nil?" "inc" "format"
             "alter" "commute" "ref-set" "floor" "assoc" "send" "send-off" ) t)
          "\\>")
-        .  1)
+       1 font-lock-builtin-face)
       ;; (fn name? args ...)
       (,(concat "(\\(?:clojure/\\)?\\(fn\\)[ \t]+"
                 ;; Possibly type
@@ -517,19 +534,6 @@ check for contextual indenting."
   (with-open 1)
   (with-precision 1))
 
-;; macro indent (auto generated)
-
-;; Things that just aren't right (manually removed)
-; (put '-> 'clojure-indent-function 2)
-; (put '.. 'clojure-indent-function 2)
-; (put 'and 'clojure-indent-function 1)
-; (put 'defmethod 'clojure-indent-function 2)
-; (put 'defn- 'clojure-indent-function 1)
-; (put 'memfn 'clojure-indent-function 1)
-; (put 'or 'clojure-indent-function 1)
-; (put 'lazy-cat 'clojure-indent-function 1)
-; (put 'lazy-cons 'clojure-indent-function 1)
-
 (defvar clojure-src-root "~/src"
   "Directory that contains checkouts for Clojure and other libs.
 
@@ -598,13 +602,6 @@ This requires git, a JVM, ant, and an active Internet connection."
 
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
-
-(when clojure-enable-paredit
-  (defun clojure-paredit-hook () (require 'paredit) (paredit-mode +1))
-  (add-hook 'clojure-mode-hook 'clojure-paredit-hook)
-
-  (define-key clojure-mode-map "{" 'paredit-open-brace)
-  (define-key clojure-mode-map "}" 'paredit-close-brace))
 
 (provide 'clojure-mode)
 ;;; clojure-mode.el ends here
