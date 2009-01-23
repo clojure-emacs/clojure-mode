@@ -27,8 +27,8 @@
 
 ;; Paredit users:
 
-;; Download paredit v22 (currently beta)
-;;    http://mumble.net/~campbell/emacs/paredit-beta.el
+;; Download paredit v21 or greater
+;;    http://mumble.net/~campbell/emacs/paredit.el
 
 ;; Use paredit as you normally would any other mode.
 ;; Example:
@@ -187,7 +187,7 @@ if that value is non-nil."
   (run-mode-hooks 'clojure-mode-hook)
   
   ;; Enable curly braces when paredit is enabled in clojure-mode-hook
-  (when (and (featurep 'paredit) paredit-mode (>= paredit-version 22))
+  (when (and (featurep 'paredit) paredit-mode (>= paredit-version 21))
     (define-key clojure-mode-map "{" 'paredit-open-curly)
     (define-key clojure-mode-map "}" 'paredit-close-curly)))
 
