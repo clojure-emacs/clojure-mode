@@ -1,6 +1,6 @@
 ;;; clojure-mode.el --- Major mode for Clojure code
 
-;; Copyright (C) 2007, 2008 Jeffrey Chu and Lennart Staflin
+;; Copyright (C) 2007, 2008, 2009 Jeffrey Chu and Lennart Staflin
 ;;
 ;; Authors: Jeffrey Chu <jochu0@gmail.com>
 ;;          Lennart Staflin <lenst@lysator.liu.se>
@@ -29,15 +29,19 @@
 ;; Download paredit v21 or greater
 ;;    http://mumble.net/~campbell/emacs/paredit.el
 
-;; Use paredit as you normally would any other mode.
-;; Example:
+;; Use paredit as you normally would with any other mode; for instance:
+;;
 ;;   ;; require or autoload paredit-mode
 ;;   (defun lisp-enable-paredit-hook () (paredit-mode 1))
 ;;   (add-hook 'clojure-mode-hook 'lisp-enable-paredit-hook)
 
+;; The clojure-install function can check out and configure all the
+;; dependencies get going with Clojure, including SLIME integration.
+
 ;;; Todo:
 
 ;; * hashbang is also a valid comment character
+;; * do the inferior-lisp functions work without SLIME? needs documentation
 
 ;;; License:
 
@@ -568,7 +572,7 @@ is bundled up as a function so that you can call it after you've set
   (require 'slime-autoloads)
   (require 'swank-clojure-autoload)
 
-  (eval-after-load 'slime '(slime-setup '(slime-fancy)))
+  (slime-setup '(slime-fancy slime-repl))
 
   (setq swank-clojure-jar-path (concat clojure-src-root "/clojure/clojure.jar")
         swank-clojure-extra-classpaths
@@ -602,11 +606,14 @@ This requires git, a JVM, ant, and an active Internet connection."
   (cd (concat clojure-src-root "/clojure-contrib"))
   (unless (= 0 (shell-command "ant")) (error "Couldn't compile Clojure contrib."))
 
-  (unless (equal src-root clojure-src-root)
+  (if (equal src-root clojure-src-root)
+      (with-output-to-temp-buffer "clojure-install-note"
+        (princ "Add a call to \"\(clojure-slime-config\)\" to your .emacs so you can use SLIME in future sessions."))
     (with-output-to-temp-buffer "clojure-install-note"
       (princ (format "You've installed clojure in a non-default location. If you want to use this installation in the future, you will need to add the following line to your personal Emacs config somewhere:
 
-\(setq clojure-src-root \"%s\"\)" src-root)))
+\(setq clojure-src-root \"%s\"\)
+\(clojure-slime-config\)" src-root)))
     (setq clojure-src-root src-root))
 
   (clojure-slime-config)
