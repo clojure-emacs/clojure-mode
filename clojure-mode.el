@@ -26,14 +26,18 @@
 
 ;; Paredit users:
 
-;; Download paredit v22 (currently beta)
-;;    http://mumble.net/~campbell/emacs/paredit-beta.el
+;; Download paredit v21 or greater
+;;    http://mumble.net/~campbell/emacs/paredit.el
 
 ;; Use paredit as you normally would any other mode.
 ;; Example:
 ;;   ;; require or autoload paredit-mode
 ;;   (defun lisp-enable-paredit-hook () (paredit-mode 1))
 ;;   (add-hook 'clojure-mode-hook 'lisp-enable-paredit-hook)
+
+;;; Todo:
+
+;; * hashbang is also a valid comment character
 
 ;;; License:
 
@@ -137,6 +141,9 @@ All commands in `lisp-mode-shared-map' are inherited by this map.")
 This holds a cons cell of the form `(DIRECTORY . FILE)'
 describing the last `clojure-load-file' or `clojure-compile-file' command.")
 
+(defvar clojure-def-regexp "^\\s *\\((def\\S *\\s +\\(\\S +\\)\\)"
+  "A regular expression to match any top-level definitions.")
+
 ;;;###autoload
 (defun clojure-mode ()
   "Major mode for editing Clojure code - similar to Lisp mode..
@@ -163,6 +170,12 @@ if that value is non-nil."
        'clojure-indent-function)
   (set (make-local-variable 'font-lock-multiline) t)
 
+  (setq lisp-imenu-generic-expression
+        `((nil ,clojure-def-regexp 2)))
+  (setq imenu-create-index-function
+        (lambda ()
+          (imenu--generic-function lisp-imenu-generic-expression)))
+
   (if (and (not (boundp 'font-lock-extend-region-functions))
            (or clojure-mode-font-lock-multiline-def
                clojure-mode-font-lock-comment-sexp))
@@ -188,7 +201,7 @@ if that value is non-nil."
   (run-mode-hooks 'clojure-mode-hook)
   
   ;; Enable curly braces when paredit is enabled in clojure-mode-hook
-  (when (and (featurep 'paredit) paredit-mode (>= paredit-version 22))
+  (when (and (featurep 'paredit) paredit-mode (>= paredit-version 21))
     (define-key clojure-mode-map "{" 'paredit-open-curly)
     (define-key clojure-mode-map "}" 'paredit-close-curly)))
 
