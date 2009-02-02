@@ -551,6 +551,8 @@ check for contextual indenting."
   (with-open 1)
   (with-precision 1))
 
+;;; SLIME integration
+
 (defvar clojure-src-root "~/src"
   "Directory that contains checkouts for Clojure and other libs.
 
@@ -584,33 +586,33 @@ is bundled up as a function so that you can call it after you've set
 This requires git, a JVM, ant, and an active Internet connection."
   (interactive (list
                 (read-from-minibuffer (concat "Install Clojure in (default: "
-                                              clojure-src-root "): ")
-                                      nil nil nil nil clojure-src-root)))
+                                              clojure-src-root "): "))))
+
+  (if (string= src-root "") (setq src-root clojure-src-root))
   (mkdir src-root t)
 
   (if (file-exists-p (concat src-root "/clojure"))
       (error "Clojure is already installed at %s/clojure" src-root))
 
-  (cd src-root)
   (message "Checking out source... this will take a while...")
   (dolist (cmd '("git clone git://github.com/kevinoneill/clojure.git"
                  "git clone git://github.com/kevinoneill/clojure-contrib.git"
                  "git clone git://github.com/jochu/swank-clojure.git"
                  "git clone git://git.boinkor.net/slime.git"))
-    (unless (= 0 (shell-command cmd))
+    (unless (= 0 (shell-command (format "cd %; %" src-root cmd)))
       (error "Clojure installation step failed: %s" cmd)))
 
   (message "Compiling...")
-  (cd (concat clojure-src-root "/clojure"))
-  (unless (= 0 (shell-command "ant")) (error "Couldn't compile Clojure."))
-  (cd (concat clojure-src-root "/clojure-contrib"))
-  (unless (= 0 (shell-command "ant")) (error "Couldn't compile Clojure contrib."))
+  (unless (= 0 (shell-command (format "cd %/clojure; ant")))
+    (error "Couldn't compile Clojure."))
+  (unless (= 0 (shell-command (format "cd %/clojure-contrib; ant")))
+    (error "Couldn't compile Clojure."))
 
   (if (equal src-root clojure-src-root)
       (with-output-to-temp-buffer "clojure-install-note"
         (princ "Add a call to \"\(clojure-slime-config\)\" to your .emacs so you can use SLIME in future sessions."))
     (with-output-to-temp-buffer "clojure-install-note"
-      (princ (format "You've installed clojure in a non-default location. If you want to use this installation in the future, you will need to add the following line to your personal Emacs config somewhere:
+      (princ (format "You've installed clojure in a non-default location. If you want to use this installation in the future, you will need to add the following lines to your personal Emacs config somewhere:
 
 \(setq clojure-src-root \"%s\"\)
 \(clojure-slime-config\)" src-root)))
