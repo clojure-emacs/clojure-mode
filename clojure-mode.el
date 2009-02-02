@@ -585,10 +585,10 @@ is bundled up as a function so that you can call it after you've set
 
 This requires git, a JVM, ant, and an active Internet connection."
   (interactive (list
-                (read-from-minibuffer (concat "Install Clojure in (default: "
-                                              clojure-src-root "): "))))
+                (read-string (concat "Install Clojure in (default: "
+                                     clojure-src-root "): ")
+                             nil nil clojure-src-root)))
 
-  (if (string= src-root "") (setq src-root clojure-src-root))
   (mkdir src-root t)
 
   (if (file-exists-p (concat src-root "/clojure"))
