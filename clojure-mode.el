@@ -589,7 +589,7 @@ This requires git, a JVM, ant, and an active Internet connection."
                                      clojure-src-root "): ")
                              nil nil clojure-src-root)))
 
-  (mkdir src-root t)
+  (make-directory src-root t)
 
   (if (file-exists-p (concat src-root "/clojure"))
       (error "Clojure is already installed at %s/clojure" src-root))
@@ -598,7 +598,7 @@ This requires git, a JVM, ant, and an active Internet connection."
   (dolist (cmd '("git clone git://github.com/kevinoneill/clojure.git"
                  "git clone git://github.com/kevinoneill/clojure-contrib.git"
                  "git clone git://github.com/jochu/swank-clojure.git"
-                 "git clone --depth 2 git://git.boinkor.net/slime.git"))
+                 "git clone --depth 2 git://github.com/nablaone/slime.git"))
     (unless (= 0 (shell-command (format "cd %s; %s" src-root cmd)))
       (error "Clojure installation step failed: %s" cmd)))
 
@@ -611,9 +611,12 @@ This requires git, a JVM, ant, and an active Internet connection."
   (with-output-to-temp-buffer "clojure-install-note"
     (princ
      (if (equal src-root clojure-src-root)
-         "Add a call to \"\(clojure-slime-config\)\" to your .emacs so you can use SLIME in future sessions."
+         "Add a call to \"\(clojure-slime-config\)\" to your .emacs so you can
+use SLIME in future sessions."
        (setq clojure-src-root src-root)
-       (format "You've installed clojure in a non-default location. If you want to use this installation in the future, you will need to add the following lines to your personal Emacs config somewhere:
+       (format "You've installed clojure in a non-default location. If you want
+to use this installation in the future, you will need to add the following
+lines to your personal Emacs config somewhere:
 
 \(setq clojure-src-root \"%s\"\)
 \(clojure-slime-config\)" src-root)))
