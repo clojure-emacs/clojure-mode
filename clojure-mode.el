@@ -598,29 +598,28 @@ This requires git, a JVM, ant, and an active Internet connection."
   (dolist (cmd '("git clone git://github.com/kevinoneill/clojure.git"
                  "git clone git://github.com/kevinoneill/clojure-contrib.git"
                  "git clone git://github.com/jochu/swank-clojure.git"
-                 "git clone git://git.boinkor.net/slime.git"))
-    (unless (= 0 (shell-command (format "cd %; %" src-root cmd)))
+                 "git clone --depth 2 git://git.boinkor.net/slime.git"))
+    (unless (= 0 (shell-command (format "cd %s; %s" src-root cmd)))
       (error "Clojure installation step failed: %s" cmd)))
 
   (message "Compiling...")
-  (unless (= 0 (shell-command (format "cd %/clojure; ant")))
+  (unless (= 0 (shell-command (format "cd %s/clojure; ant" src-root)))
     (error "Couldn't compile Clojure."))
-  (unless (= 0 (shell-command (format "cd %/clojure-contrib; ant")))
+  (unless (= 0 (shell-command (format "cd %s/clojure-contrib; ant" src-root)))
     (error "Couldn't compile Clojure."))
 
-  (if (equal src-root clojure-src-root)
-      (with-output-to-temp-buffer "clojure-install-note"
-        (princ "Add a call to \"\(clojure-slime-config\)\" to your .emacs so you can use SLIME in future sessions."))
-    (with-output-to-temp-buffer "clojure-install-note"
-      (princ (format "You've installed clojure in a non-default location. If you want to use this installation in the future, you will need to add the following lines to your personal Emacs config somewhere:
+  (with-output-to-temp-buffer "clojure-install-note"
+    (princ
+     (if (equal src-root clojure-src-root)
+         "Add a call to \"\(clojure-slime-config\)\" to your .emacs so you can use SLIME in future sessions."
+       (setq clojure-src-root src-root)
+       (format "You've installed clojure in a non-default location. If you want to use this installation in the future, you will need to add the following lines to your personal Emacs config somewhere:
 
 \(setq clojure-src-root \"%s\"\)
 \(clojure-slime-config\)" src-root)))
-    (setq clojure-src-root src-root))
+    (princ "\n\n Press M-x slime to launch Clojure."))
 
-  (clojure-slime-config)
-
-  (message "Installed Clojure successfully. Press M-x slime to continue."))
+  (clojure-slime-config))
 
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
