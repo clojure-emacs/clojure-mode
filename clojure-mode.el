@@ -637,8 +637,9 @@ should be checked out in the `clojure-src-root' directory."
       (error "Clojure update failed: %s" repo)))
 
   (message "Compiling...")
-  (unless (= 0 (shell-command (format "cd %s/clojure; ant" clojure-src-root)))
-    (error "Couldn't compile Clojure."))
+  (save-window-excursion
+    (unless (= 0 (shell-command (format "cd %s/clojure; ant" clojure-src-root)))
+      (error "Couldn't compile Clojure.")))
   (message "Finished updating Clojure."))
 
 ;;;###autoload
