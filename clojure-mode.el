@@ -560,6 +560,7 @@ check for contextual indenting."
 
 ;;; SLIME integration
 
+;;;###autoload
 (defun clojure-slime-config ()
   "Load Clojure SLIME support out of the `clojure-src-root' directory.
 
@@ -578,8 +579,9 @@ is bundled up as a function so that you can call it after you've set
 
   (setq swank-clojure-jar-path (concat clojure-src-root "/clojure/clojure.jar")
         swank-clojure-extra-classpaths
-        (list (concat clojure-src-root "/clojure-contrib/clojure-contrib/src/"))))
+        (list (concat clojure-src-root "/clojure-contrib/src/"))))
 
+;;;###autoload
 (defun clojure-install (src-root)
   "Perform the initial Clojure install along with Emacs support libs.
 
