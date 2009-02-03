@@ -102,6 +102,13 @@ indentation."
   :type 'integer
   :group 'clojure-mode)
 
+(defcustom clojure-src-root "~/src"
+  "Directory that contains checkouts for clojure, clojure-contrib,
+slime, and swank-clojure. This value is used by `clojure-install'
+and `clojure-slime-config'."
+  :type 'string
+  :group 'clojure-mode)
+
 (defvar clojure-mode-map
   (let ((map (make-sparse-keymap)))
     (set-keymap-parent map lisp-mode-shared-map)
@@ -552,13 +559,6 @@ check for contextual indenting."
   (with-precision 1))
 
 ;;; SLIME integration
-
-(defvar clojure-src-root "~/src"
-  "Directory that contains checkouts for Clojure and other libs.
-
-clojure-contrib, slime, and swank-clojure should be here too. Use
-the `clojure-install' command to check these out and configure
-them for you.")
 
 (defun clojure-slime-config ()
   "Load Clojure SLIME support out of the `clojure-src-root' directory.
