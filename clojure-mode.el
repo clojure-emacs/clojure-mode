@@ -622,6 +622,23 @@ lines to your personal Emacs config somewhere:
 
   (clojure-slime-config))
 
+(defun clojure-update ()
+  "Update clojure-related repositories and recompile clojure.
+
+Works with clojure etc. installed via `clojure-install'. Code
+should be checked out in the `clojure-src-root' directory."
+  (interactive)
+
+  (message "Updating...")
+  (dolist (repo '("clojure" "clojure-contrib" "swank-clojure" "slime"))
+    (unless (= 0 (shell-command (format "cd %s/%s; git pull" clojure-src-root repo)))
+      (error "Clojure update failed: %s" repo)))
+
+  (message "Compiling...")
+  (unless (= 0 (shell-command (format "cd %s/clojure; ant" clojure-src-root)))
+    (error "Couldn't compile Clojure."))
+  (message "Finished updating Clojure."))
+
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
 
