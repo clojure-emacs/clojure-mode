@@ -578,7 +578,7 @@ is bundled up as a function so that you can call it after you've set
 
   (setq swank-clojure-jar-path (concat clojure-src-root "/clojure/clojure.jar")
         swank-clojure-extra-classpaths
-        (list (concat clojure-src-root "/clojure-contrib/clojure-contrib.jar"))))
+        (list (concat clojure-src-root "/clojure-contrib/clojure-contrib/src/"))))
 
 (defun clojure-install (src-root)
   "Perform the initial Clojure install along with Emacs support libs.
@@ -604,8 +604,6 @@ This requires git, a JVM, ant, and an active Internet connection."
 
   (message "Compiling...")
   (unless (= 0 (shell-command (format "cd %s/clojure; ant" src-root)))
-    (error "Couldn't compile Clojure."))
-  (unless (= 0 (shell-command (format "cd %s/clojure-contrib; ant" src-root)))
     (error "Couldn't compile Clojure."))
 
   (with-output-to-temp-buffer "clojure-install-note"
