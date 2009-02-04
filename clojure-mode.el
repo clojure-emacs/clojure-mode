@@ -611,15 +611,15 @@ This requires git, a JVM, ant, and an active Internet connection."
   (with-output-to-temp-buffer "clojure-install-note"
     (princ
      (if (equal src-root clojure-src-root)
-         "Add a call to \"\(clojure-slime-config\)\" to your .emacs so you can
-use SLIME in future sessions."
+         "Add a call to \"\(eval-after-load 'clojure-mode '\(clojure-slime-config\)\)\"
+to your .emacs so you can use SLIME in future sessions."
        (setq clojure-src-root src-root)
        (format "You've installed clojure in a non-default location. If you want
 to use this installation in the future, you will need to add the following
 lines to your personal Emacs config somewhere:
 
 \(setq clojure-src-root \"%s\"\)
-\(clojure-slime-config\)" src-root)))
+\(eval-after-load 'clojure-mode '\(clojure-slime-config\)\)" src-root)))
     (princ "\n\n Press M-x slime to launch Clojure."))
 
   (clojure-slime-config))
