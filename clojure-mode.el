@@ -17,7 +17,7 @@
 
 ;;; Installation:
 
-;; (0) Add this file to your load-path.
+;; (0) Add this file to your load-path, usually the ~/.emacs.d directory.
 ;; (1) Either:
 ;;     Add these lines to your .emacs:
 ;;       (autoload 'clojure-mode "clojure-mode" "A major mode for Clojure" t)
@@ -102,7 +102,7 @@ indentation."
   :type 'integer
   :group 'clojure-mode)
 
-(defcustom clojure-src-root "~/src"
+(defcustom clojure-src-root (expand-file-name "~/src")
   "Directory that contains checkouts for clojure, clojure-contrib,
 slime, and swank-clojure. This value is used by `clojure-install'
 and `clojure-slime-config'."
