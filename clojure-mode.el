@@ -181,25 +181,27 @@ if that value is non-nil."
                clojure-mode-font-lock-comment-sexp))
       (message "Clojure mode font lock extras are unavailable, please upgrade to atleast version 22 ")
     
-   (when clojure-mode-font-lock-multiline-def
-     (add-to-list 'font-lock-extend-region-functions 'clojure-font-lock-extend-region-def t))
-   
-   (when clojure-mode-font-lock-comment-sexp
-     (add-to-list 'font-lock-extend-region-functions 'clojure-font-lock-extend-region-comment t)
-     (make-local-variable 'clojure-font-lock-keywords)
-     (add-to-list 'clojure-font-lock-keywords  'clojure-font-lock-mark-comment t)
-     (set (make-local-variable 'open-paren-in-column-0-is-defun-start) nil)))
+    (when clojure-mode-font-lock-multiline-def
+      (add-to-list 'font-lock-extend-region-functions 'clojure-font-lock-extend-region-def t))
+    
+    (when clojure-mode-font-lock-comment-sexp
+      (add-to-list 'font-lock-extend-region-functions 'clojure-font-lock-extend-region-comment t)
+      (make-local-variable 'clojure-font-lock-keywords)
+      (add-to-list 'clojure-font-lock-keywords  'clojure-font-lock-mark-comment t)
+      (set (make-local-variable 'open-paren-in-column-0-is-defun-start) nil)))
 
   (setq font-lock-defaults
-	'(clojure-font-lock-keywords    ; keywords
-	  nil nil
+        '(clojure-font-lock-keywords    ; keywords
+          nil nil
           (("+-*/.<>=!?$%_&~^:@" . "w")) ; syntax alist
           nil
-	  (font-lock-mark-block-function . mark-defun)
-	  (font-lock-syntactic-face-function . lisp-font-lock-syntactic-face-function)))
-  
-  (run-mode-hooks 'clojure-mode-hook)
-  
+          (font-lock-mark-block-function . mark-defun)
+          (font-lock-syntactic-face-function . lisp-font-lock-syntactic-face-function)))
+
+  (if (fboundp 'run-mode-hooks) 
+      (run-mode-hooks 'clojure-mode-hook)
+    (run-hooks 'clojure-mode-hook))
+
   ;; Enable curly braces when paredit is enabled in clojure-mode-hook
   (when (and (featurep 'paredit) paredit-mode (>= paredit-version 21))
     (define-key clojure-mode-map "{" 'paredit-open-curly)
