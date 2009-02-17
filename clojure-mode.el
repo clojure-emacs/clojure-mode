@@ -37,6 +37,8 @@
 
 ;; The clojure-install function can check out and configure all the
 ;; dependencies get going with Clojure, including SLIME integration.
+;; To use this function, you may have to manually load clojure-mode.el
+;; using M-x load-file or M-x eval-buffer.
 
 ;;; Todo:
 
@@ -298,7 +300,7 @@ elements of a def* forms."
     `( ;; Definitions.
       (,(concat "(\\(?:clojure/\\)?\\(def"
 		;; Function declarations.
-		"\\(n-?\\|multi\\|macro\\|method\\|"
+		"\\(n-?\\|multi\\|macro\\|method\\|test\\|"
 		;; Variable declarations.
                 "struct\\|once\\|"
 		"\\)\\)\\>"
@@ -633,7 +635,7 @@ should be checked out in the `clojure-src-root' directory."
 
   (message "Updating...")
   (dolist (repo '("clojure" "clojure-contrib" "swank-clojure" "slime"))
-    (unless (= 0 (shell-command (format "cd %s/%s; git pull" clojure-src-root repo)))
+    (unless (= 0 (shell-command (format "cd %s/%s; git pull origin master" clojure-src-root repo)))
       (error "Clojure update failed: %s" repo)))
 
   (message "Compiling...")
