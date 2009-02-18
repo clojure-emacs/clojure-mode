@@ -28,13 +28,19 @@
 ;;                            (clojure-test-mode)))))
 ;;     Or generate autoloads with the `update-directory-autoloads' function.
 
+;;; TODO:
+
+;; * Handle errors, not just failures
+;; * Colors that don't suck
+;; * Right now, you need to launch slime before launching clojure-test-mode.
+;; * Run a single test
+;; * Support with-test
+;; * Highlight tests as they fail?
+
 ;;; Code:
 
 (require 'clojure-mode)
 (require 'slime)
-
-(defvar clojure-test-results nil
-  "An alist containing the results of the last test run for each test.")
 
 ;; Support Functions
 
@@ -49,20 +55,21 @@
 
 (defun clojure-test-load-reporting ()
   "Redefine the test-is report function to store results in metadata."
-  (slime-repl-eval-string
+  (clojure-test-eval
    "(use 'clojure.contrib.test-is)
-(ns clojure.contrib.test-is)
-(defonce old-report report)
-(defn report [event msg expected actual]
+ (ns clojure.contrib.test-is)
+ (defonce old-report report)
+ (defn report [event msg expected actual]
   (if-let [current-test (last *testing-vars*)]
           (alter-meta! current-test
                        assoc :status [event msg (str expected) (str actual)
                                             ((file-position 2) 1)]))
-  (old-report event msg expected actual))"));; embedded clojure broke font-lock"
+  (old-report event msg expected actual))" #'identity))
 
 (defun clojure-test-get-results (result)
-  (clojure-test-eval "(map #(cons (str (:name (meta %))) (:status (meta %))) (vals (ns-interns 'clojure.contrib.test-is.test)))"
-                     #'clojure-test-extract-results))
+  (clojure-test-eval
+   "(map #(cons (str (:name (meta %))) (:status (meta %))) (vals (ns-interns *ns*)))"
+   #'clojure-test-extract-results))
 
 (defun clojure-test-extract-results (results)
   ;; slime-eval-async hands us a cons with a useless car
@@ -89,10 +96,8 @@
   "Run all the tests in the current namespace."
   (interactive)
   (remove-overlays)
-  (setq clojure-test-results nil)
   (slime-load-file (buffer-file-name))
-  ;; (format "(run-tests '%s)" (slime-current-package))
-  (clojure-test-eval "(run-tests)" #'clojure-test-get-results))
+  (clojure-test-eval "(clojure.contrib.test-is/run-tests)" #'clojure-test-get-results))
 
 ;; (defun clojure-test-run-focused-test ()
 ;;   "Run the test under point."
@@ -107,17 +112,20 @@
   (interactive)
   (message (overlay-get (car (overlays-at (point))) 'message)))
 
-(defvar clojure-test-mode-map (make-keymap))
+(defvar clojure-test-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "C-c C-,") 'clojure-test-run-tests)
+    (define-key map (kbd "C-c ,")   'clojure-test-run-focused-test)
+    (define-key map (kbd "C-c '")   'clojure-test-show-result)
+    map)
+  "Keymap for Clojure test mode.")
 
 ;;;###autoload
 (define-minor-mode clojure-test-mode
   "A minor mode for running Clojure tests."
+  nil " Test" clojure-test-mode-map
   (clojure-test-load-reporting)
   (slime-mode t))
-
-(define-key clojure-test-mode-map (kbd "C-c C-,") 'clojure-test-run-tests)
-(define-key clojure-test-mode-map (kbd "C-c ,") 'clojure-test-run-focused-test)
-(define-key clojure-test-mode-map (kbd "C-c '") 'clojure-test-show-result)
 
 ;;;###autoload
 (add-hook 'clojure-mode-hook
