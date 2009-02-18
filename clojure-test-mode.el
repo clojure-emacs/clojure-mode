@@ -76,10 +76,11 @@
   (mapcar #'clojure-test-extract-result (read (cadr results))))
 
 (defun clojure-test-extract-result (result)
-  (destructuring-bind (test event msg expected actual line) result
-    (let ((message (format "Expected %s, got %s" expected actual)))
-      (unless (equal :pass event)
-        (clojure-test-highlight-problem line event message)))))
+  (if (rest result)
+      (destructuring-bind (test event msg expected actual line) result
+        (let ((message (format "Expected %s, got %s" expected actual)))
+          (unless (equal :pass event)
+            (clojure-test-highlight-problem line event message))))))
 
 (defun clojure-test-highlight-problem (line event message)
   (save-excursion
