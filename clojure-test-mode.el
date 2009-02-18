@@ -33,19 +33,27 @@
 ;; * Handle errors, not just failures
 ;; * Colors that don't suck
 ;; * Right now, you need to launch slime before launching clojure-test-mode.
-;; * Run a single test
-;; * Support with-test
-;; * Highlight tests as they fail?
+;; * Run a single test (should be simple)
+;; * Highlight tests as they fail? (big job, probably)
 
 ;;; Code:
 
 (require 'clojure-mode)
 (require 'slime)
 
+(defface clojure-test-failure-face
+  '((((class color) (background light))
+     :background "orange red")
+    (((class color) (background dark))
+     :background "firebrick"))
+  "Face for failures in Clojure tests."
+  :group 'clojure-test)
+
 ;; Support Functions
 
-(defun clojure-test-eval (string handler)
-  (slime-eval-async `(swank:eval-and-grab-output ,string) handler))
+(defun clojure-test-eval (string &optional handler)
+  (slime-eval-async `(swank:eval-and-grab-output ,string)
+                    (or handler #'identity)))
 
 (defun clojure-test-focused-test ()
   (save-excursion
@@ -78,7 +86,6 @@
 
 (defun clojure-test-extract-result (result)
   (dolist (is-result (rest result))
-    (setq the-is-result is-result)
     (destructuring-bind (event msg expected actual line) (coerce is-result 'list)
       (let ((message (format "Expected %s, got %s" expected actual)))
         (unless (equal :pass event)
@@ -90,14 +97,13 @@
     (set-mark-command nil)
     (end-of-line)
     (let ((overlay (make-overlay (mark) (point))))
-      (overlay-put overlay 'face '(background-color . "red"))
+      (overlay-put overlay 'face 'clojure-test-failure-face)
       (overlay-put overlay 'message message))))
 
 (defun clojure-test-clear ()
   (remove-overlays)
   (clojure-test-eval
-   "(doseq [test (vals (ns-interns *ns*))] (alter-meta! test assoc :status []))"
-   #'identity))
+   "(doseq [test (vals (ns-interns *ns*))] (alter-meta! test assoc :status []))"))
 
 ;; Commands
 
