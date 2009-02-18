@@ -4,7 +4,7 @@
 
 ;; Author: Phil Hagelberg <technomancy@gmail.com>
 ;; URL: http://emacswiki.org/cgi-bin/wiki/ClojureTestMode
-;; Version: 0.1
+;; Version: 0.2
 ;; Keywords: languages, lisp
 
 ;; This file is not part of GNU Emacs.
@@ -13,7 +13,7 @@
 
 ;; This file provides support for running Clojure tests (using the
 ;; test-is framework) via SLIME and seeing feedback in the test buffer
-;; about which tests passed and which failed or errored.
+;; about which tests failed or errored.
 
 ;;; Installation:
 
@@ -24,16 +24,15 @@
 ;;      (add-hook 'clojure-mode-hook
 ;;                (lambda () (save-excursion
 ;;                        (goto-char (point-min))
-;;                        (if (search-forward "(deftest" nil t)
-;;                            (clojure-test-mode)))))
+;;                        (if (or (search-forward "(deftest" nil t)
+;;                                (search-forward "(with-test" nil t))
+;;                            (clojure-test-mode t)))))
+;;
 ;;     Or generate autoloads with the `update-directory-autoloads' function.
 
 ;;; TODO:
 
-;; * Handle errors, not just failures
-;; * Colors that don't suck
 ;; * Right now, you need to launch slime before launching clojure-test-mode.
-;; * Run a single test (should be simple)
 ;; * Highlight tests as they fail? (big job, probably)
 
 ;;; Code:
@@ -49,17 +48,19 @@
   "Face for failures in Clojure tests."
   :group 'clojure-test)
 
+(defface clojure-test-error-face
+  '((((class color) (background light))
+     :background "orange1")
+    (((class color) (background dark))
+     :background "orange4"))
+  "Face for failures in Clojure tests."
+  :group 'clojure-test)
+
 ;; Support Functions
 
 (defun clojure-test-eval (string &optional handler)
   (slime-eval-async `(swank:eval-and-grab-output ,string)
                     (or handler #'identity)))
-
-(defun clojure-test-focused-test ()
-  (save-excursion
-    (end-of-line)
-    (search-backward-regexp "(deftest \\(.*\\)")
-    (match-string 1)))
 
 (defun clojure-test-load-reporting ()
   "Redefine the test-is report function to store results in metadata."
@@ -73,7 +74,7 @@
                        assoc :status (conj (:status ^current-test)
                                        [event msg (str expected) (str actual)
                                         ((file-position 2) 1)])))
-  (old-report event msg expected actual))" #'identity))
+  (old-report event msg expected actual))"))
 
 (defun clojure-test-get-results (result)
   (clojure-test-eval
@@ -87,9 +88,11 @@
 (defun clojure-test-extract-result (result)
   (dolist (is-result (rest result))
     (destructuring-bind (event msg expected actual line) (coerce is-result 'list)
-      (let ((message (format "Expected %s, got %s" expected actual)))
-        (unless (equal :pass event)
-          (clojure-test-highlight-problem line event message))))))
+      (if (equal :fail event)
+          (let ((message (format "Expected %s, got %s" expected actual)))
+            (clojure-test-highlight-problem line event message))
+        (if (equal :error event)
+            (clojure-test-highlight-problem line event actual))))))
 
 (defun clojure-test-highlight-problem (line event message)
   (save-excursion
@@ -97,13 +100,15 @@
     (set-mark-command nil)
     (end-of-line)
     (let ((overlay (make-overlay (mark) (point))))
-      (overlay-put overlay 'face 'clojure-test-failure-face)
+      (overlay-put overlay 'face (if (equal event :fail)
+                                     'clojure-test-failure-face
+                                   'clojure-test-error-face))
       (overlay-put overlay 'message message))))
 
 (defun clojure-test-clear ()
   (remove-overlays)
   (clojure-test-eval
-   "(doseq [test (vals (ns-interns *ns*))] (alter-meta! test assoc :status []))"))
+   "(doseq [t (vals (ns-interns *ns*))] (alter-meta! t assoc :status []))"))
 
 ;; Commands
 
@@ -115,14 +120,6 @@
   (clojure-test-eval "(clojure.contrib.test-is/run-tests)"
                      #'clojure-test-get-results))
 
-;; (defun clojure-test-run-focused-test ()
-;;   "Run the test under point."
-;;   ;; TODO: this doesn't work.
-;;   (interactive)
-;;   (slime-load-file (buffer-file-name))
-;;   (slime-interactive-eval (format "(test-var #'%s)" (clojure-test-focused-test)))
-;;   (clojure-test-get-results))
-
 (defun clojure-test-show-result ()
   "Show the result of the test under point."
   (interactive)
@@ -131,7 +128,6 @@
 (defvar clojure-test-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "C-c C-,") 'clojure-test-run-tests)
-    (define-key map (kbd "C-c ,")   'clojure-test-run-focused-test)
     (define-key map (kbd "C-c '")   'clojure-test-show-result)
     map)
   "Keymap for Clojure test mode.")
