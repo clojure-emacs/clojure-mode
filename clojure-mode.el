@@ -644,6 +644,16 @@ should be checked out in the `clojure-src-root' directory."
       (error "Couldn't compile Clojure.")))
   (message "Finished updating Clojure."))
 
+(defun clojure-enable-slime-on-existing-buffers ()
+  (interactive)
+  (dolist (buffer (buffer-list))
+    (if (equal '(major-mode . clojure-mode)
+               (assoc 'major-mode (buffer-local-variables buffer)))
+        (with-current-buffer buffer
+          (slime-mode t)))))
+
+(add-hook 'slime-connected-hook 'clojure-enable-slime-on-existing-buffers)
+
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
 
