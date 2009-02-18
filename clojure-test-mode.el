@@ -132,7 +132,8 @@
 (add-hook 'clojure-mode-hook
           (lambda () (save-excursion
                   (goto-char (point-min))
-                  (if (search-forward "(deftest" nil t)
+                  (if (or (search-forward "(deftest" nil t)
+                          (search-forward "(with-test" nil t))
                       (clojure-test-mode t)))))
 
 (provide 'clojure-test-mode)
