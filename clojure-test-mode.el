@@ -62,8 +62,9 @@
  (defn report [event msg expected actual]
   (if-let [current-test (last *testing-vars*)]
           (alter-meta! current-test
-                       assoc :status [event msg (str expected) (str actual)
-                                            ((file-position 2) 1)]))
+                       assoc :status (conj (:status ^current-test)
+                                       [event msg (str expected) (str actual)
+                                        ((file-position 2) 1)])))
   (old-report event msg expected actual))" #'identity))
 
 (defun clojure-test-get-results (result)
@@ -76,11 +77,12 @@
   (mapcar #'clojure-test-extract-result (read (cadr results))))
 
 (defun clojure-test-extract-result (result)
-  (if (rest result)
-      (destructuring-bind (test event msg expected actual line) result
-        (let ((message (format "Expected %s, got %s" expected actual)))
-          (unless (equal :pass event)
-            (clojure-test-highlight-problem line event message))))))
+  (dolist (is-result (rest result))
+    (setq the-is-result is-result)
+    (destructuring-bind (event msg expected actual line) (coerce is-result 'list)
+      (let ((message (format "Expected %s, got %s" expected actual)))
+        (unless (equal :pass event)
+          (clojure-test-highlight-problem line event message))))))
 
 (defun clojure-test-highlight-problem (line event message)
   (save-excursion
@@ -91,14 +93,21 @@
       (overlay-put overlay 'face '(background-color . "red"))
       (overlay-put overlay 'message message))))
 
+(defun clojure-test-clear ()
+  (remove-overlays)
+  (clojure-test-eval
+   "(doseq [test (vals (ns-interns *ns*))] (alter-meta! test assoc :status []))"
+   #'identity))
+
 ;; Commands
 
 (defun clojure-test-run-tests ()
   "Run all the tests in the current namespace."
   (interactive)
-  (remove-overlays)
+  (clojure-test-clear)
   (slime-load-file (buffer-file-name))
-  (clojure-test-eval "(clojure.contrib.test-is/run-tests)" #'clojure-test-get-results))
+  (clojure-test-eval "(clojure.contrib.test-is/run-tests)"
+                     #'clojure-test-get-results))
 
 ;; (defun clojure-test-run-focused-test ()
 ;;   "Run the test under point."
