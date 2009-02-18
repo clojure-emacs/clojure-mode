@@ -32,7 +32,7 @@
 
 ;;; TODO:
 
-;; * Right now, you need to launch slime before launching clojure-test-mode.
+;; * Errors occasionally fail to highlight. Not consistently reproducible.
 ;; * Highlight tests as they fail? (big job, probably)
 
 ;;; Code:
@@ -40,13 +40,15 @@
 (require 'clojure-mode)
 (require 'slime)
 
+;; Faces
+
 (defface clojure-test-failure-face
   '((((class color) (background light))
      :background "orange red")
     (((class color) (background dark))
      :background "firebrick"))
   "Face for failures in Clojure tests."
-  :group 'clojure-test)
+  :group 'clojure-test-mode)
 
 (defface clojure-test-error-face
   '((((class color) (background light))
@@ -54,7 +56,7 @@
     (((class color) (background dark))
      :background "orange4"))
   "Face for failures in Clojure tests."
-  :group 'clojure-test)
+  :group 'clojure-test-mode)
 
 ;; Support Functions
 
@@ -105,11 +107,6 @@
                                    'clojure-test-error-face))
       (overlay-put overlay 'message message))))
 
-(defun clojure-test-clear ()
-  (remove-overlays)
-  (clojure-test-eval
-   "(doseq [t (vals (ns-interns *ns*))] (alter-meta! t assoc :status []))"))
-
 ;; Commands
 
 (defun clojure-test-run-tests ()
@@ -123,7 +120,15 @@
 (defun clojure-test-show-result ()
   "Show the result of the test under point."
   (interactive)
-  (message (overlay-get (car (overlays-at (point))) 'message)))
+  (let ((overlay (car (overlays-at (point)))))
+    (if overlay
+        (message (overlay-get overlay 'message)))))
+
+(defun clojure-test-clear ()
+  (interactive)
+  (remove-overlays)
+  (clojure-test-eval
+   "(doseq [t (vals (ns-interns *ns*))] (alter-meta! t assoc :status []))"))
 
 (defvar clojure-test-mode-map
   (let ((map (make-sparse-keymap)))
@@ -136,8 +141,10 @@
 (define-minor-mode clojure-test-mode
   "A minor mode for running Clojure tests."
   nil " Test" clojure-test-mode-map
-  (clojure-test-load-reporting)
-  (slime-mode t))
+  (if (slime-connected-p)
+      (clojure-test-load-reporting)
+    (slime)
+    (add-hook 'slime-connected-hook 'clojure-test-load-reporting)))
 
 ;;;###autoload
 (add-hook 'clojure-mode-hook
