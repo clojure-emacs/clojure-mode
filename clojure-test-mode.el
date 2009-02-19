@@ -32,8 +32,10 @@
 
 ;;; TODO:
 
-;; * Errors occasionally fail to highlight. Not consistently reproducible.
-;; * Highlight tests as they fail? (big job, probably)
+;; * Summary message in minibuffer
+;; * Errors *loading* the tests are not reported
+;; * Errors occasionally fail to highlight. Not consistently reproducible
+;; * Highlight tests as they fail? (big job, probably, useful for slow suites)
 
 ;;; Code:
 
@@ -44,7 +46,7 @@
 
 (defface clojure-test-failure-face
   '((((class color) (background light))
-     :background "orange red")
+     :background "orange red") ;; TODO: Hard to read strings over this.
     (((class color) (background dark))
      :background "firebrick"))
   "Face for failures in Clojure tests."
@@ -55,7 +57,7 @@
      :background "orange1")
     (((class color) (background dark))
      :background "orange4"))
-  "Face for failures in Clojure tests."
+  "Face for errors in Clojure tests."
   :group 'clojure-test-mode)
 
 ;; Support Functions
@@ -80,23 +82,30 @@
 
 (defun clojure-test-get-results (result)
   (clojure-test-eval
-   "(map #(cons (str (:name (meta %))) (:status (meta %))) (vals (ns-interns *ns*)))"
+   "(map #(cons (str (:name (meta %)))
+                (:status (meta %))) (vals (ns-interns *ns*)))"
    #'clojure-test-extract-results))
 
 (defun clojure-test-extract-results (results)
   ;; slime-eval-async hands us a cons with a useless car
-  (mapcar #'clojure-test-extract-result (read (cadr results))))
+  (setq the-results nil)
+  (mapcar #'clojure-test-extract-result (read (cadr results)))
+  ;; TODO: (message "Ran 7 tests containing 16 assertions. 4 failures, 9 errors.")
+  )
 
 (defun clojure-test-extract-result (result)
+  "Parse the result from a single test. May contain multiple is blocks."
   (dolist (is-result (rest result))
+    (setq the-is-result is-result)
     (destructuring-bind (event msg expected actual line) (coerce is-result 'list)
       (if (equal :fail event)
-          (let ((message (format "Expected %s, got %s" expected actual)))
-            (clojure-test-highlight-problem line event message))
+          (clojure-test-highlight-problem
+           line event (format "Expected %s, got %s" expected actual))
         (if (equal :error event)
             (clojure-test-highlight-problem line event actual))))))
 
 (defun clojure-test-highlight-problem (line event message)
+  ;; (add-to-list 'the-results (list line event message))
   (save-excursion
     (goto-line line)
     (set-mark-command nil)
@@ -112,7 +121,9 @@
 (defun clojure-test-run-tests ()
   "Run all the tests in the current namespace."
   (interactive)
-  (clojure-test-clear)
+  ;; TODO: this is async; might need to make sure it finishes before
+  ;; we load the file next.
+  (clojure-test-clear) 
   (slime-load-file (buffer-file-name))
   (clojure-test-eval "(clojure.contrib.test-is/run-tests)"
                      #'clojure-test-get-results))
@@ -125,10 +136,13 @@
         (message (overlay-get overlay 'message)))))
 
 (defun clojure-test-clear ()
+  "Remove overlays and clear stored results."
   (interactive)
   (remove-overlays)
   (clojure-test-eval
-   "(doseq [t (vals (ns-interns *ns*))] (alter-meta! t assoc :status []))"))
+   "(doseq [t (vals (ns-interns *ns*))]
+      (alter-meta! t assoc :status [])
+      (alter-meta! t assoc :test nil))"))
 
 (defvar clojure-test-mode-map
   (let ((map (make-sparse-keymap)))
@@ -153,6 +167,7 @@
                   (if (or (search-forward "(deftest" nil t)
                           (search-forward "(with-test" nil t))
                       (clojure-test-mode t)))))
+;; Don't want to make this a defun since that means the hook would
+;; autoload the whole file.
 
-(provide 'clojure-test-mode)
-
+(provide 'clojure-test-mode) ;;; clojure-test-mode.el ends here
