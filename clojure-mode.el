@@ -145,7 +145,6 @@ All commands in `lisp-mode-shared-map' are inherited by this map.")
     (modify-syntax-entry ?\[ "(]" table)
     (modify-syntax-entry ?\] ")[" table)
     (modify-syntax-entry ?^ "'" table)
-    (modify-syntax-entry ?= "'" table)
     table))
 
 
