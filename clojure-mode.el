@@ -536,6 +536,7 @@ check for contextual indenting."
   (loop 1)
   (struct-map 1)
   (assoc 1)
+  (condp 2)
 
   (fn 'defun))
 
