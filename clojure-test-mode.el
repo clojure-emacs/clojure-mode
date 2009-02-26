@@ -82,13 +82,13 @@
 
 (defun clojure-test-get-results (result)
   (clojure-test-eval
-   "(map #(cons (str (:name (meta %)))
-                (:status (meta %))) (vals (ns-interns *ns*)))"
+   (concat "(map #(cons (str (:name (meta %)))
+                (:status (meta %))) (vals (ns-interns '"
+           (slime-lisp-package) ")))")
    #'clojure-test-extract-results))
 
 (defun clojure-test-extract-results (results)
   ;; slime-eval-async hands us a cons with a useless car
-  (setq the-results nil)
   (mapcar #'clojure-test-extract-result (read (cadr results)))
   ;; TODO: (message "Ran 7 tests containing 16 assertions. 4 failures, 9 errors.")
   )
@@ -96,7 +96,6 @@
 (defun clojure-test-extract-result (result)
   "Parse the result from a single test. May contain multiple is blocks."
   (dolist (is-result (rest result))
-    (setq the-is-result is-result)
     (destructuring-bind (event msg expected actual line) (coerce is-result 'list)
       (if (equal :fail event)
           (clojure-test-highlight-problem
@@ -140,9 +139,9 @@
   (interactive)
   (remove-overlays)
   (clojure-test-eval
-   "(doseq [t (vals (ns-interns *ns*))]
+   (concat "(doseq [t (vals (ns-interns '" (slime-lisp-package) "))]
       (alter-meta! t assoc :status [])
-      (alter-meta! t assoc :test nil))"))
+      (alter-meta! t assoc :test nil))")))
 
 (defvar clojure-test-mode-map
   (let ((map (make-sparse-keymap)))
@@ -157,7 +156,7 @@
   nil " Test" clojure-test-mode-map
   (if (slime-connected-p)
       (clojure-test-load-reporting)
-    (slime)
+    (save-excursion (slime))
     (add-hook 'slime-connected-hook 'clojure-test-load-reporting)))
 
 ;;;###autoload
