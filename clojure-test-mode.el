@@ -32,7 +32,6 @@
 
 ;;; TODO:
 
-;; * Currently incompatible with hl-line-mode
 ;; * Summary message in minibuffer
 ;; * Errors *loading* the tests are not reported
 ;; * Errors occasionally fail to highlight. Not consistently reproducible
@@ -41,6 +40,7 @@
 ;;; Code:
 
 (require 'clojure-mode)
+(require 'cl)
 (require 'slime)
 
 ;; Faces
@@ -134,7 +134,8 @@
 (defun clojure-test-show-result ()
   "Show the result of the test under point."
   (interactive)
-  (let ((overlay (car (overlays-at (point)))))
+  (let ((overlay (find-if (lambda (o) (overlay-get o 'message))
+                          (overlays-at (point)))))
     (if overlay
         (message (overlay-get overlay 'message)))))
 
@@ -159,7 +160,6 @@
 (define-minor-mode clojure-test-mode
   "A minor mode for running Clojure tests."
   nil " Test" clojure-test-mode-map
-  (if (functionp 'hl-line-mode) (hl-line-mode -1))
   (if (slime-connected-p)
       (clojure-test-load-reporting)
     (save-excursion (slime))
