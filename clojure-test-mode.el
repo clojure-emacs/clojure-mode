@@ -32,6 +32,7 @@
 
 ;;; TODO:
 
+;; * Currently incompatible with hl-line-mode
 ;; * Summary message in minibuffer
 ;; * Errors *loading* the tests are not reported
 ;; * Errors occasionally fail to highlight. Not consistently reproducible
@@ -84,14 +85,16 @@
   (clojure-test-eval
    (concat "(map #(cons (str (:name (meta %)))
                 (:status (meta %))) (vals (ns-interns '"
-           (slime-lisp-package) ")))")
+           (slime-current-package) ")))")
    #'clojure-test-extract-results))
 
 (defun clojure-test-extract-results (results)
-  ;; slime-eval-async hands us a cons with a useless car
-  (mapcar #'clojure-test-extract-result (read (cadr results)))
-  ;; TODO: (message "Ran 7 tests containing 16 assertions. 4 failures, 9 errors.")
-  )
+  (let ((result-list (read (cadr results))))
+    (setq the-result result-list)
+    ;; slime-eval-async hands us a cons with a useless car
+    (mapcar #'clojure-test-extract-result result-list)
+    ;; TODO: (message "Ran 7 tests containing 16 assertions. 4 failures, 9 errors.")
+    ))
 
 (defun clojure-test-extract-result (result)
   "Parse the result from a single test. May contain multiple is blocks."
@@ -120,12 +123,13 @@
 (defun clojure-test-run-tests ()
   "Run all the tests in the current namespace."
   (interactive)
-  ;; TODO: this is async; might need to make sure it finishes before
-  ;; we load the file next.
-  (clojure-test-clear) 
-  (slime-load-file (buffer-file-name))
-  (clojure-test-eval "(clojure.contrib.test-is/run-tests)"
-                     #'clojure-test-get-results))
+  (clojure-test-clear
+   (lambda (&rest args)
+     (clojure-test-eval (format "(load-file \"%s\")"
+                                (buffer-file-name))
+                        (lambda (&rest args)
+                          (clojure-test-eval "(clojure.contrib.test-is/run-tests)"
+                                             #'clojure-test-get-results))))))
 
 (defun clojure-test-show-result ()
   "Show the result of the test under point."
@@ -134,14 +138,15 @@
     (if overlay
         (message (overlay-get overlay 'message)))))
 
-(defun clojure-test-clear ()
+(defun clojure-test-clear (&optional callback)
   "Remove overlays and clear stored results."
   (interactive)
   (remove-overlays)
   (clojure-test-eval
-   (concat "(doseq [t (vals (ns-interns '" (slime-lisp-package) "))]
+   (concat "(doseq [t (vals (ns-interns '" (slime-current-package) "))]
       (alter-meta! t assoc :status [])
-      (alter-meta! t assoc :test nil))")))
+      (alter-meta! t assoc :test nil))")
+   callback))
 
 (defvar clojure-test-mode-map
   (let ((map (make-sparse-keymap)))
@@ -154,6 +159,7 @@
 (define-minor-mode clojure-test-mode
   "A minor mode for running Clojure tests."
   nil " Test" clojure-test-mode-map
+  (if (functionp 'hl-line-mode) (hl-line-mode -1))
   (if (slime-connected-p)
       (clojure-test-load-reporting)
     (save-excursion (slime))
