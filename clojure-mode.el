@@ -42,6 +42,8 @@
 
 ;;; Todo:
 
+;; * installer doesn't work when git port is blocked
+;; * updater/installer should know "last known good" sha1s?
 ;; * hashbang is also a valid comment character
 ;; * do the inferior-lisp functions work without SLIME? needs documentation
 
@@ -85,7 +87,7 @@ restart (ie. M-x clojure-mode) of existing clojure mode buffers."
   :type 'boolean
   :group 'clojure-mode)
 
-(defcustom clojure-mode-load-command  "(clojure/load-file \"%s\")\n"
+(defcustom clojure-mode-load-command  "(clojure.core/load-file \"%s\")\n"
   "*Format-string for building a Clojure expression to load a file.
 This format string should use `%s' to substitute a file name
 and should result in a Clojure expression that will command the inferior Clojure
@@ -218,6 +220,9 @@ if that value is non-nil."
   (when (and (featurep 'paredit) paredit-mode (>= paredit-version 21))
     (define-key clojure-mode-map "{" 'paredit-open-curly)
     (define-key clojure-mode-map "}" 'paredit-close-curly)))
+
+;; (define-key clojure-mode-map "{" 'self-insert-command)
+;; (define-key clojure-mode-map "}" 'self-insert-command)
 
 (defun clojure-font-lock-def-at-point (point)
   "Find the position range between the top-most def* and the
@@ -581,7 +586,7 @@ is bundled up as a function so that you can call it after you've set
   (require 'slime-autoloads)
   (require 'swank-clojure-autoload)
 
-  (slime-setup '(slime-fancy slime-repl))
+  (slime-setup '(slime-fancy))
 
   (setq swank-clojure-jar-path (concat clojure-src-root "/clojure/clojure.jar")
         swank-clojure-extra-classpaths
@@ -650,11 +655,12 @@ should be checked out in the `clojure-src-root' directory."
 
 (defun clojure-enable-slime-on-existing-buffers ()
   (interactive)
+  (add-hook 'clojure-mode-hook 'swank-clojure-slime-mode-hook)
   (dolist (buffer (buffer-list))
     (if (equal '(major-mode . clojure-mode)
                (assoc 'major-mode (buffer-local-variables buffer)))
         (with-current-buffer buffer
-          (slime-mode t)))))
+          (swank-clojure-slime-mode-hook)))))
 
 (add-hook 'slime-connected-hook 'clojure-enable-slime-on-existing-buffers)
 
