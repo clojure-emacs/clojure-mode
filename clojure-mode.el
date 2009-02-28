@@ -657,9 +657,8 @@ should be checked out in the `clojure-src-root' directory."
   (interactive)
   (add-hook 'clojure-mode-hook 'swank-clojure-slime-mode-hook)
   (dolist (buffer (buffer-list))
-    (if (equal '(major-mode . clojure-mode)
-               (assoc 'major-mode (buffer-local-variables buffer)))
-        (with-current-buffer buffer
+    (with-current-buffer buffer
+      (if (equal major-mode 'clojure-mode)
           (swank-clojure-slime-mode-hook)))))
 
 (add-hook 'slime-connected-hook 'clojure-enable-slime-on-existing-buffers)

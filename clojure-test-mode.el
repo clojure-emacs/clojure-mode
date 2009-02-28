@@ -32,9 +32,8 @@
 
 ;;; TODO:
 
-;; * Summary message in minibuffer
 ;; * Errors *loading* the tests are not reported
-;; * Errors occasionally fail to highlight. Not consistently reproducible
+;; * Error messages need line number.
 ;; * Highlight tests as they fail? (big job, probably, useful for slow suites)
 
 ;;; Code:
@@ -60,6 +59,12 @@
      :background "orange4"))
   "Face for errors in Clojure tests."
   :group 'clojure-test-mode)
+
+;; Counts
+
+(defvar clojure-test-count 0)
+(defvar clojure-test-failure-count 0)
+(defvar clojure-test-error-count 0)
 
 ;; Support Functions
 
@@ -93,18 +98,22 @@
     (setq the-result result-list)
     ;; slime-eval-async hands us a cons with a useless car
     (mapcar #'clojure-test-extract-result result-list)
-    ;; TODO: (message "Ran 7 tests containing 16 assertions. 4 failures, 9 errors.")
-    ))
+    (message "Ran %s tests. %s failures, %s errors."
+             clojure-test-count
+             clojure-test-failure-count clojure-test-error-count)))
 
 (defun clojure-test-extract-result (result)
   "Parse the result from a single test. May contain multiple is blocks."
   (dolist (is-result (rest result))
+    (incf clojure-test-count)
     (destructuring-bind (event msg expected actual line) (coerce is-result 'list)
       (if (equal :fail event)
-          (clojure-test-highlight-problem
-           line event (format "Expected %s, got %s" expected actual))
-        (if (equal :error event)
-            (clojure-test-highlight-problem line event actual))))))
+          (progn (incf clojure-test-failure-count)
+                 (clojure-test-highlight-problem
+                  line event (format "Expected %s, got %s" expected actual)))
+        (when (equal :error event)
+          (incf clojure-test-error-count)
+          (clojure-test-highlight-problem line event actual))))))
 
 (defun clojure-test-highlight-problem (line event message)
   ;; (add-to-list 'the-results (list line event message))
@@ -123,6 +132,7 @@
 (defun clojure-test-run-tests ()
   "Run all the tests in the current namespace."
   (interactive)
+  (save-some-buffers nil (lambda () (equal major-mode 'clojure-mode)))
   (clojure-test-clear
    (lambda (&rest args)
      (clojure-test-eval (format "(load-file \"%s\")"
@@ -143,10 +153,13 @@
   "Remove overlays and clear stored results."
   (interactive)
   (remove-overlays)
+  (setq clojure-test-count 0
+        clojure-test-failure-count 0
+        clojure-test-error-count 0)
   (clojure-test-eval
-   (concat "(doseq [t (vals (ns-interns '" (slime-current-package) "))]
+   "(doseq [t (vals (ns-interns *ns*))]
       (alter-meta! t assoc :status [])
-      (alter-meta! t assoc :test nil))")
+      (alter-meta! t assoc :test nil))"
    callback))
 
 (defvar clojure-test-mode-map
