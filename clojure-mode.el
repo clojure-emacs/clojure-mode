@@ -317,7 +317,7 @@ elements of a def* forms."
       (,(concat
          "(\\(?:clojure/\\)?" 
          (regexp-opt
-          '("let" "do"
+          '("let" "letfn" "do"
             "cond" "condp"
             "for" "loop" "recur"
             "when" "when-not" "when-let" "when-first"
