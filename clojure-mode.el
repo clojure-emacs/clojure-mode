@@ -532,6 +532,7 @@ check for contextual indenting."
   (if 1)
   (if-not 1)
   (let 1)
+  (letfn 1)
   (loop 1)
   (struct-map 1)
   (assoc 1)
