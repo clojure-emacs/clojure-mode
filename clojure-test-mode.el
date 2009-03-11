@@ -32,9 +32,10 @@
 
 ;;; TODO:
 
+;; * Implement next-problem command
 ;; * Errors *loading* the tests are not reported
 ;; * Error messages need line number.
-;; * Highlight tests as they fail? (big job, probably, useful for slow suites)
+;; * Highlight as they fail? (big job, probably only useful for slow suites)
 
 ;;; Code:
 
@@ -165,6 +166,7 @@
 (defvar clojure-test-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "C-c C-,") 'clojure-test-run-tests)
+    (define-key map (kbd "C-c C-'")   'clojure-test-show-result)
     (define-key map (kbd "C-c '")   'clojure-test-show-result)
     map)
   "Keymap for Clojure test mode.")
