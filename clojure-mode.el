@@ -5,7 +5,7 @@
 ;; Authors: Jeffrey Chu <jochu0@gmail.com>
 ;;          Lennart Staflin <lenst@lysator.liu.se>
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki/ClojureMode
-;; Version: 1.0
+;; Version: 1.1
 ;; Keywords: languages, lisp
 
 ;; This file is not part of GNU Emacs.
@@ -13,9 +13,15 @@
 ;;; Commentary:
 
 ;; Provides font-lock, indentation, and functions for communication
-;; with subprocesses for Clojure. (http://clojure.org)
+;; with subprocesses for the Clojure language. (http://clojure.org)
 
 ;;; Installation:
+
+;; If you use ELPA, you can install via the M-x package-list-packages
+;; interface. This is preferrable as you will have access to updates
+;; automatically.
+
+;; If you need to install by hand for some reason:
 
 ;; (0) Add this file to your load-path, usually the ~/.emacs.d directory.
 ;; (1) Either:
