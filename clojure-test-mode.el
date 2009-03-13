@@ -4,8 +4,9 @@
 
 ;; Author: Phil Hagelberg <technomancy@gmail.com>
 ;; URL: http://emacswiki.org/cgi-bin/wiki/ClojureTestMode
-;; Version: 0.2
+;; Version: 1.0
 ;; Keywords: languages, lisp
+;; Package-Requires: ((clojure-mode "1.1"))
 
 ;; This file is not part of GNU Emacs.
 
@@ -17,16 +18,18 @@
 
 ;;; Installation:
 
+;; If you use ELPA, you can install via the M-x package-list-packages
+;; interface. This is preferrable as you will have access to updates
+;; automatically.
+
+;; If you need to install by hand for some reason:
+
 ;; (0) Add this file to your load-path, usually the ~/.emacs.d directory.
 ;; (1) Either:
 ;;     Add these lines to your .emacs:
 ;;      (autoload 'clojure-test-mode "clojure-test-mode" "Clojure test mode" t)
-;;      (add-hook 'clojure-mode-hook
-;;                (lambda () (save-excursion
-;;                        (goto-char (point-min))
-;;                        (if (or (search-forward "(deftest" nil t)
-;;                                (search-forward "(with-test" nil t))
-;;                            (clojure-test-mode t)))))
+;;      (autoload 'clojure-test-maybe-enable "clojure-test-mode" "" t)
+;;      (add-hook 'clojure-mode-hook 'clojure-test-maybe-enable)
 ;;
 ;;     Or generate autoloads with the `update-directory-autoloads' function.
 
