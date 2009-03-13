@@ -180,17 +180,18 @@
   nil " Test" clojure-test-mode-map
   (if (slime-connected-p)
       (clojure-test-load-reporting)
-    (save-excursion (slime))
     (add-hook 'slime-connected-hook 'clojure-test-load-reporting)))
 
 ;;;###autoload
-(add-hook 'clojure-mode-hook
-          (lambda () (save-excursion
-                  (goto-char (point-min))
-                  (if (or (search-forward "(deftest" nil t)
-                          (search-forward "(with-test" nil t))
-                      (clojure-test-mode t)))))
-;; Don't want to make this a defun since that means the hook would
-;; autoload the whole file.
+(defun clojure-test-maybe-enable ()
+  "Enable clojure-test-mode if the current buffer contains Clojure tests."
+  (save-excursion
+    (goto-char (point-min))
+    (if (or (search-forward "(deftest" nil t)
+            (search-forward "(with-test" nil t))
+        (clojure-test-mode t))))
+
+;;;###autoload
+(add-hook 'clojure-mode-hook 'clojure-test-maybe-enable)
 
 (provide 'clojure-test-mode) ;;; clojure-test-mode.el ends here
