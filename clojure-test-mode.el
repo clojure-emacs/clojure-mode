@@ -1,4 +1,4 @@
-;;; clojure-test-mode --- Minor mode for Clojure tests
+;;; clojure-test-mode.el --- Minor mode for Clojure tests
 
 ;; Copyright (C) 2009 Phil Hagelberg
 
@@ -39,6 +39,8 @@
 ;; * Errors *loading* the tests are not reported
 ;; * Error messages need line number.
 ;; * Highlight as they fail? (big job, probably only useful for slow suites)
+;; * Currently show-message needs point to be on the line with the
+;;   "is" invocation; this could be cleaned up.
 
 ;;; Code:
 
@@ -79,16 +81,17 @@
 (defun clojure-test-load-reporting ()
   "Redefine the test-is report function to store results in metadata."
   (clojure-test-eval
-   "(use 'clojure.contrib.test-is)
+   "(require 'clojure.contrib.test-is)
  (ns clojure.contrib.test-is)
  (defonce old-report report)
- (defn report [event msg expected actual]
+ (defn report [event]
   (if-let [current-test (last *testing-vars*)]
           (alter-meta! current-test
                        assoc :status (conj (:status ^current-test)
-                                       [event msg (str expected) (str actual)
+                                       [(:type event) (:message event)
+                                        (str (:expected event)) (str (:actual event))
                                         ((file-position 2) 1)])))
-  (old-report event msg expected actual))"))
+  (old-report event))"))
 
 (defun clojure-test-get-results (result)
   (clojure-test-eval
@@ -194,4 +197,5 @@
 ;;;###autoload
 (add-hook 'clojure-mode-hook 'clojure-test-maybe-enable)
 
-(provide 'clojure-test-mode) ;;; clojure-test-mode.el ends here
+(provide 'clojure-test-mode)
+;;; clojure-test-mode.el ends here
