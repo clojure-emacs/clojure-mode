@@ -4,7 +4,7 @@
 
 ;; Author: Phil Hagelberg <technomancy@gmail.com>
 ;; URL: http://emacswiki.org/cgi-bin/wiki/ClojureTestMode
-;; Version: 1.0
+;; Version: 1.1
 ;; Keywords: languages, lisp
 ;; Package-Requires: ((clojure-mode "1.1"))
 
@@ -32,6 +32,19 @@
 ;;      (add-hook 'clojure-mode-hook 'clojure-test-maybe-enable)
 ;;
 ;;     Or generate autoloads with the `update-directory-autoloads' function.
+
+;; If you get an error about the wrong number of arguments getting
+;; passed to report, you are probably using an older version of
+;; Clojure contrib's test-is library. Either upgrade your test-is or
+;; downgrade clojure-test-mode to version 1.0.
+
+;;; History:
+
+;; 1.0: 2009-03-12
+;;  * Initial Release
+
+;; 1.1: 2009-04-28
+;;  * Fix to work with latest version of test-is. (circa Clojure 1.0)
 
 ;;; TODO:
 
@@ -72,6 +85,12 @@
 (defvar clojure-test-failure-count 0)
 (defvar clojure-test-error-count 0)
 
+;; Consts
+
+(defconst clojure-test-ignore-results
+  '(:end-test-ns :begin-test-var :end-test-var)
+  "Results from test-is that we don't use")
+
 ;; Support Functions
 
 (defun clojure-test-eval (string &optional handler)
@@ -101,10 +120,10 @@
    #'clojure-test-extract-results))
 
 (defun clojure-test-extract-results (results)
-  (let ((result-list (read (cadr results))))
-    (setq the-result result-list)
+  (let ((result-vars (read (cadr results))))
+    (setq the-result result-vars)
     ;; slime-eval-async hands us a cons with a useless car
-    (mapcar #'clojure-test-extract-result result-list)
+    (mapcar #'clojure-test-extract-result result-vars)
     (message "Ran %s tests. %s failures, %s errors."
              clojure-test-count
              clojure-test-failure-count clojure-test-error-count)))
@@ -112,15 +131,16 @@
 (defun clojure-test-extract-result (result)
   "Parse the result from a single test. May contain multiple is blocks."
   (dolist (is-result (rest result))
-    (incf clojure-test-count)
-    (destructuring-bind (event msg expected actual line) (coerce is-result 'list)
+    (unless (member (aref is-result 0) clojure-test-ignore-results)
+      (incf clojure-test-count)
+      (destructuring-bind (event msg expected actual line) (coerce is-result 'list)
       (if (equal :fail event)
           (progn (incf clojure-test-failure-count)
                  (clojure-test-highlight-problem
                   line event (format "Expected %s, got %s" expected actual)))
         (when (equal :error event)
           (incf clojure-test-error-count)
-          (clojure-test-highlight-problem line event actual))))))
+          (clojure-test-highlight-problem line event actual)))))))
 
 (defun clojure-test-highlight-problem (line event message)
   ;; (add-to-list 'the-results (list line event message))
