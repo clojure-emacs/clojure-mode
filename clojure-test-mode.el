@@ -70,12 +70,14 @@
 ;; 1.1: 2009-04-28
 ;;  * Fix to work with latest version of test-is. (circa Clojure 1.0)
 
+;; 1.2: ???
+;;  * Add clojure-test-jump-to-(test|implementation).
+
 ;;; TODO:
 
 ;; * Implement next-problem command
 ;; * Errors *loading* the tests are not reported
 ;; * Error messages need line number.
-;; * Highlight as they fail? (big job, probably only useful for slow suites)
 ;; * Currently show-message needs point to be on the line with the
 ;;   "is" invocation; this could be cleaned up.
 
@@ -84,6 +86,7 @@
 (require 'clojure-mode)
 (require 'cl)
 (require 'slime)
+(require 'swank-clojure)
 
 ;; Faces
 
@@ -178,6 +181,19 @@
                                    'clojure-test-error-face))
       (overlay-put overlay 'message message))))
 
+(defun clojure-test-implementation-for (namespace)
+  (let* ((segments (split-string namespace "\\."))
+         (common-segments (butlast segments 2))
+         (impl-segments (append common-segments (last segments))))
+    (mapconcat 'identity impl-segments "/")))
+
+(defun clojure-test-test-for (namespace)
+  (let* ((segments (split-string namespace "\\."))
+         (common-segments (butlast segments))
+         (test-segments (append common-segments '("test")))
+         (test-segments (append test-segments (last segments))))
+    (mapconcat 'identity test-segments "/")))
+
 ;; Commands
 
 (defun clojure-test-run-tests ()
@@ -213,21 +229,40 @@
       (alter-meta! t assoc :test nil))"
    callback))
 
+(defun clojure-test-jump-to-implementation ()
+  "Jump from test file to implementation."
+  (interactive)
+  (find-file (format "%s/src/%s.clj"
+                     (locate-dominating-file buffer-file-name "src/")
+                     (clojure-test-implementation-for (slime-current-package)))))
+
+(defun clojure-test-jump-to-test ()
+  "Jump from implementation file to test."
+  (interactive)
+  (find-file (format "%s/test/%s.clj"
+                     (locate-dominating-file buffer-file-name "src/")
+                     (clojure-test-test-for (slime-current-package)))))
+
 (defvar clojure-test-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "C-c C-,") 'clojure-test-run-tests)
-    (define-key map (kbd "C-c C-'")   'clojure-test-show-result)
+    (define-key map (kbd "C-c C-'") 'clojure-test-show-result)
     (define-key map (kbd "C-c '")   'clojure-test-show-result)
+    (define-key map (kbd "C-c k")   'clojure-test-clear)
+    (define-key map (kbd "C-c t")   'clojure-test-jump-to-implementation)
     map)
   "Keymap for Clojure test mode.")
+
+(define-key clojure-mode-map (kbd "C-c t") 'clojure-test-jump-to-test)
 
 ;;;###autoload
 (define-minor-mode clojure-test-mode
   "A minor mode for running Clojure tests."
   nil " Test" clojure-test-mode-map
   (if (slime-connected-p)
-      (clojure-test-load-reporting)
-    (add-hook 'slime-connected-hook 'clojure-test-load-reporting)))
+      (clojure-test-load-reporting)))
+
+(add-hook 'slime-connected-hook 'clojure-test-load-reporting)
 
 ;;;###autoload
 (defun clojure-test-maybe-enable ()
