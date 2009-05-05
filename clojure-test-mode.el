@@ -33,10 +33,34 @@
 ;;
 ;;     Or generate autoloads with the `update-directory-autoloads' function.
 
+;; This depends on swank-clojure to work properly. Unfortunately since
+;; SLIME is a complex dependency, it hasn't been packaged in ELPA
+;; yet. To get it configured and installed, use M-x clojure-install
+;; from clojure-mode.
+
 ;; If you get an error about the wrong number of arguments getting
 ;; passed to report, you are probably using an older version of
 ;; Clojure contrib's test-is library. Either upgrade your test-is or
 ;; downgrade clojure-test-mode to version 1.0.
+
+;;; Usage:
+
+;; Once you have a SLIME session active, you can run the tests in the
+;; current buffer with C-c C-,. Failing tests and errors will be
+;; highlighted using overlays. To clear the overlays, use C-c k.
+
+;; You can jump between implementation and test files with C-c t if
+;; your project is laid out in a way that clojure-test-mode
+;; expects. Your project root should have a src/ directory containing
+;; files that correspond to their namespace. It should also have a
+;; test/ directory containing files that correspond to their
+;; namespace, and the test namespaces should mirror the implementation
+;; namespaces with the addition of "test" as the second-to-last
+;; segment of the namespace.
+
+;; So my.project.frob would be found in src/my/project/frob.clj and
+;; its tests would be in test/my/project/test/frob.clj in the
+;; my.project.test.frob namespace.
 
 ;;; History:
 
