@@ -214,7 +214,7 @@
   (let ((overlay (find-if (lambda (o) (overlay-get o 'message))
                           (overlays-at (point)))))
     (if overlay
-        (message (overlay-get overlay 'message)))))
+        (message (replace-regexp-in-string "%" "%%" (overlay-get overlay 'message))))))
 
 (defun clojure-test-clear (&optional callback)
   "Remove overlays and clear stored results."
