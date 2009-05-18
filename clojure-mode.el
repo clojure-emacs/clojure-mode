@@ -119,6 +119,13 @@ and `clojure-slime-config'."
   :type 'string
   :group 'clojure-mode)
 
+(defvar clojure-last-known-good-revisions
+  '(("clojure" . "origin/1.0")
+    ("clojure-contrib" . "77b441b8a24f26eed239b9e85628e1e5dc03f19a")
+    ("swank-clojure" . "c1e309dfe53cb45149258404c4db5b53fb5c81b7")
+    ("slime" . "a4a75da81bbf44f51e5e7e9ba795857c95f07a4b"))
+  "Latest revision known to work with Slime.")
+
 (defvar clojure-mode-map
   (let ((map (make-sparse-keymap)))
     (set-keymap-parent map lisp-mode-shared-map)
@@ -620,6 +627,9 @@ This requires git, a JVM, ant, and an active Internet connection."
                  "git clone --depth 2 git://github.com/nablaone/slime.git"))
     (unless (= 0 (shell-command (format "cd %s; %s" src-root cmd)))
       (error "Clojure installation step failed: %s" cmd)))
+
+  (dolist (repo clojure-last-known-good-revisions)
+    (shell-command (apply 'format "cd %s; git checkout %s" repo)))
 
   (message "Compiling...")
   (unless (= 0 (shell-command (format "cd %s/clojure; ant" src-root)))
