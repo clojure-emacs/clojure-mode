@@ -4,7 +4,7 @@
 
 ;; Author: Phil Hagelberg <technomancy@gmail.com>
 ;; URL: http://emacswiki.org/cgi-bin/wiki/ClojureTestMode
-;; Version: 1.1
+;; Version: 1.2
 ;; Keywords: languages, lisp
 ;; Package-Requires: ((clojure-mode "1.1"))
 
@@ -70,7 +70,7 @@
 ;; 1.1: 2009-04-28
 ;;  * Fix to work with latest version of test-is. (circa Clojure 1.0)
 
-;; 1.2: ???
+;; 1.2: 2009-05-19
 ;;  * Add clojure-test-jump-to-(test|implementation).
 
 ;;; TODO:
