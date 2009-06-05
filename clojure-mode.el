@@ -457,7 +457,7 @@ This function also returns nil meaning don't specify the indentation."
 	      ((or (eq method 'defun)
 		   (and (null method)
 			(> (length function) 3)
-			(string-match "\\`\\(?:clojure/\\)?def" function)))
+			(string-match "\\`\\(?:clojure/\\)?\\(def\\|with-\\)" function)))
 	       (lisp-indent-defform state indent-point))
               
 	      ((integerp method)
