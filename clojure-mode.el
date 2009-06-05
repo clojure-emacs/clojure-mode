@@ -317,7 +317,7 @@ elements of a def* forms."
 (defconst clojure-font-lock-keywords
   (eval-when-compile
     `( ;; Definitions.
-      (,(concat "(\\(?:clojure/\\)?\\(def"
+      (,(concat "(\\(?:clojure.core/\\)?\\(def"
 		;; Function declarations.
 		"\\(n-?\\|multi\\|macro\\|method\\|test\\|"
 		;; Variable declarations.
@@ -333,7 +333,7 @@ elements of a def* forms."
         (3 font-lock-function-name-face nil t))
       ;; Control structures
       (,(concat
-         "(\\(?:clojure/\\)?" 
+         "(\\(?:clojure.core/\\)?" 
          (regexp-opt
           '("let" "letfn" "do"
             "cond" "condp"
@@ -351,7 +351,7 @@ elements of a def* forms."
         .  1)
       ;; Built-ins
       (,(concat
-         "(\\(?:clojure/\\)?" 
+         "(\\(?:clojure.core/\\)?" 
          (regexp-opt
           '(
             "implement" "proxy" "lazy-cons" "with-meta"
@@ -374,7 +374,7 @@ elements of a def* forms."
          "\\>")
        1 font-lock-builtin-face)
       ;; (fn name? args ...)
-      (,(concat "(\\(?:clojure/\\)?\\(fn\\)[ \t]+"
+      (,(concat "(\\(?:clojure.core/\\)?\\(fn\\)[ \t]+"
                 ;; Possibly type
                 "\\(?:#^\\sw+[ \t]*\\)?"
                 ;; Possibly name
