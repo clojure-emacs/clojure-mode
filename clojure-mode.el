@@ -616,44 +616,46 @@ This requires git, a JVM, ant, and an active Internet connection."
                                      clojure-src-root "): ")
                              nil nil clojure-src-root)))
 
-  (make-directory src-root t)
-  (cd src-root)
+  (let ((orig-directory default-directory))
+    (make-directory src-root t)
+    (cd src-root)
 
-  (if (file-exists-p (concat src-root "/clojure"))
-      (error "Clojure is already installed at %s/clojure" src-root))
+    (if (file-exists-p (concat src-root "/clojure"))
+        (error "Clojure is already installed at %s/clojure" src-root))
 
-  (message "Checking out source... this will take a while...")
-  (dolist (cmd '("git clone git://github.com/kevinoneill/clojure.git"
-                 "git clone git://github.com/kevinoneill/clojure-contrib.git"
-                 "git clone git://github.com/jochu/swank-clojure.git"
-                 "git clone --depth 2 git://github.com/nablaone/slime.git"))
-    (unless (= 0 (shell-command cmd))
-      (error "Clojure installation step failed: %s" cmd)))
+    (message "Checking out source... this will take a while...")
+    (dolist (cmd '("git clone git://github.com/kevinoneill/clojure.git"
+                   "git clone git://github.com/kevinoneill/clojure-contrib.git"
+                   "git clone git://github.com/jochu/swank-clojure.git"
+                   "git clone --depth 2 git://github.com/nablaone/slime.git"))
+      (unless (= 0 (shell-command cmd))
+        (error "Clojure installation step failed: %s" cmd)))
 
-  (dolist (repo clojure-last-known-good-revisions)
-    (cd (first repo))
-    (shell-command (format "git checkout %s" (second repo))))
+    (dolist (repo clojure-last-known-good-revisions)
+      (cd (first repo))
+      (shell-command (format "git checkout %s" (second repo))))
 
-  (message "Compiling...")
-  (cd (concat src-root "/clojure"))
-  (unless (= 0 (shell-command "ant"))
-    (error "Couldn't compile Clojure."))
+    (message "Compiling...")
+    (cd (concat src-root "/clojure"))
+    (unless (= 0 (shell-command "ant"))
+      (error "Couldn't compile Clojure."))
 
-  (with-output-to-temp-buffer "clojure-install-note"
-    (princ
-     (if (equal src-root clojure-src-root)
-         "Add a call to \"\(clojure-slime-config\)\"
+    (with-output-to-temp-buffer "clojure-install-note"
+      (princ
+       (if (equal src-root clojure-src-root)
+           "Add a call to \"\(clojure-slime-config\)\"
 to your .emacs so you can use SLIME in future sessions."
-       (setq clojure-src-root src-root)
-       (format "You've installed clojure in a non-default location. If you want
+         (setq clojure-src-root src-root)
+         (format "You've installed clojure in a non-default location. If you want
 to use this installation in the future, you will need to add the following
 lines to your personal Emacs config somewhere:
 
 \(setq clojure-src-root \"%s\"\)
 \(clojure-slime-config\)" src-root)))
-    (princ "\n\n Press M-x slime to launch Clojure."))
+      (princ "\n\n Press M-x slime to launch Clojure."))
 
-  (clojure-slime-config))
+    (clojure-slime-config)
+    (cd orig-directory)))
 
 (defun clojure-update ()
   "Update clojure-related repositories and recompile clojure.
@@ -663,17 +665,19 @@ should be checked out in the `clojure-src-root' directory."
   (interactive)
 
   (message "Updating...")
-  (dolist (repo '("clojure" "clojure-contrib" "swank-clojure" "slime"))
-    (cd (concat clojure-src-root "/" repo))
-    (unless (= 0 (shell-command "git pull origin master"))
-      (error "Clojure update failed: %s" repo)))
+  (let ((orig-directory default-directory))
+    (dolist (repo '("clojure" "clojure-contrib" "swank-clojure" "slime"))
+      (cd (concat clojure-src-root "/" repo))
+      (unless (= 0 (shell-command "git pull origin master"))
+        (error "Clojure update failed: %s" repo)))
 
-  (message "Compiling...")
-  (save-window-excursion
-    (cd clojure-src-root)
-    (unless (= 0 (shell-command "ant"))
-      (error "Couldn't compile Clojure.")))
-  (message "Finished updating Clojure."))
+    (message "Compiling...")
+    (save-window-excursion
+      (cd clojure-src-root)
+      (unless (= 0 (shell-command "ant"))
+        (error "Couldn't compile Clojure.")))
+    (message "Finished updating Clojure.")
+    (cd orig-directory)))
 
 (defun clojure-enable-slime-on-existing-buffers ()
   (interactive)
