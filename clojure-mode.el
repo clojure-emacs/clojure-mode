@@ -586,25 +586,32 @@ check for contextual indenting."
 ;;; SLIME integration
 
 ;;;###autoload
-(defun clojure-slime-config ()
-  "Load Clojure SLIME support out of the `clojure-src-root' directory.
+(progn
+  ;; We want this function to be able to be loaded without loading the
+  ;; whole of clojure-mode.el since it runs at every startup.
+  (defun clojure-slime-config (&optional src-root)
+    "Load Clojure SLIME support out of the `clojure-src-root' directory.
 
 Since there's no single conventional place to keep Clojure, this
 is bundled up as a function so that you can call it after you've set
 `clojure-src-root' in your personal config."
 
-  (add-to-list 'load-path (concat clojure-src-root "/slime"))
-  (add-to-list 'load-path (concat clojure-src-root "/slime/contrib"))
-  (add-to-list 'load-path (concat clojure-src-root "/swank-clojure"))
+    (if src-root (setq clojure-src-root src-root))
 
-  (require 'slime-autoloads)
-  (require 'swank-clojure-autoload)
+    (add-to-list 'load-path (concat clojure-src-root "/slime"))
+    (add-to-list 'load-path (concat clojure-src-root "/slime/contrib"))
+    (add-to-list 'load-path (concat clojure-src-root "/swank-clojure"))
 
-  (slime-setup '(slime-fancy))
+    (require 'slime-autoloads)
+    (require 'swank-clojure-autoload)
 
-  (setq swank-clojure-jar-path (concat clojure-src-root "/clojure/clojure.jar"))
-  (add-to-list 'swank-clojure-extra-classpaths
-               (concat clojure-src-root "/clojure-contrib/src/")))
+    (slime-setup '(slime-fancy))
+
+    (setq swank-clojure-jar-path (concat clojure-src-root "/clojure/clojure.jar"))
+    (unless (boundp 'swank-clojure-extra-classpaths)
+      (setq swank-clojure-extra-classpaths nil))
+    (add-to-list 'swank-clojure-extra-classpaths
+                 (concat clojure-src-root "/clojure-contrib/src/"))))
 
 ;;;###autoload
 (defun clojure-install (src-root)
@@ -650,8 +657,7 @@ to your .emacs so you can use SLIME in future sessions."
 to use this installation in the future, you will need to add the following
 lines to your personal Emacs config somewhere:
 
-\(setq clojure-src-root \"%s\"\)
-\(clojure-slime-config\)" src-root)))
+\(clojure-slime-config \"%s\"\)" src-root)))
       (princ "\n\n Press M-x slime to launch Clojure."))
 
     (clojure-slime-config)
