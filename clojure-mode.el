@@ -50,7 +50,6 @@
 ;;; Todo:
 
 ;; * installer doesn't work when git port is blocked
-;; * updater/installer should know "last known good" sha1s?
 ;; * hashbang is also a valid comment character
 ;; * do the inferior-lisp functions work without SLIME? needs documentation
 
@@ -122,8 +121,8 @@ and `clojure-slime-config'."
 
 (defvar clojure-last-known-good-revisions
   '(("clojure" . "origin/1.0")
-    ("clojure-contrib" . "77b441b8a24f26eed239b9e85628e1e5dc03f19a")
-    ("swank-clojure" . "c1e309dfe53cb45149258404c4db5b53fb5c81b7")
+    ("clojure-contrib" . "66fc2f90afa4649675d115e611528f78e5ac0016")
+    ("swank-clojure" . "e2ec46fdd6533e093e26c4a0694cac4f29ca1d53")
     ("slime" . "a4a75da81bbf44f51e5e7e9ba795857c95f07a4b"))
   "Latest revision known to work with Slime.")
 
@@ -637,8 +636,8 @@ This requires git, a JVM, ant, and an active Internet connection."
         (error "Clojure is already installed at %s/clojure" src-root))
 
     (message "Checking out source... this will take a while...")
-    (dolist (cmd '("git clone git://github.com/kevinoneill/clojure.git"
-                   "git clone git://github.com/kevinoneill/clojure-contrib.git"
+    (dolist (cmd '("git clone git://github.com/richhickey/clojure.git"
+                   "git clone git://github.com/richhickey/clojure-contrib.git"
                    "git clone git://github.com/jochu/swank-clojure.git"
                    "git clone --depth 2 git://github.com/nablaone/slime.git"))
       (unless (= 0 (shell-command cmd))
