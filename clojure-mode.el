@@ -163,6 +163,10 @@ All commands in `lisp-mode-shared-map' are inherited by this map.")
     (modify-syntax-entry ?^ "'" table)
     table))
 
+(defvar clojure-mode-abbrev-table nil
+  "Abbrev table used in clojure-mode buffers.")
+
+(define-abbrev-table 'clojure-mode-abbrev-table ())
 
 (defvar clojure-prev-l/c-dir/file nil
   "Record last directory and file used in loading or compiling.
@@ -192,6 +196,8 @@ if that value is non-nil."
   (lisp-mode-variables nil)
   (set-syntax-table clojure-mode-syntax-table)
   
+  (setq local-abbrev-table clojure-mode-abbrev-table)
+
   (set (make-local-variable 'comment-start-skip)
        "\\(\\(^\\|[^\\\\\n]\\)\\(\\\\\\\\\\)*\\)\\(;+\\|#|\\) *")
   (set (make-local-variable 'lisp-indent-function)
