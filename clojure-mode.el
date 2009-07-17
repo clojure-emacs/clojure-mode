@@ -614,8 +614,8 @@ This requires git, a JVM, ant, and an active Internet connection."
       (error "Clojure is already installed at %s/clojure" src-root))
 
   (message "Checking out source... this will take a while...")
-  (dolist (cmd '("git clone git://github.com/kevinoneill/clojure.git"
-                 "git clone git://github.com/kevinoneill/clojure-contrib.git"
+  (dolist (cmd '("git clone git://github.com/richhickey/clojure.git"
+                 "git clone git://github.com/richhickey/clojure-contrib.git"
                  "git clone git://github.com/jochu/swank-clojure.git"
                  "git clone --depth 2 git://github.com/nablaone/slime.git"))
     (unless (= 0 (shell-command (format "cd %s; %s" src-root cmd)))
