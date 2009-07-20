@@ -645,7 +645,7 @@ This requires git, a JVM, ant, and an active Internet connection."
 
     (dolist (repo clojure-last-known-good-revisions)
       (cd (first repo))
-      (shell-command (format "git checkout %s" (second repo))))
+      (shell-command (format "git checkout %s" (cdr repo))))
 
     (message "Compiling...")
     (cd (concat src-root "/clojure"))
