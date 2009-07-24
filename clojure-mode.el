@@ -49,7 +49,8 @@
 
 ;;; Todo:
 
-;; * installer doesn't work when git port is blocked
+;; * make install command more recoverable
+;; * option to follow snapshot vs stable
 ;; * hashbang is also a valid comment character
 ;; * do the inferior-lisp functions work without SLIME? needs documentation
 
@@ -121,7 +122,7 @@ and `clojure-slime-config'."
 
 (defvar clojure-last-known-good-revisions
   '(("clojure" . "origin/1.0")
-    ("clojure-contrib" . "66fc2f90afa4649675d115e611528f78e5ac0016")
+    ("clojure-contrib" . "origin/clojure-1.0-compatible")
     ("swank-clojure" . "e2ec46fdd6533e093e26c4a0694cac4f29ca1d53")
     ("slime" . "a4a75da81bbf44f51e5e7e9ba795857c95f07a4b"))
   "Latest revision known to work with Slime.")
@@ -639,12 +640,12 @@ This requires git, a JVM, ant, and an active Internet connection."
     (dolist (cmd '("git clone git://github.com/richhickey/clojure.git"
                    "git clone git://github.com/richhickey/clojure-contrib.git"
                    "git clone git://github.com/jochu/swank-clojure.git"
-                   "git clone --depth 2 git://github.com/nablaone/slime.git"))
+                   "git clone --depth 2 git://github.com/technomancy/slime.git"))
       (unless (= 0 (shell-command cmd))
         (error "Clojure installation step failed: %s" cmd)))
 
     (dolist (repo clojure-last-known-good-revisions)
-      (cd (first repo))
+      (cd (format "%s/%s" src-root (first repo)))
       (shell-command (format "git checkout %s" (cdr repo))))
 
     (message "Compiling...")
