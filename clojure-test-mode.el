@@ -127,17 +127,26 @@
 (defun clojure-test-load-reporting ()
   "Redefine the test-is report function to store results in metadata."
   (clojure-test-eval
-   "(require 'clojure.contrib.test-is)
- (ns clojure.contrib.test-is)
- (defonce old-report report)
- (defn report [event]
-  (if-let [current-test (last *testing-vars*)]
-          (alter-meta! current-test
-                       assoc :status (conj (:status ^current-test)
-                                       [(:type event) (:message event)
-                                        (str (:expected event)) (str (:actual event))
-                                        ((file-position 2) 1)])))
-  (old-report event))"))
+   "(def test-namespace
+     (try
+      (require 'clojure.contrib.test-is)
+      'clojure.contrib.test-is
+      (catch java.io.FileNotFoundException fnfe
+        (require 'clojure.test)
+        'clojure.test
+        )))
+
+    (in-ns test-namespace)
+
+    (defonce old-report report)
+    (defn report [event]
+     (if-let [current-test (last *testing-vars*)]
+             (alter-meta! current-test
+                          assoc :status (conj (:status ^current-test)
+                                          [(:type event) (:message event)
+                                           (str (:expected event)) (str (:actual event))
+                                           ((file-position 2) 1)])))
+     (old-report event))"))
 
 (defun clojure-test-get-results (result)
   (clojure-test-eval
