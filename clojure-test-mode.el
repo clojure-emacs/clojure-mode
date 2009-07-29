@@ -266,7 +266,7 @@
 
 ;;;###autoload
 (defun clojure-test-maybe-enable ()
-  "Enable clojure-test-mode if the current buffer contains Clojure tests."
+  "Enable clojure-test-mode if the current buffer contains Clojure tests or if the file is in a 'test' directory."
   (save-excursion
     (goto-char (point-min))
     (if (or (search-forward "(deftest" nil t)
