@@ -124,19 +124,27 @@
   (slime-eval-async `(swank:eval-and-grab-output ,string)
                     (or handler #'identity)))
 
-(defun clojure-test-load-reporting ()
-  "Redefine the test-is report function to store results in metadata."
-  (clojure-test-eval
-   "(def test-namespace
+(defun clojure-test-eval-sync (string)
+  (slime-eval `(swank:eval-and-grab-output ,string)))
+
+(defun clojure-test-set-testing-framework ()
+  "In the clojure slime connection, sets clojure-test-mode/*testing-framework-namespace* to the namespace symbol of the test framework (clojure.contrib.test-is or clojure.test"
+  (clojure-test-eval-sync
+   "(ns clojure-test-mode)
+    (def *testing-framework-namespace*
      (try
       (require 'clojure.contrib.test-is)
       'clojure.contrib.test-is
       (catch java.io.FileNotFoundException fnfe
         (require 'clojure.test)
         'clojure.test
-        )))
+        )))"))
 
-    (in-ns test-namespace)
+(defun clojure-test-load-reporting ()
+  "Redefine the test-is report function to store results in metadata."
+  (clojure-test-eval-sync
+   "(refer 'clojure-test-mode)
+    (in-ns *testing-framework-namespace*)
 
     (defonce old-report report)
     (defn report [event]
@@ -214,7 +222,7 @@
      (clojure-test-eval (format "(load-file \"%s\")"
                                 (buffer-file-name))
                         (lambda (&rest args)
-                          (clojure-test-eval "(clojure.contrib.test-is/run-tests)"
+                          (clojure-test-eval "(refer 'clojure-test-mode) ((intern *testing-framework-namespace* 'run-tests))"
                                              #'clojure-test-get-results))))))
 
 (defun clojure-test-show-result ()
@@ -269,9 +277,13 @@
   "A minor mode for running Clojure tests."
   nil " Test" clojure-test-mode-map
   (if (slime-connected-p)
-      (clojure-test-load-reporting)))
+      (progn
+        (clojure-test-set-testing-framework)
+        (clojure-test-load-reporting))))
 
-(add-hook 'slime-connected-hook 'clojure-test-load-reporting)
+(add-hook 'slime-connected-hook '(lambda ()
+                                   (clojure-test-set-testing-framework)
+                                   (clojure-test-load-reporting)))
 
 ;;;###autoload
 (defun clojure-test-maybe-enable ()
