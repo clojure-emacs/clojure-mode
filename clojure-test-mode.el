@@ -270,7 +270,8 @@
   (save-excursion
     (goto-char (point-min))
     (if (or (search-forward "(deftest" nil t)
-            (search-forward "(with-test" nil t))
+            (search-forward "(with-test" nil t)
+            (string-match "/test/$" default-directory))
         (clojure-test-mode t))))
 
 ;;;###autoload
