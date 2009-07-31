@@ -331,16 +331,16 @@ elements of a def* forms."
                               "deftest"
                               "defstruct"
                               "def" "defonce"))
-		;; Function declarations.
-		"\\)\\>"
-		;; Any whitespace
-		"[ \r\n\t]*"
+                ;; Function declarations.
+                "\\)\\>"
+                ;; Any whitespace
+                "[ \r\n\t]*"
                 ;; Possibly type or metadata
                 "\\(?:#^\\(?:{[^}]*}\\|\\sw+\\)[ \r\n\t]*\\)?"
                 
                 "\\(\\sw+\\)?")
-        (1 font-lock-keyword-face)
-        (2 font-lock-function-name-face nil t))
+       (1 font-lock-keyword-face)
+       (2 font-lock-function-name-face nil t))
       ;; Control structures
       (,(concat
          "(\\(?:clojure.core/\\)?" 
@@ -358,7 +358,7 @@ elements of a def* forms."
             "with-open" "with-local-vars" "binding" 
             "gen-class" "gen-and-load-class" "gen-and-save-class") t)
          "\\>")
-        .  1)
+       .  1)
       ;; Built-ins
       (,(concat
          "(\\(?:clojure.core/\\)?" 
@@ -389,8 +389,8 @@ elements of a def* forms."
                 "\\(?:#^\\sw+[ \t]*\\)?"
                 ;; Possibly name
                 "\\(\\sw+\\)?" )
-        (1 font-lock-keyword-face)
-        (2 font-lock-function-name-face nil t))
+       (1 font-lock-keyword-face)
+       (2 font-lock-function-name-face nil t))
       ;; Constant values.
       ("\\<:\\sw+\\>" 0 font-lock-builtin-face)
       ;; Meta type annotation #^Type
@@ -541,6 +541,7 @@ check for contextual indenting."
 
 ;; entries are subject to change
 (put 'implement 'clojure-backtracking-indent '(4 (2)))
+(put 'letfn 'clojure-backtracking-indent '((2) 2))
 (put 'proxy 'clojure-backtracking-indent '(4 4 (2)))
 
 
