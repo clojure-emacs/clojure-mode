@@ -324,12 +324,15 @@ elements of a def* forms."
 (defconst clojure-font-lock-keywords
   (eval-when-compile
     `( ;; Definitions.
-      (,(concat "(\\(?:clojure.core/\\)?\\(def"
+      (,(concat "(\\(?:clojure.core/\\)?\\("
+                (regexp-opt '("defn" "defn-"
+                              "defmulti" "defmethod"
+                              "defmacro"
+                              "deftest"
+                              "defstruct"
+                              "def" "defonce"))
 		;; Function declarations.
-		"\\(n-?\\|multi\\|macro\\|method\\|test\\|"
-		;; Variable declarations.
-                "struct\\|once\\|"
-		"\\)\\)\\>"
+		"\\)\\>"
 		;; Any whitespace
 		"[ \r\n\t]*"
                 ;; Possibly type or metadata
@@ -337,7 +340,7 @@ elements of a def* forms."
                 
                 "\\(\\sw+\\)?")
         (1 font-lock-keyword-face)
-        (3 font-lock-function-name-face nil t))
+        (2 font-lock-function-name-face nil t))
       ;; Control structures
       (,(concat
          "(\\(?:clojure.core/\\)?" 
