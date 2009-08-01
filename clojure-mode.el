@@ -522,21 +522,6 @@ check for contextual indenting."
           (error (setq depth clojure-max-backtracking)))))
     indent))
 
-;; (defun clojure-indent-defn (indent-point state)
-;;   "Indent by 2 if after a [] clause that's at the beginning of a
-;; line"
-;;   (if (not (eq (char-after (elt state 2)) ?\[))
-;;       (lisp-indent-defform state indent-point)
-;;     (goto-char (elt state 2))
-;;     (beginning-of-line)
-;;     (skip-syntax-forward " ")
-;;     (if (= (point) (elt state 2))
-;;         (+ (current-column) 2)
-;;       (lisp-indent-defform state indent-point))))
-
-;; (put 'defn 'clojure-indent-function 'clojure-indent-defn)
-;; (put 'defmacro 'clojure-indent-function 'clojure-indent-defn)
-
 ;; clojure backtracking indent is experimental and the format for these
 
 ;; entries are subject to change
