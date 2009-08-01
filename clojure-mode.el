@@ -391,8 +391,8 @@ elements of a def* forms."
                 "\\(\\sw+\\)?" )
        (1 font-lock-keyword-face)
        (2 font-lock-function-name-face nil t))
-      ;; Constant values.
-      ("\\<:\\sw+\\>" 0 font-lock-builtin-face)
+      ;; Constant values (keywords).
+      ("\\<:\\(\\sw\\|#\\)+\\>" 0 font-lock-builtin-face)
       ;; Meta type annotation #^Type
       ("#^\\sw+" 0 font-lock-type-face)
       ("\\<io\\!\\>" 0 font-lock-warning-face)))
