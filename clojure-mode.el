@@ -113,13 +113,6 @@ indentation."
   :type 'integer
   :group 'clojure-mode)
 
-(defcustom clojure-src-root (expand-file-name "~/src")
-  "Directory that contains checkouts for clojure, clojure-contrib,
-slime, and swank-clojure. This value is used by `clojure-install'
-and `clojure-slime-config'."
-  :type 'string
-  :group 'clojure-mode)
-
 (defvar clojure-last-known-good-revisions
   '(("clojure" . "origin/1.0")
     ("clojure-contrib" . "origin/clojure-1.0-compatible")
@@ -593,6 +586,13 @@ check for contextual indenting."
 
 ;;;###autoload
 (progn
+  (defcustom clojure-src-root (expand-file-name "~/src")
+    "Directory that contains checkouts for clojure, clojure-contrib,
+slime, and swank-clojure. This value is used by `clojure-install'
+and `clojure-slime-config'."
+    :type 'string
+    :group 'clojure-mode)
+
   ;; We want this function to be able to be loaded without loading the
   ;; whole of clojure-mode.el since it runs at every startup.
   (defun clojure-slime-config (&optional src-root)
