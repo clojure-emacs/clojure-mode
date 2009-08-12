@@ -317,20 +317,23 @@ elements of a def* forms."
 (defconst clojure-font-lock-keywords
   (eval-when-compile
     `( ;; Definitions.
-      (,(concat "(\\(?:clojure.core/\\)?\\(def"
-		;; Function declarations.
-		"\\(n-?\\|multi\\|macro\\|method\\|test\\|"
-		;; Variable declarations.
-                "struct\\|once\\|"
-		"\\)\\)\\>"
-		;; Any whitespace
-		"[ \r\n\t]*"
+      (,(concat "(\\(?:clojure.core/\\)?\\("
+                (regexp-opt '("defn" "defn-"
+                              "defmulti" "defmethod"
+                              "defmacro"
+                              "deftest"
+                              "defstruct"
+                              "def" "defonce"))
+                ;; Function declarations.
+                "\\)\\>"
+                ;; Any whitespace
+                "[ \r\n\t]*"
                 ;; Possibly type or metadata
                 "\\(?:#^\\(?:{[^}]*}\\|\\sw+\\)[ \r\n\t]*\\)?"
                 
                 "\\(\\sw+\\)?")
-        (1 font-lock-keyword-face)
-        (3 font-lock-function-name-face nil t))
+       (1 font-lock-keyword-face)
+       (2 font-lock-function-name-face nil t))
       ;; Control structures
       (,(concat
          "(\\(?:clojure.core/\\)?" 
@@ -348,7 +351,7 @@ elements of a def* forms."
             "with-open" "with-local-vars" "binding" 
             "gen-class" "gen-and-load-class" "gen-and-save-class") t)
          "\\>")
-        .  1)
+       .  1)
       ;; Built-ins
       (,(concat
          "(\\(?:clojure.core/\\)?" 
@@ -379,10 +382,10 @@ elements of a def* forms."
                 "\\(?:#^\\sw+[ \t]*\\)?"
                 ;; Possibly name
                 "\\(\\sw+\\)?" )
-        (1 font-lock-keyword-face)
-        (2 font-lock-function-name-face nil t))
-      ;; Constant values.
-      ("\\<:\\sw+\\>" 0 font-lock-builtin-face)
+       (1 font-lock-keyword-face)
+       (2 font-lock-function-name-face nil t))
+      ;; Constant values (keywords).
+      ("\\<:\\(\\sw\\|#\\)+\\>" 0 font-lock-builtin-face)
       ;; Meta type annotation #^Type
       ("#^\\sw+" 0 font-lock-type-face)
       ("\\<io\\!\\>" 0 font-lock-warning-face)))
@@ -512,25 +515,11 @@ check for contextual indenting."
           (error (setq depth clojure-max-backtracking)))))
     indent))
 
-;; (defun clojure-indent-defn (indent-point state)
-;;   "Indent by 2 if after a [] clause that's at the beginning of a
-;; line"
-;;   (if (not (eq (char-after (elt state 2)) ?\[))
-;;       (lisp-indent-defform state indent-point)
-;;     (goto-char (elt state 2))
-;;     (beginning-of-line)
-;;     (skip-syntax-forward " ")
-;;     (if (= (point) (elt state 2))
-;;         (+ (current-column) 2)
-;;       (lisp-indent-defform state indent-point))))
-
-;; (put 'defn 'clojure-indent-function 'clojure-indent-defn)
-;; (put 'defmacro 'clojure-indent-function 'clojure-indent-defn)
-
 ;; clojure backtracking indent is experimental and the format for these
 
 ;; entries are subject to change
 (put 'implement 'clojure-backtracking-indent '(4 (2)))
+(put 'letfn 'clojure-backtracking-indent '((2) 2))
 (put 'proxy 'clojure-backtracking-indent '(4 4 (2)))
 
 
