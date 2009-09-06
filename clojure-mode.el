@@ -674,9 +674,10 @@ should be checked out in the `clojure-src-root' directory."
 
     (message "Compiling...")
     (save-window-excursion
-      (cd clojure-src-root)
-      (unless (= 0 (shell-command "ant"))
-        (error "Couldn't compile Clojure.")))
+      (dolist (repo '("clojure" "clojure-contrib"))
+        (cd (concat clojure-src-root "/" repo))
+        (unless (= 0 (shell-command "ant"))
+          (error "Couldn't compile Clojure."))))
     (message "Finished updating Clojure.")
     (cd orig-directory)))
 
