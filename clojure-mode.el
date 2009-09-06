@@ -60,12 +60,12 @@
 ;; modify it under the terms of the GNU General Public License
 ;; as published by the Free Software Foundation; either version 3
 ;; of the License, or (at your option) any later version.
-;; 
+;;
 ;; This program is distributed in the hope that it will be useful,
 ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
 ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ;; GNU General Public License for more details.
-;; 
+;;
 ;; You should have received a copy of the GNU General Public License
 ;; along with GNU Emacs; see the file COPYING.  If not, write to the
 ;; Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
@@ -188,7 +188,7 @@ if that value is non-nil."
   (setq mode-name "Clojure")
   (lisp-mode-variables nil)
   (set-syntax-table clojure-mode-syntax-table)
-  
+
   (setq local-abbrev-table clojure-mode-abbrev-table)
 
   (set (make-local-variable 'comment-start-skip)
@@ -207,10 +207,10 @@ if that value is non-nil."
            (or clojure-mode-font-lock-multiline-def
                clojure-mode-font-lock-comment-sexp))
       (message "Clojure mode font lock extras are unavailable, please upgrade to atleast version 22 ")
-    
+
     (when clojure-mode-font-lock-multiline-def
       (add-to-list 'font-lock-extend-region-functions 'clojure-font-lock-extend-region-def t))
-    
+
     (when clojure-mode-font-lock-comment-sexp
       (add-to-list 'font-lock-extend-region-functions 'clojure-font-lock-extend-region-comment t)
       (make-local-variable 'clojure-font-lock-keywords)
@@ -225,7 +225,7 @@ if that value is non-nil."
           (font-lock-mark-block-function . mark-defun)
           (font-lock-syntactic-face-function . lisp-font-lock-syntactic-face-function)))
 
-  (if (fboundp 'run-mode-hooks) 
+  (if (fboundp 'run-mode-hooks)
       (run-mode-hooks 'clojure-mode-hook)
     (run-hooks 'clojure-mode-hook))
 
@@ -246,17 +246,17 @@ top-level."
   (condition-case nil
       (beginning-of-defun)
     (error nil))
-  
+
   (let ((beg-def (point)))
     (when (and (not (= point beg-def))
                (looking-at "(def"))
       (condition-case nil
-       (progn
-         ;; move forward as much as possible until failure (or success)
-         (forward-char)
-         (dotimes (i 4)
-           (forward-sexp)))
-       (error nil))
+          (progn
+            ;; move forward as much as possible until failure (or success)
+            (forward-char)
+            (dotimes (i 4)
+              (forward-sexp)))
+        (error nil))
       (cons beg-def (point)))))
 
 (defun clojure-font-lock-extend-region-def ()
@@ -265,19 +265,19 @@ elements of a def* forms."
   (let ((changed nil))
     (let ((def (clojure-font-lock-def-at-point font-lock-beg)))
       (when def
-       (destructuring-bind (def-beg . def-end) def
-         (when (and (< def-beg font-lock-beg)
-                    (< font-lock-beg def-end))
-           (setq font-lock-beg def-beg
-                 changed t)))))
+        (destructuring-bind (def-beg . def-end) def
+          (when (and (< def-beg font-lock-beg)
+                     (< font-lock-beg def-end))
+            (setq font-lock-beg def-beg
+                  changed t)))))
 
     (let ((def (clojure-font-lock-def-at-point font-lock-end)))
       (when def
-       (destructuring-bind (def-beg . def-end) def
-         (when (and (< def-beg font-lock-end)
-                    (< font-lock-end def-end))
-           (setq font-lock-end def-end
-                 changed t)))))
+        (destructuring-bind (def-beg . def-end) def
+          (when (and (< def-beg font-lock-end)
+                     (< font-lock-end def-end))
+            (setq font-lock-end def-end
+                  changed t)))))
     changed))
 
 (defun clojure-font-lock-extend-region-comment ()
@@ -299,7 +299,7 @@ elements of a def* forms."
           (setq font-lock-end (point)
                 changed t))))
     changed))
-        
+
 
 (defun clojure-font-lock-mark-comment (limit)
   "Marks all (comment ..) forms with font-lock-comment-face."
@@ -330,13 +330,13 @@ elements of a def* forms."
                 "[ \r\n\t]*"
                 ;; Possibly type or metadata
                 "\\(?:#^\\(?:{[^}]*}\\|\\sw+\\)[ \r\n\t]*\\)?"
-                
+
                 "\\(\\sw+\\)?")
        (1 font-lock-keyword-face)
        (2 font-lock-function-name-face nil t))
       ;; Control structures
       (,(concat
-         "(\\(?:clojure.core/\\)?" 
+         "(\\(?:clojure.core/\\)?"
          (regexp-opt
           '("let" "letfn" "do"
             "cond" "condp"
@@ -348,13 +348,13 @@ elements of a def* forms."
             "dosync" "doseq" "dotimes" "dorun" "doall"
             "load" "import" "unimport" "ns" "in-ns" "refer"
             "try" "catch" "finally" "throw"
-            "with-open" "with-local-vars" "binding" 
+            "with-open" "with-local-vars" "binding"
             "gen-class" "gen-and-load-class" "gen-and-save-class") t)
          "\\>")
        .  1)
       ;; Built-ins
       (,(concat
-         "(\\(?:clojure.core/\\)?" 
+         "(\\(?:clojure.core/\\)?"
          (regexp-opt
           '(
             "implement" "proxy" "lazy-cons" "with-meta"
@@ -395,12 +395,12 @@ elements of a def* forms."
 (defun clojure-load-file (file-name)
   "Load a Lisp file into the inferior Lisp process."
   (interactive (comint-get-source "Load Clojure file: " clojure-prev-l/c-dir/file
-				  '(clojure-mode) t))
+                                  '(clojure-mode) t))
   (comint-check-source file-name) ; Check to see if buffer needs saved.
   (setq clojure-prev-l/c-dir/file (cons (file-name-directory file-name)
-				     (file-name-nondirectory file-name)))
+                                        (file-name-nondirectory file-name)))
   (comint-send-string (inferior-lisp-proc)
-		      (format clojure-mode-load-command file-name))
+                      (format clojure-mode-load-command file-name))
   (switch-to-lisp t))
 
 
@@ -435,13 +435,13 @@ This function also returns nil meaning don't specify the indentation."
         (progn
           (if (not (> (save-excursion (forward-line 1) (point))
                       calculate-lisp-indent-last-sexp))
-		(progn (goto-char calculate-lisp-indent-last-sexp)
-		       (beginning-of-line)
-		       (parse-partial-sexp (point)
-					   calculate-lisp-indent-last-sexp 0 t)))
-	    ;; Indent under the list or under the first sexp on the same
-	    ;; line as calculate-lisp-indent-last-sexp.  Note that first
-	    ;; thing on that line has to be complete sexp since we are
+              (progn (goto-char calculate-lisp-indent-last-sexp)
+                     (beginning-of-line)
+                     (parse-partial-sexp (point)
+                                         calculate-lisp-indent-last-sexp 0 t)))
+          ;; Indent under the list or under the first sexp on the same
+          ;; line as calculate-lisp-indent-last-sexp.  Note that first
+          ;; thing on that line has to be complete sexp since we are
           ;; inside the innermost containing sexp.
           (backward-prefix-chars)
           (if (and (eq (char-after (point)) ?\[)
@@ -449,25 +449,25 @@ This function also returns nil meaning don't specify the indentation."
               (+ (current-column) 2) ;; this is probably inside a defn
             (current-column)))
       (let ((function (buffer-substring (point)
-					(progn (forward-sexp 1) (point))))
+                                        (progn (forward-sexp 1) (point))))
             (open-paren (elt state 1))
-	    method)
-	(setq method (get (intern-soft function) 'clojure-indent-function))
-        
-	(cond ((member (char-after open-paren) '(?\[ ?\{))
-	       (goto-char open-paren)
+            method)
+        (setq method (get (intern-soft function) 'clojure-indent-function))
+
+        (cond ((member (char-after open-paren) '(?\[ ?\{))
+               (goto-char open-paren)
                (1+ (current-column)))
-	      ((or (eq method 'defun)
-		   (and (null method)
-			(> (length function) 3)
-			(string-match "\\`\\(?:\\S +/\\)?def\\|with-" function)))
-	       (lisp-indent-defform state indent-point))
-              
-	      ((integerp method)
-	       (lisp-indent-specform method state
-				     indent-point normal-indent))
-	      (method
-		(funcall method indent-point state))
+              ((or (eq method 'defun)
+                   (and (null method)
+                        (> (length function) 3)
+                        (string-match "\\`\\(?:\\S +/\\)?def\\|with-" function)))
+               (lisp-indent-defform state indent-point))
+
+              ((integerp method)
+               (lisp-indent-specform method state
+                                     indent-point normal-indent))
+              (method
+               (funcall method indent-point state))
               (clojure-mode-use-backtracking-indent
                (clojure-backtracking-indent indent-point state normal-indent)))))))
 
@@ -488,11 +488,11 @@ check for contextual indenting."
               (when (< (point) indent-point)
                 (condition-case ()
                     (progn
-                     (forward-sexp 1)
-                     (while (< (point) indent-point)
-                       (parse-partial-sexp (point) indent-point 1 t)
-                       (incf n)
-                       (forward-sexp 1)))
+                      (forward-sexp 1)
+                      (while (< (point) indent-point)
+                        (parse-partial-sexp (point) indent-point 1 t)
+                        (incf n)
+                        (forward-sexp 1)))
                   (error nil)))
               (push n path))
             (when meth
