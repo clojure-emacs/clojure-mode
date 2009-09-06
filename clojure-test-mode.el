@@ -73,6 +73,9 @@
 ;; 1.2: 2009-05-19
 ;;  * Add clojure-test-jump-to-(test|implementation).
 
+;; 1.3: ???
+;;  * Support clojure.contrib.test-is and clojure.test.
+
 ;;; TODO:
 
 ;; * Implement next-problem command
@@ -128,17 +131,17 @@
   (slime-eval `(swank:eval-and-grab-output ,string)))
 
 (defun clojure-test-set-testing-framework ()
-  "In the clojure slime connection, sets clojure-test-mode/*testing-framework-namespace* to the namespace symbol of the test framework (clojure.contrib.test-is or clojure.test"
+  "In the clojure slime connection, sets *testing-framework-namespace*.
+Should be  clojure.contrib.test-is or clojure.test."
   (clojure-test-eval-sync
    "(ns clojure-test-mode)
     (def *testing-framework-namespace*
      (try
       (require 'clojure.contrib.test-is)
       'clojure.contrib.test-is
-      (catch java.io.FileNotFoundException fnfe
+      (catch java.io.FileNotFoundException _
         (require 'clojure.test)
-        'clojure.test
-        )))"))
+        'clojure.test)))"))
 
 (defun clojure-test-load-reporting ()
   "Redefine the test-is report function to store results in metadata."
@@ -152,7 +155,8 @@
              (alter-meta! current-test
                           assoc :status (conj (:status ^current-test)
                                           [(:type event) (:message event)
-                                           (str (:expected event)) (str (:actual event))
+                                           (str (:expected event))
+                                           (str (:actual event))
                                            ((file-position 2) 1)])))
      (old-report event))"))
 
@@ -178,13 +182,13 @@
     (unless (member (aref is-result 0) clojure-test-ignore-results)
       (incf clojure-test-count)
       (destructuring-bind (event msg expected actual line) (coerce is-result 'list)
-      (if (equal :fail event)
-          (progn (incf clojure-test-failure-count)
-                 (clojure-test-highlight-problem
-                  line event (format "Expected %s, got %s" expected actual)))
-        (when (equal :error event)
-          (incf clojure-test-error-count)
-          (clojure-test-highlight-problem line event actual)))))))
+        (if (equal :fail event)
+            (progn (incf clojure-test-failure-count)
+                   (clojure-test-highlight-problem
+                    line event (format "Expected %s, got %s" expected actual)))
+          (when (equal :error event)
+            (incf clojure-test-error-count)
+            (clojure-test-highlight-problem line event actual)))))))
 
 (defun clojure-test-highlight-problem (line event message)
   ;; (add-to-list 'the-results (list line event message))
@@ -222,7 +226,8 @@
      (clojure-test-eval (format "(load-file \"%s\")"
                                 (buffer-file-name))
                         (lambda (&rest args)
-                          (clojure-test-eval "(refer 'clojure-test-mode) ((intern *testing-framework-namespace* 'run-tests))"
+                          (clojure-test-eval "(refer 'clojure-test-mode)
+                            ((intern *testing-framework-namespace* 'run-tests))"
                                              #'clojure-test-get-results))))))
 
 (defun clojure-test-show-result ()
@@ -231,7 +236,8 @@
   (let ((overlay (find-if (lambda (o) (overlay-get o 'message))
                           (overlays-at (point)))))
     (if overlay
-        (message (replace-regexp-in-string "%" "%%" (overlay-get overlay 'message))))))
+        (message (replace-regexp-in-string "%" "%%"
+                                           (overlay-get overlay 'message))))))
 
 (defun clojure-test-clear (&optional callback)
   "Remove overlays and clear stored results."
@@ -276,10 +282,9 @@
 (define-minor-mode clojure-test-mode
   "A minor mode for running Clojure tests."
   nil " Test" clojure-test-mode-map
-  (if (slime-connected-p)
-      (progn
-        (clojure-test-set-testing-framework)
-        (clojure-test-load-reporting))))
+  (when (slime-connected-p)
+    (clojure-test-set-testing-framework)
+    (clojure-test-load-reporting)))
 
 (add-hook 'slime-connected-hook '(lambda ()
                                    (clojure-test-set-testing-framework)
@@ -287,7 +292,8 @@
 
 ;;;###autoload
 (defun clojure-test-maybe-enable ()
-  "Enable clojure-test-mode if the current buffer contains Clojure tests or if the file is in a 'test' directory."
+  "Enable clojure-test-mode if the current buffer contains Clojure tests.
+Also will enable it if the file is in a test directory."
   (save-excursion
     (goto-char (point-min))
     (if (or (search-forward "(deftest" nil t)
