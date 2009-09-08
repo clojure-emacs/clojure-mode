@@ -113,13 +113,6 @@ indentation."
   :type 'integer
   :group 'clojure-mode)
 
-(defvar clojure-last-known-good-revisions
-  '(("clojure" . "origin/1.0")
-    ("clojure-contrib" . "origin/clojure-1.0-compatible")
-    ("swank-clojure" . "e2ec46fdd6533e093e26c4a0694cac4f29ca1d53")
-    ("slime" . "a4a75da81bbf44f51e5e7e9ba795857c95f07a4b"))
-  "Latest revision known to work with Slime.")
-
 (defvar clojure-mode-map
   (let ((map (make-sparse-keymap)))
     (set-keymap-parent map lisp-mode-shared-map)
@@ -628,19 +621,20 @@ This requires git, a JVM, ant, and an active Internet connection."
     (message "Checking out source... this will take a while...")
     (dolist (cmd '("git clone git://github.com/richhickey/clojure.git"
                    "git clone git://github.com/richhickey/clojure-contrib.git"
-                   "git clone git://github.com/jochu/swank-clojure.git"
+                   "git clone git://github.com/technomancy/swank-clojure.git"
                    "git clone --depth 2 git://github.com/technomancy/slime.git"))
       (unless (= 0 (shell-command cmd))
         (error "Clojure installation step failed: %s" cmd)))
 
-    (dolist (repo clojure-last-known-good-revisions)
-      (cd (format "%s/%s" src-root (first repo)))
-      (shell-command (format "git checkout %s" (cdr repo))))
-
-    (message "Compiling...")
-    (cd (concat src-root "/clojure"))
+    (cd (format "%s/clojure" src-root))
+    (shell-command "git checkout 1.0")
     (unless (= 0 (shell-command "ant"))
       (error "Couldn't compile Clojure."))
+
+    (cd (format "%s/clojure-contrib" src-root))
+    (shell-command "git checkout clojure-1.0-compatible")
+    (unless (= 0 (shell-command "ant -Dclojure.jar=../clojure/clojure.jar"))
+      (error "Couldn't compile Contrib."))
 
     (with-output-to-temp-buffer "clojure-install-note"
       (princ
