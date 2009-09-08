@@ -13,8 +13,8 @@
 
 ;;; Commentary:
 
-;; Provides font-lock, indentation, and functions for communication
-;; with subprocesses for the Clojure language. (http://clojure.org)
+;; Provides font-lock, indentation, and navigation for the Clojure
+;; language. (http://clojure.org)
 
 ;;; Installation:
 
@@ -50,9 +50,7 @@
 ;;; Todo:
 
 ;; * make install command more recoverable
-;; * option to follow snapshot vs stable
 ;; * hashbang is also a valid comment character
-;; * do the inferior-lisp functions work without SLIME? needs documentation
 
 ;;; License:
 
@@ -94,14 +92,6 @@ restart (ie. M-x clojure-mode) of existing clojure mode buffers."
   :type 'boolean
   :group 'clojure-mode)
 
-(defcustom clojure-mode-load-command  "(clojure.core/load-file \"%s\")\n"
-  "*Format-string for building a Clojure expression to load a file.
-This format string should use `%s' to substitute a file name
-and should result in a Clojure expression that will command the inferior
-Clojure to load that file."
-  :type 'string
-  :group 'clojure-mode)
-
 (defcustom clojure-mode-use-backtracking-indent nil
   "Set to non-nil to enable backtracking/context sensitive indentation."
   :type 'boolean
@@ -115,25 +105,9 @@ Clojure to load that file."
 (defvar clojure-mode-map
   (let ((map (make-sparse-keymap)))
     (set-keymap-parent map lisp-mode-shared-map)
-    (define-key map "\e\C-x" 'lisp-eval-defun)
-    (define-key map "\C-x\C-e" 'lisp-eval-last-sexp)
-    (define-key map "\C-c\C-e" 'lisp-eval-last-sexp)
-    (define-key map "\C-c\C-l" 'clojure-load-file)
-    (define-key map "\C-c\C-r" 'lisp-eval-region)
-    (define-key map "\C-c\C-z" 'run-lisp)
     map)
   "Keymap for ordinary Clojure mode.
 All commands in `lisp-mode-shared-map' are inherited by this map.")
-
-(easy-menu-define clojure-menu clojure-mode-map "Menu used in `clojure-mode'."
-  '("Clojure"
-    ["Eval defun"         lisp-eval-defun         t]
-    ["Eval defun and go"  lisp-eval-defun-and-go  t]
-    ["Eval last sexp"     lisp-eval-last-sexp     t]
-    ["Eval region"        lisp-eval-region        t]
-    ["Eval region and go" lisp-eval-region-and-go t]
-    ["Load file..."       clojure-load-file       t]
-    ["Run Lisp"           run-lisp                t]))
 
 (defvar clojure-mode-syntax-table
   (let ((table (copy-syntax-table emacs-lisp-mode-syntax-table)))
@@ -151,11 +125,6 @@ All commands in `lisp-mode-shared-map' are inherited by this map.")
 
 (define-abbrev-table 'clojure-mode-abbrev-table ())
 
-(defvar clojure-prev-l/c-dir/file nil
-  "Record last directory and file used in loading or compiling.
-This holds a cons cell of the form `(DIRECTORY . FILE)'
-describing the last `clojure-load-file' or `clojure-compile-file' command.")
-
 (defvar clojure-def-regexp "^\\s *\\((def\\S *\\s +\\(\[^ \n\t\]+\\)\\)"
   "A regular expression to match any top-level definitions.")
 
@@ -166,8 +135,6 @@ Commands:
 Delete converts tabs to spaces as it moves back.
 Blank lines separate paragraphs.  Semicolons start comments.
 \\{clojure-mode-map}
-Note that `run-lisp' may be used either to start an inferior Lisp job
-or to switch back to an existing one.
 
 Entry to this mode calls the value of `clojure-mode-hook'
 if that value is non-nil."
@@ -386,18 +353,6 @@ elements of a def* forms."
       ("\\<io\\!\\>" 0 font-lock-warning-face)))
   "Default expressions to highlight in Clojure mode.")
 
-(defun clojure-load-file (file-name)
-  "Load a Lisp file into the inferior Lisp process."
-  (interactive (comint-get-source "Load Clojure file: "
-                                  clojure-prev-l/c-dir/file
-                                  '(clojure-mode) t))
-  (comint-check-source file-name) ; Check to see if buffer needs saved.
-  (setq clojure-prev-l/c-dir/file (cons (file-name-directory file-name)
-                                        (file-name-nondirectory file-name)))
-  (comint-send-string (inferior-lisp-proc)
-                      (format clojure-mode-load-command file-name))
-  (switch-to-lisp t))
-
 (defun clojure-indent-function (indent-point state)
   "This function is the normal value of the variable `lisp-indent-function'.
 It is used when indenting a line within a function call, to see if the
@@ -511,7 +466,6 @@ check for contextual indenting."
     indent))
 
 ;; clojure backtracking indent is experimental and the format for these
-
 ;; entries are subject to change
 (put 'implement 'clojure-backtracking-indent '(4 (2)))
 (put 'letfn 'clojure-backtracking-indent '((2) 2))
