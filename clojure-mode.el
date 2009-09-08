@@ -97,14 +97,13 @@ restart (ie. M-x clojure-mode) of existing clojure mode buffers."
 (defcustom clojure-mode-load-command  "(clojure.core/load-file \"%s\")\n"
   "*Format-string for building a Clojure expression to load a file.
 This format string should use `%s' to substitute a file name
-and should result in a Clojure expression that will command the inferior Clojure
-to load that file."
+and should result in a Clojure expression that will command the inferior
+Clojure to load that file."
   :type 'string
   :group 'clojure-mode)
 
 (defcustom clojure-mode-use-backtracking-indent nil
-  "Set to non-nil to enable backtracking/context sensitive
-indentation."
+  "Set to non-nil to enable backtracking/context sensitive indentation."
   :type 'boolean
   :group 'clojure-mode)
 
@@ -126,7 +125,6 @@ indentation."
   "Keymap for ordinary Clojure mode.
 All commands in `lisp-mode-shared-map' are inherited by this map.")
 
-
 (easy-menu-define clojure-menu clojure-mode-map "Menu used in `clojure-mode'."
   '("Clojure"
     ["Eval defun"         lisp-eval-defun         t]
@@ -136,7 +134,6 @@ All commands in `lisp-mode-shared-map' are inherited by this map.")
     ["Eval region and go" lisp-eval-region-and-go t]
     ["Load file..."       clojure-load-file       t]
     ["Run Lisp"           run-lisp                t]))
-
 
 (defvar clojure-mode-syntax-table
   (let ((table (copy-syntax-table emacs-lisp-mode-syntax-table)))
@@ -199,15 +196,19 @@ if that value is non-nil."
   (if (and (not (boundp 'font-lock-extend-region-functions))
            (or clojure-mode-font-lock-multiline-def
                clojure-mode-font-lock-comment-sexp))
-      (message "Clojure mode font lock extras are unavailable, please upgrade to atleast version 22 ")
+      (message "Clojure mode font lock extras are unavailable.
+Please upgrade to at least version 22 ")
 
     (when clojure-mode-font-lock-multiline-def
-      (add-to-list 'font-lock-extend-region-functions 'clojure-font-lock-extend-region-def t))
+      (add-to-list 'font-lock-extend-region-functions
+                   'clojure-font-lock-extend-region-def t))
 
     (when clojure-mode-font-lock-comment-sexp
-      (add-to-list 'font-lock-extend-region-functions 'clojure-font-lock-extend-region-comment t)
+      (add-to-list 'font-lock-extend-region-functions
+                   'clojure-font-lock-extend-region-comment t)
       (make-local-variable 'clojure-font-lock-keywords)
-      (add-to-list 'clojure-font-lock-keywords  'clojure-font-lock-mark-comment t)
+      (add-to-list 'clojure-font-lock-keywords
+                   'clojure-font-lock-mark-comment t)
       (set (make-local-variable 'open-paren-in-column-0-is-defun-start) nil)))
 
   (setq font-lock-defaults
@@ -216,7 +217,8 @@ if that value is non-nil."
           (("+-*/.<>=!?$%_&~^:@" . "w")) ; syntax alist
           nil
           (font-lock-mark-block-function . mark-defun)
-          (font-lock-syntactic-face-function . lisp-font-lock-syntactic-face-function)))
+          (font-lock-syntactic-face-function
+           . lisp-font-lock-syntactic-face-function)))
 
   (if (fboundp 'run-mode-hooks)
       (run-mode-hooks 'clojure-mode-hook)
@@ -293,7 +295,6 @@ elements of a def* forms."
                 changed t))))
     changed))
 
-
 (defun clojure-font-lock-mark-comment (limit)
   "Marks all (comment ..) forms with font-lock-comment-face."
   (let (pos)
@@ -302,7 +303,8 @@ elements of a def* forms."
       (when pos
         (forward-char -8)
         (condition-case nil
-            (add-text-properties (1+ (point)) (progn (forward-sexp) (1- (point)))
+            (add-text-properties (1+ (point)) (progn
+                                                (forward-sexp) (1- (point)))
                                  '(face font-lock-comment-face multiline t))
           (error (forward-char 8))))))
   nil)
@@ -353,17 +355,17 @@ elements of a def* forms."
             "implement" "proxy" "lazy-cons" "with-meta"
             "struct" "struct-map" "delay" "locking" "sync" "time" "apply"
             "remove" "merge" "interleave" "interpose" "distinct" "for"
-            "cons" "concat" "lazy-cat" "cycle" "rest" "frest" "drop" "drop-while"
-            "nthrest" "take" "take-while" "take-nth" "butlast" "drop-last"
+            "cons" "concat" "lazy-cat" "cycle" "rest" "frest" "drop"
+            "drop-while" "nthrest" "take" "take-while" "take-nth" "butlast"
             "reverse" "sort" "sort-by" "split-at" "partition" "split-with"
-            "first" "ffirst" "rfirst" "when-first" "zipmap" "into" "set" "vec" "into-array"
-            "to-array-2d" "not-empty" "seq?" "not-every?" "every?" "not-any?" "empty?"
+            "first" "ffirst" "rfirst" "when-first" "zipmap" "into" "set" "vec"
+            "to-array-2d" "not-empty" "seq?" "not-every?" "every?" "not-any?"
             "map" "mapcat" "vector?" "list?" "hash-map" "reduce" "filter"
-            "vals" "keys" "rseq" "subseq" "rsubseq" "count"
-            "fnseq" "lazy-cons" "repeatedly" "iterate"
-            "repeat" "replicate" "range"
-            "line-seq" "resultset-seq" "re-seq" "re-find" "tree-seq" "file-seq" "xml-seq"
-            "iterator-seq" "enumeration-seq" "declare"
+            "vals" "keys" "rseq" "subseq" "rsubseq" "count" "empty?"
+            "fnseq" "lazy-cons" "repeatedly" "iterate" "drop-last"
+            "repeat" "replicate" "range"  "into-array"
+            "line-seq" "resultset-seq" "re-seq" "re-find" "tree-seq" "file-seq"
+            "iterator-seq" "enumeration-seq" "declare"  "xml-seq"
             "symbol?" "string?" "vector" "conj" "str"
             "pos?" "neg?" "zero?" "nil?" "inc" "format"
             "alter" "commute" "ref-set" "floor" "assoc" "send" "send-off" ) t)
@@ -384,10 +386,10 @@ elements of a def* forms."
       ("\\<io\\!\\>" 0 font-lock-warning-face)))
   "Default expressions to highlight in Clojure mode.")
 
-
 (defun clojure-load-file (file-name)
   "Load a Lisp file into the inferior Lisp process."
-  (interactive (comint-get-source "Load Clojure file: " clojure-prev-l/c-dir/file
+  (interactive (comint-get-source "Load Clojure file: "
+                                  clojure-prev-l/c-dir/file
                                   '(clojure-mode) t))
   (comint-check-source file-name) ; Check to see if buffer needs saved.
   (setq clojure-prev-l/c-dir/file (cons (file-name-directory file-name)
@@ -395,8 +397,6 @@ elements of a def* forms."
   (comint-send-string (inferior-lisp-proc)
                       (format clojure-mode-load-command file-name))
   (switch-to-lisp t))
-
-
 
 (defun clojure-indent-function (indent-point state)
   "This function is the normal value of the variable `lisp-indent-function'.
@@ -453,7 +453,8 @@ This function also returns nil meaning don't specify the indentation."
               ((or (eq method 'defun)
                    (and (null method)
                         (> (length function) 3)
-                        (string-match "\\`\\(?:\\S +/\\)?def\\|with-" function)))
+                        (string-match "\\`\\(?:\\S +/\\)?def\\|with-"
+                                      function)))
                (lisp-indent-defform state indent-point))
 
               ((integerp method)
@@ -462,7 +463,8 @@ This function also returns nil meaning don't specify the indentation."
               (method
                (funcall method indent-point state))
               (clojure-mode-use-backtracking-indent
-               (clojure-backtracking-indent indent-point state normal-indent)))))))
+               (clojure-backtracking-indent
+                indent-point state normal-indent)))))))
 
 (defun clojure-backtracking-indent (indent-point state normal-indent)
   "Experimental backtracking support. Will upwards in an sexp to
@@ -515,14 +517,15 @@ check for contextual indenting."
 (put 'letfn 'clojure-backtracking-indent '((2) 2))
 (put 'proxy 'clojure-backtracking-indent '(4 4 (2)))
 
-
 (defun put-clojure-indent (sym indent)
   (put sym 'clojure-indent-function indent)
-  (put (intern (format "clojure/%s" (symbol-name sym))) 'clojure-indent-function indent))
+  (put (intern (format "clojure/%s" (symbol-name sym)))
+       'clojure-indent-function indent))
 
 (defmacro define-clojure-indent (&rest kvs)
   `(progn
-     ,@(mapcar (lambda (x) `(put-clojure-indent (quote ,(first x)) ,(second x))) kvs)))
+     ,@(mapcar (lambda (x) `(put-clojure-indent
+                        (quote ,(first x)) ,(second x))) kvs)))
 
 (define-clojure-indent
   (catch 2)
@@ -595,7 +598,8 @@ is bundled up as a function so that you can call it after you've set
 
     (slime-setup '(slime-fancy))
 
-    (setq swank-clojure-jar-path (concat clojure-src-root "/clojure/clojure.jar"))
+    (setq swank-clojure-jar-path
+          (concat clojure-src-root "/clojure/clojure.jar"))
     (unless (boundp 'swank-clojure-extra-classpaths)
       (setq swank-clojure-extra-classpaths nil))
     (add-to-list 'swank-clojure-extra-classpaths
@@ -621,8 +625,8 @@ This requires git, a JVM, ant, and an active Internet connection."
     (message "Checking out source... this will take a while...")
     (dolist (cmd '("git clone git://github.com/richhickey/clojure.git"
                    "git clone git://github.com/richhickey/clojure-contrib.git"
-                   "git clone git://github.com/technomancy/swank-clojure.git"
-                   "git clone --depth 2 git://github.com/technomancy/slime.git"))
+                   "git clone --depth 2 git://github.com/technomancy/slime.git"
+                   "git clone git://github.com/technomancy/swank-clojure.git"))
       (unless (= 0 (shell-command cmd))
         (error "Clojure installation step failed: %s" cmd)))
 
@@ -642,8 +646,8 @@ This requires git, a JVM, ant, and an active Internet connection."
            "Add a call to \"\(clojure-slime-config\)\"
 to your .emacs so you can use SLIME in future sessions."
          (setq clojure-src-root src-root)
-         (format "You've installed clojure in a non-default location. If you want
-to use this installation in the future, you will need to add the following
+         (format "You've installed clojure in a non-default location. If you
+want to use this installation in the future, you will need to add the following
 lines to your personal Emacs config somewhere:
 
 \(clojure-slime-config \"%s\"\)" src-root)))
