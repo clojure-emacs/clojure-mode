@@ -31,6 +31,14 @@
 ;;       (add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
 ;;     Or generate autoloads with the `update-directory-autoloads' function.
 
+;; The clojure-install function can check out and configure all the
+;; dependencies get going with Clojure, including SLIME integration.
+;; To use this function, you may have to manually load clojure-mode.el
+;; using M-x load-file or M-x eval-buffer.
+
+;; Users of older Emacs (pre-22) should get version 1.4:
+;; http://github.com/technomancy/clojure-mode/tree/1.4
+
 ;; Paredit users:
 
 ;; Download paredit v21 or greater
@@ -41,11 +49,6 @@
 ;;   ;; require or autoload paredit-mode
 ;;   (defun lisp-enable-paredit-hook () (paredit-mode 1))
 ;;   (add-hook 'clojure-mode-hook 'lisp-enable-paredit-hook)
-
-;; The clojure-install function can check out and configure all the
-;; dependencies get going with Clojure, including SLIME integration.
-;; To use this function, you may have to manually load clojure-mode.el
-;; using M-x load-file or M-x eval-buffer.
 
 ;;; Todo:
 
@@ -78,13 +81,6 @@
   :prefix "clojure-mode-"
   :group 'applications)
 
-(defcustom clojure-mode-font-lock-multiline-def t
-  "Set to non-nil in order to enable font-lock of
-multi-line (def...) forms. Changing this will require a
-restart (ie. M-x clojure-mode) of existing clojure mode buffers."
-  :type 'boolean
-  :group 'clojure-mode)
-
 (defcustom clojure-mode-font-lock-comment-sexp nil
   "Set to non-nil in order to enable font-lock of (comment...)
 forms. This option is experimental. Changing this will require a
@@ -106,8 +102,7 @@ restart (ie. M-x clojure-mode) of existing clojure mode buffers."
   (let ((map (make-sparse-keymap)))
     (set-keymap-parent map lisp-mode-shared-map)
     map)
-  "Keymap for ordinary Clojure mode.
-All commands in `lisp-mode-shared-map' are inherited by this map.")
+  "Keymap for Clojure mode. Inherits from `lisp-mode-shared-map'.")
 
 (defvar clojure-mode-syntax-table
   (let ((table (copy-syntax-table emacs-lisp-mode-syntax-table)))
@@ -160,23 +155,16 @@ if that value is non-nil."
         (lambda ()
           (imenu--generic-function lisp-imenu-generic-expression)))
 
-  (if (and (not (boundp 'font-lock-extend-region-functions))
-           (or clojure-mode-font-lock-multiline-def
-               clojure-mode-font-lock-comment-sexp))
-      (message "Clojure mode font lock extras are unavailable.
-Please upgrade to at least version 22 ")
+  (add-to-list 'font-lock-extend-region-functions
+               'clojure-font-lock-extend-region-def t)
 
-    (when clojure-mode-font-lock-multiline-def
-      (add-to-list 'font-lock-extend-region-functions
-                   'clojure-font-lock-extend-region-def t))
-
-    (when clojure-mode-font-lock-comment-sexp
-      (add-to-list 'font-lock-extend-region-functions
-                   'clojure-font-lock-extend-region-comment t)
-      (make-local-variable 'clojure-font-lock-keywords)
-      (add-to-list 'clojure-font-lock-keywords
-                   'clojure-font-lock-mark-comment t)
-      (set (make-local-variable 'open-paren-in-column-0-is-defun-start) nil)))
+  (when clojure-mode-font-lock-comment-sexp
+    (add-to-list 'font-lock-extend-region-functions
+                 'clojure-font-lock-extend-region-comment t)
+    (make-local-variable 'clojure-font-lock-keywords)
+    (add-to-list 'clojure-font-lock-keywords
+                 'clojure-font-lock-mark-comment t)
+    (set (make-local-variable 'open-paren-in-column-0-is-defun-start) nil))
 
   (setq font-lock-defaults
         '(clojure-font-lock-keywords    ; keywords
@@ -187,9 +175,7 @@ Please upgrade to at least version 22 ")
           (font-lock-syntactic-face-function
            . lisp-font-lock-syntactic-face-function)))
 
-  (if (fboundp 'run-mode-hooks)
-      (run-mode-hooks 'clojure-mode-hook)
-    (run-hooks 'clojure-mode-hook))
+  (run-mode-hooks 'clojure-mode-hook)
 
   ;; Enable curly braces when paredit is enabled in clojure-mode-hook
   (when (and (featurep 'paredit) paredit-mode (>= paredit-version 21))
@@ -318,8 +304,7 @@ elements of a def* forms."
       (,(concat
          "(\\(?:clojure.core/\\)?"
          (regexp-opt
-          '(
-            "implement" "proxy" "lazy-cons" "with-meta"
+          '("implement" "proxy" "lazy-cons" "with-meta"
             "struct" "struct-map" "delay" "locking" "sync" "time" "apply"
             "remove" "merge" "interleave" "interpose" "distinct" "for"
             "cons" "concat" "lazy-cat" "cycle" "rest" "frest" "drop"
