@@ -1,6 +1,6 @@
 ;;; clojure-mode.el --- Major mode for Clojure code
 
-;; Copyright (C) 2007, 2008, 2009 Jeffrey Chu and Lennart Staflin
+;; Copyright (C) 2007, 2008, 2009 Jeffrey Chu, Lennart Staflin, Phil Hagelberg
 ;;
 ;; Authors: Jeffrey Chu <jochu0@gmail.com>
 ;;          Lennart Staflin <lenst@lysator.liu.se>
@@ -606,15 +606,18 @@ should be checked out in the `clojure-src-root' directory."
   (let ((orig-directory default-directory))
     (dolist (repo '("clojure" "clojure-contrib" "swank-clojure" "slime"))
       (cd (concat clojure-src-root "/" repo))
-      (unless (= 0 (shell-command "git pull origin master"))
+      (unless (= 0 (shell-command "git pull"))
         (error "Clojure update failed: %s" repo)))
 
     (message "Compiling...")
-    (save-window-excursion
-      (dolist (repo '("clojure" "clojure-contrib"))
-        (cd (concat clojure-src-root "/" repo))
-        (unless (= 0 (shell-command "ant"))
-          (error "Couldn't compile Clojure."))))
+    (cd (format "%s/clojure" src-root))
+    (unless (= 0 (shell-command "ant"))
+      (error "Couldn't compile Clojure."))
+
+    (cd (format "%s/clojure-contrib" src-root))
+    (unless (= 0 (shell-command "ant -Dclojure.jar=../clojure/clojure.jar"))
+      (error "Couldn't compile Contrib."))
+    
     (message "Finished updating Clojure.")
     (cd orig-directory)))
 
