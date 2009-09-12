@@ -535,12 +535,10 @@ is bundled up as a function so that you can call it after you've set
 
     (slime-setup '(slime-fancy))
 
-    (setq swank-clojure-jar-path
-          (concat clojure-src-root "/clojure/clojure.jar"))
-    (unless (boundp 'swank-clojure-extra-classpaths)
-      (setq swank-clojure-extra-classpaths nil))
-    (add-to-list 'swank-clojure-extra-classpaths
-                 (concat clojure-src-root "/clojure-contrib/src/"))))
+    (setq swank-clojure-classpath
+          (list
+           (concat clojure-src-root "/clojure/clojure.jar")
+           (concat clojure-src-root "/clojure-contrib/clojure-contrib.jar")))))
 
 ;;;###autoload
 (defun clojure-install (src-root)
