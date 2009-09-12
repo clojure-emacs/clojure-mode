@@ -592,7 +592,7 @@ lines to your personal Emacs config somewhere:
     (cd orig-directory)))
 
 (defun clojure-update ()
-  "Update clojure-related repositories and recompile clojure.
+  "Update clojure-related repositories from upstream master and recompile clojure.
 
 Works with clojure etc. installed via `clojure-install'. Code
 should be checked out in the `clojure-src-root' directory."
@@ -602,15 +602,15 @@ should be checked out in the `clojure-src-root' directory."
   (let ((orig-directory default-directory))
     (dolist (repo '("clojure" "clojure-contrib" "swank-clojure" "slime"))
       (cd (concat clojure-src-root "/" repo))
-      (unless (= 0 (shell-command "git pull"))
+      (unless (= 0 (shell-command "git checkout master && git pull"))
         (error "Clojure update failed: %s" repo)))
 
     (message "Compiling...")
-    (cd (format "%s/clojure" src-root))
+    (cd (format "%s/clojure" clojure-src-root))
     (unless (= 0 (shell-command "ant"))
       (error "Couldn't compile Clojure."))
 
-    (cd (format "%s/clojure-contrib" src-root))
+    (cd (format "%s/clojure-contrib" clojure-src-root))
     (unless (= 0 (shell-command "ant -Dclojure.jar=../clojure/clojure.jar"))
       (error "Couldn't compile Contrib."))
     
