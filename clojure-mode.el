@@ -6,7 +6,7 @@
 ;;          Lennart Staflin <lenst@lysator.liu.se>
 ;;          Phil Hagelberg <technomancy@gmail.com>
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki/ClojureMode
-;; Version: 1.4
+;; Version: 1.5
 ;; Keywords: languages, lisp
 
 ;; This file is not part of GNU Emacs.
@@ -47,11 +47,6 @@
 ;;   ;; require or autoload paredit-mode
 ;;   (defun lisp-enable-paredit-hook () (paredit-mode 1))
 ;;   (add-hook 'clojure-mode-hook 'lisp-enable-paredit-hook)
-
-;;; Todo:
-
-;; * make install command more recoverable
-;; * hashbang is also a valid comment character
 
 ;;; License:
 
