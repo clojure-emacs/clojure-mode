@@ -26,9 +26,7 @@
 
 ;; (0) Add this file to your load-path, usually the ~/.emacs.d directory.
 ;; (1) Either:
-;;     Add these lines to your .emacs:
-;;       (autoload 'clojure-mode "clojure-mode" "A major mode for Clojure" t)
-;;       (add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
+;;     Add this to your .emacs config: (require 'clojure-mode)
 ;;     Or generate autoloads with the `update-directory-autoloads' function.
 
 ;; The clojure-install function can check out and configure all the
