@@ -291,18 +291,17 @@ Should be  clojure.contrib.test-is or clojure.test."
                                    (clojure-test-load-reporting)))
 
 ;;;###autoload
-(defun clojure-test-maybe-enable ()
-  "Enable clojure-test-mode if the current buffer contains Clojure tests.
+(progn
+  (defun clojure-test-maybe-enable ()
+    "Enable clojure-test-mode if the current buffer contains Clojure tests.
 Also will enable it if the file is in a test directory."
-  (save-excursion
-    (goto-char (point-min))
-    (if (or (search-forward "(deftest" nil t)
-            (search-forward "(with-test" nil t)
-            (string-match "/test/$" default-directory))
-        (clojure-test-mode t))))
-
-;;;###autoload
-(add-hook 'clojure-mode-hook 'clojure-test-maybe-enable)
+    (save-excursion
+      (goto-char (point-min))
+      (if (or (search-forward "(deftest" nil t)
+              (search-forward "(with-test" nil t)
+              (string-match "/test/$" default-directory))
+          (clojure-test-mode t))))
+  (add-hook 'clojure-mode-hook 'clojure-test-maybe-enable))
 
 (provide 'clojure-test-mode)
 ;;; clojure-test-mode.el ends here

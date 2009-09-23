@@ -1,5 +1,5 @@
-(ns clojure-mode.test-is
-  (:use clojure.contrib.test-is))
+(ns clojure-mode.test
+  (:use [clojure.test]))
 
 (deftest test-str
   (is (= "o hai" (str "o" "hai"))))
