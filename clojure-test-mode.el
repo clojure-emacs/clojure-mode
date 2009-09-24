@@ -38,8 +38,8 @@
 ;; yet. To get it configured and installed, use M-x clojure-install
 ;; from clojure-mode.
 
-;; This library does not currently support clojure.contrib.test-is
-;; from Clojure Contrib's 1.0-compatibility branch. If you need it,
+;; This library may not support clojure.contrib.test-is from Clojure
+;; Contrib's 1.0-compatibility branch. If you have problems with it,
 ;; please use version 1.2 of clojure-test-mode:
 
 ;; http://github.com/technomancy/clojure-mode/tree/test-1.2
@@ -134,7 +134,13 @@
 (defun clojure-test-load-reporting ()
   "Redefine the test-is report function to store results in metadata."
   (clojure-test-eval-sync
-   "(in-ns 'clojure.test)
+   "(ns clojure.test)
+
+    (when-not (resolve 'report)
+      (require 'clojure.contrib.test-is)
+      (def *testing-vars* clojure.contrib.test-is/*testing-vars*)
+      (def run-tests clojure.contrib.test-is/run-tests)
+      (def report clojure.contrib.test-is/report))
 
     (defonce old-report report)
     (defn report [event]
