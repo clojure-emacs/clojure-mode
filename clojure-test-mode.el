@@ -13,8 +13,8 @@
 ;;; Commentary:
 
 ;; This file provides support for running Clojure tests (using the
-;; test-is framework) via SLIME and seeing feedback in the test buffer
-;; about which tests failed or errored.
+;; clojure.test framework) via SLIME and seeing feedback in the test
+;; buffer about which tests failed or errored.
 
 ;;; Installation:
 
@@ -38,10 +38,11 @@
 ;; yet. To get it configured and installed, use M-x clojure-install
 ;; from clojure-mode.
 
-;; If you get an error about the wrong number of arguments getting
-;; passed to report, you are probably using an older version of
-;; Clojure contrib's test-is library. Either upgrade your test-is or
-;; downgrade clojure-test-mode to version 1.0.
+;; This library does not currently support clojure.contrib.test-is
+;; from Clojure Contrib's 1.0-compatibility branch. If you need it,
+;; please use version 1.2 of clojure-test-mode:
+
+;; http://github.com/technomancy/clojure-mode/tree/test-1.2
 
 ;;; Usage:
 
@@ -130,24 +131,10 @@
 (defun clojure-test-eval-sync (string)
   (slime-eval `(swank:eval-and-grab-output ,string)))
 
-(defun clojure-test-set-testing-framework ()
-  "In the clojure slime connection, sets *testing-framework-namespace*.
-Should be  clojure.contrib.test-is or clojure.test."
-  (clojure-test-eval-sync
-   "(ns clojure-test-mode)
-    (def *testing-framework-namespace*
-     (try
-      (require 'clojure.contrib.test-is)
-      'clojure.contrib.test-is
-      (catch java.io.FileNotFoundException _
-        (require 'clojure.test)
-        'clojure.test)))"))
-
 (defun clojure-test-load-reporting ()
   "Redefine the test-is report function to store results in metadata."
   (clojure-test-eval-sync
-   "(refer 'clojure-test-mode)
-    (in-ns *testing-framework-namespace*)
+   "(in-ns 'clojure.test)
 
     (defonce old-report report)
     (defn report [event]
@@ -226,8 +213,7 @@ Should be  clojure.contrib.test-is or clojure.test."
      (clojure-test-eval (format "(load-file \"%s\")"
                                 (buffer-file-name))
                         (lambda (&rest args)
-                          (clojure-test-eval "(refer 'clojure-test-mode)
-                            ((intern *testing-framework-namespace* 'run-tests))"
+                          (clojure-test-eval "(clojure.test/run-tests)"
                                              #'clojure-test-get-results))))))
 
 (defun clojure-test-show-result ()
@@ -283,12 +269,9 @@ Should be  clojure.contrib.test-is or clojure.test."
   "A minor mode for running Clojure tests."
   nil " Test" clojure-test-mode-map
   (when (slime-connected-p)
-    (clojure-test-set-testing-framework)
-    (clojure-test-load-reporting)))
+    (run-hooks slime-connected-hook)))
 
-(add-hook 'slime-connected-hook '(lambda ()
-                                   (clojure-test-set-testing-framework)
-                                   (clojure-test-load-reporting)))
+(add-hook 'slime-connected-hook 'clojure-test-load-reporting)
 
 ;;;###autoload
 (progn
