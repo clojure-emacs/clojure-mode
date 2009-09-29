@@ -269,7 +269,7 @@
   "A minor mode for running Clojure tests."
   nil " Test" clojure-test-mode-map
   (when (slime-connected-p)
-    (run-hooks slime-connected-hook)))
+    (run-hooks 'slime-connected-hook)))
 
 (add-hook 'slime-connected-hook 'clojure-test-load-reporting)
 
