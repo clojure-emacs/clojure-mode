@@ -534,11 +534,13 @@ is bundled up as a function so that you can call it after you've set
           (list
            (concat clojure-src-root "/clojure/clojure.jar")
            (concat clojure-src-root "/clojure-contrib/clojure-contrib.jar")))
-    (eval-after-load 'swank-clojure
-      '(setq slime-lisp-implementations
-             (cons `(clojure ,(swank-clojure-cmd) :init swank-clojure-init)
-                   (remove-if #'(lambda (x) (eq (car x) 'clojure))
-                              slime-lisp-implementations))))))
+    (eval-after-load 'slime
+      '(progn (require 'swank-clojure)
+              (setq slime-lisp-implementations
+                    (cons `(clojure ,(swank-clojure-cmd) :init
+                                    swank-clojure-init)
+                          (remove-if #'(lambda (x) (eq (car x) 'clojure))
+                                     slime-lisp-implementations)))))))
 
 ;;;###autoload
 (defun clojure-install (src-root)
