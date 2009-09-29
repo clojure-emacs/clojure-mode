@@ -473,7 +473,8 @@ check for contextual indenting."
   (assoc 1)
   (condp 2)
 
-  (fn 'defun))
+  (fn 'defun)
+  (testing 1))
 
 ;; built-ins
 (define-clojure-indent
