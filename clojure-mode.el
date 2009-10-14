@@ -140,6 +140,8 @@ if that value is non-nil."
        "\\(\\(^\\|[^\\\\\n]\\)\\(\\\\\\\\\\)*\\)\\(;+\\|#|\\) *")
   (set (make-local-variable 'lisp-indent-function)
        'clojure-indent-function)
+  (set (make-local-variable 'lisp-doc-string-elt-property)
+	   'clojure-doc-string-elt)
   (set (make-local-variable 'font-lock-multiline) t)
 
   (setq lisp-imenu-generic-expression
@@ -330,6 +332,12 @@ elements of a def* forms."
       ("#^\\sw+" 0 font-lock-type-face)
       ("\\<io\\!\\>" 0 font-lock-warning-face)))
   "Default expressions to highlight in Clojure mode.")
+
+;; Docstring positions
+(put 'defn 'clojure-doc-string-elt 2)
+(put 'defn- 'clojure-doc-string-elt 2)
+(put 'defmulti 'clojure-doc-string-elt 2)
+(put 'defmacro 'clojure-doc-string-elt 2)
 
 (defun clojure-indent-function (indent-point state)
   "This function is the normal value of the variable `lisp-indent-function'.
