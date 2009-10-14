@@ -18,9 +18,9 @@
 
 ;;; Installation:
 
-;; If you use ELPA, you can install via the M-x package-list-packages
-;; interface. This is preferrable as you will have access to updates
-;; automatically.
+;; If you use ELPA (http://tromey.com/elpa), you can install via the
+;; M-x package-list-packages interface. This is preferrable as you
+;; will have access to updates automatically.
 
 ;; If you need to install by hand for some reason:
 

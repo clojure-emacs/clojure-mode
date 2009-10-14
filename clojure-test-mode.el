@@ -75,7 +75,8 @@
 ;;  * Add clojure-test-jump-to-(test|implementation).
 
 ;; 1.3: ???
-;;  * Support clojure.contrib.test-is and clojure.test.
+;;  * Update to use clojure.test instead of clojure.contrib.test-is.
+;;  * Fix bug suppressing test report output in repl.
 
 ;;; TODO:
 
@@ -145,7 +146,8 @@
                                            (str (:expected event))
                                            (str (:actual event))
                                            ((file-position 2) 1)])))
-     (old-report event))"))
+     (binding [*test-out* *out*]
+       (old-report event)))"))
 
 (defun clojure-test-get-results (result)
   (clojure-test-eval
@@ -156,7 +158,6 @@
 
 (defun clojure-test-extract-results (results)
   (let ((result-vars (read (cadr results))))
-    (setq the-result result-vars)
     ;; slime-eval-async hands us a cons with a useless car
     (mapcar #'clojure-test-extract-result result-vars)
     (message "Ran %s tests. %s failures, %s errors."
@@ -178,7 +179,6 @@
             (clojure-test-highlight-problem line event actual)))))))
 
 (defun clojure-test-highlight-problem (line event message)
-  ;; (add-to-list 'the-results (list line event message))
   (save-excursion
     (goto-line line)
     (set-mark-command nil)
@@ -188,6 +188,8 @@
                                      'clojure-test-failure-face
                                    'clojure-test-error-face))
       (overlay-put overlay 'message message))))
+
+;; File navigation
 
 (defun clojure-test-implementation-for (namespace)
   (let* ((segments (split-string namespace "\\."))
@@ -213,8 +215,10 @@
      (clojure-test-eval (format "(load-file \"%s\")"
                                 (buffer-file-name))
                         (lambda (&rest args)
-                          (clojure-test-eval "(clojure.test/run-tests)"
-                                             #'clojure-test-get-results))))))
+                          ;; clojure-test-eval will wrap in with-out-str
+                          (slime-eval-async `(swank:interactive-eval
+                                              "(clojure.test/run-tests)")
+                                            #'clojure-test-get-results))))))
 
 (defun clojure-test-show-result ()
   "Show the result of the test under point."
