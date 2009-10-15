@@ -259,6 +259,7 @@
 (defvar clojure-test-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "C-c C-,") 'clojure-test-run-tests)
+    (define-key map (kbd "C-c ,")   'clojure-test-run-tests)
     (define-key map (kbd "C-c C-'") 'clojure-test-show-result)
     (define-key map (kbd "C-c '")   'clojure-test-show-result)
     (define-key map (kbd "C-c k")   'clojure-test-clear)
