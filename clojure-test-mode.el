@@ -159,7 +159,7 @@
 (defun clojure-test-extract-results (results)
   (let ((result-vars (read (cadr results))))
     ;; slime-eval-async hands us a cons with a useless car
-    (mapcar #'clojure-test-extract-result result-vars)
+    (mapc #'clojure-test-extract-result result-vars)
     (message "Ran %s tests. %s failures, %s errors."
              clojure-test-count
              clojure-test-failure-count clojure-test-error-count)))
