@@ -224,14 +224,20 @@
 (defun clojure-test-run-test ()
   "Run the test at point."
   (interactive)
+  (save-some-buffers nil (lambda () (equal major-mode 'clojure-mode)))
   (clojure-test-clear
    (lambda (&rest args)
-     (slime-eval-async
-      `(swank:interactive-eval
-        ,(format "(do (load-file \"%s\") (%s) (cons nil (:status ^#'%s)))"
-                 (buffer-file-name) (first (which-function))
-                 (first (which-function))))
-      (lambda (arg) (clojure-test-extract-result (read arg)))))))
+     (let ((test-name (first (which-function))))
+       (slime-eval-async
+        `(swank:interactive-eval
+          ,(format "(do (load-file \"%s\")
+                      (when (:test ^#'%s) (%s) (cons nil (:status ^#'%s))))"
+                   (buffer-file-name) test-name test-name test-name))
+        (lambda (result-str)
+          (let ((result (read result-str)))
+            (if (cdr result)
+                (clojure-test-extract-result result)
+              (message "Not in a test.")))))))))
 
 (defun clojure-test-show-result ()
   "Show the result of the test under point."
