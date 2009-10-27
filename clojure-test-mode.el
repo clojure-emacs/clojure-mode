@@ -92,6 +92,7 @@
 (require 'cl)
 (require 'slime)
 (require 'swank-clojure)
+(require 'which-func)
 
 ;; Faces
 
@@ -220,6 +221,18 @@
                                               "(clojure.test/run-tests)")
                                             #'clojure-test-get-results))))))
 
+(defun clojure-test-run-test ()
+  "Run the test at point."
+  (interactive)
+  (clojure-test-clear
+   (lambda (&rest args)
+     (slime-eval-async
+      `(swank:interactive-eval
+        ,(format "(do (load-file \"%s\") (%s) (cons nil (:status ^#'%s)))"
+                 (buffer-file-name) (first (which-function))
+                 (first (which-function))))
+      (lambda (arg) (clojure-test-extract-result (read arg)))))))
+
 (defun clojure-test-show-result ()
   "Show the result of the test under point."
   (interactive)
@@ -260,6 +273,7 @@
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "C-c C-,") 'clojure-test-run-tests)
     (define-key map (kbd "C-c ,")   'clojure-test-run-tests)
+    (define-key map (kbd "C-c M-,") 'clojure-test-run-test)
     (define-key map (kbd "C-c C-'") 'clojure-test-show-result)
     (define-key map (kbd "C-c '")   'clojure-test-show-result)
     (define-key map (kbd "C-c k")   'clojure-test-clear)
