@@ -4,9 +4,9 @@
 
 ;; Author: Phil Hagelberg <technomancy@gmail.com>
 ;; URL: http://emacswiki.org/cgi-bin/wiki/ClojureTestMode
-;; Version: 1.2
+;; Version: 1.3
 ;; Keywords: languages, lisp
-;; Package-Requires: ((clojure-mode "1.1"))
+;; Package-Requires: ((swank-clojure "1.0"))
 
 ;; This file is not part of GNU Emacs.
 
@@ -32,11 +32,6 @@
 ;;      (add-hook 'clojure-mode-hook 'clojure-test-maybe-enable)
 ;;
 ;;     Or generate autoloads with the `update-directory-autoloads' function.
-
-;; This depends on swank-clojure to work properly. Unfortunately since
-;; SLIME is a complex dependency, it hasn't been packaged in ELPA
-;; yet. To get it configured and installed, use M-x clojure-install
-;; from clojure-mode.
 
 ;; This library does not currently support clojure.contrib.test-is
 ;; from Clojure Contrib's 1.0-compatibility branch. If you need it,
@@ -74,14 +69,13 @@
 ;; 1.2: 2009-05-19
 ;;  * Add clojure-test-jump-to-(test|implementation).
 
-;; 1.3: ???
+;; 1.3: 2009-11-10
 ;;  * Update to use clojure.test instead of clojure.contrib.test-is.
 ;;  * Fix bug suppressing test report output in repl.
 
 ;;; TODO:
 
 ;; * Implement next-problem command
-;; * Errors *loading* the tests are not reported
 ;; * Error messages need line number.
 ;; * Currently show-message needs point to be on the line with the
 ;;   "is" invocation; this could be cleaned up.
