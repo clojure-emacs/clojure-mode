@@ -6,7 +6,7 @@
 ;;          Lennart Staflin <lenst@lysator.liu.se>
 ;;          Phil Hagelberg <technomancy@gmail.com>
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki/ClojureMode
-;; Version: 1.5
+;; Version: 1.6
 ;; Keywords: languages, lisp
 
 ;; This file is not part of GNU Emacs.
@@ -595,7 +595,8 @@ Deprecated in favour of functionality in swank-clojure."
                              nil nil clojure-src-root)))
 
   (when (y-or-n-p
-         "This function is deprecated in favour of swank-clojure. Abort? ")
+         "This function is deprecated in favour of swank-clojure. \
+See http://technomancy.us/swank-clojure for details. Abort? ")
     (error "Aborted!"))
 
   (let ((orig-directory default-directory))
