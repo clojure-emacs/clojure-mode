@@ -107,6 +107,7 @@ Clojure to load that file."
     (define-key map "\C-c\C-l" 'clojure-load-file)
     (define-key map "\C-c\C-r" 'lisp-eval-region)
     (define-key map "\C-c\C-z" 'run-lisp)
+    (define-key map "RET" 'reindent-then-newline-and-indent)
     map)
   "Keymap for Clojure mode. Inherits from `lisp-mode-shared-map'.")
 
@@ -281,12 +282,13 @@ elements of a def* forms."
   (eval-when-compile
     `( ;; Definitions.
       (,(concat "(\\(?:clojure.core/\\)?\\("
-                (regexp-opt '("defn" "defn-"
+                (regexp-opt '("defn" "defn-" "def" "defonce"
                               "defmulti" "defmethod"
-                              "defmacro"
-                              "deftest"
-                              "defstruct"
-                              "def" "defonce"))
+                              "defmacro" "deftest"
+                              "defstruct" "deftype" "defprotocol"
+                              "defvar" "defunbound"
+                              "defalias" "defhinted"
+                              "defnk" "defn-memo"))
                 ;; Function declarations.
                 "\\)\\>"
                 ;; Any whitespace
@@ -306,7 +308,7 @@ elements of a def* forms."
             "for" "loop" "recur"
             "when" "when-not" "when-let" "when-first"
             "if" "if-let" "if-not"
-            "." ".." "->" "doto"
+            "." ".." "->" "->>" "doto"
             "and" "or"
             "dosync" "doseq" "dotimes" "dorun" "doall"
             "load" "import" "unimport" "ns" "in-ns" "refer"
