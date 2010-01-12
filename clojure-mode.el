@@ -107,7 +107,7 @@ Clojure to load that file."
     (define-key map "\C-c\C-l" 'clojure-load-file)
     (define-key map "\C-c\C-r" 'lisp-eval-region)
     (define-key map "\C-c\C-z" 'run-lisp)
-    (define-key map "RET" 'reindent-then-newline-and-indent)
+    (define-key map (kbd "RET") 'reindent-then-newline-and-indent)
     map)
   "Keymap for Clojure mode. Inherits from `lisp-mode-shared-map'.")
 
