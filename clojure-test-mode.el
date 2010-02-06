@@ -75,6 +75,7 @@
 
 ;;; TODO:
 
+;; * Wrap enabling of slime in save-window-excursion
 ;; * Implement next-problem command
 ;; * Error messages need line number.
 ;; * Currently show-message needs point to be on the line with the
@@ -173,16 +174,17 @@
             (incf clojure-test-error-count)
             (clojure-test-highlight-problem line event actual)))))))
 
+	
 (defun clojure-test-highlight-problem (line event message)
   (save-excursion
     (goto-line line)
-    (set-mark-command nil)
-    (end-of-line)
-    (let ((overlay (make-overlay (mark) (point))))
-      (overlay-put overlay 'face (if (equal event :fail)
-                                     'clojure-test-failure-face
-                                   'clojure-test-error-face))
-      (overlay-put overlay 'message message))))
+    (let ((beg (point)))
+      (end-of-line)
+      (let ((overlay (make-overlay beg (point))))
+        (overlay-put overlay 'face (if (equal event :fail)
+                                       'clojure-test-failure-face
+                                     'clojure-test-error-face))
+        (overlay-put overlay 'message message)))))
 
 ;; File navigation
 
