@@ -186,6 +186,35 @@
                                      'clojure-test-error-face))
         (overlay-put overlay 'message message)))))
 
+;; Problem navigation
+(defun clojure-test-find-next-problem (here)
+  "Go to the next position with an overlay message.
+Retuns the problem overlay if such a position is found, otherwise nil."
+  (let ((current-overlays (overlays-at here))
+	(next-overlays (next-overlay-change here)))
+    (while (and (not (equal next-overlays (point-max)))
+		(or
+		 (not (overlays-at next-overlays))
+		 (equal (overlays-at next-overlays)
+			current-overlays)))
+      (setq next-overlays (next-overlay-change next-overlays)))
+    (if (not (equal next-overlays (point-max)))
+	(overlay-start (car (overlays-at next-overlays))))))
+
+(defun clojure-test-find-previous-problem (here)
+  "Go to the next position with the `clojure-test-problem' text property.
+Retuns the problem overlay if such a position is found, otherwise nil."
+  (let ((current-overlays (overlays-at here))
+	(previous-overlays (previous-overlay-change here)))
+    (while (and (not (equal previous-overlays (point-min)))
+		(or
+		 (not (overlays-at previous-overlays))
+		 (equal (overlays-at previous-overlays)
+			current-overlays)))
+      (setq previous-overlays (previous-overlay-change previous-overlays)))
+    (if (not (equal previous-overlays (point-min)))
+	(overlay-start (car (overlays-at previous-overlays))))))
+
 ;; File navigation
 
 (defun clojure-test-implementation-for (namespace)
@@ -258,6 +287,30 @@
       (alter-meta! t assoc :test nil))"
    callback))
 
+
+(defun clojure-test-next-problem ()
+  "Go to and describe the next test problem in the buffer."
+  (interactive)
+  (let* ((here (point))
+	 (problem (clojure-test-find-next-problem here)))
+    (if problem
+        (goto-char problem)
+      (goto-char here)
+      (message "No next problem."))))
+
+(defun clojure-test-previous-problem ()
+  "Go to and describe the previous compiler problem in the buffer."
+  (interactive)
+  (let* ((here (point))
+	 (problem (clojure-test-find-previous-problem here)))
+    (if problem
+        (goto-char problem)
+      (goto-char here)
+      (message "No previous problem."))))
+
+
+
+
 (defun clojure-test-jump-to-implementation ()
   "Jump from test file to implementation."
   (interactive)
@@ -281,6 +334,8 @@
     (define-key map (kbd "C-c '")   'clojure-test-show-result)
     (define-key map (kbd "C-c k")   'clojure-test-clear)
     (define-key map (kbd "C-c t")   'clojure-test-jump-to-implementation)
+    (define-key map (kbd "M-p")     'clojure-test-previous-problem)
+    (define-key map (kbd "M-n")     'clojure-test-next-problem)
     map)
   "Keymap for Clojure test mode.")
 
