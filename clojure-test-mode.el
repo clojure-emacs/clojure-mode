@@ -253,16 +253,17 @@ Retuns the problem overlay if such a position is found, otherwise nil."
   (save-some-buffers nil (lambda () (equal major-mode 'clojure-mode)))
   (clojure-test-clear
    (lambda (&rest args)
-     (let ((test-name (first (which-function))))
+     (let* ((f (which-function))
+	    (test-name (if (listp f) (first f) f)))
        (slime-eval-async
         `(swank:interactive-eval
           ,(format "(do (load-file \"%s\")
-                      (when (:test ^#'%s) (%s) (cons nil (:status ^#'%s))))"
-                   (buffer-file-name) test-name test-name test-name))
+                      (when (:test (meta (var %s))) (%s) (cons (:name (meta (var %s))) (:status (meta (var %s))))))"
+                   (buffer-file-name) test-name test-name test-name test-name))
         (lambda (result-str)
           (let ((result (read result-str)))
             (if (cdr result)
-                (clojure-test-extract-result result)
+		(clojure-test-extract-result result)
               (message "Not in a test.")))))))))
 
 (defun clojure-test-show-result ()
