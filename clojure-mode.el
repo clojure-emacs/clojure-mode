@@ -679,139 +679,14 @@ check for contextual indenting."
   (handler-case 1)
   (handle 1))
 
-;;; SLIME integration
-
-;;;###autoload
-(progn
-  (defcustom clojure-src-root (expand-file-name "~/src")
-    "Directory that contains checkouts for clojure, clojure-contrib,
-slime, and swank-clojure. This value is used by `clojure-install'
-and `clojure-slime-config'."
-    :type 'string
-    :group 'clojure-mode)
-
-  ;; We want this function to be able to be loaded without loading the
-  ;; whole of clojure-mode.el since it runs at every startup.
-  (defun clojure-slime-config (&optional src-root)
-    "Load Clojure SLIME support out of the `clojure-src-root' directory.
-
-Since there's no single conventional place to keep Clojure, this
-is bundled up as a function so that you can call it after you've set
-`clojure-src-root' in your personal config."
-
-    (if src-root (setq clojure-src-root src-root))
-
-    (add-to-list 'load-path (concat clojure-src-root "/slime"))
-    (add-to-list 'load-path (concat clojure-src-root "/slime/contrib"))
-    (add-to-list 'load-path (concat clojure-src-root "/swank-clojure"))
-
-    (require 'slime-autoloads)
-    (require 'swank-clojure-autoload)
-
-    (slime-setup '(slime-fancy))
-
-    (setq swank-clojure-classpath
-          (list
-           (concat clojure-src-root "/clojure/clojure.jar")
-           (concat clojure-src-root "/clojure-contrib/clojure-contrib.jar")))
-    (eval-after-load 'slime
-      '(progn (require 'swank-clojure)
-              (setq slime-lisp-implementations
-                    (cons `(clojure ,(swank-clojure-cmd) :init
-                                    swank-clojure-init)
-                          (remove-if #'(lambda (x) (eq (car x) 'clojure))
-                                     slime-lisp-implementations)))))))
-
-;;;###autoload
-(defun clojure-install (src-root)
-  "Perform the initial Clojure install along with Emacs support libs.
-
-This requires git, a JVM, ant, and an active Internet connection.
-Deprecated in favour of functionality in swank-clojure."
-  (interactive (list
-                (read-string (concat "Install Clojure in (default: "
-                                     clojure-src-root "): ")
-                             nil nil clojure-src-root)))
-
-  (when (y-or-n-p
-         "This function is deprecated in favour of swank-clojure. \
-See http://technomancy.us/swank-clojure for details. Abort? ")
-    (error "Aborted!"))
-
-  (let ((orig-directory default-directory))
-    (make-directory src-root t)
-    (cd src-root)
-
-    (if (file-exists-p (concat src-root "/clojure"))
-        (error "Clojure is already installed at %s/clojure" src-root))
-
-    (message "Checking out source... this will take a while...")
-    (dolist (cmd '("git clone git://github.com/richhickey/clojure.git"
-                   "git clone git://github.com/richhickey/clojure-contrib.git"
-                   "git clone --depth 2 git://github.com/technomancy/slime.git"
-                   "git clone git://github.com/technomancy/swank-clojure.git"))
-      (unless (= 0 (shell-command cmd))
-        (error "Clojure installation step failed: %s" cmd)))
-
-    (cd (format "%s/clojure" src-root))
-    (shell-command "git checkout 1.0")
-    (unless (= 0 (shell-command "ant"))
-      (error "Couldn't compile Clojure."))
-
-    (cd (format "%s/clojure-contrib" src-root))
-    (shell-command "git checkout clojure-1.0-compatible")
-    (unless (= 0 (shell-command "ant -Dclojure.jar=../clojure/clojure.jar"))
-      (error "Couldn't compile Contrib."))
-
-    (with-output-to-temp-buffer "clojure-install-note"
-      (princ
-       (if (equal src-root clojure-src-root)
-           "Add a call to \"\(clojure-slime-config\)\"
-to your .emacs so you can use SLIME in future sessions."
-         (setq clojure-src-root src-root)
-         (format "You've installed clojure in a non-default location. If you
-want to use this installation in the future, you will need to add the following
-lines to your personal Emacs config somewhere:
-
-\(clojure-slime-config \"%s\"\)" src-root)))
-      (princ "\n\n Press M-x slime to launch Clojure."))
-
-    (clojure-slime-config)
-    (cd orig-directory)))
-
-(defun clojure-update ()
-  "Update clojure-related repositories from upstream master and recompile clojure.
-
-Works with clojure etc. installed via `clojure-install'. Code
-should be checked out in the `clojure-src-root' directory."
-  (interactive)
-
-  (message "Updating...")
-  (let ((orig-directory default-directory))
-    (dolist (repo '("clojure" "clojure-contrib" "swank-clojure" "slime"))
-      (cd (concat clojure-src-root "/" repo))
-      (unless (= 0 (shell-command "git checkout master && git pull"))
-        (error "Clojure update failed: %s" repo)))
-
-    (message "Compiling...")
-    (cd (format "%s/clojure" clojure-src-root))
-    (unless (= 0 (shell-command "ant"))
-      (error "Couldn't compile Clojure."))
-
-    (cd (format "%s/clojure-contrib" clojure-src-root))
-    (unless (= 0 (shell-command "ant -Dclojure.jar=../clojure/clojure.jar"))
-      (error "Couldn't compile Contrib."))
-
-    (message "Finished updating Clojure.")
-    (cd orig-directory)))
-
 (defun clojure-enable-slime-on-existing-buffers ()
   (interactive)
   (add-hook 'clojure-mode-hook 'swank-clojure-slime-mode-hook)
-  (dolist (buffer (buffer-list))
-    (with-current-buffer buffer
-      (if (equal major-mode 'clojure-mode)
-          (swank-clojure-slime-mode-hook)))))
+  (save-window-excursion
+    (dolist (buffer (buffer-list))
+      (with-current-buffer buffer
+        (if (equal major-mode 'clojure-mode)
+            (swank-clojure-slime-mode-hook))))))
 
 (add-hook 'slime-connected-hook 'clojure-enable-slime-on-existing-buffers)
 
