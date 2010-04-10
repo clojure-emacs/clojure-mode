@@ -321,7 +321,8 @@ elements of a def* forms."
             "load" "import" "unimport" "ns" "in-ns" "refer"
             "try" "catch" "finally" "throw"
             "with-open" "with-local-vars" "binding"
-            "gen-class" "gen-and-load-class" "gen-and-save-class") t)
+            "gen-class" "gen-and-load-class" "gen-and-save-class"
+            "handler-case" "handle") t)
          "\\>")
        .  1)
       ;; Built-ins
@@ -623,9 +624,7 @@ check for contextual indenting."
 (put 'proxy 'clojure-backtracking-indent '(4 4 (2)))
 
 (defun put-clojure-indent (sym indent)
-  (put sym 'clojure-indent-function indent)
-  (put (intern (format "clojure/%s" (symbol-name sym)))
-       'clojure-indent-function indent))
+  (put sym 'clojure-indent-function indent))
 
 (defmacro define-clojure-indent (&rest kvs)
   `(progn
@@ -633,45 +632,52 @@ check for contextual indenting."
                         (quote ,(first x)) ,(second x))) kvs)))
 
 (define-clojure-indent
-  (catch 2)
-  (defmuti 1)
-  (do 0)
-  (for 1)
+  ;; built-ins
+  (ns 1)
+  (fn 'defun)
+  (defn 'defun)
   (if 1)
   (if-not 1)
-  (let 1)
-  (letfn 1)
-  (loop 1)
-  (struct-map 1)
-  (assoc 1)
   (condp 2)
-
-  (fn 'defun)
-  (testing 1))
-
-;; built-ins
-(define-clojure-indent
-  (ns 1)
-  (binding 1)
+  (when 1)
+  (when-not 1)
+  (do 0)
   (comment 0)
-  (defstruct 1)
-  (doseq 1)
-  (dotimes 1)
   (doto 1)
-  (implement 1)
-  (let 1)
-  (when-let 1)
-  (if-let 1)
   (locking 1)
   (proxy 2)
-  (sync 1)
-  (when 1)
-  (when-first 1)
-  (when-let 1)
-  (when-not 1)
-  (with-local-vars 1)
   (with-open 1)
-  (with-precision 1))
+  (with-precision 1)
+  (with-local-vars 1)
+
+  (try 0)
+  (catch 2)
+
+  ;; binding forms
+  (let 1)
+  (letfn 1)
+  (binding 1)
+  (loop 1)
+  (for 1)
+  (doseq 1)
+  (dotimes 1)
+  (when-let 1)
+  (if-let 1)
+
+  ;; data structures
+  (defstruct 1)
+  (struct-map 1)
+  (assoc 1)
+
+  (defmethod 2)
+
+  ;; clojure.test
+  (testing 1)
+  (deftest 1)
+
+  ;; contrib
+  (handler-case 1)
+  (handle 1))
 
 ;;; SLIME integration
 
