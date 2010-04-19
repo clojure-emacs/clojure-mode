@@ -217,14 +217,19 @@ Retuns the problem overlay if such a position is found, otherwise nil."
 
 ;; File navigation
 
+(defun clojure-test-underscores-for-hyphens (namespace)
+  (replace-regexp-in-string "-" "_" namespace))
+
 (defun clojure-test-implementation-for (namespace)
-  (let* ((segments (split-string namespace "\\."))
+  (let* ((namespace (clojure-test-underscores-for-hyphens namespace))
+         (segments (split-string namespace "\\."))
          (common-segments (butlast segments 2))
          (impl-segments (append common-segments (last segments))))
     (mapconcat 'identity impl-segments "/")))
 
 (defun clojure-test-test-for (namespace)
-  (let* ((segments (split-string namespace "\\."))
+  (let* ((namespace (clojure-test-underscores-for-hyphens namespace))
+         (segments (split-string namespace "\\."))
          (common-segments (butlast segments))
          (test-segments (append common-segments '("test")))
          (test-segments (append test-segments (last segments))))
