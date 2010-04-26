@@ -137,7 +137,7 @@
     (defn report [event]
      (if-let [current-test (last *testing-vars*)]
              (alter-meta! current-test
-                          assoc :status (conj (:status ^current-test)
+                          assoc :status (conj (:status (meta current-test))
                                           [(:type event) (:message event)
                                            (str (:expected event))
                                            (str (:actual event))
