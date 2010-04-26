@@ -283,10 +283,10 @@ elements of a def* forms."
   (eval-when-compile
     `( ;; Definitions.
       (,(concat "(\\(?:clojure.core/\\)?\\("
-                (regexp-opt '("defn" "defn-" "def" "defonce"
+                (regexp-opt '("defn" "defn-" "def" "def-" "defonce"
                               "defmulti" "defmethod" "defmacro"
                               "defstruct" "deftype" "defprotocol"
-                              "defvar" "defunbound"
+                              "defrecord" "defvar" "defunbound"
                               "defalias" "defhinted"
                               "defnk" "defn-memo"))
                 ;; Function declarations.
@@ -404,7 +404,7 @@ elements of a def* forms."
         "pvalues" "quot" "rand" "rand-int" "range"
         "ratio?" "rational?" "rationalize" "re-find" "re-groups"
         "re-matcher" "re-matches" "re-pattern" "re-seq" "read"
-        "read-line" "read-string" "reduce" "ref" "ref-history-count"
+        "read-line" "read-string" "reify" "reduce" "ref" "ref-history-count"
         "ref-max-history" "ref-min-history" "ref-set" "refer" "refer-clojure"
         "release-pending-sends" "rem" "remove" "remove-method" "remove-ns"
         "repeat" "repeatedly" "replace" "replicate"
@@ -649,6 +649,9 @@ check for contextual indenting."
   (with-open 1)
   (with-precision 1)
   (with-local-vars 1)
+  (deftype 'defun)
+  (defrecord 'defun)
+  (defprotocol 'defun)
 
   (try 0)
   (catch 2)
