@@ -366,8 +366,9 @@ elements of a def* forms."
         "doc" "dorun" "doseq" "dosync" "dotimes"
         "doto" "double" "double-array" "doubles" "drop"
         "drop-last" "drop-while" "empty" "empty?" "ensure"
-        "enumeration-seq" "eval" "even?" "every?" "false?"
-        "ffirst" "file-seq" "filter" "find" "find-doc"
+        "enumeration-seq" "eval" "even?" "every?"
+        "extend" "extend-protocol" "extend-type" "extends?" "extenders"
+        "false?" "ffirst" "file-seq" "filter" "find" "find-doc"
         "find-ns" "find-var" "first" "float" "float-array"
         "float?" "floats" "flush" "fn" "fn?"
         "fnext" "for" "force" "format" "future"
@@ -410,7 +411,7 @@ elements of a def* forms."
         "repeat" "repeatedly" "replace" "replicate"
         "require" "reset!" "reset-meta!" "resolve" "rest"
         "resultset-seq" "reverse" "reversible?" "rseq" "rsubseq"
-        "second" "select-keys" "send" "send-off" "seq"
+        "satisfies?" "second" "select-keys" "send" "send-off" "seq"
         "seq?" "seque" "sequence" "sequential?" "set"
         "set-validator!" "set?" "short" "short-array" "shorts"
         "shutdown-agents" "slurp" "some" "sort" "sort-by"
@@ -652,6 +653,9 @@ check for contextual indenting."
   (deftype 'defun)
   (defrecord 'defun)
   (defprotocol 'defun)
+  (extend 1)
+  (extend-protocol 1)
+  (extend-type 1)
 
   (try 0)
   (catch 2)
