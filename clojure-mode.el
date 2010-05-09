@@ -199,8 +199,19 @@ if that value is non-nil."
     (define-key clojure-mode-map "{" 'paredit-open-curly)
     (define-key clojure-mode-map "}" 'paredit-close-curly)))
 
-;; (define-key clojure-mode-map "{" 'self-insert-command)
-;; (define-key clojure-mode-map "}" 'self-insert-command)
+(defun clojure-load-file (file-name)
+  "Load a Lisp file into the inferior Lisp process."
+  (interactive (comint-get-source "Load Clojure file: "
+                                  clojure-prev-l/c-dir/file
+                                  '(clojure-mode) t))
+  (comint-check-source file-name) ; Check to see if buffer needs saved.
+  (setq clojure-prev-l/c-dir/file (cons (file-name-directory file-name)
+                                        (file-name-nondirectory file-name)))
+  (comint-send-string (inferior-lisp-proc)
+                      (format clojure-mode-load-command file-name))
+  (switch-to-lisp t))
+
+
 
 (defun clojure-font-lock-def-at-point (point)
   "Find the position range between the top-most def* and the
@@ -494,17 +505,7 @@ elements of a def* forms."
 (put 'defmulti 'clojure-doc-string-elt 2)
 (put 'defmacro 'clojure-doc-string-elt 2)
 
-(defun clojure-load-file (file-name)
-  "Load a Lisp file into the inferior Lisp process."
-  (interactive (comint-get-source "Load Clojure file: "
-                                  clojure-prev-l/c-dir/file
-                                  '(clojure-mode) t))
-  (comint-check-source file-name) ; Check to see if buffer needs saved.
-  (setq clojure-prev-l/c-dir/file (cons (file-name-directory file-name)
-                                        (file-name-nondirectory file-name)))
-  (comint-send-string (inferior-lisp-proc)
-                      (format clojure-mode-load-command file-name))
-  (switch-to-lisp t))
+
 
 (defun clojure-indent-function (indent-point state)
   "This function is the normal value of the variable `lisp-indent-function'.
@@ -641,6 +642,7 @@ check for contextual indenting."
   (if-not 1)
   (condp 2)
   (when 1)
+  (while 1)
   (when-not 1)
   (do 0)
   (comment 0)
