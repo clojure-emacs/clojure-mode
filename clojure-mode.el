@@ -688,16 +688,37 @@ check for contextual indenting."
   (handler-case 1)
   (handle 1))
 
+
+
+;; A little bit of SLIME help:
+;; swank-clojure.el should now only be needed if you want to launch from Emacs
+
+(defun clojure-find-package ()
+  (let ((regexp "^(\\(clojure.core/\\)?\\(in-\\)?ns\\+?[ \t\n\r]+\\(#\\^{[^}]+}[ \t\n\r]+\\)?[:']?\\([^()\" \t\n]+\\>\\)"))
+    (save-excursion
+      (when (or (re-search-backward regexp nil t)
+                (re-search-forward regexp nil t))
+        (match-string-no-properties 4)))))
+
+(defun clojure-enable-slime ()
+  (slime-mode t)
+  (set (make-local-variable 'slime-find-buffer-package-function)
+       'clojure-find-package))
+
+;;;###autoload
 (defun clojure-enable-slime-on-existing-buffers ()
   (interactive)
-  (add-hook 'clojure-mode-hook 'swank-clojure-slime-mode-hook)
+  (add-hook 'clojure-mode-hook 'clojure-enable-slime)
   (save-window-excursion
     (dolist (buffer (buffer-list))
       (with-current-buffer buffer
-        (if (equal major-mode 'clojure-mode)
-            (swank-clojure-slime-mode-hook))))))
+        (when (eq major-mode 'clojure-mode)
+          (clojure-enable-slime))))))
 
+;;;###autoload
 (add-hook 'slime-connected-hook 'clojure-enable-slime-on-existing-buffers)
+
+
 
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
