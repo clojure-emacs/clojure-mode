@@ -164,7 +164,6 @@ if that value is non-nil."
        'clojure-indent-function)
   (set (make-local-variable 'lisp-doc-string-elt-property)
        'clojure-doc-string-elt)
-  (set (make-local-variable 'font-lock-multiline) t)
 
   (setq lisp-imenu-generic-expression
         `((nil ,clojure-def-regexp 2)))
@@ -172,25 +171,7 @@ if that value is non-nil."
         (lambda ()
           (imenu--generic-function lisp-imenu-generic-expression)))
 
-  (add-to-list 'font-lock-extend-region-functions
-               'clojure-font-lock-extend-region-def t)
-
-  (when clojure-mode-font-lock-comment-sexp
-    (add-to-list 'font-lock-extend-region-functions
-                 'clojure-font-lock-extend-region-comment t)
-    (make-local-variable 'clojure-font-lock-keywords)
-    (add-to-list 'clojure-font-lock-keywords
-                 'clojure-font-lock-mark-comment t)
-    (set (make-local-variable 'open-paren-in-column-0-is-defun-start) nil))
-
-  (setq font-lock-defaults
-        '(clojure-font-lock-keywords    ; keywords
-          nil nil
-          (("+-*/.<>=!?$%_&~^:@" . "w")) ; syntax alist
-          nil
-          (font-lock-mark-block-function . mark-defun)
-          (font-lock-syntactic-face-function
-           . lisp-font-lock-syntactic-face-function)))
+  (clojure-mode-font-lock-setup)
 
   (run-mode-hooks 'clojure-mode-hook)
 
@@ -212,6 +193,30 @@ if that value is non-nil."
   (switch-to-lisp t))
 
 
+
+(defun clojure-mode-font-lock-setup ()
+  "Configures font-lock for editing Clojure code."
+  (interactive)
+  (set (make-local-variable 'font-lock-multiline) t)
+  (add-to-list 'font-lock-extend-region-functions
+               'clojure-font-lock-extend-region-def t)
+
+  (when clojure-mode-font-lock-comment-sexp
+    (add-to-list 'font-lock-extend-region-functions
+                 'clojure-font-lock-extend-region-comment t)
+    (make-local-variable 'clojure-font-lock-keywords)
+    (add-to-list 'clojure-font-lock-keywords
+                 'clojure-font-lock-mark-comment t)
+    (set (make-local-variable 'open-paren-in-column-0-is-defun-start) nil))
+
+  (setq font-lock-defaults
+        '(clojure-font-lock-keywords    ; keywords
+          nil nil
+          (("+-*/.<>=!?$%_&~^:@" . "w")) ; syntax alist
+          nil
+          (font-lock-mark-block-function . mark-defun)
+          (font-lock-syntactic-face-function
+           . lisp-font-lock-syntactic-face-function))))
 
 (defun clojure-font-lock-def-at-point (point)
   "Find the position range between the top-most def* and the
