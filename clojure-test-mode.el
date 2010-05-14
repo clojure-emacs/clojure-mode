@@ -1,12 +1,12 @@
 ;;; clojure-test-mode.el --- Minor mode for Clojure tests
 
-;; Copyright (C) 2009 Phil Hagelberg
+;; Copyright (C) 2009-2010 Phil Hagelberg
 
 ;; Author: Phil Hagelberg <technomancy@gmail.com>
 ;; URL: http://emacswiki.org/cgi-bin/wiki/ClojureTestMode
-;; Version: 1.3
-;; Keywords: languages, lisp
-;; Package-Requires: ((swank-clojure "1.0"))
+;; Version: 1.4
+;; Keywords: languages, lisp, test
+;; Package-Requires: ((slime "20091016") (clojure-mode "1.7"))
 
 ;; This file is not part of GNU Emacs.
 
@@ -73,9 +73,15 @@
 ;;  * Update to use clojure.test instead of clojure.contrib.test-is.
 ;;  * Fix bug suppressing test report output in repl.
 
+;; 1.4: 2010-05-13
+;;  * Fix jump-to-test
+;;  * Update to work with Clojure 1.2.
+;;  * Added next/prev problem.
+;;  * Depend upon slime, not swank-clojure.
+;;  * Don't move the mark when activating.
+
 ;;; TODO:
 
-;; * Wrap enabling of slime in save-window-excursion
 ;; * Implement next-problem command
 ;; * Error messages need line number.
 ;; * Currently show-message needs point to be on the line with the
@@ -86,7 +92,6 @@
 (require 'clojure-mode)
 (require 'cl)
 (require 'slime)
-(require 'swank-clojure)
 (require 'which-func)
 
 ;; Faces
