@@ -362,11 +362,10 @@ Retuns the problem overlay if such a position is found, otherwise nil."
     "Enable clojure-test-mode if the current buffer contains Clojure tests.
 Also will enable it if the file is in a test directory."
     (save-excursion
-      (goto-char (point-min))
-      (if (or (search-forward "(deftest" nil t)
-              (search-forward "(with-test" nil t)
-              (string-match "/test/$" default-directory))
-          (clojure-test-mode t))))
+      (save-window-excursion
+        (goto-char (point-min))
+        (when (search-forward "clojure.test" nil t)
+            (clojure-test-mode t)))))
   (add-hook 'clojure-mode-hook 'clojure-test-maybe-enable))
 
 (provide 'clojure-test-mode)
