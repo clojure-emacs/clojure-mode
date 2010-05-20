@@ -683,7 +683,7 @@ check for contextual indenting."
   (struct-map 1)
   (assoc 1)
 
-  (defmethod 2)
+  (defmethod 'defun)
 
   ;; clojure.test
   (testing 1)
