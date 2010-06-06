@@ -519,6 +519,8 @@ elements of a def* forms."
 (put 'defn- 'clojure-doc-string-elt 2)
 (put 'defmulti 'clojure-doc-string-elt 2)
 (put 'defmacro 'clojure-doc-string-elt 2)
+(put 'definline 'clojure-doc-string-elt 2)
+(put 'defprotocol 'clojure-doc-string-elt 2)
 
 
 
