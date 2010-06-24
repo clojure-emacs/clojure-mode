@@ -222,22 +222,32 @@ Retuns the problem overlay if such a position is found, otherwise nil."
 
 ;; File navigation
 
+(defvar clojure-test-ns-segment-position -1
+  "Which segment of the ns is \"test\" inserted in your test name convention.
+
+Customize this depending on your project's conventions. Negative
+numbers count from the end:
+
+  leiningen.compile -> leiningen.test.compile (uses 1)
+  clojure.http.client -> clojure.http.test.client (uses -1)")
+
 (defun clojure-test-underscores-for-hyphens (namespace)
   (replace-regexp-in-string "-" "_" namespace))
 
 (defun clojure-test-implementation-for (namespace)
   (let* ((namespace (clojure-test-underscores-for-hyphens namespace))
          (segments (split-string namespace "\\."))
-         (common-segments (butlast segments 2))
-         (impl-segments (append common-segments (last segments))))
+         (before (subseq segments 0 clojure-test-ns-segment-position))
+         (after (subseq segments (1+ clojure-test-ns-segment-position)))
+         (impl-segments (append before after)))
     (mapconcat 'identity impl-segments "/")))
 
 (defun clojure-test-test-for (namespace)
   (let* ((namespace (clojure-test-underscores-for-hyphens namespace))
          (segments (split-string namespace "\\."))
-         (common-segments (butlast segments))
-         (test-segments (append common-segments '("test")))
-         (test-segments (append test-segments (last segments))))
+         (before (subseq segments 0 clojure-test-ns-segment-position))
+         (after (subseq segments clojure-test-ns-segment-position))
+         (test-segments (append before (list "test") after)))
     (mapconcat 'identity test-segments "/")))
 
 ;; Commands
@@ -318,9 +328,6 @@ Retuns the problem overlay if such a position is found, otherwise nil."
         (goto-char problem)
       (goto-char here)
       (message "No previous problem."))))
-
-
-
 
 (defun clojure-test-jump-to-implementation ()
   "Jump from test file to implementation."
