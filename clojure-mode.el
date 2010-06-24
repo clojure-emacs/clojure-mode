@@ -108,6 +108,7 @@ Clojure to load that file."
     (define-key map "\C-c\C-r" 'lisp-eval-region)
     (define-key map "\C-c\C-z" 'run-lisp)
     (define-key map (kbd "RET") 'reindent-then-newline-and-indent)
+    (define-key map (kbd "C-c t") 'clojure-jump-to-test)
     map)
   "Keymap for Clojure mode. Inherits from `lisp-mode-shared-map'.")
 
@@ -135,6 +136,15 @@ describing the last `clojure-load-file' or `clojure-compile-file' command.")
 
 (defvar clojure-def-regexp "^\\s *\\((def\\S *\\s +\\(\[^ \n\t\]+\\)\\)"
   "A regular expression to match any top-level definitions.")
+
+(defvar clojure-test-ns-segment-position -1
+  "Which segment of the ns is \"test\" inserted in your test name convention.
+
+Customize this depending on your project's conventions. Negative
+numbers count from the end:
+
+  leiningen.compile -> leiningen.test.compile (uses 1)
+  clojure.http.client -> clojure.http.test.client (uses -1)")
 
 ;;;###autoload
 (defun clojure-mode ()
@@ -720,6 +730,26 @@ check for contextual indenting."
       (with-current-buffer buffer
         (when (eq major-mode 'clojure-mode)
           (clojure-enable-slime))))))
+
+;; Test navigation:
+
+(defun clojure-underscores-for-hyphens (namespace)
+  (replace-regexp-in-string "-" "_" namespace))
+
+(defun clojure-test-for (namespace)
+  (let* ((namespace (clojure-underscores-for-hyphens namespace))
+         (segments (split-string namespace "\\."))
+         (before (subseq segments 0 clojure-test-ns-segment-position))
+         (after (subseq segments clojure-test-ns-segment-position))
+         (test-segments (append before (list "test") after)))
+    (mapconcat 'identity test-segments "/")))
+
+(defun clojure-jump-to-test ()
+  "Jump from implementation file to test."
+  (interactive)
+  (find-file (format "%s/test/%s.clj"
+                     (locate-dominating-file buffer-file-name "src/")
+                     (clojure-test-for (clojure-find-package)))))
 
 ;;;###autoload
 (add-hook 'slime-connected-hook 'clojure-enable-slime-on-existing-buffers)
