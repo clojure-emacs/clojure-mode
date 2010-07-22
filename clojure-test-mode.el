@@ -146,7 +146,10 @@
                                           [(:type event) (:message event)
                                            (str (:expected event))
                                            (str (:actual event))
-                                           ((file-position 2) 1)])))
+                                           (if (and (= (:major *clojure-version*) 1)
+                                                    (< (:minor *clojure-version*) 2))
+                                               ((file-position 2) 1)
+                                               (:line event))])))
      (binding [*test-out* *out*]
        (old-report event)))"))
 
@@ -158,6 +161,7 @@
    #'clojure-test-extract-results))
 
 (defun clojure-test-extract-results (results)
+  (print results)
   (let ((result-vars (read (cadr results))))
     ;; slime-eval-async hands us a cons with a useless car
     (mapc #'clojure-test-extract-result result-vars)
