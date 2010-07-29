@@ -658,6 +658,7 @@ check for contextual indenting."
   ;; built-ins
   (ns 1)
   (fn 'defun)
+  (def 'defun)
   (defn 'defun)
   (if 1)
   (if-not 1)
@@ -666,6 +667,7 @@ check for contextual indenting."
   (while 1)
   (when-not 1)
   (do 0)
+  (future 0)
   (comment 0)
   (doto 1)
   (locking 1)
