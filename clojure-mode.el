@@ -320,7 +320,7 @@ elements of a def* forms."
                 ;; Any whitespace
                 "[ \r\n\t]*"
                 ;; Possibly type or metadata
-                "\\(?:#^\\(?:{[^}]*}\\|\\sw+\\)[ \r\n\t]*\\)?"
+                "\\(?:#?^\\(?:{[^}]*}\\|\\sw+\\)[ \r\n\t]*\\)?"
 
                 "\\(\\sw+\\)?")
        (1 font-lock-keyword-face)
@@ -462,7 +462,7 @@ elements of a def* forms."
       ;; (fn name? args ...)
       (,(concat "(\\(?:clojure.core/\\)?\\(fn\\)[ \t]+"
                 ;; Possibly type
-                "\\(?:#^\\sw+[ \t]*\\)?"
+                "\\(?:#?^\\sw+[ \t]*\\)?"
                 ;; Possibly name
                 "\\(\\sw+\\)?" )
        (1 font-lock-keyword-face)
