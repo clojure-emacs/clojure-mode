@@ -666,6 +666,7 @@ check for contextual indenting."
   (when 1)
   (while 1)
   (when-not 1)
+  (when-first 1)
   (do 0)
   (future 0)
   (comment 0)
