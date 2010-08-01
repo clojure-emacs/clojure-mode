@@ -522,6 +522,16 @@ elements of a def* forms."
 (put 'definline 'clojure-doc-string-elt 2)
 (put 'defprotocol 'clojure-doc-string-elt 2)
 
+;; Docstring positions - contrib
+(put 'defalias 'clojure-doc-string-elt 3)
+(put 'defmacro- 'clojure-doc-string-elt 2)
+(put 'defn-memo 'clojure-doc-string-elt 2)
+(put 'defonce- 'clojure-doc-string-elt 3)
+(put 'defunbound 'clojure-doc-string-elt 2)
+(put 'defunbound- 'clojure-doc-string-elt 2)
+(put 'defvar 'clojure-doc-string-elt 3)
+(put 'defvar- 'clojure-doc-string-elt 3)
+
 
 
 (defun clojure-indent-function (indent-point state)
