@@ -312,9 +312,11 @@ elements of a def* forms."
                 (regexp-opt '("defn" "defn-" "def" "def-" "defonce"
                               "defmulti" "defmethod" "defmacro"
                               "defstruct" "deftype" "defprotocol"
-                              "defrecord" "defvar" "defunbound"
-                              "defalias" "defhinted"
-                              "defnk" "defn-memo"))
+                              "defrecord"
+                              "defalias" "defhinted" "defmacro-"
+                              "defn-memo" "defnk" "defonce-"
+                              "defstruct-" "defunbound" "defunbound-"
+                              "defvar" "defvar-"))
                 ;; Function declarations.
                 "\\)\\>"
                 ;; Any whitespace
