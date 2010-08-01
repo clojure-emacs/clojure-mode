@@ -526,6 +526,7 @@ elements of a def* forms."
 (put 'defalias 'clojure-doc-string-elt 3)
 (put 'defmacro- 'clojure-doc-string-elt 2)
 (put 'defn-memo 'clojure-doc-string-elt 2)
+(put 'defnk 'clojure-doc-string-elt 2)
 (put 'defonce- 'clojure-doc-string-elt 3)
 (put 'defunbound 'clojure-doc-string-elt 2)
 (put 'defunbound- 'clojure-doc-string-elt 2)
