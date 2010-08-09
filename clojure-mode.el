@@ -514,7 +514,16 @@ elements of a def* forms."
       ("\\<^?:\\(\\sw\\|#\\)+\\>" 0 font-lock-builtin-face)
       ;; Meta type annotation #^Type or ^Type
       ("#?^\\sw+" 0 font-lock-type-face)
-      ("\\<io\\!\\>" 0 font-lock-warning-face)))
+      ("\\<io\\!\\>" 0 font-lock-warning-face)
+
+      ;;Java interop highlighting
+      ("\\<\\.[a-z][a-zA-Z0-9]*\\>" 0 font-lock-preprocessor-face) ;; .foo .barBaz .qux01
+      ("\\<[A-Z][a-zA-Z0-9]*/[a-zA-Z0-9/$_]+\\>" 0 font-lock-preprocessor-face) ;; Foo Bar$Baz Qux_
+      ("\\<[a-zA-Z]+\\.[a-zA-Z0-9._]*[A-Z]+[a-zA-Z0-9/.$]*\\>" 0 font-lock-preprocessor-face) ;; Foo/Bar foo.bar.Baz foo.Bar/baz
+      ("[a-z]*[A-Z]+[a-z][a-zA-Z0-9$]*\\>" 0 font-lock-preprocessor-face) ;; fooBar
+      ("\\<[A-Z][a-zA-Z0-9$]*\\.\\>" 0 font-lock-preprocessor-face))) ;; Foo. BarBaz. Qux$Quux. Corge9.
+
+
   "Default expressions to highlight in Clojure mode.")
 
 ;; Docstring positions
