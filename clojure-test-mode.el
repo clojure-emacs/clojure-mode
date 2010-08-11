@@ -146,7 +146,12 @@
                                           [(:type event) (:message event)
                                            (str (:expected event))
                                            (str (:actual event))
-                                           ((file-position 2) 1)])))
+                                           (if (and (= (:major *clojure-version*) 1)
+                                                    (< (:minor *clojure-version*) 2))
+                                               ((file-position 2) 1)
+                                               (if (= (:type event) :error)
+                                                   ((file-position 3) 1)
+                                                   (:line event)))])))
      (binding [*test-out* *out*]
        (old-report event)))"))
 
