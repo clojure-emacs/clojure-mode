@@ -786,6 +786,7 @@ check for contextual indenting."
 
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
+(add-to-list 'interpreter-mode-alist '("cake" . clojure-mode))
 
 (provide 'clojure-mode)
 ;;; clojure-mode.el ends here
