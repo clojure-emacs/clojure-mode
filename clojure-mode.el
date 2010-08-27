@@ -730,7 +730,8 @@ check for contextual indenting."
   ;; contrib
   (handler-case 1)
   (handle 1)
-  (dotrace 1))
+  (dotrace 1)
+  (deftrace 'defun))
 
 
 
