@@ -473,20 +473,20 @@ elements of a def* forms."
       (,(concat
          "(\\(?:\.*/\\)?"
          (regexp-opt
-          '(;clojure.inpsector
+          '(;; clojure.inspector
         "atom?" "collection-tag" "get-child" "get-child-count" "inspect"
         "inspect-table" "inspect-tree" "is-leaf" "list-model" "list-provider"
-        ;clojure.main
+        ;; clojure.main
         "load-script" "main" "repl" "repl-caught" "repl-exception"
         "repl-prompt" "repl-read" "skip-if-eol" "skip-whitespace" "with-bindings"
-        ;clojure.set
+        ;; clojure.set
         "difference" "index" "intersection" "join" "map-invert"
         "project" "rename" "rename-keys" "select" "union"
-        ;clojure.stacktrace
+        ;; clojure.stacktrace
         "e" "print-cause-trace" "print-stack-trace" "print-throwable" "print-trace-element"
-        ;clojure.template
+        ;; clojure.template
         "do-template" "apply-template"
-        ;clojure.test
+        ;; clojure.test
         "*initial-report-counters*" "*load-tests*" "*report-counters*" "*stack-trace-depth*" "*test-out*"
         "*testing-contexts*" "*testing-vars*" "are" "assert-any" "assert-expr"
         "assert-predicate" "compose-fixtures" "deftest" "deftest-" "file-position"
@@ -494,13 +494,13 @@ elements of a def* forms."
         "report" "run-all-tests" "run-tests" "set-test" "successful?"
         "test-all-vars" "test-ns" "test-var" "testing" "testing-contexts-str"
         "testing-vars-str" "try-expr" "use-fixtures" "with-test" "with-test-out"
-        ;clojure.walk
+        ;; clojure.walk
         "keywordize-keys" "macroexpand-all" "postwalk" "postwalk-demo" "postwalk-replace"
         "prewalk" "prewalk-demo" "prewalk-replace" "stringify-keys" "walk"
-        ;clojure.xml
+        ;; clojure.xml
         "*current*" "*sb*" "*stack*" "*state*" "attrs"
         "content" "content-handler" "element" "emit" "emit-element"
-        ;clojure.zip
+        ;; clojure.zip
         "append-child" "branch?" "children" "down" "edit"
         "end?" "insert-child" "insert-left" "insert-right" "left"
         "leftmost" "lefts" "make-node" "next" "node"
