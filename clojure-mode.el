@@ -324,8 +324,7 @@ elements of a def* forms."
                 ;; Any whitespace
                 "[ \r\n\t]*"
                 ;; Possibly type or metadata
-                "\\(?:#?^\\(?:{[^}]*}\\|\\sw+\\)[ \r\n\t]*\\)?"
-
+                "\\(?:#?^\\(?:{[^}]*}\\|\\sw+\\)[ \r\n\t]*\\)*"
                 "\\(\\sw+\\)?")
        (1 font-lock-keyword-face)
        (2 font-lock-function-name-face nil t))
@@ -511,9 +510,9 @@ elements of a def* forms."
         ) t)
          "\\>")
        1 font-lock-type-face)
-      ;; Constant values (keywords).
-      ("\\<:\\(\\sw\\|#\\)+\\>" 0 font-lock-builtin-face)
-      ;; Meta type annotation #^Type
+      ;; Constant values (keywords), including as metadata e.g. ^:static
+      ("\\<^?:\\(\\sw\\|#\\)+\\>" 0 font-lock-builtin-face)
+      ;; Meta type annotation #^Type or ^Type
       ("#?^\\sw+" 0 font-lock-type-face)
       ("\\<io\\!\\>" 0 font-lock-warning-face)))
   "Default expressions to highlight in Clojure mode.")
