@@ -115,7 +115,9 @@ Clojure to load that file."
 (defvar clojure-mode-syntax-table
   (let ((table (copy-syntax-table emacs-lisp-mode-syntax-table)))
     (modify-syntax-entry ?~ "'   " table)
-    (modify-syntax-entry ?, "    " table)
+    ;; can't safely make commas whitespace since it will apply even
+    ;; inside string literals--ick!
+    ;; (modify-syntax-entry ?, "    " table)
     (modify-syntax-entry ?\{ "(}" table)
     (modify-syntax-entry ?\} "){" table)
     (modify-syntax-entry ?\[ "(]" table)
