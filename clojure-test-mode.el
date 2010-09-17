@@ -4,7 +4,7 @@
 
 ;; Author: Phil Hagelberg <technomancy@gmail.com>
 ;; URL: http://emacswiki.org/cgi-bin/wiki/ClojureTestMode
-;; Version: 1.4
+;; Version: 1.5
 ;; Keywords: languages, lisp, test
 ;; Package-Requires: ((slime "20091016") (clojure-mode "1.7"))
 
@@ -18,20 +18,15 @@
 
 ;;; Installation:
 
-;; If you use ELPA, you can install via the M-x package-list-packages
-;; interface. This is preferrable as you will have access to updates
-;; automatically.
+;; Install using package.el. You will need to add repo.technomancy.us
+;; to your archive list:
 
-;; If you need to install by hand for some reason:
+;; (add-to-list 'package-archives "http://repo.technomancy.us/emacs")
 
-;; (0) Add this file to your load-path, usually the ~/.emacs.d directory.
-;; (1) Either:
-;;     Add these lines to your .emacs:
-;;      (autoload 'clojure-test-mode "clojure-test-mode" "Clojure test mode" t)
-;;      (autoload 'clojure-test-maybe-enable "clojure-test-mode" "" t)
-;;      (add-hook 'clojure-mode-hook 'clojure-test-maybe-enable)
-;;
-;;     Or generate autoloads with the `update-directory-autoloads' function.
+;; If you use a version of Emacs prior to 24 that doesn't include
+;; package.el, you can get it from http://bit.ly/pkg-el. If you have
+;; an older package.el installed from tromey.com, you should upgrade
+;; in order to support installation from multiple sources.
 
 ;; This library does not currently support clojure.contrib.test-is
 ;; from Clojure Contrib's 1.0-compatibility branch. If you need it,
@@ -79,6 +74,12 @@
 ;;  * Added next/prev problem.
 ;;  * Depend upon slime, not swank-clojure.
 ;;  * Don't move the mark when activating.
+
+;; 1.5: 2010-09-16
+;;  * Allow customization of clojure-test-ns-segment-position.
+;;  * Fixes for Clojure 1.2.
+;;  * Check for active slime connection
+;;  * Fix test toggling with negative segment-position.
 
 ;;; TODO:
 
