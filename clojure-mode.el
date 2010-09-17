@@ -733,7 +733,7 @@ check for contextual indenting."
 
   ;; clojure.test
   (testing 1)
-  (deftest 1)
+  (deftest 'defun)
 
   ;; contrib
   (handler-case 1)
