@@ -136,7 +136,7 @@ Clojure to load that file."
 This holds a cons cell of the form `(DIRECTORY . FILE)'
 describing the last `clojure-load-file' or `clojure-compile-file' command.")
 
-(defvar clojure-def-regexp "^\\s *(def\\S *\\s +\\([^ \n\t]+\\)"
+(defvar clojure-def-regexp "^\\s *(def\\S *\\s +\\(?:\\^\\S +\\s +\\)?\\([^ \n\t]+\\)"
   "A regular expression to match any top-level definitions.")
 
 (defvar clojure-test-ns-segment-position -1
