@@ -176,12 +176,9 @@ if that value is non-nil."
        'clojure-indent-function)
   (set (make-local-variable 'lisp-doc-string-elt-property)
        'clojure-doc-string-elt)
-
-  (setq lisp-imenu-generic-expression
-        `((nil ,clojure-def-regexp 2)))
   (setq imenu-create-index-function
         (lambda ()
-          (imenu--generic-function lisp-imenu-generic-expression)))
+          (imenu--generic-function `((nil ,clojure-def-regexp 2)))))
 
   (clojure-mode-font-lock-setup)
 
