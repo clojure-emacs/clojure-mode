@@ -82,6 +82,7 @@
 
 ;;; TODO:
 
+;; * Put Testing indicator in modeline while tests are running
 ;; * Implement next-problem command
 ;; * Error messages need line number.
 ;; * Currently show-message needs point to be on the line with the
