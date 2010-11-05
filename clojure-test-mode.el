@@ -170,6 +170,7 @@
   (let ((result-vars (read (cadr results))))
     ;; slime-eval-async hands us a cons with a useless car
     (mapc #'clojure-test-extract-result result-vars)
+    (slime-repl-emit (concat "\n" (make-string (1- (window-width)) ?=) "\n"))
     (message "Ran %s tests. %s failures, %s errors."
              clojure-test-count
              clojure-test-failure-count clojure-test-error-count)))
@@ -250,7 +251,6 @@ Retuns the problem overlay if such a position is found, otherwise nil."
   (interactive)
   (save-some-buffers nil (lambda () (equal major-mode 'clojure-mode)))
   (message "Testing...")
-  (slime-repl-emit (concat "\n" (make-string (1- (window-width)) ?=) "\n"))
   (clojure-test-clear
    (lambda (&rest args)
      (clojure-test-eval (format "(load-file \"%s\")"
@@ -265,7 +265,6 @@ Retuns the problem overlay if such a position is found, otherwise nil."
   "Run the test at point."
   (interactive)
   (save-some-buffers nil (lambda () (equal major-mode 'clojure-mode)))
-  (slime-repl-emit (concat "\n" (make-string (1- (window-width)) ?=) "\n"))
   (clojure-test-clear
    (lambda (&rest args)
      (let* ((f (which-function))
