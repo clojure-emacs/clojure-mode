@@ -354,14 +354,13 @@ Retuns the problem overlay if such a position is found, otherwise nil."
 
 ;;;###autoload
 (progn
-  (defun clojure-test-maybe-enable ()
-    "Enable clojure-test-mode if the current buffer contains Clojure tests.
-Also will enable it if the file is in a test directory."
-    (save-excursion
+(defun clojure-test-maybe-enable ()
+  "Enable clojure-test-mode if the current buffer contains a namespace 
+with a \"test.\" bit on it."
+  (let ((ns (clojure-find-package))) ; defined in clojure-mode.el
+    (when (search "test." ns)
       (save-window-excursion
-        (goto-char (point-min))
-        (when (search-forward "clojure.test" nil t)
-            (clojure-test-mode t)))))
+        (clojure-test-mode t)))))
   (add-hook 'clojure-mode-hook 'clojure-test-maybe-enable))
 
 (provide 'clojure-test-mode)
