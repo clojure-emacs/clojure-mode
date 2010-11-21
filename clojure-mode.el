@@ -144,6 +144,10 @@ numbers count from the end:
   leiningen.compile -> leiningen.test.compile (uses 1)
   clojure.http.client -> clojure.http.test.client (uses -1)")
 
+(defun clojure-mode-version ()
+  "Currently package.el doesn't support prerelease version numbers."
+  "1.8.1-SNAPSHOT")
+
 ;;;###autoload
 (defun clojure-mode ()
   "Major mode for editing Clojure code - similar to Lisp mode..
