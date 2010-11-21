@@ -32,16 +32,14 @@
 ;; an older package.el installed from tromey.com, you should upgrade
 ;; in order to support installation from multiple sources.
 
-;; Paredit users:
-
-;; Download paredit v21 or greater
-;;    http://mumble.net/~campbell/emacs/paredit.el
+;; Using clojure-mode with paredit is highly recommended. You will
+;; need version 22 or greater: http://mumble.net/~campbell/emacs/paredit.el
 
 ;; Use paredit as you normally would with any other mode; for instance:
 ;;
 ;;   ;; require or autoload paredit-mode
-;;   (defun lisp-enable-paredit-hook () (paredit-mode 1))
-;;   (add-hook 'clojure-mode-hook 'lisp-enable-paredit-hook)
+;;   (defun turn-on-paredit () (paredit-mode 1))
+;;   (add-hook 'clojure-mode-hook 'turn-on-paredit)
 
 ;;; License:
 
