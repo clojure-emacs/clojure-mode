@@ -16,9 +16,6 @@
 ;; Provides font-lock, indentation, and navigation for the Clojure
 ;; language. (http://clojure.org)
 
-;; See also the swank-clojure package for better interaction with
-;; Clojure subprocesses.
-
 ;; Users of older Emacs (pre-22) should get version 1.4:
 ;; http://github.com/technomancy/clojure-mode/tree/1.4
 
@@ -32,14 +29,17 @@
 ;; an older package.el installed from tromey.com, you should upgrade
 ;; in order to support installation from multiple sources.
 
-;; Using clojure-mode with paredit is highly recommended. You will
-;; need version 22 or greater: http://mumble.net/~campbell/emacs/paredit.el
+;; Using clojure-mode with paredit is highly recommended. It is also
+;; available using package.el from the above archive.
 
 ;; Use paredit as you normally would with any other mode; for instance:
 ;;
 ;;   ;; require or autoload paredit-mode
 ;;   (defun turn-on-paredit () (paredit-mode 1))
 ;;   (add-hook 'clojure-mode-hook 'turn-on-paredit)
+
+;; See slime-repl (also available from the same package archive) for
+;; better interaction with subprocesses.
 
 ;;; License:
 

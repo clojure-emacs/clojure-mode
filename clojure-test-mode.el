@@ -4,7 +4,7 @@
 
 ;; Author: Phil Hagelberg <technomancy@gmail.com>
 ;; URL: http://emacswiki.org/cgi-bin/wiki/ClojureTestMode
-;; Version: 1.5
+;; Version: 1.5.1
 ;; Keywords: languages, lisp, test
 ;; Package-Requires: ((slime "20091016") (clojure-mode "1.7"))
 
@@ -78,8 +78,11 @@
 ;; 1.5: 2010-09-16
 ;;  * Allow customization of clojure-test-ns-segment-position.
 ;;  * Fixes for Clojure 1.2.
-;;  * Check for active slime connection
+;;  * Check for active slime connection.
 ;;  * Fix test toggling with negative segment-position.
+
+;; 1.5.1: 2010-11-27
+;;  * Add marker between each test run.
 
 ;;; TODO:
 
