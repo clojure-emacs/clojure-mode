@@ -22,7 +22,8 @@
 ;; Install using package.el. You will need to add repo.technomancy.us
 ;; to your archive list:
 
-;; (add-to-list 'package-archives "http://repo.technomancy.us/emacs")
+;; (add-to-list 'package-archives
+;;              '("technomancy" . "http://repo.technomancy.us/emacs/") t)
 
 ;; If you use a version of Emacs prior to 24 that doesn't include
 ;; package.el, you can get it from http://bit.ly/pkg-el. If you have
