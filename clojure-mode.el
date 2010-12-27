@@ -629,6 +629,9 @@ check for contextual indenting."
 (put 'implement 'clojure-backtracking-indent '(4 (2)))
 (put 'letfn 'clojure-backtracking-indent '((2) 2))
 (put 'proxy 'clojure-backtracking-indent '(4 4 (2)))
+(put 'extend-type 'clojure-backtracking-indent '(4 4 (2)))
+(put 'defprotocol 'clojure-backtracking-indent '(4 4 (2)))
+(put 'defrecord 'clojure-backtracking-indent '(4 4 (2)))
 
 (defun put-clojure-indent (sym indent)
   (put sym 'clojure-indent-function indent))
