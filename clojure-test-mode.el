@@ -165,7 +165,7 @@
 
 (defun clojure-test-load-reporting ()
   "Redefine the test-is report function to store results in metadata."
-  (when (compare-strings "clojure" 0 7 (slime-connection-name) 0 7)
+  (when (eq (compare-strings "clojure" 0 7 (slime-connection-name) 0 7) t)
     (clojure-test-eval-sync
      "(require 'clojure.test) (ns clojure.test)
 
