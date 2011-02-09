@@ -119,6 +119,16 @@
   "Face for errors in Clojure tests."
   :group 'clojure-test-mode)
 
+(defface clojure-test-success-face
+  '((((class color) (background light))
+     :foreground "black"
+     :background "green")
+    (((class color) (background dark))
+     :foreground "black"
+     :background "green"))
+  "Face for success in Clojure tests."
+  :group 'clojure-test-mode)
+
 ;; Counts
 
 (defvar clojure-test-count 0)
@@ -170,14 +180,23 @@
            (slime-current-package) ")))")
    #'clojure-test-extract-results))
 
+(defun clojure-test-echo-results ()
+  (message
+   (propertize
+    (format "Ran %s tests. %s failures, %s errors."
+            clojure-test-count clojure-test-failure-count
+            clojure-test-error-count)
+    'face
+    (cond ((not (= clojure-test-error-count 0)) 'clojure-test-error-face)
+          ((not (= clojure-test-failure-count 0)) 'clojure-test-failure-face)
+          (t 'clojure-test-success-face)))))
+
 (defun clojure-test-extract-results (results)
   (let ((result-vars (read (cadr results))))
     ;; slime-eval-async hands us a cons with a useless car
     (mapc #'clojure-test-extract-result result-vars)
     (slime-repl-emit (concat "\n" (make-string (1- (window-width)) ?=) "\n"))
-    (message "Ran %s tests. %s failures, %s errors."
-             clojure-test-count
-             clojure-test-failure-count clojure-test-error-count)))
+    (clojure-test-echo-results)))
 
 (defun clojure-test-extract-result (result)
   "Parse the result from a single test. May contain multiple is blocks."
