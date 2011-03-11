@@ -257,14 +257,13 @@ Retuns the problem overlay if such a position is found, otherwise nil."
   (message "Testing...")
   (clojure-test-clear
    (lambda (&rest args)
-     (clojure-test-eval (format "(load-file \"%s\")"
-                                (buffer-file-name))
-                        (lambda (&rest args)
-                          ;; clojure-test-eval will wrap in with-out-str
-                          (slime-eval-async `(swank:interactive-eval
-                                              "(clojure.test/run-tests)")
-                                            #'clojure-test-get-results))))))
+     (slime-load-file (buffer-file-name))
+     ;; clojure-test-eval will wrap in with-out-str
+     (slime-eval-async `(swank:interactive-eval
+                         "(clojure.test/run-tests)")
+       #'clojure-test-get-results))))
 
+;; TODO: compose clojure.test fixtures and use them here
 (defun clojure-test-run-test ()
   "Run the test at point."
   (interactive)
