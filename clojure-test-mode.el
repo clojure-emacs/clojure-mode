@@ -4,7 +4,7 @@
 
 ;; Author: Phil Hagelberg <technomancy@gmail.com>
 ;; URL: http://emacswiki.org/cgi-bin/wiki/ClojureTestMode
-;; Version: 1.5.1
+;; Version: 1.5.2
 ;; Keywords: languages, lisp, test
 ;; Package-Requires: ((slime "20091016") (clojure-mode "1.7"))
 
@@ -84,6 +84,9 @@
 
 ;; 1.5.1: 2010-11-27
 ;;  * Add marker between each test run.
+
+;; 1.5.2: 2011-03-11
+;;  * Make clojure-test-run-tests force reload. Requires swank-clojure 1.3.0.
 
 ;;; TODO:
 
