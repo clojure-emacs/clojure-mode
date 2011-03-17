@@ -282,11 +282,13 @@ Retuns the problem overlay if such a position is found, otherwise nil."
   (message "Testing...")
   (clojure-test-clear
    (lambda (&rest args)
-     (slime-load-file (buffer-file-name))
      ;; clojure-test-eval will wrap in with-out-str
-     (slime-eval-async `(swank:interactive-eval
-                         "(clojure.test/run-tests)")
-       #'clojure-test-get-results))))
+     (slime-eval-async `(swank:load-file
+                         ,(slime-to-lisp-filename
+                           (expand-file-name (buffer-file-name))))
+       (lambda (&rest args)
+         (slime-eval-async '(swank:interactive-eval "(clojure.test/run-tests)"))
+         #'clojure-test-get-results)))))
 
 ;; TODO: run tests in region
 (defun clojure-test-run-test ()
