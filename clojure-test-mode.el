@@ -1,10 +1,10 @@
 ;;; clojure-test-mode.el --- Minor mode for Clojure tests
 
-;; Copyright (C) 2009-2010 Phil Hagelberg
+;; Copyright (C) 2009-2011 Phil Hagelberg
 
 ;; Author: Phil Hagelberg <technomancy@gmail.com>
 ;; URL: http://emacswiki.org/cgi-bin/wiki/ClojureTestMode
-;; Version: 1.5.3
+;; Version: 1.5.4
 ;; Keywords: languages, lisp, test
 ;; Package-Requires: ((slime "20091016") (clojure-mode "1.7"))
 
@@ -87,6 +87,12 @@
 
 ;; 1.5.2: 2011-03-11
 ;;  * Make clojure-test-run-tests force reload. Requires swank-clojure 1.3.0.
+
+;; 1.5.3 2011-03-14
+;;  * Fix clojure-test-run-test to use fixtures.
+
+;; 1.5.4 2011-03-16
+;;  * Fix clojure-test-run-tests to wait until tests are reloaded.
 
 ;;; TODO:
 
