@@ -1,10 +1,10 @@
 ;;; clojure-test-mode.el --- Minor mode for Clojure tests
 
-;; Copyright (C) 2009-2010 Phil Hagelberg
+;; Copyright (C) 2009-2011 Phil Hagelberg
 
 ;; Author: Phil Hagelberg <technomancy@gmail.com>
 ;; URL: http://emacswiki.org/cgi-bin/wiki/ClojureTestMode
-;; Version: 1.5.1
+;; Version: 1.5.4
 ;; Keywords: languages, lisp, test
 ;; Package-Requires: ((slime "20091016") (clojure-mode "1.7"))
 
@@ -85,6 +85,15 @@
 ;; 1.5.1: 2010-11-27
 ;;  * Add marker between each test run.
 
+;; 1.5.2: 2011-03-11
+;;  * Make clojure-test-run-tests force reload. Requires swank-clojure 1.3.0.
+
+;; 1.5.3 2011-03-14
+;;  * Fix clojure-test-run-test to use fixtures.
+
+;; 1.5.4 2011-03-16
+;;  * Fix clojure-test-run-tests to wait until tests are reloaded.
+
 ;;; TODO:
 
 ;; * Prefix arg to jump-to-impl should open in other window
@@ -161,7 +170,29 @@
                                                    ((file-position 3) 1)
                                                    (:line event)))])))
      (binding [*test-out* *out*]
-       (old-report event)))")))
+       (old-report event)))
+
+   (defn clojure-test-mode-test-one-var [test-ns test-name]
+     (let [v (ns-resolve test-ns test-name)
+           once-fixture-fn (join-fixtures (::once-fixtures (meta (find-ns test-ns))))
+           each-fixture-fn (join-fixtures (::each-fixtures (meta (find-ns test-ns))))]
+       (once-fixture-fn
+        (fn []
+          (when (:test (meta v))
+            (each-fixture-fn (fn [] (test-var v))))))))
+
+    ;; adapted from test-ns
+    (defn clojure-test-mode-test-one-in-ns [ns test-name]
+      (binding [*report-counters* (ref *initial-report-counters*)]
+        (let [ns-obj (the-ns ns)]
+          (do-report {:type :begin-test-ns, :ns ns-obj})
+          ;; If the namespace has a test-ns-hook function, call that:
+          (if-let [v (find-var (symbol (str (ns-name ns-obj)) \"test-ns-hook\"))]
+            ((var-get v))
+            ;; Otherwise, just test every var in the namespace.
+            (clojure-test-mode-test-one-var ns test-name))
+          (do-report {:type :end-test-ns, :ns ns-obj}))
+        (do-report (assoc @*report-counters* :type :summary)))) ")))
 
 (defun clojure-test-get-results (result)
   (clojure-test-eval
@@ -257,14 +288,15 @@ Retuns the problem overlay if such a position is found, otherwise nil."
   (message "Testing...")
   (clojure-test-clear
    (lambda (&rest args)
-     (clojure-test-eval (format "(load-file \"%s\")"
-                                (buffer-file-name))
-                        (lambda (&rest args)
-                          ;; clojure-test-eval will wrap in with-out-str
-                          (slime-eval-async `(swank:interactive-eval
-                                              "(clojure.test/run-tests)")
-                                            #'clojure-test-get-results))))))
+     ;; clojure-test-eval will wrap in with-out-str
+     (slime-eval-async `(swank:load-file
+                         ,(slime-to-lisp-filename
+                           (expand-file-name (buffer-file-name))))
+       (lambda (&rest args)
+         (slime-eval-async '(swank:interactive-eval "(clojure.test/run-tests)"))
+         #'clojure-test-get-results)))))
 
+;; TODO: run tests in region
 (defun clojure-test-run-test ()
   "Run the test at point."
   (interactive)
@@ -276,8 +308,11 @@ Retuns the problem overlay if such a position is found, otherwise nil."
        (slime-eval-async
         `(swank:interactive-eval
           ,(format "(do (load-file \"%s\")
-                      (when (:test (meta (var %s))) (%s) (cons (:name (meta (var %s))) (:status (meta (var %s))))))"
-                   (buffer-file-name) test-name test-name test-name test-name))
+                        (clojure-test-mode-test-one-in-ns '%s '%s)
+                        (cons (:name (meta (var %s))) (:status (meta (var %s)))))"
+                   (buffer-file-name)
+                   (slime-current-package) test-name
+                   test-name test-name))
         (lambda (result-str)
           (let ((result (read result-str)))
             (if (cdr result)

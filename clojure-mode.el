@@ -162,22 +162,21 @@ if that value is non-nil."
   (interactive)
   (kill-all-local-variables)
   (use-local-map clojure-mode-map)
-  (setq major-mode 'clojure-mode)
-  (setq mode-name "Clojure")
+  (setq mode-name "Clojure"
+        major-mode 'clojure-mode
+        imenu-create-index-function
+        (lambda ()
+          (imenu--generic-function `((nil ,clojure-def-regexp 1))))
+        local-abbrev-table clojure-mode-abbrev-table
+        indent-tabs-mode nil)
   (lisp-mode-variables nil)
   (set-syntax-table clojure-mode-syntax-table)
-
-  (setq local-abbrev-table clojure-mode-abbrev-table)
-
   (set (make-local-variable 'comment-start-skip)
        "\\(\\(^\\|[^\\\\\n]\\)\\(\\\\\\\\\\)*\\)\\(;+\\|#|\\) *")
   (set (make-local-variable 'lisp-indent-function)
        'clojure-indent-function)
   (set (make-local-variable 'lisp-doc-string-elt-property)
        'clojure-doc-string-elt)
-  (setq imenu-create-index-function
-        (lambda ()
-          (imenu--generic-function `((nil ,clojure-def-regexp 1)))))
 
   (clojure-mode-font-lock-setup)
 
