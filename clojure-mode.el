@@ -674,6 +674,22 @@ check for contextual indenting."
      ,@(mapcar (lambda (x) `(put-clojure-indent
                         (quote ,(first x)) ,(second x))) kvs)))
 
+(defun add-custom-clojure-indents (name value)
+  (setq clojure-defun-indents value)
+  (mapcar (lambda (x)
+            (put-clojure-indent x 'defun))
+          value))
+
+(defcustom clojure-defun-indents nil
+  "List of symbols to give defun-style indentation to in Clojure
+code, in addition to those that are built-in. You can use this to
+get emacs to indent your own macros the same as it does the
+built-ins like with-open. To set manually from lisp code,
+use (put-clojure-indent 'some-symbol 'defun)."
+  :type '(repeat sexp)
+  :group 'clojure-mode
+  :set 'add-custom-clojure-indents)
+
 (define-clojure-indent
   ;; built-ins
   (ns 1)
