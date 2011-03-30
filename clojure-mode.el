@@ -686,7 +686,7 @@ code, in addition to those that are built-in. You can use this to
 get emacs to indent your own macros the same as it does the
 built-ins like with-open. To set manually from lisp code,
 use (put-clojure-indent 'some-symbol 'defun)."
-  :type '(repeat sexp)
+  :type '(repeat symbol)
   :group 'clojure-mode
   :set 'add-custom-clojure-indents)
 
