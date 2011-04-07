@@ -777,14 +777,9 @@ use (put-clojure-indent 'some-symbol 'defun)."
       (zero-or-one (any ":'"))         
       (group (one-or-more (not (any "()\"" whitespace))) word-end)))
 
-(defun clojure-find-package ()
-  (let ((regexp *namespace-name-regex*))
-    (save-excursion
-      (when (or (re-search-backward regexp nil t)
-                (re-search-forward regexp nil t))
-        (match-string-no-properties 4)))))
-
-;;; for testing *package-regex*
+;; for testing *namespace-name-regex*, you can evaluate this code and make
+;; sure foo (or whatever the namespace name is) shows up in results. some of
+;; these currently fail.
 ;; (mapcar (lambda (s) (let ((n (string-match *namespace-name-regex* s)))
 ;;                       (if n (match-string 4 s))))
 ;;         '("(ns foo)"
@@ -804,6 +799,13 @@ use (put-clojure-indent 'some-symbol 'defun)."
 ;;           "(ns
 ;;  foo)"
 ;;     "foo"))
+
+(defun clojure-find-package ()
+  (let ((regexp *namespace-name-regex*))
+    (save-excursion
+      (when (or (re-search-backward regexp nil t)
+                (re-search-forward regexp nil t))
+        (match-string-no-properties 4)))))
 
 (defun clojure-enable-slime ()
   (slime-mode t)
