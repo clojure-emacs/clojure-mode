@@ -758,12 +758,52 @@ use (put-clojure-indent 'some-symbol 'defun)."
 ;; A little bit of SLIME help:
 ;; swank-clojure.el should now only be needed if you want to launch from Emacs
 
+(defconst *namespace-name-regex*
+  (rx line-start
+      "("
+      (zero-or-one (group (regexp "clojure.core/")))
+      (zero-or-one (submatch "in-"))
+      "ns"
+      (zero-or-one "+")
+      (one-or-more (any whitespace "\n"))
+      (zero-or-more (or (submatch (zero-or-one "#")
+                                  "^{"
+                                  (zero-or-more (not (any "}")))
+                                  "}")
+                        (zero-or-more "^:"
+                                      (one-or-more (not (any whitespace)))))
+                    (one-or-more (any whitespace "\n")))
+      ;; why is this here? oh (in-ns 'foo) or (ns+ :user)
+      (zero-or-one (any ":'"))         
+      (group (one-or-more (not (any "()\"" whitespace))) word-end)))
+
 (defun clojure-find-package ()
-  (let ((regexp "^(\\(clojure.core/\\)?\\(in-\\)?ns\\+?[ \t\n\r]+\\(#\\^{[^}]+}[ \t\n\r]+\\)?[:']?\\([^()\" \t\n]+\\>\\)"))
+  (let ((regexp *namespace-name-regex*))
     (save-excursion
       (when (or (re-search-backward regexp nil t)
                 (re-search-forward regexp nil t))
         (match-string-no-properties 4)))))
+
+;;; for testing *package-regex*
+;; (mapcar (lambda (s) (let ((n (string-match *namespace-name-regex* s)))
+;;                       (if n (match-string 4 s))))
+;;         '("(ns foo)"
+;;           "(ns 
+;; foo)"
+;;           "(ns foo.baz)"
+;;           "(ns ^:bar foo)"
+;;           "(ns ^:bar ^:baz foo)"
+;;           "(ns ^{:bar true} foo)"
+;;           "(ns #^{:bar true} foo)"
+;;           "(ns #^{:fail {}} foo)"
+;;           "(ns ^{:fail2 {}} foo.baz)"
+;;           "(ns ^{} foo)"
+;;           "(ns ^{:skip-wiki true}
+;;   aleph.netty
+;; "
+;;           "(ns
+;;  foo)"
+;;     "foo"))
 
 (defun clojure-enable-slime ()
   (slime-mode t)
