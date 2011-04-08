@@ -18,14 +18,14 @@
 
 ;;; Installation:
 
-;; Install using package.el. You will need to add repo.technomancy.us
-;; to your archive list:
+;; Use package.el. You'll need to add Marmalade to your archives:
 
+;; (require 'package)
 ;; (add-to-list 'package-archives
-;;              '("technomancy" . "http://repo.technomancy.us/emacs/") t)
+;;              '("marmalade" . "http://marmalade-repo.org/packages/"))
 
 ;; If you use a version of Emacs prior to 24 that doesn't include
-;; package.el, you can get it from http://bit.ly/pkg-el. If you have
+;; package.el, you can get it from http://bit.ly/pkg-el23. If you have
 ;; an older package.el installed from tromey.com, you should upgrade
 ;; in order to support installation from multiple sources.
 

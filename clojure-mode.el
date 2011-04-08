@@ -1,6 +1,6 @@
 ;;; clojure-mode.el --- Major mode for Clojure code
 
-;; Copyright (C) 2007-2010 Jeffrey Chu, Lennart Staflin, Phil Hagelberg
+;; Copyright (C) 2007-2011 Jeffrey Chu, Lennart Staflin, Phil Hagelberg
 ;;
 ;; Authors: Jeffrey Chu <jochu0@gmail.com>
 ;;          Lennart Staflin <lenst@lysator.liu.se>
@@ -19,14 +19,14 @@
 ;; Users of older Emacs (pre-22) should get version 1.4:
 ;; http://github.com/technomancy/clojure-mode/tree/1.4
 
-;; Install using package.el. You will need to add repo.technomancy.us
-;; to your archive list:
+;; Use package.el. You'll need to add Marmalade to your archives:
 
+;; (require 'package)
 ;; (add-to-list 'package-archives
-;;              '("technomancy" . "http://repo.technomancy.us/emacs/") t)
+;;              '("marmalade" . "http://marmalade-repo.org/packages/"))
 
 ;; If you use a version of Emacs prior to 24 that doesn't include
-;; package.el, you can get it from http://bit.ly/pkg-el. If you have
+;; package.el, you can get it from http://bit.ly/pkg-el23. If you have
 ;; an older package.el installed from tromey.com, you should upgrade
 ;; in order to support installation from multiple sources.
 
