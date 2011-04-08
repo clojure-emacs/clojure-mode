@@ -4,7 +4,7 @@
 
 ;; Author: Phil Hagelberg <technomancy@gmail.com>
 ;; URL: http://emacswiki.org/cgi-bin/wiki/ClojureTestMode
-;; Version: 1.5.4
+;; Version: 1.5.5
 ;; Keywords: languages, lisp, test
 ;; Package-Requires: ((slime "20091016") (clojure-mode "1.7"))
 
@@ -93,6 +93,10 @@
 
 ;; 1.5.4 2011-03-16
 ;;  * Fix clojure-test-run-tests to wait until tests are reloaded.
+
+;; 1.5.5 2011-04-08
+;;  * Fix coloring/reporting
+;;  * Don't trigger slime-connected-hook.
 
 ;;; TODO:
 
@@ -246,7 +250,7 @@
 	
 (defun clojure-test-highlight-problem (line event message)
   (save-excursion
-    (goto-line line)
+    (goto-char (point-min)) (forward-line (1- line))
     (let ((beg (point)))
       (end-of-line)
       (let ((overlay (make-overlay beg (point))))
