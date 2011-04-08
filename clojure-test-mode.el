@@ -407,19 +407,19 @@ Retuns the problem overlay if such a position is found, otherwise nil."
   "A minor mode for running Clojure tests."
   nil " Test" clojure-test-mode-map
   (when (slime-connected-p)
-    (run-hooks 'slime-connected-hook)))
+    (clojure-test-load-reporting)))
 
 (add-hook 'slime-connected-hook 'clojure-test-load-reporting)
 
 ;;;###autoload
 (progn
-(defun clojure-test-maybe-enable ()
-  "Enable clojure-test-mode if the current buffer contains a namespace 
+  (defun clojure-test-maybe-enable ()
+    "Enable clojure-test-mode if the current buffer contains a namespace 
 with a \"test.\" bit on it."
-  (let ((ns (clojure-find-package))) ; defined in clojure-mode.el
-    (when (search "test." ns)
-      (save-window-excursion
-        (clojure-test-mode t)))))
+    (let ((ns (clojure-find-package))) ; defined in clojure-mode.el
+      (when (search "test." ns)
+        (save-window-excursion
+          (clojure-test-mode t)))))
   (add-hook 'clojure-mode-hook 'clojure-test-maybe-enable))
 
 (provide 'clojure-test-mode)
