@@ -311,9 +311,10 @@ Retuns the problem overlay if such a position is found, otherwise nil."
      (slime-eval-async `(swank:load-file
                          ,(slime-to-lisp-filename
                            (expand-file-name (buffer-file-name))))
-       (lambda (&rest args)
-         (slime-eval-async '(swank:interactive-eval "(clojure.test/run-tests)"))
-         #'clojure-test-get-results)))))
+                       (lambda (&rest args)
+                         (slime-eval-async '(swank:interactive-eval
+                                             "(clojure.test/run-tests)")
+                                           #'clojure-test-get-results))))))
 
 ;; TODO: run tests in region
 (defun clojure-test-run-test ()
