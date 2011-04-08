@@ -6,7 +6,7 @@
 ;;          Lennart Staflin <lenst@lysator.liu.se>
 ;;          Phil Hagelberg <technomancy@gmail.com>
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki/ClojureMode
-;; Version: 1.8.0
+;; Version: 1.8.1
 ;; Keywords: languages, lisp
 
 ;; This file is not part of GNU Emacs.
@@ -754,9 +754,6 @@ use (put-clojure-indent 'some-symbol 'defun)."
   (deftrace 'defun))
 
 
-
-;; A little bit of SLIME help:
-;; swank-clojure.el should now only be needed if you want to launch from Emacs
 
 (defconst *namespace-name-regex*
   (rx line-start
