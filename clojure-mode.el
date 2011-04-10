@@ -149,7 +149,7 @@ numbers count from the end:
 
 ;;;###autoload
 (defun clojure-mode ()
-  "Major mode for editing Clojure code - similar to Lisp mode..
+  "Major mode for editing Clojure code - similar to Lisp mode.
 Commands:
 Delete converts tabs to spaces as it moves back.
 Blank lines separate paragraphs.  Semicolons start comments.
