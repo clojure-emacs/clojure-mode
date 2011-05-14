@@ -175,6 +175,8 @@ if that value is non-nil."
        "\\(\\(^\\|[^\\\\\n]\\)\\(\\\\\\\\\\)*\\)\\(;+\\|#|\\) *")
   (set (make-local-variable 'lisp-indent-function)
        'clojure-indent-function)
+  (set (make-local-variable 'forward-sexp-function)
+       'clojure-forward-sexp)
   (set (make-local-variable 'lisp-doc-string-elt-property)
        'clojure-doc-string-elt)
 
@@ -542,6 +544,21 @@ elements of a def* forms."
 (put 'defvar- 'clojure-doc-string-elt 3)
 
 
+
+(defun clojure-forward-sexp (n)
+  "Treat record literals like #user.Foo[1] and #user.Foo{:size 1}
+as a single sexp so that slime will send them properly. Arguably
+this behavior is unintuitive for the user pressing (eg) C-M-f
+himself, but since these are single objects I think it's right."
+  (let ((dir (if (> n 0) 1 -1)))
+    (while (not (zerop n))
+      (let ((forward-sexp-function nil)) ; force the built-in version
+        (forward-sexp dir)
+        (when (save-excursion
+                (backward-sexp) ; call it again if we're inside a 
+                (looking-at "#\\w")) ; record literal
+          (forward-sexp dir))
+        (setq n (- n dir))))))
 
 (defun clojure-indent-function (indent-point state)
   "This function is the normal value of the variable `lisp-indent-function'.
