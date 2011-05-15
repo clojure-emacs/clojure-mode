@@ -118,7 +118,6 @@ Clojure to load that file."
     (modify-syntax-entry ?\[ "(]" table)
     (modify-syntax-entry ?\] ")[" table)
     (modify-syntax-entry ?^ "'" table)
-    (modify-syntax-entry ?= "'" table)
     table))
 
 (defvar clojure-mode-abbrev-table nil
