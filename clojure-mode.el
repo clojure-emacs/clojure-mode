@@ -550,15 +550,18 @@ elements of a def* forms."
 as a single sexp so that slime will send them properly. Arguably
 this behavior is unintuitive for the user pressing (eg) C-M-f
 himself, but since these are single objects I think it's right."
-  (let ((dir (if (> n 0) 1 -1)))
+  (let ((dir (if (> n 0) 1 -1))
+        (forward-sexp-function nil)) ; force the built-in version
     (while (not (zerop n))
-      (let ((forward-sexp-function nil)) ; force the built-in version
-        (forward-sexp dir)
-        (when (save-excursion
-                (backward-sexp) ; call it again if we're inside a 
-                (looking-at "#\\w")) ; record literal
-          (forward-sexp dir))
-        (setq n (- n dir))))))
+      (forward-sexp dir)
+      (when (save-excursion ; move back to see if we're in a record literal
+              (and
+               (condition-case nil
+                   (progn (backward-sexp) 't)
+                 ('scan-error nil))
+               (looking-at "#\\w")))
+        (forward-sexp dir)) ; if so, jump over it
+      (setq n (- n dir)))))
 
 (defun clojure-indent-function (indent-point state)
   "This function is the normal value of the variable `lisp-indent-function'.
