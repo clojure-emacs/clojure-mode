@@ -19,6 +19,8 @@
 ;; Users of older Emacs (pre-22) should get version 1.4:
 ;; http://github.com/technomancy/clojure-mode/tree/1.4
 
+;;; Installation:
+
 ;; Use package.el. You'll need to add Marmalade to your archives:
 
 ;; (require 'package)
@@ -39,7 +41,7 @@
 ;;   (defun turn-on-paredit () (paredit-mode 1))
 ;;   (add-hook 'clojure-mode-hook 'turn-on-paredit)
 
-;; See slime-repl (also available from the same package archive) for
+;; See Swank Clojure (http://github.com/technomancy/swank-clojure) for
 ;; better interaction with subprocesses.
 
 ;;; License:
@@ -816,17 +818,50 @@ use (put-clojure-indent 'some-symbol 'defun)."
 ;;  foo)"
 ;;     "foo"))
 
-(defun clojure-find-package ()
+
+;;; Slime help
+
+;;;###autoload
+
+(defvar clojure-project-root-file "project.clj")
+
+(defvar clojure-swank-command "cd %s && lein-1.5.2 jack %s &")
+
+(defvar clojure-swank-port nil)
+
+(defun clojure-jack ()
+  (interactive)
+  (let ((clojure-root (locate-dominating-file default-directory
+                                              clojure-project-root-file)))
+    (setq clojure-swank-port (+ 1024 (* (random 64512))))
+    (when (not clojure-root)
+      (error "Not in a project; couldn't find %s." clojure-project-root-file))
+    (shell-command (format clojure-swank-command clojure-root clojure-swank-port)
+                   "*swank*")
+    (set-process-filter (get-buffer-process "*swank*")
+                        (lambda (process output)
+                          (with-current-buffer "*swank*"
+                            (insert output))
+                          (when (string-match "proceed to jack in" output)
+                            (setq ooo output)
+                            (eval-buffer "*swank*")
+                            (slime-connect "localhost" clojure-swank-port)
+                            (set-process-filter process nil))))
+    (message "Starting swank server...")))
+
+(defun clojure-find-ns ()
   (let ((regexp *namespace-name-regex*))
     (save-excursion
       (when (or (re-search-backward regexp nil t)
                 (re-search-forward regexp nil t))
         (match-string-no-properties 4)))))
 
+(defalias 'clojure-find-package 'clojure-find-ns)
+
 (defun clojure-enable-slime ()
   (slime-mode t)
   (set (make-local-variable 'slime-find-buffer-package-function)
-       'clojure-find-package))
+       'clojure-find-ns))
 
 ;;;###autoload
 (defun clojure-enable-slime-on-existing-buffers ()
@@ -856,7 +891,7 @@ use (put-clojure-indent 'some-symbol 'defun)."
   (interactive)
   (find-file (format "%s/test/%s.clj"
                      (locate-dominating-file buffer-file-name "src/")
-                     (clojure-test-for (clojure-find-package)))))
+                     (clojure-test-for (clojure-find-ns)))))
 
 ;;;###autoload
 (add-hook 'slime-connected-hook 'clojure-enable-slime-on-existing-buffers)
