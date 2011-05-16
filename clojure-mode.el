@@ -821,15 +821,14 @@ use (put-clojure-indent 'some-symbol 'defun)."
 
 ;;; Slime help
 
-;;;###autoload
-
 (defvar clojure-project-root-file "project.clj")
 
-(defvar clojure-swank-command "cd %s && lein-1.5.2 jack %s &")
+(defvar clojure-swank-command "cd %s && lein jack-in %s &")
 
 (defvar clojure-swank-port nil)
 
-(defun clojure-jack ()
+;;;###autoload
+(defun clojure-jack-in ()
   (interactive)
   (let ((clojure-root (locate-dominating-file default-directory
                                               clojure-project-root-file)))
