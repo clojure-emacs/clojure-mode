@@ -6,7 +6,7 @@
 ;;          Lennart Staflin <lenst@lysator.liu.se>
 ;;          Phil Hagelberg <technomancy@gmail.com>
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki/ClojureMode
-;; Version: 1.8.1
+;; Version: 1.9.0
 ;; Keywords: languages, lisp
 
 ;; This file is not part of GNU Emacs.
@@ -31,6 +31,10 @@
 ;; package.el, you can get it from http://bit.ly/pkg-el23. If you have
 ;; an older package.el installed from tromey.com, you should upgrade
 ;; in order to support installation from multiple sources.
+
+;; Of course, it's possible to just place it on your load-path and
+;; require it as well if you don't mind missing out on
+;; byte-compilation and autoloads.
 
 ;; Using clojure-mode with paredit is highly recommended. It is also
 ;; available using package.el from the above archive.
@@ -146,7 +150,7 @@ numbers count from the end:
 
 (defun clojure-mode-version ()
   "Currently package.el doesn't support prerelease version numbers."
-  "1.8.1-SNAPSHOT")
+  "1.9.0")
 
 ;;;###autoload
 (defun clojure-mode ()
@@ -832,8 +836,10 @@ use (put-clojure-indent 'some-symbol 'defun)."
   (interactive)
   (let ((clojure-root (locate-dominating-file default-directory
                                               clojure-project-root-file)))
+    ;; graaaahhhh--no closures in elisp (23)
     (setq clojure-swank-port (+ 1024 (* (random 64512))))
     (when (not clojure-root)
+      ;; TODO: prompt for project root.
       (error "Not in a project; couldn't find %s." clojure-project-root-file))
     (shell-command (format clojure-swank-command clojure-root clojure-swank-port)
                    "*swank*")
