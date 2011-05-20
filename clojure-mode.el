@@ -840,8 +840,9 @@ use (put-clojure-indent 'some-symbol 'defun)."
     ;; graaaahhhh--no closures in elisp (23)
     (setq clojure-swank-port (+ 1024 (* (random 64512))))
     (when (not clojure-root)
-      ;; TODO: prompt for project root.
-      (error "Not in a project; couldn't find %s." clojure-project-root-file))
+      (setq clojure-root (if ido-mode
+                             (ido-read-directory-name "Project: ")
+                           (read-directory-name "Project: "))))
     (shell-command (format clojure-swank-command clojure-root clojure-swank-port)
                    "*swank*")
     (set-process-filter (get-buffer-process "*swank*")
