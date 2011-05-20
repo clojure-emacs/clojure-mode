@@ -180,8 +180,9 @@ if that value is non-nil."
        "\\(\\(^\\|[^\\\\\n]\\)\\(\\\\\\\\\\)*\\)\\(;+\\|#|\\) *")
   (set (make-local-variable 'lisp-indent-function)
        'clojure-indent-function)
-  (set (make-local-variable 'forward-sexp-function)
-       'clojure-forward-sexp)
+  (when (< emacs-major-version 24)
+    (set (make-local-variable 'forward-sexp-function)
+         'clojure-forward-sexp))
   (set (make-local-variable 'lisp-doc-string-elt-property)
        'clojure-doc-string-elt)
 
