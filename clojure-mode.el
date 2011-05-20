@@ -850,7 +850,13 @@ use (put-clojure-indent 'some-symbol 'defun)."
                           (with-current-buffer "*swank*"
                             (insert output))
                           (when (string-match "proceed to jack in" output)
-                            (setq ooo output)
+                            (with-current-buffer "*swank*"
+                              (kill-region (save-excursion
+                                             (goto-char (point-max))
+                                             (search-backward "slime-load-hook")
+                                             (forward-line)
+                                             (point))
+                                           (point-max)))
                             (eval-buffer "*swank*")
                             (slime-connect "localhost" clojure-swank-port)
                             (set-process-filter process nil))))
