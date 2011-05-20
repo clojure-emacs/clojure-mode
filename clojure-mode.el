@@ -6,7 +6,7 @@
 ;;          Lennart Staflin <lenst@lysator.liu.se>
 ;;          Phil Hagelberg <technomancy@gmail.com>
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki/ClojureMode
-;; Version: 1.9.0
+;; Version: 1.9.1
 ;; Keywords: languages, lisp
 
 ;; This file is not part of GNU Emacs.
