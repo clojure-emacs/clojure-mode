@@ -843,7 +843,7 @@ use (put-clojure-indent 'some-symbol 'defun)."
       (setq clojure-root (if ido-mode
                              (ido-read-directory-name "Project: ")
                            (read-directory-name "Project: "))))
-    (shell-command (format clojure-swank-command clojure-root clojure-swank-port)
+    (shell-command (format clojure-swank-command (expand-file-name clojure-root) clojure-swank-port)
                    "*swank*")
     (set-process-filter (get-buffer-process "*swank*")
                         (lambda (process output)
