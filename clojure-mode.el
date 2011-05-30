@@ -189,6 +189,7 @@ if that value is non-nil."
   (clojure-mode-font-lock-setup)
 
   (run-mode-hooks 'clojure-mode-hook)
+  (run-hooks 'prog-mode-hook)
 
   ;; Enable curly braces when paredit is enabled in clojure-mode-hook
   (when (and (featurep 'paredit) paredit-mode (>= paredit-version 21))
