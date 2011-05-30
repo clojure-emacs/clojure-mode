@@ -6,7 +6,7 @@
 ;;          Lennart Staflin <lenst@lysator.liu.se>
 ;;          Phil Hagelberg <technomancy@gmail.com>
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki/ClojureMode
-;; Version: 1.9.1
+;; Version: 1.9.2
 ;; Keywords: languages, lisp
 
 ;; This file is not part of GNU Emacs.
@@ -46,7 +46,7 @@
 ;;   (add-hook 'clojure-mode-hook 'turn-on-paredit)
 
 ;; See Swank Clojure (http://github.com/technomancy/swank-clojure) for
-;; better interaction with subprocesses.
+;; better interaction with subprocesses via SLIME.
 
 ;;; License:
 
