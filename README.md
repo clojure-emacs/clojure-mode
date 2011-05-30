@@ -1,18 +1,21 @@
 # Clojure Mode
 
-Provides font-lock, indentation, and navigation for the
+Provides Emacs font-lock, indentation, and navigation for the
 [Clojure language](http://clojure.org).
 
 ## Installation
 
 It's easiest to install and keep Clojure Mode updated using
-[package.el](http://pkg-el23). 
+[package.el](http://bit.ly/pkg-el23). 
 
+    ;; add to ~/.emacs.d/init.el if you aren't already using Marmalade.
     (require 'package)
     (add-to-list 'package-archives
                  '("marmalade" . "http://marmalade-repo.org/packages/"))
     (package-initialize)
-    
+
+    M-x eval-buffer
+
     M-x package-install clojure-mode
 
 If you use a version of Emacs prior to 24 that doesn't include
