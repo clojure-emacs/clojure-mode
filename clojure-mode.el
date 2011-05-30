@@ -5,7 +5,7 @@
 ;; Authors: Jeffrey Chu <jochu0@gmail.com>
 ;;          Lennart Staflin <lenst@lysator.liu.se>
 ;;          Phil Hagelberg <technomancy@gmail.com>
-;; URL: http://www.emacswiki.org/cgi-bin/wiki/ClojureMode
+;; URL: http://github.com/technomancy/clojure-mode
 ;; Version: 1.9.2
 ;; Keywords: languages, lisp
 
