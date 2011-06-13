@@ -98,6 +98,9 @@
 ;;  * Fix coloring/reporting
 ;;  * Don't trigger slime-connected-hook.
 
+;; 1.5.6 ???
+;;  * Remove heinous clojure.test/report monkeypatch.
+
 ;;; TODO:
 
 ;; * Prefix arg to jump-to-impl should open in other window
@@ -167,11 +170,13 @@
   "Redefine the test-is report function to store results in metadata."
   (when (eq (compare-strings "clojure" 0 7 (slime-connection-name) 0 7) t)
     (clojure-test-eval-sync
-     "(require 'clojure.test) (ns clojure.test)
+     "(ns clojure.test.mode
+        (:use [clojure.test :only [file-position *testing-vars* *test-out*
+                                   join-fixtures *report-counters* do-report
+                                   test-var *initial-report-counters*]]))
 
-    (defonce old-report report)
     (defn report [event]
-     (if-let [current-test (last *testing-vars*)]
+     (if-let [current-test (last clojure.test/*testing-vars*)]
              (alter-meta! current-test
                           assoc :status (conj (:status (meta current-test))
                                           [(:type event) (:message event)
@@ -184,7 +189,7 @@
                                                    ((file-position 3) 1)
                                                    (:line event)))])))
      (binding [*test-out* *out*]
-       (old-report event)))
+       ((.getRoot #'clojure.test/report) event)))
 
    (defn clojure-test-mode-test-one-var [test-ns test-name]
      (let [v (ns-resolve test-ns test-name)
@@ -317,10 +322,11 @@ Retuns the problem overlay if such a position is found, otherwise nil."
                            (expand-file-name (buffer-file-name))))
                        (lambda (&rest args)
                          (slime-eval-async '(swank:interactive-eval
-                                             "(clojure.test/run-tests)")
+                                             "(binding [clojure.test/report
+                                               clojure.test.mode/report]
+                                                (clojure.test/run-tests))")
                                            #'clojure-test-get-results))))))
 
-;; TODO: run tests in region
 (defun clojure-test-run-test ()
   "Run the test at point."
   (interactive)
@@ -331,7 +337,8 @@ Retuns the problem overlay if such a position is found, otherwise nil."
 	    (test-name (if (listp f) (first f) f)))
        (slime-eval-async
         `(swank:interactive-eval
-          ,(format "(do (load-file \"%s\")
+          ,(format "(binding [clojure.test/report clojure.test.mode/report]
+                        (load-file \"%s\")
                         (clojure-test-mode-test-one-in-ns '%s '%s)
                         (cons (:name (meta (var %s))) (:status (meta (var %s)))))"
                    (buffer-file-name)
