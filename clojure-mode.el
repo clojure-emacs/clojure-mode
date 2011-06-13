@@ -830,39 +830,32 @@ use (put-clojure-indent 'some-symbol 'defun)."
 
 (defvar clojure-project-root-file "project.clj")
 
-(defvar clojure-swank-command "cd %s && lein jack-in %s &")
+(defvar clojure-swank-command "lein jack-in %s &")
 
 (defvar clojure-swank-port nil)
 
 ;;;###autoload
 (defun clojure-jack-in ()
   (interactive)
-  (let ((clojure-root (locate-dominating-file default-directory
-                                              clojure-project-root-file)))
-    ;; graaaahhhh--no closures in elisp (23)
-    (setq clojure-swank-port (+ 1024 (* (random 64512))))
-    (when (not clojure-root)
-      (setq clojure-root (if ido-mode
-                             (ido-read-directory-name "Project: ")
-                           (read-directory-name "Project: "))))
-    (shell-command (format clojure-swank-command (expand-file-name clojure-root) clojure-swank-port)
-                   "*swank*")
-    (set-process-filter (get-buffer-process "*swank*")
-                        (lambda (process output)
+  ;; graaaahhhh--no closures in elisp (23)
+  (setq clojure-swank-port (+ 1024 (* (random 64512))))
+  (shell-command (format clojure-swank-command clojure-swank-port) "*swank*")
+  (set-process-filter (get-buffer-process "*swank*")
+                      (lambda (process output)
+                        (with-current-buffer "*swank*"
+                          (insert output))
+                        (when (string-match "proceed to jack in" output)
                           (with-current-buffer "*swank*"
-                            (insert output))
-                          (when (string-match "proceed to jack in" output)
-                            (with-current-buffer "*swank*"
-                              (kill-region (save-excursion
-                                             (goto-char (point-max))
-                                             (search-backward "slime-load-hook")
-                                             (forward-line)
-                                             (point))
-                                           (point-max)))
-                            (eval-buffer "*swank*")
-                            (slime-connect "localhost" clojure-swank-port)
-                            (set-process-filter process nil))))
-    (message "Starting swank server...")))
+                            (kill-region (save-excursion
+                                           (goto-char (point-max))
+                                           (search-backward "slime-load-hook")
+                                           (forward-line)
+                                           (point))
+                                         (point-max)))
+                          (eval-buffer "*swank*")
+                          (slime-connect "localhost" clojure-swank-port)
+                          (set-process-filter process nil))))
+  (message "Starting swank server..."))
 
 (defun clojure-find-ns ()
   (let ((regexp *namespace-name-regex*))

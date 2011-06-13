@@ -40,7 +40,7 @@ Use paredit as you normally would with any other mode; for instance:
 
 ## SLIME
 
-You can use Leiningen (http://github.com/technomancy/leiningen) for
+You can use [Leiningen](http://github.com/technomancy/leiningen) for
 better interaction with subprocesses via SLIME.
 
     $ wget https://github.com/technomancy/leiningen/raw/stable/bin/lein
