@@ -4,7 +4,7 @@
 
 ;; Author: Phil Hagelberg <technomancy@gmail.com>
 ;; URL: http://emacswiki.org/cgi-bin/wiki/ClojureTestMode
-;; Version: 1.5.5
+;; Version: 1.5.6
 ;; Keywords: languages, lisp, test
 ;; Package-Requires: ((slime "20091016") (clojure-mode "1.7"))
 
@@ -98,7 +98,7 @@
 ;;  * Fix coloring/reporting
 ;;  * Don't trigger slime-connected-hook.
 
-;; 1.5.6 ???
+;; 1.5.6 2011-06-15
 ;;  * Remove heinous clojure.test/report monkeypatch.
 
 ;;; TODO:
