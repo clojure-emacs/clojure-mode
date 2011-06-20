@@ -136,9 +136,6 @@ Clojure to load that file."
 This holds a cons cell of the form `(DIRECTORY . FILE)'
 describing the last `clojure-load-file' or `clojure-compile-file' command.")
 
-(defvar clojure-def-regexp "^\\s *(def\\S *\\s +\\(?:\\^\\S +\\s +\\)?\\([^ \n\t]+\\)"
-  "A regular expression to match any top-level definitions.")
-
 (defvar clojure-test-ns-segment-position -1
   "Which segment of the ns is \"test\" inserted in your test name convention.
 
@@ -171,7 +168,7 @@ if that value is non-nil."
         major-mode 'clojure-mode
         imenu-create-index-function
         (lambda ()
-          (imenu--generic-function `((nil ,clojure-def-regexp 1))))
+          (imenu--generic-function '((nil clojure-match-next-def 0))))
         local-abbrev-table clojure-mode-abbrev-table
         indent-tabs-mode nil)
   (lisp-mode-variables nil)
@@ -209,6 +206,17 @@ if that value is non-nil."
   (switch-to-lisp t))
 
 
+
+(defun clojure-match-next-def ()
+  "Scans the buffer backwards for the next top-level definition.
+Called by `imenu--generic-function'."
+  (when (re-search-backward "^\\s *(def\\S *[ \n\t]+" nil t)
+    (save-excursion
+      (goto-char (match-end 0))
+      (when (looking-at "#?\\^")
+        (let (forward-sexp-function) ; using the built-in one
+          (forward-sexp)))           ; skip the metadata
+      (re-search-forward "[^ \n\t)]+"))))
 
 (defun clojure-mode-font-lock-setup ()
   "Configures font-lock for editing Clojure code."
