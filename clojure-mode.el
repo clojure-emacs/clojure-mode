@@ -345,7 +345,7 @@ elements of a def* forms."
          "(\\(?:clojure.core/\\)?"
          (regexp-opt
           '("let" "letfn" "do"
-            "cond" "condp"
+            "case" "cond" "condp"
             "for" "loop" "recur"
             "when" "when-not" "when-let" "when-first"
             "if" "if-let" "if-not"
@@ -383,7 +383,7 @@ elements of a def* forms."
         "bit-clear" "bit-flip" "bit-not" "bit-or" "bit-set"
         "bit-shift-left" "bit-shift-right" "bit-test" "bit-xor" "boolean"
         "boolean-array" "booleans" "bound-fn" "bound-fn*" "butlast"
-        "byte" "byte-array" "bytes" "cast" "char"
+        "byte" "byte-array" "bytes" "case" "cast" "char"
         "char-array" "char-escape-string" "char-name-string" "char?" "chars"
         "chunk" "chunk-append" "chunk-buffer" "chunk-cons" "chunk-first"
         "chunk-next" "chunk-rest" "chunked-seq?" "class" "class?"
@@ -727,6 +727,7 @@ use (put-clojure-indent 'some-symbol 'defun)."
   (bound-fn 'defun)
   (if 1)
   (if-not 1)
+  (case 1)
   (condp 2)
   (when 1)
   (while 1)
