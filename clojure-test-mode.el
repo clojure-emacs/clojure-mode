@@ -252,7 +252,7 @@
             (incf clojure-test-error-count)
             (clojure-test-highlight-problem line event actual)))))))
 
-	
+
 (defun clojure-test-highlight-problem (line event message)
   (save-excursion
     (goto-char (point-min)) (forward-line (1- line))
@@ -339,7 +339,7 @@ Retuns the problem overlay if such a position is found, otherwise nil."
         `(swank:interactive-eval
           ,(format "(binding [clojure.test/report clojure.test.mode/report]
                         (load-file \"%s\")
-                        (clojure-test-mode-test-one-in-ns '%s '%s)
+                        (clojure.test.mode/clojure-test-mode-test-one-in-ns '%s '%s)
                         (cons (:name (meta (var %s))) (:status (meta (var %s)))))"
                    (buffer-file-name)
                    (slime-current-package) test-name
