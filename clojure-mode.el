@@ -847,7 +847,7 @@ use (put-clojure-indent 'some-symbol 'defun)."
 (defun clojure-jack-in ()
   (interactive)
   ;; graaaahhhh--no closures in elisp (23)
-  (setq clojure-swank-port (+ 1024 (* (random 64512)))
+  (setq clojure-swank-port (- 65535 (mod (caddr (current-time)) 4096))
         slime-net-coding-system 'utf-8-unix)
 
   (let* ((swank-cmd (format clojure-swank-command clojure-swank-port))
