@@ -322,16 +322,7 @@ elements of a def* forms."
 (defconst clojure-font-lock-keywords
   (eval-when-compile
     `( ;; Definitions.
-      (,(concat "(\\(?:clojure.core/\\)?\\("
-                (regexp-opt '("defn" "defn-" "def" "def-" "defonce"
-                              "defmulti" "defmethod" "defmacro"
-                              "defstruct" "deftype" "defprotocol"
-                              "defrecord" "deftest"
-                              "slice" "def\\[a-z\\]"
-                              "defalias" "defhinted" "defmacro-"
-                              "defn-memo" "defnk" "defonce-"
-                              "defstruct-" "defunbound" "defunbound-"
-                              "defvar" "defvar-"))
+      (,(concat "(\\(?:clojure.core/\\)?\\(def[-a-z]*"
                 ;; Function declarations.
                 "\\)\\>"
                 ;; Any whitespace
