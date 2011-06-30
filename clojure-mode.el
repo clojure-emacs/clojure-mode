@@ -147,7 +147,7 @@ numbers count from the end:
 
 (defun clojure-mode-version ()
   "Currently package.el doesn't support prerelease version numbers."
-  "1.9.0")
+  "1.9.2")
 
 ;;;###autoload
 (defun clojure-mode ()
