@@ -835,6 +835,16 @@ use (put-clojure-indent 'some-symbol 'defun)."
 ;;     "foo"))
 
 
+
+(defun clojure-insert-ns-form ()
+  (interactive)
+  (goto-char (point-min))
+  (let* ((rel (car (last (split-string buffer-file-name "src/\\|test/"))))
+         (relative (car (split-string rel "\\.clj")))
+         (segments (split-string relative "/")))
+    (insert (format "(ns %s)" (mapconcat #'identity segments ".")))))
+
+
 ;;; Slime help
 
 (defvar clojure-project-root-file "project.clj")
