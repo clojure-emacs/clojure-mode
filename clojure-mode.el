@@ -792,7 +792,7 @@ use (put-clojure-indent 'some-symbol 'defun)."
 
 
 
-(defconst *namespace-name-regex*
+(defconst clojure-namespace-name-regex
   (rx line-start
       "("
       (zero-or-one (group (regexp "clojure.core/")))
@@ -811,10 +811,10 @@ use (put-clojure-indent 'some-symbol 'defun)."
       (zero-or-one (any ":'"))
       (group (one-or-more (not (any "()\"" whitespace))) word-end)))
 
-;; for testing *namespace-name-regex*, you can evaluate this code and make
+;; for testing clojure-namespace-name-regex, you can evaluate this code and make
 ;; sure foo (or whatever the namespace name is) shows up in results. some of
 ;; these currently fail.
-;; (mapcar (lambda (s) (let ((n (string-match *namespace-name-regex* s)))
+;; (mapcar (lambda (s) (let ((n (string-match clojure-namespace-name-regex s)))
 ;;                       (if n (match-string 4 s))))
 ;;         '("(ns foo)"
 ;;           "(ns
@@ -869,7 +869,7 @@ use (put-clojure-indent 'some-symbol 'defun)."
   (message "Starting swank server..."))
 
 (defun clojure-find-ns ()
-  (let ((regexp *namespace-name-regex*))
+  (let ((regexp clojure-namespace-name-regex))
     (save-excursion
       (when (or (re-search-backward regexp nil t)
                 (re-search-forward regexp nil t))
