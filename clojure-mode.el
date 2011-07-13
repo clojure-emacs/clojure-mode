@@ -475,7 +475,7 @@ elements of a def* forms."
         "with-bindings" "with-bindings*" "with-in-str" "with-loading-context" "with-local-vars"
         "with-meta" "with-open" "with-out-str" "with-precision" "xml-seq"
         ) t)
-         "\\>")
+         "\\(\\>\\|\\_>\\)")
        1 font-lock-variable-name-face)
       ;; (fn name? args ...)
       (,(concat "(\\(?:clojure.core/\\)?\\(fn\\)[ \t]+"
