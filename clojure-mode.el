@@ -124,6 +124,8 @@ Clojure to load that file."
     (modify-syntax-entry ?\[ "(]" table)
     (modify-syntax-entry ?\] ")[" table)
     (modify-syntax-entry ?^ "'" table)
+    (modify-syntax-entry ?' "_" table)
+    (modify-syntax-entry ?# "_" table)
     table))
 
 (defvar clojure-mode-abbrev-table nil
@@ -337,8 +339,8 @@ elements of a def* forms."
                 ;; Any whitespace
                 "[ \r\n\t]*"
                 ;; Possibly type or metadata
-                "\\(?:#?^\\(?:{[^}]*}\\|\\sw+\\)[ \r\n\t]*\\)*"
-                "\\(\\sw+\\)?")
+                "\\(?:#?^\\(?:{[^}]*}\\|\\(?:\\sw\\|\\s_\\)+\\)[ \r\n\t]*\\)*"
+                "\\(\\sw\\(?:\\sw\\|\\s_\\)*\\)?")
        (1 font-lock-keyword-face)
        (2 font-lock-function-name-face nil t))
       ;; Deprecated functions
@@ -473,14 +475,14 @@ elements of a def* forms."
         "with-bindings" "with-bindings*" "with-in-str" "with-loading-context" "with-local-vars"
         "with-meta" "with-open" "with-out-str" "with-precision" "xml-seq"
         ) t)
-         "\\>")
+         "\\(\\>\\|\\_>\\)")
        1 font-lock-variable-name-face)
       ;; (fn name? args ...)
       (,(concat "(\\(?:clojure.core/\\)?\\(fn\\)[ \t]+"
                 ;; Possibly type
-                "\\(?:#?^\\sw+[ \t]*\\)?"
+                "\\(?:#?^\\(?:\\sw\\|\\s_\\)+[ \t]*\\)?"
                 ;; Possibly name
-                "\\(\\sw+\\)?" )
+                "\\(\\sw\\(?:\\sw\\|\\s_\\)*\\)?" )
        (1 font-lock-keyword-face)
        (2 font-lock-function-name-face nil t))
       ;;Other namespaces in clojure.jar
@@ -521,10 +523,10 @@ elements of a def* forms."
         "path" "prev" "remove" "replace" "right"
         "rightmost" "rights" "root" "seq-zip" "up"
         ) t)
-         "\\>")
+         "\\(\\>\\|\\_>\\)")
        1 font-lock-type-face)
       ;; Constant values (keywords), including as metadata e.g. ^:static
-      ("\\<^?:\\(\\sw\\|#\\)+\\>" 0 font-lock-constant-face)
+      ("\\<^?:\\(\\sw\\|\\s_\\)+\\(?:\\>\\|\\_>\\)" 0 font-lock-constant-face)
       ;; Meta type annotation #^Type or ^Type
       ("#?^\\sw+" 0 font-lock-type-face)
       ("\\<io\\!\\>" 0 font-lock-warning-face)
