@@ -124,6 +124,8 @@ Clojure to load that file."
     (modify-syntax-entry ?\[ "(]" table)
     (modify-syntax-entry ?\] ")[" table)
     (modify-syntax-entry ?^ "'" table)
+    (modify-syntax-entry ?' "_" table)
+    (modify-syntax-entry ?# "_" table)
     table))
 
 (defvar clojure-mode-abbrev-table nil
