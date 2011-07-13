@@ -339,7 +339,7 @@ elements of a def* forms."
                 ;; Any whitespace
                 "[ \r\n\t]*"
                 ;; Possibly type or metadata
-                "\\(?:#?^\\(?:{[^}]*}\\|\\sw+\\)[ \r\n\t]*\\)*"
+                "\\(?:#?^\\(?:{[^}]*}\\|\\(?:\\sw\\|\\s_\\)+\\)[ \r\n\t]*\\)*"
                 "\\(\\sw+\\)?")
        (1 font-lock-keyword-face)
        (2 font-lock-function-name-face nil t))
@@ -526,7 +526,7 @@ elements of a def* forms."
          "\\>")
        1 font-lock-type-face)
       ;; Constant values (keywords), including as metadata e.g. ^:static
-      ("\\<^?:\\(\\sw\\|#\\)+\\>" 0 font-lock-constant-face)
+      ("\\<^?:\\(\\sw\\|\\s_\\)+\\(?:\\>\\|\\_>\\)" 0 font-lock-constant-face)
       ;; Meta type annotation #^Type or ^Type
       ("#?^\\sw+" 0 font-lock-type-face)
       ("\\<io\\!\\>" 0 font-lock-warning-face)
