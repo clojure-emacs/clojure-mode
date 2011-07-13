@@ -523,7 +523,7 @@ elements of a def* forms."
         "path" "prev" "remove" "replace" "right"
         "rightmost" "rights" "root" "seq-zip" "up"
         ) t)
-         "\\>")
+         "\\(\\>\\|\\_>\\)")
        1 font-lock-type-face)
       ;; Constant values (keywords), including as metadata e.g. ^:static
       ("\\<^?:\\(\\sw\\|\\s_\\)+\\(?:\\>\\|\\_>\\)" 0 font-lock-constant-face)
