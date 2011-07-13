@@ -480,9 +480,9 @@ elements of a def* forms."
       ;; (fn name? args ...)
       (,(concat "(\\(?:clojure.core/\\)?\\(fn\\)[ \t]+"
                 ;; Possibly type
-                "\\(?:#?^\\sw+[ \t]*\\)?"
+                "\\(?:#?^\\(?:\\sw\\|\\s_\\)+[ \t]*\\)?"
                 ;; Possibly name
-                "\\(\\sw+\\)?" )
+                "\\(\\sw\\(?:\\sw\\|\\s_\\)*\\)?" )
        (1 font-lock-keyword-face)
        (2 font-lock-function-name-face nil t))
       ;;Other namespaces in clojure.jar
