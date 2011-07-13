@@ -340,7 +340,7 @@ elements of a def* forms."
                 "[ \r\n\t]*"
                 ;; Possibly type or metadata
                 "\\(?:#?^\\(?:{[^}]*}\\|\\(?:\\sw\\|\\s_\\)+\\)[ \r\n\t]*\\)*"
-                "\\(\\sw+\\)?")
+                "\\(\\sw\\(?:\\sw\\|\\s_\\)*\\)?")
        (1 font-lock-keyword-face)
        (2 font-lock-function-name-face nil t))
       ;; Deprecated functions
