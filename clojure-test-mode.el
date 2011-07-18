@@ -255,7 +255,7 @@
 
 (defun clojure-test-highlight-problem (line event message)
   (save-excursion
-    (goto-char (point-min)) (forward-line (1- line))
+    (goto-line line)
     (let ((beg (point)))
       (end-of-line)
       (let ((overlay (make-overlay beg (point))))
