@@ -851,31 +851,44 @@ use (put-clojure-indent 'some-symbol 'defun)."
 
 (defvar clojure-swank-command "lein jack-in %s")
 
+(defvar clojure-swank-command-slime-provided "lein swank %s localhost :message \"\\\";;; proceed to jack in\\\"\"")
+
 ;;;###autoload
 (defun clojure-jack-in ()
   (interactive)
   (setq slime-net-coding-system 'utf-8-unix)
   (lexical-let ((port (- 65535 (mod (caddr (current-time)) 4096)))
                 (dir default-directory))
-    (let* ((swank-cmd (format clojure-swank-command port))
+    (when-let (buf (get-buffer "*swank*"))
+      (when-let (proc (get-buffer-process buf))
+        (set-process-sentinel proc nil))
+      (kill-buffer buf))
+    (let* ((swank-cmd (format (if (featurep 'slime-repl)
+                                  clojure-swank-command-slime-provided
+                                clojure-swank-command)
+                              port))
            (proc (start-process-shell-command "swank" "*swank*" swank-cmd)))
-      (set-process-filter (get-buffer-process "*swank*")
+      (message swank-cmd)
+      (set-process-sentinel proc
+                            (lambda (process state)
+                              (when-let (buf (get-buffer "*swank*"))
+                                (with-current-buffer buf
+                                  (insert (concat ";;; " state)))
+                                (when (string-match "exited abnormally" state)
+                                  (display-buffer buf))
+                                (message state))))
+      (set-process-filter proc
                           (lambda (process output)
                             (with-current-buffer "*swank*"
                               (insert output))
                             (when (string-match "proceed to jack in" output)
-                              (with-current-buffer "*swank*"
-                                (kill-region (save-excursion
-                                               (goto-char (point-max))
-                                               (search-backward "slime-load-hook")
-                                               (forward-line)
-                                               (point))
-                                             (point-max)))
                               (eval-buffer "*swank*")
                               (slime-connect "localhost" port)
                               (with-current-buffer (slime-output-buffer t)
                                 (setq default-directory dir))
-                              (set-process-filter process nil))))))
+                              (set-process-filter process nil)
+                              (with-current-buffer "*swank*"
+                                (delete-region (point-min) (point-max))))))))
   (message "Starting swank server..."))
 
 (defun clojure-find-ns ()
