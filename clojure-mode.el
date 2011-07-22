@@ -857,6 +857,7 @@ use (put-clojure-indent 'some-symbol 'defun)."
   (setq slime-net-coding-system 'utf-8-unix)
   (lexical-let ((port (- 65535 (mod (caddr (current-time)) 4096)))
                 (dir default-directory))
+    (kill-buffer "*swank*")
     (let* ((swank-cmd (format clojure-swank-command port))
            (proc (start-process-shell-command "swank" "*swank*" swank-cmd)))
       (set-process-filter (get-buffer-process "*swank*")
