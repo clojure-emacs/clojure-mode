@@ -849,7 +849,8 @@ use (put-clojure-indent 'some-symbol 'defun)."
 
 (defvar clojure-project-root-file "project.clj")
 
-(defvar clojure-swank-command "lein jack-in %s")
+;; Pipe to sh to work around mackosecks GUI Emacs $PATH issues.
+(defvar clojure-swank-command "echo \"lein jack-in %s\" | sh")
 
 ;;;###autoload
 (defun clojure-jack-in ()
