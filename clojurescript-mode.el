@@ -43,7 +43,8 @@
   "Path to ClojureScript home directory")
 
 (defvar clojurescript-clj-repl
-  (expand-file-name "script/repl" clojurescript-home)
+  (when clojurescript-home
+    (expand-file-name "script/repl" clojurescript-home))
   "Path to the ClojureScript Clojure REPL")
 
 (defvar clojurescript-repl-interface
@@ -56,6 +57,9 @@
           "(cljs.repl/repl (" clojurescript-repl-interface "/repl-env)" ")" "\n"))
 
 (defun clojurescript-start-cljs-repl ()
+  ;; I know, I know; major facepalm. But that's the way it is.
+  (when (not clojurescript-home)
+    (error "CLOJURESCRIPT_HOME not configured. See ClojureScript docs."))
   (comint-send-string (inferior-lisp-proc) (clojurescript-repl-init-commands)))
 
 ;;;###autoload
