@@ -58,14 +58,16 @@
 (defun clojurescript-start-cljs-repl ()
   (comint-send-string (inferior-lisp-proc) (clojurescript-repl-init-commands)))
 
+;;;###autoload
 (define-derived-mode clojurescript-mode clojure-mode "ClojureScript"
   "Major mode for ClojureScript"
-  
+
   (set (make-local-variable 'inferior-lisp-program) clojurescript-clj-repl)
-  (add-hook 'inferior-lisp-mode-hook 'clojurescript-start-cljs-repl))
+  (add-hook 'inferior-lisp-mode-hook 'clojurescript-start-cljs-repl)
+  (when (functionp 'slime-mode)
+    (slime-mode -1)))
 
-(add-hook 'clojurescript-mode-hook '(lambda () (slime-mode -1)))
-
+;;;###autoload
 (add-to-list 'auto-mode-alist '("\\.cljs$" . clojurescript-mode))
 
 (provide 'clojurescript-mode)
