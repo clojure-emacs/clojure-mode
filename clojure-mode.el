@@ -877,6 +877,7 @@ use (put-clojure-indent 'some-symbol 'defun)."
                               (eval-buffer "*swank*")
                               (slime-connect "localhost" port)
                               (with-current-buffer (slime-output-buffer t)
+                                (delete-region (point-min) (point-max))
                                 (setq default-directory dir))
                               (set-process-filter process nil))))))
   (message "Starting swank server..."))
