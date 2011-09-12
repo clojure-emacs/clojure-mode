@@ -4,7 +4,7 @@
 ;;
 ;; Authors: Luke Amdor <luke.amdor@gmail.com>
 ;; URL: http://github.com/rubbish/clojurescript-mode
-;; Version: 1.3.0-beta
+;; Version: 0.5
 ;; Keywords: languages, lisp, javascript
 
 ;; This file is not part of GNU Emacs.
