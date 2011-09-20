@@ -6,7 +6,7 @@
 ;;          Lennart Staflin <lenst@lysator.liu.se>
 ;;          Phil Hagelberg <technomancy@gmail.com>
 ;; URL: http://github.com/technomancy/clojure-mode
-;; Version: 1.11.0
+;; Version: 1.11.1
 ;; Keywords: languages, lisp
 
 ;; This file is not part of GNU Emacs.
