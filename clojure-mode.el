@@ -858,7 +858,7 @@ use (put-clojure-indent 'some-symbol 'defun)."
   (setq slime-net-coding-system 'utf-8-unix)
   (lexical-let ((port (- 65535 (mod (caddr (current-time)) 4096)))
                 (dir default-directory))
-    (when (slime-current-connection)
+    (when (and (functionp 'slime-disconnect) (slime-current-connection))
       (slime-disconnect))
     (when (get-buffer "*swank*")
       (kill-buffer "*swank*"))
