@@ -75,3 +75,4 @@
 (add-to-list 'auto-mode-alist '("\\.cljs$" . clojurescript-mode))
 
 (provide 'clojurescript-mode)
+;;; clojurescript-mode.el ends here
