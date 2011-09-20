@@ -411,7 +411,7 @@ elements of a def* forms."
         "enumeration-seq" "eval" "even?" "every?"
         "extend" "extend-protocol" "extend-type" "extends?" "extenders"
         "false?" "ffirst" "file-seq" "filter" "find" "find-doc"
-        "find-ns" "find-var" "first" "float" "float-array"
+        "find-ns" "find-var" "first" "flatten" "float" "float-array"
         "float?" "floats" "flush" "fn" "fn?"
         "fnext" "for" "force" "format" "future"
         "future-call" "future-cancel" "future-cancelled?" "future-done?" "future?"
@@ -471,7 +471,7 @@ elements of a def* forms."
         "var?" "vary-meta" "vec" "vector" "vector?"
         "when" "when-first" "when-let" "when-not" "while"
         "with-bindings" "with-bindings*" "with-in-str" "with-loading-context" "with-local-vars"
-        "with-meta" "with-open" "with-out-str" "with-precision" "xml-seq"
+        "with-meta" "with-open" "with-out-str" "with-precision" "xml-seq" "zipmap"
         ) t)
          "\\>")
        1 font-lock-variable-name-face)
