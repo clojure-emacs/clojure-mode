@@ -869,17 +869,9 @@ use (put-clojure-indent 'some-symbol 'defun)."
                             (with-current-buffer "*swank*"
                               (insert output))
                             (when (string-match "proceed to jack in" output)
-                              (with-current-buffer "*swank*"
-                                (kill-region (save-excursion
-                                               (goto-char (point-max))
-                                               (search-backward "slime-load-hook")
-                                               (forward-line)
-                                               (point))
-                                             (point-max)))
                               (eval-buffer "*swank*")
                               (slime-connect "localhost" port)
                               (with-current-buffer (slime-output-buffer t)
-                                (delete-region (point-min) (point-max))
                                 (setq default-directory dir))
                               (set-process-filter process nil))))))
   (message "Starting swank server..."))
