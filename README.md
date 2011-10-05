@@ -16,6 +16,8 @@ It's easiest to install and keep Clojure Mode updated using
 
     M-x eval-buffer
 
+    M-x package-refresh-contents
+
     M-x package-install clojure-mode
 
 If you use a version of Emacs prior to 24 that doesn't include
