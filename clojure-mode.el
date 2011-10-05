@@ -854,6 +854,12 @@ use (put-clojure-indent 'some-symbol 'defun)."
                                   "lein jack-in %s"
                                 "echo \"lein jack-in %s\" | sh"))
 
+(defun clojure-jack-in-sentinel (process event)
+  (let ((debug-on-error t))
+    (error "Could not start swank server: %s"
+           (with-current-buffer (process-buffer process)
+             (buffer-substring (point-min) (point-max))))))
+
 ;;;###autoload
 (defun clojure-jack-in ()
   (interactive)
@@ -866,15 +872,18 @@ use (put-clojure-indent 'some-symbol 'defun)."
       (kill-buffer "*swank*"))
     (let* ((swank-cmd (format clojure-swank-command port))
            (proc (start-process-shell-command "swank" "*swank*" swank-cmd)))
+      (set-process-sentinel (get-buffer-process "*swank*")
+                            'clojure-jack-in-sentinel)
       (set-process-filter (get-buffer-process "*swank*")
                           (lambda (process output)
-                            (with-current-buffer "*swank*"
+                            (with-current-buffer (process-buffer process)
                               (insert output))
                             (when (string-match "proceed to jack in" output)
-                              (eval-buffer "*swank*")
+                              (eval-buffer (process-buffer process))
                               (slime-connect "localhost" port)
                               (with-current-buffer (slime-output-buffer t)
                                 (setq default-directory dir))
+                              (set-process-sentinel process nil)
                               (set-process-filter process nil))))))
   (message "Starting swank server..."))
 
