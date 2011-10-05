@@ -45,7 +45,7 @@ better interaction with subprocesses via SLIME.
 
     $ wget https://github.com/technomancy/leiningen/raw/stable/bin/lein
     [place the "lein" script on your $PATH and make it executable]
-    $ lein plugin install swank-clojure 1.3.1
+    $ lein plugin install swank-clojure 1.3.3
     
     M-x clojure-jack-in # from inside a project
 
