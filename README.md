@@ -40,13 +40,21 @@ Use paredit as you normally would with any other mode; for instance:
     (defun turn-on-paredit () (paredit-mode 1))
     (add-hook 'clojure-mode-hook 'turn-on-paredit)
 
+## Basic REPL
+
+Use <kbd>M-x run-lisp</kbd> to open a simple REPL subprocess using
+[Leiningen](http://github.com/technomancy/leiningen). Once that has
+opened, you can use <kbd>C-c C-r</kbd> to evaluate the region or
+<kbd>C-c C-l</kbd> to load the whole file.
+
+If you don't use Leiningen, you can set `inferior-lisp-program` to
+a different REPL command.
+
 ## SLIME
 
-You can use [Leiningen](http://github.com/technomancy/leiningen) for
-better interaction with subprocesses via SLIME.
+You can also use [Leiningen](http://github.com/technomancy/leiningen)
+to start an enhanced REPL via SLIME:
 
-    $ wget https://github.com/technomancy/leiningen/raw/stable/bin/lein
-    [place the "lein" script on your $PATH and make it executable]
     $ lein plugin install swank-clojure 1.3.3
     
     M-x clojure-jack-in # from inside a project
