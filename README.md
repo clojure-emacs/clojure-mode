@@ -8,17 +8,17 @@ Provides Emacs font-lock, indentation, and navigation for the
 It's easiest to install and keep Clojure Mode updated using
 [package.el](http://bit.ly/pkg-el23). 
 
-    ;; add to ~/.emacs.d/init.el if you aren't already using Marmalade.
-    (require 'package)
-    (add-to-list 'package-archives
-                 '("marmalade" . "http://marmalade-repo.org/packages/"))
-    (package-initialize)
+```lisp
+;; add to ~/.emacs.d/init.el if you aren't already using Marmalade.
+(require 'package)
+(add-to-list 'package-archives
+             '("marmalade" . "http://marmalade-repo.org/packages/"))
+(package-initialize)
+```
 
-    M-x eval-buffer
-
-    M-x package-refresh-contents
-
-    M-x package-install clojure-mode
+* <kbd>M-x eval-buffer</kbd>
+* <kbd>M-x package-refresh-contents</kbd>
+* <kbd>M-x package-install clojure-mode</kbd>
 
 If you use a version of Emacs prior to 24 that doesn't include
 package.el, you can get it from http://bit.ly/pkg-el23. If you have an
@@ -31,8 +31,10 @@ Download `clojure-mode.el` and place it in the `~/.emacs.d/`
 directory, creating it if it doesn't exist. Then add this to the file
 `~/.emacs.d/init.el`:
 
-    (add-to-list 'load-path "~/.emacs.d/")
-    (require 'clojure-mode)
+```lisp
+(add-to-list 'load-path "~/.emacs.d/")
+(require 'clojure-mode)
+```
 
 ## Paredit
 
@@ -41,9 +43,11 @@ available using package.el from the above archive.
 
 Use paredit as you normally would with any other mode; for instance:
 
-    ;; (require 'paredit) if you didn't install via package.el
-    (defun turn-on-paredit () (paredit-mode 1))
-    (add-hook 'clojure-mode-hook 'turn-on-paredit)
+```lisp
+;; (require 'paredit) if you didn't install via package.el
+(defun turn-on-paredit () (paredit-mode 1))
+(add-hook 'clojure-mode-hook 'turn-on-paredit)
+```
 
 ## Basic REPL
 
