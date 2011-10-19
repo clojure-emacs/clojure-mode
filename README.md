@@ -25,9 +25,14 @@ package.el, you can get it from http://bit.ly/pkg-el23. If you have an
 older package.el installed from tromey.com, you should upgrade in
 order to support installation from multiple sources.
 
-Of course, it's possible to just place it on your load-path and
-require it as well if you don't mind missing out on
-byte-compilation and autoloads.
+Of course, it's possible to install from source if you don't mind
+missing out on automated updates, byte-compilation, and autoloads.
+Download `clojure-mode.el` and place it in the `~/.emacs.d/`
+directory, creating it if it doesn't exist. Then add this to the file
+`~/.emacs.d/init.el`:
+
+    (add-to-list 'load-path "~/.emacs.d/")
+    (require 'clojure-mode)
 
 ## Paredit
 
