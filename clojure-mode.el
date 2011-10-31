@@ -850,12 +850,11 @@ use (put-clojure-indent 'some-symbol 'defun)."
 
 (defvar clojure-project-root-file "project.clj")
 
-;; Pipe to sh to work around mackosecks GUI Emacs $PATH issues.
+;; Pipe to $SHELL to work around mackosecks GUI Emacs $PATH issues.
 (defcustom clojure-swank-command 
-  (if (or (locate-file "lein" exec-path)
-          (locate-file "lein.bat" exec-path))
+  (if (or (locate-file "lein" exec-path) (locate-file "lein.bat" exec-path))
       "lein jack-in %s"
-    "echo \"lein jack-in %s\" | sh")
+    "echo \"lein jack-in %s\" | $SHELL -l")
   "The command used to start swank via clojure-jack-in."
   :type 'string
   :group 'clojure-mode)
