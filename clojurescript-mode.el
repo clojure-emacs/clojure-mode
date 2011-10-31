@@ -68,6 +68,9 @@
 
   (set (make-local-variable 'inferior-lisp-program) clojurescript-clj-repl)
   (add-hook 'inferior-lisp-mode-hook 'clojurescript-start-cljs-repl)
+  (when (and (featurep 'paredit) paredit-mode (>= paredit-version 21))
+    (define-key clojurescript-mode-map "{" 'paredit-open-curly)
+    (define-key clojurescript-mode-map "}" 'paredit-close-curly))
   (when (functionp 'slime-mode)
     (slime-mode -1)))
 
