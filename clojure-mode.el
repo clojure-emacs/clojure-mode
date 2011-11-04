@@ -865,6 +865,18 @@ use (put-clojure-indent 'some-symbol 'defun)."
            (with-current-buffer (process-buffer process)
              (buffer-substring (point-min) (point-max))))))
 
+(defun clojure-eval-bootstrap-region (process)
+  "Eval only the elisp in between the markers."
+  (with-current-buffer (process-buffer process)
+    (save-excursion
+      (goto-char 0)
+      (search-forward ";;; Bootstrapping bundled version of SLIME")
+      (let ((begin (point)))
+        (when (not (search-forward ";;; Done bootstrapping." nil t))
+          ;; fall back to possibly-ambiguous string if above isn't found
+          (search-forward "(run-hooks 'slime-load-hook) ; on port"))
+        (eval-region begin (point))))))
+
 ;;;###autoload
 (defun clojure-jack-in ()
   (interactive)
@@ -884,7 +896,7 @@ use (put-clojure-indent 'some-symbol 'defun)."
                             (with-current-buffer (process-buffer process)
                               (insert output))
                             (when (string-match "proceed to jack in" output)
-                              (eval-buffer (process-buffer process))
+                              (clojure-eval-bootstrap-region process)
                               (slime-connect "localhost" port)
                               (with-current-buffer (slime-output-buffer t)
                                 (setq default-directory dir))
