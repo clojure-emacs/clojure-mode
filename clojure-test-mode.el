@@ -1,10 +1,10 @@
 ;;; clojure-test-mode.el --- Minor mode for Clojure tests
 
-;; Copyright (C) 2009-2011 Phil Hagelberg
+;; Copyright © 2009-2011 Phil Hagelberg
 
 ;; Author: Phil Hagelberg <technomancy@gmail.com>
 ;; URL: http://emacswiki.org/cgi-bin/wiki/ClojureTestMode
-;; Version: 1.5.6
+;; Version: 1.6.0
 ;; Keywords: languages, lisp, test
 ;; Package-Requires: ((slime "20091016") (clojure-mode "1.7"))
 
@@ -100,6 +100,11 @@
 
 ;; 1.5.6 2011-06-15
 ;;  * Remove heinous clojure.test/report monkeypatch.
+
+;; 1.6.0 2011-11-06
+;;  * Compatibility with Clojure 1.3.
+;;  * Support narrowing.
+;;  * Fix a bug in clojure-test-mode-test-one-in-ns.
 
 ;;; TODO:
 
