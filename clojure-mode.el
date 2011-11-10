@@ -6,7 +6,7 @@
 ;;          Lennart Staflin <lenst@lysator.liu.se>
 ;;          Phil Hagelberg <technomancy@gmail.com>
 ;; URL: http://github.com/technomancy/clojure-mode
-;; Version: 1.11.3
+;; Version: 1.11.4
 ;; Keywords: languages, lisp
 
 ;; This file is not part of GNU Emacs.
@@ -147,7 +147,7 @@ numbers count from the end:
 
 (defun clojure-mode-version ()
   "Currently package.el doesn't support prerelease version numbers."
-  "1.11.3")
+  "1.11.4")
 
 ;;;###autoload
 (defun clojure-mode ()
