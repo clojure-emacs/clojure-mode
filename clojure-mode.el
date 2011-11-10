@@ -182,6 +182,7 @@ if that value is non-nil."
          'clojure-forward-sexp))
   (set (make-local-variable 'lisp-doc-string-elt-property)
        'clojure-doc-string-elt)
+  (set (make-local-variable 'parse-sexp-ignore-comments) t)
 
   (clojure-mode-font-lock-setup)
 
