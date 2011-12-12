@@ -875,7 +875,7 @@ use (put-clojure-indent 'some-symbol 'defun)."
       (let ((begin (point)))
         (when (not (search-forward ";;; Done bootstrapping." nil t))
           ;; fall back to possibly-ambiguous string if above isn't found
-          (search-forward "(run-hooks 'slime-load-hook) ; on port"))
+          (search-forward "(run-hooks 'slime-load-hook)"))
         (eval-region begin (point))))))
 
 ;;;###autoload
