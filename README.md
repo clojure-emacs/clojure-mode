@@ -5,36 +5,63 @@ Provides Emacs font-lock, indentation, and navigation for the
 
 ## Installation
 
-It's easiest to install and keep Clojure Mode updated using
-[package.el](http://bit.ly/pkg-el23). 
+If you use [package.el](http://bit.ly/pkg-el23), you can install with
+`M-x package-install clojure-mode`. Otherwise you can do a manual
+install by downloading `clojure-mode.el` and placing it in the
+`~/.emacs.d/` directory, creating it if it doesn't exist. Then add
+this to the file `~/.emacs.d/init.el`:
 
 ```lisp
-;; add to ~/.emacs.d/init.el if you aren't already using Marmalade.
+(add-to-list 'load-path "~/.emacs.d/")
+(require 'clojure-mode)
+```
+
+### Setting up package.el
+
+If you use package.el but haven't added
+[Marmalade](http://marmalade-repo.org), the community package source,
+yet, add this to `~/.emacs.d/init.el`:
+
+```lisp
 (require 'package)
 (add-to-list 'package-archives
              '("marmalade" . "http://marmalade-repo.org/packages/"))
 (package-initialize)
 ```
 
+Then do this to load the package listing:
+
 * <kbd>M-x eval-buffer</kbd>
 * <kbd>M-x package-refresh-contents</kbd>
-* <kbd>M-x package-install clojure-mode</kbd>
 
 If you use a version of Emacs prior to 24 that doesn't include
 package.el, you can get it from http://bit.ly/pkg-el23. If you have an
 older package.el installed from tromey.com, you should upgrade in
 order to support installation from multiple sources.
 
-Of course, it's possible to install from source if you don't mind
-missing out on automated updates, byte-compilation, and autoloads.
-Download `clojure-mode.el` and place it in the `~/.emacs.d/`
-directory, creating it if it doesn't exist. Then add this to the file
-`~/.emacs.d/init.el`:
+## Clojure Test Mode
 
-```lisp
-(add-to-list 'load-path "~/.emacs.d/")
-(require 'clojure-mode)
-```
+This source repository also includes `clojure-test-mode.el`, which
+provides support for running Clojure tests (using the clojure.test
+framework) via SLIME and seeing feedback in the test buffer about
+which tests failed or errored. The installation instructions above
+should work for clojure-test-mode as well.
+
+Once you have a SLIME session active (see below), you can run the
+tests in the current buffer with `C-c C-,`. Failing tests and errors
+will be highlighted using overlays. To clear the overlays, use `C-c k`.
+
+You can jump between implementation and test files with `C-c t` if
+your project is laid out in a way that clojure-test-mode expects. Your
+project root should have a src/ directory containing files that
+correspond to their namespace. It should also have a test/ directory
+containing files that correspond to their namespace, and the test
+namespaces should mirror the implementation namespaces with the
+addition of "test" as the second-to-last segment of the namespace.
+
+So `my.project.frob` would be found in `src/my/project/frob.clj` and
+its tests would be in `test/my/project/test/frob.clj` in the
+`my.project.test.frob` namespace.
 
 ## Paredit
 
