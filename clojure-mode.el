@@ -110,6 +110,7 @@ Clojure to load that file."
     (define-key map "\C-c\C-z" 'run-lisp)
     (define-key map (kbd "RET") 'reindent-then-newline-and-indent)
     (define-key map (kbd "C-c t") 'clojure-jump-to-test)
+    (define-key map (kbd "C-c M-q") 'clojure-fill-docstring)
     map)
   "Keymap for Clojure mode. Inherits from `lisp-mode-shared-map'.")
 
@@ -791,6 +792,100 @@ use (put-clojure-indent 'some-symbol 'defun)."
   (handle 1)
   (dotrace 1)
   (deftrace 'defun))
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; Better docstring filling for clojure-mode
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun clojure-string-start ()
+  "Return the position of the \" that begins the string at point."
+  (save-excursion
+    (save-match-data
+      ;; Find a quote that appears immediately after whitespace,
+      ;; beginning of line, or an open paren, brace, or bracket
+      (re-search-backward "\\(\\s-\\|^\\|(\\|\\[\\|{\\)\\(\"\\)")
+      (match-beginning 2))))
+
+(defun clojure-char-at-point ()
+  "Return the char at point or nil if at buffer end."
+  (when (not (= (point) (point-max)))
+   (buffer-substring-no-properties (point) (1+ (point)))))
+
+(defun clojure-char-before-point ()
+  "Return the char before point or nil if at buffer beginning."
+  (when (not (= (point) (point-min)))
+    (buffer-substring-no-properties (point) (1- (point)))))
+
+;; TODO: Deal with the fact that when point is exactly at the
+;; beginning of a string, it thinks that is the end.
+(defun clojure-string-end ()
+  "Return the position of the \" that ends the string at point.
+
+Note that point must be inside the string - if point is
+positioned at the opening quote, incorrect results will be
+returned."
+  (save-excursion
+    (save-match-data
+      ;; If we're at the end of the string, just return point.
+      (if (and (string= (clojure-char-at-point) "\"")
+               (not (string= (clojure-char-before-point) "\\")))
+          (point)
+        ;; We don't want to get screwed by starting out at the
+        ;; backslash in an escaped quote.
+        (when (string= (clojure-char-at-point) "\\")
+          (backward-char))
+        ;; Look for a quote not preceeded by a backslash
+        (re-search-forward "[^\\]\\\(\\\"\\)")
+        (match-beginning 1)))))
+
+(defun clojure-docstring-start+end-points ()
+  "Return the start and end points of the string at point as a cons."
+  (if (and (fboundp 'paredit-string-start+end-points) paredit-mode)
+      (paredit-string-start+end-points)
+    (cons (clojure-string-start) (clojure-string-end))))
+
+(defun clojure-mark-string ()
+  "Mark the string at point."
+  (interactive)
+  (goto-char (clojure-string-start))
+  (forward-char)
+  (set-mark (clojure-string-end)))
+
+(defun clojure-fill-docstring (&optional argument)
+  "Fill the definition that the point is on appropriate for Clojure.
+
+  Fills so that every paragraph has a minimum of two initial spaces,
+  with the exception of the first line. Fill margins are taken from
+  paragraph start, so a paragraph that begins with four spaces will
+  remain indented by four spaces after refilling."
+  (interactive "P")
+  (if (and (fboundp 'paredit-in-string-p) paredit-mode)
+      (unless (paredit-in-string-p)
+        (error "Must be inside a string")))
+  ;; Oddly, save-excursion doesn't do a good job of preserving point.
+  ;; It's probably because we delete the string and then re-insert it.
+  (let ((old-point (point)))
+    (save-restriction
+      (save-excursion
+        (let* ((string-region (clojure-docstring-start+end-points))
+               (string-start (1+ (car string-region)))
+               (string-end (cdr string-region))
+               (string (buffer-substring-no-properties (1+ (car string-region))
+                                                       (cdr string-region))))
+          (delete-region string-start string-end)
+          (insert
+           (with-temp-buffer
+             (insert string)
+             (let ((left-margin 2))
+               (delete-trailing-whitespace)
+               (mark-whole-buffer)
+               (fill-paragraph nil t)
+               (buffer-substring-no-properties (+ 2 (point-min)) (point-max))))))))
+    (goto-char old-point)))
 
 
 
