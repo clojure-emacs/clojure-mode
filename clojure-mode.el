@@ -882,8 +882,7 @@ returned."
              (insert string)
              (let ((left-margin 2))
                (delete-trailing-whitespace)
-               (mark-whole-buffer)
-               (fill-paragraph nil t)
+               (fill-region (point-min) (point-max))
                (buffer-substring-no-properties (+ 2 (point-min)) (point-max))))))))
     (goto-char old-point)))
 
