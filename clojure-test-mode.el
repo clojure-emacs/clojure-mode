@@ -433,7 +433,7 @@ Retuns the problem overlay if such a position is found, otherwise nil."
     "Enable clojure-test-mode if the current buffer contains a namespace
 with a \"test.\" bit on it."
     (let ((ns (clojure-find-package))) ; defined in clojure-mode.el
-      (when (search "test." ns)
+      (when (string-match-p "test\\(\\.\\|$\\)" ns)
         (save-window-excursion
           (clojure-test-mode t)))))
   (add-hook 'clojure-mode-hook 'clojure-test-maybe-enable))
