@@ -1046,6 +1046,8 @@ returned."
 ;;;###autoload
 (add-hook 'slime-connected-hook 'clojure-enable-slime-on-existing-buffers)
 
+(add-hook 'slime-indentation-update-hooks 'put-clojure-indent)
+
 
 
 ;;;###autoload
