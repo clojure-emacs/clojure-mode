@@ -764,6 +764,7 @@ use (put-clojure-indent 'some-symbol 'defun)."
 
   (try 0)
   (catch 2)
+  (finally 0)
 
   ;; binding forms
   (let 1)
