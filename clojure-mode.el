@@ -1063,6 +1063,36 @@ to specific the full path to it. The arguments are port, hostname."
                      (locate-dominating-file buffer-file-name "src/")
                      (clojure-test-for (clojure-find-ns)))))
 
+;;; slime filename translation for tramp
+(defun clojure-slime-tramp-local-filename (f)
+  ;; (interactive)
+  (if (file-remote-p f)
+      (tramp-file-name-localname
+       (tramp-dissect-file-name f))
+    f))
+
+(defun clojure-slime-tramp-remote-filename (f)
+  ;; (interactive)
+  (if (file-remote-p default-directory)
+      (tramp-make-tramp-file-name
+       (tramp-file-name-method
+        (tramp-dissect-file-name default-directory))
+       (tramp-file-name-user
+        (tramp-dissect-file-name default-directory))
+       (tramp-file-name-host
+        (tramp-dissect-file-name default-directory))
+       f)
+    f))
+
+(defun clojure-slime-remote-file-name-hook ()
+  ;; (interactive)
+  (setq slime-from-lisp-filename-function
+        'slime-tramp-remote-filename)
+  (setq slime-to-lisp-filename-function
+        'slime-tramp-local-filename))
+
+(add-hook 'slime-connected-hook 'clojure-slime-remote-file-name-hook)
+
 ;;;###autoload
 (add-hook 'slime-connected-hook 'clojure-enable-slime-on-existing-buffers)
 
