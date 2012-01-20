@@ -988,7 +988,7 @@ to specific the full path to it. The arguments are port, hostname."
     (when (and (functionp 'slime-disconnect) (slime-current-connection))
       (slime-disconnect))
     (when (get-buffer "*swank*")
-      (let ((process (get-buffer-process (current-buffer))))
+      (let ((process (get-buffer-process (get-buffer "*swank*"))))
         (if process
             (set-process-query-on-exit-flag process nil))
         (kill-buffer "*swank*")))
