@@ -1044,6 +1044,9 @@ to specific the full path to it. The arguments are port, hostname."
           (clojure-enable-slime))))))
 
 ;; Test navigation:
+(defun clojure-in-tests-p ()
+  (or (string-match-p "test\." (clojure-find-ns))
+      (string-match-p "/test" (buffer-file-name))))
 
 (defun clojure-underscores-for-hyphens (namespace)
   (replace-regexp-in-string "-" "_" namespace))
@@ -1063,16 +1066,20 @@ to specific the full path to it. The arguments are port, hostname."
                      (locate-dominating-file buffer-file-name "src/")
                      (clojure-test-for (clojure-find-ns)))))
 
+(defun clojure-jump-between-tests-and-code ()
+  (interactive)
+  (if (clojure-in-tests-p)
+      (clojure-test-jump-to-implementation)
+    (clojure-jump-to-test)))
+
 ;;; slime filename translation for tramp
 (defun clojure-slime-tramp-local-filename (f)
-  ;; (interactive)
   (if (file-remote-p f)
       (tramp-file-name-localname
        (tramp-dissect-file-name f))
     f))
 
 (defun clojure-slime-tramp-remote-filename (f)
-  ;; (interactive)
   (if (file-remote-p default-directory)
       (tramp-make-tramp-file-name
        (tramp-file-name-method
@@ -1085,7 +1092,6 @@ to specific the full path to it. The arguments are port, hostname."
     f))
 
 (defun clojure-slime-remote-file-name-hook ()
-  ;; (interactive)
   (setq slime-from-lisp-filename-function
         'slime-tramp-remote-filename)
   (setq slime-to-lisp-filename-function
