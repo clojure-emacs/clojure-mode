@@ -180,6 +180,7 @@
                                    join-fixtures *report-counters* do-report
                                    test-var *initial-report-counters*]]))
 
+    (def #^{:dynamic true} *clojure-test-mode-out* nil)
     (defn report [event]
      (if-let [current-test (last clojure.test/*testing-vars*)]
              (alter-meta! current-test
@@ -193,7 +194,7 @@
                                                (if (= (:type event) :error)
                                                    ((file-position 3) 1)
                                                    (:line event)))])))
-     (binding [*test-out* *out*]
+     (binding [*test-out* (or *clojure-test-mode-out* *out*)]
        ((.getRawRoot #'clojure.test/report) event)))
 
    (defn clojure-test-mode-test-one-var [test-ns test-name]
@@ -240,7 +241,7 @@
   (let ((result-vars (read (cadr results))))
     ;; slime-eval-async hands us a cons with a useless car
     (mapc #'clojure-test-extract-result result-vars)
-    (slime-repl-emit (concat "\n" (make-string (1- (window-width)) ?=) "\n"))
+    ;; (slime-repl-emit (concat "\n" (make-string (1- (window-width)) ?=) "\n"))
     (clojure-test-echo-results)))
 
 (defun clojure-test-extract-result (result)
