@@ -947,11 +947,14 @@ returned."
 (defvar clojure-project-root-file "project.clj")
 
 ;; Pipe to $SHELL to work around mackosecks GUI Emacs $PATH issues.
-(defcustom clojure-swank-command 
+(defcustom clojure-swank-command
   (if (or (locate-file "lein" exec-path) (locate-file "lein.bat" exec-path))
-      "lein jack-in %s"
-    "echo \"lein jack-in %s\" | $SHELL -l")
-  "The command used to start swank via clojure-jack-in."
+      "lein jack-in %s %s"
+    "echo \"lein jack-in %s %s\" | $SHELL -l")
+  "The command used to start swank via clojure-jack-in.
+For remote swank it is lein must be in your PATH and the remote
+proc is launched via sh rather than bash, so it might be necessary
+to specific the full path to it. The arguments are port, hostname."
   :type 'string
   :group 'clojure-mode)
 
@@ -978,13 +981,21 @@ returned."
   (interactive)
   (setq slime-net-coding-system 'utf-8-unix)
   (lexical-let ((port (- 65535 (mod (caddr (current-time)) 4096)))
-                (dir default-directory))
+                (dir default-directory)
+                (hostname (if (file-remote-p default-directory)
+                              tramp-current-host
+                            "localhost")))
     (when (and (functionp 'slime-disconnect) (slime-current-connection))
       (slime-disconnect))
     (when (get-buffer "*swank*")
-      (kill-buffer "*swank*"))
-    (let* ((swank-cmd (format clojure-swank-command port))
-           (proc (start-process-shell-command "swank" "*swank*" swank-cmd)))
+      (let ((process (get-buffer-process (current-buffer))))
+        (if process
+            (set-process-query-on-exit-flag process nil))
+        (kill-buffer "*swank*")))
+    (let* ((swank-cmd (format clojure-swank-command port hostname))
+           (swank-buffer (get-buffer-create "*swank*"))
+           ;; the buffer has to be created before this:
+           (proc (start-file-process-shell-command "swank" "*swank*" swank-cmd)))
       (set-process-sentinel (get-buffer-process "*swank*")
                             'clojure-jack-in-sentinel)
       (set-process-filter (get-buffer-process "*swank*")
@@ -993,11 +1004,19 @@ returned."
                               (insert output))
                             (when (string-match "proceed to jack in" output)
                               (clojure-eval-bootstrap-region process)
-                              (slime-connect "localhost" port)
+                              (with-current-buffer
+                                  (or
+                                   (get-buffer "*slime-repl clojure*")
+                                   (get-buffer "*slime-repl nil*")
+                                   (current-buffer))
+                                (slime-connect hostname port)
+                                (when (string-match "slime-repl" (buffer-name))
+                                  (goto-char (point-max))))
                               (with-current-buffer (slime-output-buffer t)
                                 (setq default-directory dir))
                               (set-process-sentinel process nil)
-                              (set-process-filter process nil))))))
+                              (set-process-filter process nil)
+                              (set-process-query-on-exit-flag process nil))))))
   (message "Starting swank server..."))
 
 (defun clojure-find-ns ()
