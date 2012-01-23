@@ -961,8 +961,10 @@ to specific the full path to it. The arguments are port, hostname."
 (defun clojure-jack-in-sentinel (process event)
   (let ((debug-on-error t))
     (error "Could not start swank server: %s"
-           (with-current-buffer (process-buffer process)
-             (buffer-substring (point-min) (point-max))))))
+           (let ((b (process-buffer process)))
+             (if (and b (buffer-live-p b))
+                 (with-current-buffer b
+                   (buffer-substring (point-min) (point-max))))))))
 
 (defun clojure-eval-bootstrap-region (process)
   "Eval only the elisp in between the markers."
