@@ -978,47 +978,72 @@ to specific the full path to it. The arguments are port, hostname."
           (search-forward "(run-hooks 'slime-load-hook)"))
         (eval-region begin (point))))))
 
-;;;###autoload
-(defun clojure-jack-in ()
-  (interactive)
-  (setq slime-net-coding-system 'utf-8-unix)
-  (lexical-let ((port (- 65535 (mod (caddr (current-time)) 4096)))
-                (dir default-directory)
-                (hostname (if (file-remote-p default-directory)
-                              tramp-current-host
-                            "localhost")))
-    (when (and (functionp 'slime-disconnect) (slime-current-connection))
-      (slime-disconnect))
-    (when (get-buffer "*swank*")
-      (let ((process (get-buffer-process (get-buffer "*swank*"))))
-        (if process
-            (set-process-query-on-exit-flag process nil))
-        (kill-buffer "*swank*")))
-    (let* ((swank-cmd (format clojure-swank-command port hostname))
-           (swank-buffer (get-buffer-create "*swank*"))
-           ;; the buffer has to be created before this:
-           (proc (start-file-process-shell-command "swank" "*swank*" swank-cmd)))
-      (set-process-sentinel (get-buffer-process "*swank*")
-                            'clojure-jack-in-sentinel)
-      (set-process-filter (get-buffer-process "*swank*")
+(defun clojure-kill-swank-buffer (swank-buffer-name)
+  (when (get-buffer swank-buffer-name)
+    (let ((process (get-buffer-process (get-buffer swank-buffer-name))))
+      (if process
+          (set-process-query-on-exit-flag process nil))
+      (kill-buffer swank-buffer-name))))
+
+(defun clojure-generate-swank-connection-name (dir hostname port)
+  "swank")
+
+(defun clojure-jack-in-start-process (swank-connection-name swank-buffer-name hostname port)
+  ;; the buffer has to be created before the proc:
+  (get-buffer-create swank-buffer-name)
+
+  (let ((swank-cmd (format clojure-swank-command port hostname)))
+    (lexical-let* ((proc (start-file-process-shell-command
+                          swank-connection-name
+                          swank-buffer-name
+                          swank-cmd))
+                   (hostname hostname)
+                   (port port)
+                   (connect-callback (lambda () (slime-connect hostname port))))
+      (set-process-sentinel proc 'clojure-jack-in-sentinel)
+      (set-process-query-on-exit-flag proc nil)
+      (set-process-filter proc
                           (lambda (process output)
                             (with-current-buffer (process-buffer process)
                               (insert output))
                             (when (string-match "proceed to jack in" output)
                               (clojure-eval-bootstrap-region process)
                               (with-current-buffer
+                                  ;; this block is an attempt to avoid
+                                  ;; creating duplicate repl windows
                                   (or
                                    (get-buffer "*slime-repl clojure*")
                                    (get-buffer "*slime-repl nil*")
                                    (current-buffer))
-                                (slime-connect hostname port)
+                                (funcall connect-callback)
                                 (when (string-match "slime-repl" (buffer-name))
                                   (goto-char (point-max))))
-                              (with-current-buffer (slime-output-buffer t)
-                                (setq default-directory dir))
                               (set-process-sentinel process nil)
-                              (set-process-filter process nil)
-                              (set-process-query-on-exit-flag process nil))))))
+                              (set-process-filter process nil)))))))
+
+;;;###autoload
+(defun clojure-jack-in ()
+  (interactive)
+  (setq slime-net-coding-system 'utf-8-unix)
+  (let* ((port (- 65535 (mod (caddr (current-time)) 4096)))
+         (dir default-directory)
+         (hostname (if (file-remote-p default-directory)
+                       tramp-current-host
+                     "localhost"))
+         (swank-connection-name
+          (clojure-generate-swank-connection-name dir hostname port))
+         (swank-buffer-name (format "*%s*" swank-connection-name)))
+
+    (when (and (functionp 'slime-disconnect)
+               (slime-current-connection)
+               ;; TODO: ask for permission once jack-in supports multiple connections
+               ;; (and (interactive-p) (y-or-n-p "Close old connections first? "))
+               )
+      (slime-disconnect))
+    (clojure-kill-swank-buffer swank-buffer-name)
+    (clojure-jack-in-start-process swank-connection-name
+                                   swank-buffer-name
+                                   hostname port))
   (message "Starting swank server..."))
 
 (defun clojure-find-ns ()
