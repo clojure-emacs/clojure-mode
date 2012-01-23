@@ -6,6 +6,7 @@
 ;; URL: http://github.com/rubbish/clojurescript-mode
 ;; Version: 0.5
 ;; Keywords: languages, lisp, javascript
+;; Package-Requires: ((clojure-mode "1.7"))
 
 ;; This file is not part of GNU Emacs.
 
