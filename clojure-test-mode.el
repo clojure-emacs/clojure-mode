@@ -320,19 +320,21 @@ Retuns the problem overlay if such a position is found, otherwise nil."
   (interactive)
   (save-some-buffers nil (lambda () (equal major-mode 'clojure-mode)))
   (message "Testing...")
-  (clojure-test-clear
-   (lambda (&rest args)
-     ;; clojure-test-eval will wrap in with-out-str
-     (slime-eval-async `(swank:load-file
-                         ,(slime-to-lisp-filename
-                           (expand-file-name (buffer-file-name))))
-                       (lambda (&rest args)
-                         (slime-eval-async '(swank:interactive-eval
-                                             "(binding [clojure.test/report
+  (save-window-excursion
+    (if (not (clojure-in-tests-p))
+        (clojure-jump-to-test))
+    (clojure-test-clear
+     (lambda (&rest args)
+       ;; clojure-test-eval will wrap in with-out-str
+       (slime-eval-async `(swank:load-file
+                           ,(slime-to-lisp-filename
+                             (expand-file-name (buffer-file-name))))
+                         (lambda (&rest args)
+                           (slime-eval-async '(swank:interactive-eval
+                                               "(binding [clojure.test/report
                                                clojure.test.mode/report]
                                                 (clojure.test/run-tests))")
-                                           #'clojure-test-get-results))))))
-
+                                             #'clojure-test-get-results)))))))
 (defun clojure-test-run-test ()
   "Run the test at point."
   (interactive)
