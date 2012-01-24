@@ -1138,8 +1138,9 @@ The arguments are dir, hostname, and port.  The return value should be an `alist
 (defun clojure-jump-to-test ()
   "Jump from implementation file to test."
   (interactive)
-  (find-file (format "%s/test/%s.clj"
-                     (locate-dominating-file buffer-file-name "src/")
+  (find-file (format "%stest/%s.clj"
+                     (file-name-as-directory
+                      (locate-dominating-file buffer-file-name "src/"))
                      (clojure-test-for (clojure-find-ns)))))
 
 (defun clojure-jump-between-tests-and-code ()
