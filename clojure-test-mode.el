@@ -180,6 +180,7 @@
                                    join-fixtures *report-counters* do-report
                                    test-var *initial-report-counters*]]))
 
+    (def #^{:dynamic true} *clojure-test-mode-out* nil)
     (defn report [event]
      (if-let [current-test (last clojure.test/*testing-vars*)]
              (alter-meta! current-test
@@ -193,7 +194,7 @@
                                                (if (= (:type event) :error)
                                                    ((file-position 3) 1)
                                                    (:line event)))])))
-     (binding [*test-out* *out*]
+     (binding [*test-out* (or *clojure-test-mode-out* *out*)]
        ((.getRawRoot #'clojure.test/report) event)))
 
    (defn clojure-test-mode-test-one-var [test-ns test-name]
@@ -240,7 +241,7 @@
   (let ((result-vars (read (cadr results))))
     ;; slime-eval-async hands us a cons with a useless car
     (mapc #'clojure-test-extract-result result-vars)
-    (slime-repl-emit (concat "\n" (make-string (1- (window-width)) ?=) "\n"))
+    ;; (slime-repl-emit (concat "\n" (make-string (1- (window-width)) ?=) "\n"))
     (clojure-test-echo-results)))
 
 (defun clojure-test-extract-result (result)
@@ -319,19 +320,21 @@ Retuns the problem overlay if such a position is found, otherwise nil."
   (interactive)
   (save-some-buffers nil (lambda () (equal major-mode 'clojure-mode)))
   (message "Testing...")
-  (clojure-test-clear
-   (lambda (&rest args)
-     ;; clojure-test-eval will wrap in with-out-str
-     (slime-eval-async `(swank:load-file
-                         ,(slime-to-lisp-filename
-                           (expand-file-name (buffer-file-name))))
-                       (lambda (&rest args)
-                         (slime-eval-async '(swank:interactive-eval
-                                             "(binding [clojure.test/report
+  (save-window-excursion
+    (if (not (clojure-in-tests-p))
+        (clojure-jump-to-test))
+    (clojure-test-clear
+     (lambda (&rest args)
+       ;; clojure-test-eval will wrap in with-out-str
+       (slime-eval-async `(swank:load-file
+                           ,(slime-to-lisp-filename
+                             (expand-file-name (buffer-file-name))))
+                         (lambda (&rest args)
+                           (slime-eval-async '(swank:interactive-eval
+                                               "(binding [clojure.test/report
                                                clojure.test.mode/report]
                                                 (clojure.test/run-tests))")
-                                           #'clojure-test-get-results))))))
-
+                                             #'clojure-test-get-results)))))))
 (defun clojure-test-run-test ()
   "Run the test at point."
   (interactive)
