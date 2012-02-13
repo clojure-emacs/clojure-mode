@@ -1170,9 +1170,9 @@ The arguments are dir, hostname, and port.  The return value should be an `alist
 
 (defun clojure-slime-remote-file-name-hook ()
   (setq slime-from-lisp-filename-function
-        'slime-tramp-remote-filename)
+        'clojure-slime-tramp-remote-filename)
   (setq slime-to-lisp-filename-function
-        'slime-tramp-local-filename))
+        'clojure-slime-tramp-local-filename))
 
 (add-hook 'slime-connected-hook 'clojure-slime-remote-file-name-hook)
 
