@@ -5,8 +5,7 @@ Provides Emacs font-lock, indentation, and navigation for the
 
 ## Installation
 
-If you use [package.el](http://bit.ly/pkg-el23), you can install with
-`M-x package-install clojure-mode`. Otherwise you can do a manual
+Unfortunately, the version on ELPA is outdated as of now. You can do a manual
 install by downloading `clojure-mode.el` and placing it in the
 `~/.emacs.d/` directory, creating it if it doesn't exist. Then add
 this to the file `~/.emacs.d/init.el`:
@@ -16,9 +15,9 @@ this to the file `~/.emacs.d/init.el`:
 (require 'clojure-mode)
 ```
 
-### Setting up package.el
+### Marmalade
 
-If you use package.el but haven't added
+The version on Marmalade is up-to-date. If you use package.el but haven't added
 [Marmalade](http://marmalade-repo.org), the community package source,
 yet, add this to `~/.emacs.d/init.el`:
 
