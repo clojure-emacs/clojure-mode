@@ -107,7 +107,7 @@ Clojure to load that file."
     (define-key map "\C-c\C-e" 'lisp-eval-last-sexp)
     (define-key map "\C-c\C-l" 'clojure-load-file)
     (define-key map "\C-c\C-r" 'lisp-eval-region)
-    (define-key map "\C-c\C-z" 'run-lisp)
+    (define-key map "\C-c\C-z" 'clojure-display-inferior-lisp-buffer)
     (define-key map (kbd "RET") 'reindent-then-newline-and-indent)
     (define-key map (kbd "C-c t") 'clojure-jump-to-test)
     (define-key map (kbd "C-c M-q") 'clojure-fill-docstring)
@@ -195,6 +195,13 @@ if that value is non-nil."
   (when (and (featurep 'paredit) paredit-mode (>= paredit-version 21))
     (define-key clojure-mode-map "{" 'paredit-open-curly)
     (define-key clojure-mode-map "}" 'paredit-close-curly)))
+
+(defun clojure-display-inferior-lisp-buffer ()
+  "Display a buffer bound to `inferior-lisp-buffer'."
+  (interactive)
+  (if (and inferior-lisp-buffer (get-buffer inferior-lisp-buffer))
+      (pop-to-buffer inferior-lisp-buffer t)
+      (run-lisp inferior-lisp-program)))
 
 (defun clojure-load-file (file-name)
   "Load a Lisp file into the inferior Lisp process."
