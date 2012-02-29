@@ -15,9 +15,9 @@ this to the file `~/.emacs.d/init.el`:
 (require 'clojure-mode)
 ```
 
-### Setting up package.el
+### Marmalade
 
-If you use package.el but haven't added
+The version on Marmalade is up-to-date. If you use package.el but haven't added
 [Marmalade](http://marmalade-repo.org), the community package source,
 yet, add this to `~/.emacs.d/init.el`:
 
