@@ -349,6 +349,16 @@ elements of a def* forms."
                 ;; Possibly type or metadata
                 "\\(?:#?^\\(?:{[^}]*}\\|\\sw+\\)[ \r\n\t]*\\)*"
                 "\\(\\sw+\\)?")
+       (1 font-lock-type-face)
+       (2 font-lock-function-name-face nil t))
+      (,(concat "\\(\\(?:[a-z\.-]+/\\)?def\[a-z\]*-?\\)"
+                ;; Function declarations.
+                "\\>"
+                ;; Any whitespace
+                "[ \r\n\t]*"
+                ;; Possibly type or metadata
+                "\\(?:#?^\\(?:{[^}]*}\\|\\sw+\\)[ \r\n\t]*\\)*"
+                "\\(\\sw+\\)?")
        (1 font-lock-keyword-face)
        (2 font-lock-function-name-face nil t))
       ;; Deprecated functions
