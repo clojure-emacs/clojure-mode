@@ -3,12 +3,11 @@
 Provides Emacs font-lock, indentation, and navigation for the
 [Clojure language](http://clojure.org).
 
-## Installation
+### Manual Installation
 
-Unfortunately, the version on ELPA is outdated as of now. You can do a manual
-install by downloading `clojure-mode.el` and placing it in the
-`~/.emacs.d/` directory, creating it if it doesn't exist. Then add
-this to the file `~/.emacs.d/init.el`:
+You can do a manual install by downloading `clojure-mode.el` and
+placing it in the `~/.emacs.d/` directory, creating it if it doesn't
+exist. Then add this to the file `~/.emacs.d/init.el`:
 
 ```lisp
 (add-to-list 'load-path "~/.emacs.d/")
@@ -17,9 +16,10 @@ this to the file `~/.emacs.d/init.el`:
 
 ### Marmalade
 
-The version on Marmalade is up-to-date. If you use package.el but haven't added
-[Marmalade](http://marmalade-repo.org), the community package source,
-yet, add this to `~/.emacs.d/init.el`:
+It can be more convenient to use Emacs's package manager to handle
+installation for you if you use many elisp libraries. If you have
+package.el but haven't added [Marmalade](http://marmalade-repo.org),
+the community package source, yet, add this to `~/.emacs.d/init.el`:
 
 ```lisp
 (require 'package)
@@ -34,9 +34,12 @@ Then do this to load the package listing:
 * <kbd>M-x package-refresh-contents</kbd>
 
 If you use a version of Emacs prior to 24 that doesn't include
-package.el, you can get it from http://bit.ly/pkg-el23. If you have an
-older package.el installed from tromey.com, you should upgrade in
-order to support installation from multiple sources.
+package.el, you can get it from http://bit.ly/pkg-el23.
+
+If you have an older ELPA package.el installed from tromey.com, you
+should upgrade in order to support installation from multiple sources.
+The ELPA archive is deprecated and no longer accepting new packages,
+so the version there (1.7.1) is very outdated.
 
 ## Clojure Test Mode
 
@@ -88,14 +91,16 @@ a different REPL command.
 ## SLIME
 
 You can also use [Leiningen](http://github.com/technomancy/leiningen)
-to start an enhanced REPL via SLIME:
-
-    $ lein plugin install swank-clojure 1.3.3
-    
-    M-x clojure-jack-in # from inside a project
+to start an enhanced REPL via SLIME. Install the `lein-swank` plugin
+as per
+[the Swank Clojure Readme](https://github.com/technomancy/swank.clojure)
+and then from a file inside a Clojure project run <kbd>M-x
+clojure-jack-in</kbd>. This will handle installing Slime for you; it's
+best if you do not install it by hand.
 
 ## License
 
-Copyright © 2007-2011 Jeffrey Chu, Lennart Staflin, Phil Hagelberg
+Copyright © 2007-2012 Jeffrey Chu, Lennart Staflin, Phil Hagelberg,
+and [contributors](https://github.com/technomancy/clojure-mode/contributors).
 
 Distributed under the GNU General Public License; see C-h t to view.
