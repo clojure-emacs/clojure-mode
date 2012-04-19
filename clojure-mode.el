@@ -547,7 +547,7 @@ elements of a def* forms."
       ;; Constant values (keywords), including as metadata e.g. ^:static
       ("\\<^?:\\(\\sw\\|#\\)+\\>" 0 font-lock-constant-face)
       ;; Meta type annotation #^Type or ^Type
-      ("#?^\\sw+" 0 font-lock-type-face)
+      ("#?^\\sw+" 0 font-lock-preprocessor-face)
       ("\\<io\\!\\>" 0 font-lock-warning-face)
 
       ;;Java interop highlighting
