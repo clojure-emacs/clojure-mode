@@ -805,6 +805,7 @@ use (put-clojure-indent 'some-symbol 'defun)."
   ;; clojure.test
   (testing 1)
   (deftest 'defun)
+  (use-fixtures 'defun)
 
   ;; contrib
   (handler-case 1)
