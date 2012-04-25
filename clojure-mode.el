@@ -952,13 +952,26 @@ returned."
 
 
 
+(defun clojure-expected-ns
+  ()
+  "Returns the namespace name that the file should have."
+  (let* ((nspath ())
+         (dirs (cdr (split-string (buffer-file-name) "/")))
+         (project-file-found nil)
+         (current-path nil))
+    (dolist (dir dirs)
+      (progn
+        (setq current-path (concat current-path "/" dir))
+        (when project-file-found
+          (push dir nspath))
+        (when (file-exists-p (concat current-path "/project.clj"))
+          (setq project-file-found t))))
+    (substring (mapconcat 'identity (cdr (reverse nspath)) ".") 0 -4)))
+
 (defun clojure-insert-ns-form ()
   (interactive)
   (goto-char (point-min))
-  (let* ((rel (car (last (split-string buffer-file-name "src/\\|test/"))))
-         (relative (car (split-string rel "\\.clj")))
-         (segments (split-string relative "/")))
-    (insert (format "(ns %s)" (mapconcat #'identity segments ".")))))
+  (insert (format "(ns %s)" (clojure-expected-ns))))
 
 
 ;;; Slime help
