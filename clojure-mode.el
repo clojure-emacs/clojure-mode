@@ -973,6 +973,19 @@ returned."
   (goto-char (point-min))
   (insert (format "(ns %s)" (clojure-expected-ns))))
 
+(defun clojure-update-ns
+  ()
+  "Updates the namespace of the current buffer. Useful if a file has been renamed."
+  (interactive)
+  (let ((nsname (clojure-expected-ns)))
+    (when nsname
+      (save-restriction
+       (save-excursion
+         (save-match-data
+           (if (clojure-find-ns)
+               (replace-match nsname nil nil nil 4)
+             (error "Namespace not found"))))))))
+
 
 ;;; Slime help
 
