@@ -965,8 +965,7 @@ returned."
   (goto-char (point-min))
   (insert (format "(ns %s)" (clojure-expected-ns))))
 
-(defun clojure-update-ns
-  ()
+(defun clojure-update-ns ()
   "Updates the namespace of the current buffer. Useful if a file has been renamed."
   (interactive)
   (let ((nsname (clojure-expected-ns)))
