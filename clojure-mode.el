@@ -952,21 +952,13 @@ returned."
 
 
 
-(defun clojure-expected-ns
-  ()
+(defun clojure-expected-ns ()
   "Returns the namespace name that the file should have."
-  (let* ((nspath ())
-         (dirs (cdr (split-string (buffer-file-name) "/")))
-         (project-file-found nil)
-         (current-path nil))
-    (dolist (dir dirs)
-      (progn
-        (setq current-path (concat current-path "/" dir))
-        (when project-file-found
-          (push dir nspath))
-        (when (file-exists-p (concat current-path "/project.clj"))
-          (setq project-file-found t))))
-    (substring (mapconcat 'identity (cdr (reverse nspath)) ".") 0 -4)))
+  (let* ((project-dir (file-truename
+                       (locate-dominating-file default-directory
+                                               "project.clj")))
+         (relative (substring (buffer-file-name) (length project-dir) -4)))
+    (mapconcat 'identity (cdr (split-string relative "/")) ".")))
 
 (defun clojure-insert-ns-form ()
   (interactive)
@@ -980,11 +972,11 @@ returned."
   (let ((nsname (clojure-expected-ns)))
     (when nsname
       (save-restriction
-       (save-excursion
-         (save-match-data
-           (if (clojure-find-ns)
-               (replace-match nsname nil nil nil 4)
-             (error "Namespace not found"))))))))
+        (save-excursion
+          (save-match-data
+            (if (clojure-find-ns)
+                (replace-match nsname nil nil nil 4)
+              (error "Namespace not found"))))))))
 
 
 ;;; Slime help
