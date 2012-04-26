@@ -952,13 +952,30 @@ returned."
 
 
 
+(defun clojure-expected-ns ()
+  "Returns the namespace name that the file should have."
+  (let* ((project-dir (file-truename
+                       (locate-dominating-file default-directory
+                                               "project.clj")))
+         (relative (substring (buffer-file-name) (length project-dir) -4)))
+    (mapconcat 'identity (cdr (split-string relative "/")) ".")))
+
 (defun clojure-insert-ns-form ()
   (interactive)
   (goto-char (point-min))
-  (let* ((rel (car (last (split-string buffer-file-name "src/\\|test/"))))
-         (relative (car (split-string rel "\\.clj")))
-         (segments (split-string relative "/")))
-    (insert (format "(ns %s)" (mapconcat #'identity segments ".")))))
+  (insert (format "(ns %s)" (clojure-expected-ns))))
+
+(defun clojure-update-ns ()
+  "Updates the namespace of the current buffer. Useful if a file has been renamed."
+  (interactive)
+  (let ((nsname (clojure-expected-ns)))
+    (when nsname
+      (save-restriction
+        (save-excursion
+          (save-match-data
+            (if (clojure-find-ns)
+                (replace-match nsname nil nil nil 4)
+              (error "Namespace not found"))))))))
 
 
 ;;; Slime help
@@ -1116,10 +1133,11 @@ The arguments are dir, hostname, and port.  The return value should be an `alist
 
 (defun clojure-find-ns ()
   (let ((regexp clojure-namespace-name-regex))
-    (save-excursion
-      (when (or (re-search-backward regexp nil t)
-                (re-search-forward regexp nil t))
-        (match-string-no-properties 4)))))
+    (save-restriction
+      (save-excursion
+        (goto-char (point-min))
+        (when (re-search-forward regexp nil t)
+          (match-string-no-properties 4))))))
 
 (defalias 'clojure-find-package 'clojure-find-ns)
 
