@@ -958,7 +958,8 @@ returned."
                        (locate-dominating-file default-directory
                                                "project.clj")))
          (relative (substring (buffer-file-name) (length project-dir) -4)))
-    (mapconcat 'identity (cdr (split-string relative "/")) ".")))
+    (replace-regexp-in-string
+     "_" "-" (mapconcat 'identity (cdr (split-string relative "/")) "."))))
 
 (defun clojure-insert-ns-form ()
   (interactive)
