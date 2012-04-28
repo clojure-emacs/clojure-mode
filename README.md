@@ -93,7 +93,7 @@ a different REPL command.
 You can also use [Leiningen](http://github.com/technomancy/leiningen)
 to start an enhanced REPL via SLIME. Install the `lein-swank` plugin
 as per
-[the Swank Clojure Readme](https://github.com/technomancy/swank.clojure)
+[the Swank Clojure Readme](https://github.com/technomancy/swank-clojure)
 and then from a file inside a Clojure project run <kbd>M-x
 clojure-jack-in</kbd>. This will handle installing Slime for you; it's
 best if you do not install it by hand.
