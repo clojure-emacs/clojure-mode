@@ -75,7 +75,6 @@
   (when (functionp 'slime-mode)
     (slime-mode -1)))
 
-;;;###autoload
 (put-clojure-indent 'this-as 'defun)
 
 ;;;###autoload
