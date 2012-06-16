@@ -69,7 +69,7 @@ Install clojure-mode while running Emacs. Hit <kbd>M-x package-install
 RET clojure-mode</kbd>. After doing this, Emacs should automatically
 recognize .clj files as Clojure files when you open them.
 
-See [clojure mode](clojure-mode.md) for more info on using it.
+See [Clojure Mode's readme](https://github.com/technomancy/clojure-mode/blob/master/README.md) for more info on using it.
 
 
 ## Paredit Mode
