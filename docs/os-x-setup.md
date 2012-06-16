@@ -1,4 +1,3 @@
-Emacs Setup on OS X
-===================
+# Emacs Setup on OS X
 
 todo

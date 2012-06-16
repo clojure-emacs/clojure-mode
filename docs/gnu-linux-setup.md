@@ -1,5 +1,4 @@
-Emacs Setup on GNU/Linux
-========================
+# Emacs Setup on GNU/Linux
 
 Emacs should be available via your OS's package manager.  For example,
 on Debian-based distros you would typically install Emacs like so:
@@ -11,10 +10,18 @@ We recommend you install the current stable release of Emacs, version
 get you v23 instead. Use `apt-cache show emacs` to see which version
 it will provide.
 
+## Nix
 
+You can use [Nix](http://nixos.org/nix) to install Emacs 24 on nearly any
+distro:
 
-Ubuntu-based distros
---------------------
+    $ nix-env -i emacs-24
+
+## Debian
+
+Debian builds are available at http://emacs.naquadah.org/
+
+## Ubuntu
 
 To get Emacs version 24 on an Ubuntu-based distribution, you currently
 need to do the following:
@@ -23,27 +30,6 @@ need to do the following:
     sudo apt-get update
     sudo apt-get install emacs-snapshot
 
+## Fedora, Arch, Gentoo, etc
 
-
-Config Files and Directory
-==========================
-
-Your main Emacs config file is "~/.emacs". You may create
-this file if it does not already exist.
-
-Your main Emacs config and package directory is "~/.emacs.d".
-Create this directory if it does not already exist.
-
-
-
-Other Optional Configuration
-============================
-
-A nice monospace font to use is Inconsolata. To install
-that on modern Debian-based distros:
-
-    sudo apt-get install fonts-inconsolata
-
-You can then select it from within Emacs by using the "Options → Set
-Default Font..." menu item, and then save that setting your ~/.emacs
-file by using the "Options → Save Options" menu item.
+TODO
