@@ -731,7 +731,7 @@ check for contextual indenting."
 (put 'extend-type 'clojure-backtracking-indent '(4 (2)))
 (put 'extend-protocol 'clojure-backtracking-indent '(4 (2)))
 
-(defun put-clojure-indent (sym indent)
+(defun put-clojure-indent (sym indent &optional packages)
   (put sym 'clojure-indent-function indent))
 
 (defmacro define-clojure-indent (&rest kvs)
