@@ -650,11 +650,14 @@ This function also returns nil meaning don't specify the indentation."
                    (eq (char-after (elt state 1)) ?\())
               (+ (current-column) 2) ;; this is probably inside a defn
             (current-column)))
-      (let ((function (buffer-substring (point)
-                                        (progn (forward-sexp 1) (point))))
-            (open-paren (elt state 1))
-            method)
-        (setq method (get (intern-soft function) 'clojure-indent-function))
+      (let* ((function (buffer-substring (point)
+                                         (progn (forward-sexp 1) (point))))
+             (open-paren (elt state 1))
+             (method nil)
+             (function-tail (first
+                             (last
+                              (split-string (substring-no-properties function) "/")))))
+        (setq method (get (intern-soft function-tail) 'clojure-indent-function))
 
         (cond ((member (char-after open-paren) '(?\[ ?\{))
                (goto-char open-paren)
