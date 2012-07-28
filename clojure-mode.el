@@ -191,8 +191,8 @@ if that value is non-nil."
   (add-hook 'paredit-mode-hook
             (lambda ()
               (when (>= paredit-version 21)
-                (define-key paredit-mode-map "{" 'paredit-open-curly)
-                (define-key paredit-mode-map "}" 'paredit-close-curly))))
+                (define-key clojure-mode-map "{" 'paredit-open-curly)
+                (define-key clojure-mode-map "}" 'paredit-close-curly))))
 
   (run-mode-hooks 'clojure-mode-hook)
   (run-hooks 'prog-mode-hook))
