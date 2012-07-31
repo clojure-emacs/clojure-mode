@@ -187,13 +187,14 @@ if that value is non-nil."
 
   (clojure-mode-font-lock-setup)
 
-  (run-mode-hooks 'clojure-mode-hook)
-  (run-hooks 'prog-mode-hook)
+  (add-hook 'paredit-mode-hook
+            (lambda ()
+              (when (>= paredit-version 21)
+                (define-key clojure-mode-map "{" 'paredit-open-curly)
+                (define-key clojure-mode-map "}" 'paredit-close-curly))))
 
-  ;; Enable curly braces when paredit is enabled in clojure-mode-hook
-  (when (and (featurep 'paredit) paredit-mode (>= paredit-version 21))
-    (define-key clojure-mode-map "{" 'paredit-open-curly)
-    (define-key clojure-mode-map "}" 'paredit-close-curly)))
+  (run-mode-hooks 'clojure-mode-hook)
+  (run-hooks 'prog-mode-hook))
 
 (defun clojure-display-inferior-lisp-buffer ()
   "Display a buffer bound to `inferior-lisp-buffer'."
