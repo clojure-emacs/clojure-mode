@@ -734,7 +734,7 @@ check for contextual indenting."
 (put 'extend-type 'clojure-backtracking-indent '(4 (2)))
 (put 'extend-protocol 'clojure-backtracking-indent '(4 (2)))
 
-(defun put-clojure-indent (sym indent)
+(defun put-clojure-indent (sym indent &optional packages)
   (put sym 'clojure-indent-function indent))
 
 (defmacro define-clojure-indent (&rest kvs)
@@ -1230,8 +1230,50 @@ The arguments are dir, hostname, and port.  The return value should be an `alist
 
 (add-hook 'slime-indentation-update-hooks 'put-clojure-indent)
 
-
 
+
+
+;; Support for Slime usage with ClojureScript
+
+;; FIXME: Maybe this belongs better in clojurescript mode?
+;; clojurescript-mode.el does not appear to have any slime in it.
+
+(defvar clojure-slime-cljs-target nil
+  "Current buffer's target repl for evaluation.
+This should be set to a keyword value in ClojureScript buffers.")
+(make-variable-buffer-local 'clojure-slime-cljs-target)
+
+(defvar clojure-slime-cljs-target-default :cljs-repl
+  "Default name for eval target. Register a repl environment with
+  this name in the Swank/VM before evaluating ClojureScript
+  code.")
+
+(defun clojure-slime-cljs-hook ()
+  "Automatically set the target variable when opening a .cljs
+file, when the variable is not set. You can override the specific
+target with a buffer-local variable."
+  (unless clojure-slime-cljs-target
+    (when (and (buffer-file-name) (string-match "\\.cljs$" (buffer-file-name)))
+      (setq clojure-slime-cljs-target clojure-slime-cljs-target-default))))
+
+;;;###autoload
+(defadvice slime-interactive-eval (around clojure-slime-cljs-target activate)
+  (if clojure-slime-cljs-target
+      ;; Redirect calls to an alternative swank function which will redirect the
+      ;; form to a registered ClojureScript REPL.
+      (slime-eval-with-transcript
+       `(swank:interactive-eval-with-target ,clojure-slime-cljs-target ,string))
+    ad-do-it))
+
+
+;; Add this to your .emacs to support cljs evaluation:
+;;
+;;   (add-hook 'clojure-mode-hook 'clojure-slime-cljs-hook)
+
+
+
+
+
 ;;;###autoload
 (progn
   (put 'clojure-test-ns-segment-position 'safe-local-variable 'integerp)
