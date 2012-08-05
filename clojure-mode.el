@@ -1136,11 +1136,11 @@ The arguments are dir, hostname, and port.  The return value should be an `alist
     (when (and (functionp 'slime-disconnect)
                (slime-current-connection)
                (and (interactive-p) (y-or-n-p "Close old connections first? ")))
-      (slime-disconnect)
-      (clojure-kill-swank-buffer swank-buffer-name)
-      (clojure-jack-in-start-process connection-name swank-buffer-name
-                                     dir hostname)
-      (message "Starting swank server..."))))
+      (slime-disconnect))
+    (clojure-kill-swank-buffer swank-buffer-name)
+    (clojure-jack-in-start-process connection-name swank-buffer-name
+                                   dir hostname)
+    (message "Starting swank server...")))
 
 (defun clojure-find-ns ()
   (let ((regexp clojure-namespace-name-regex))
