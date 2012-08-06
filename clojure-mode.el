@@ -1137,7 +1137,8 @@ The arguments are dir, hostname, and port.  The return value should be an `alist
 
     (when (and (functionp 'slime-disconnect)
                (slime-current-connection)
-               (and (interactive-p) (y-or-n-p "Close old connections first? ")))
+               (and (called-interactively-p 'any)
+                    (y-or-n-p "Close old connections first? ")))
       (slime-disconnect)
       (clojure-kill-swank-buffer swank-buffer-name))
     (clojure-jack-in-start-process connection-name swank-buffer-name
