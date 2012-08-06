@@ -68,6 +68,8 @@
 ;;; Code:
 
 (require 'cl)
+(require 'tramp)
+(require 'inf-lisp)
 
 (defgroup clojure-mode nil
   "A mode for Clojure"
