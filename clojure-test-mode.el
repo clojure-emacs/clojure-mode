@@ -325,9 +325,10 @@ Retuns the problem overlay if such a position is found, otherwise nil."
           (if (> 0 clojure-test-ns-segment-position)
               (1- (+ (length segments) clojure-test-ns-segment-position))
             clojure-test-ns-segment-position))
-         (before (subseq segments 0 test-position))
-         (after (subseq segments (1+ test-position)))
-         (impl-segments (append before after)))
+         (before (subseq segments 0 clojure-test-ns-segment-position))
+         (after (subseq segments clojure-test-ns-segment-position))
+	 (newfile (replace-regexp-in-string "_test$" "" (car after)))
+         (impl-segments (append before (list newfile))))
     (mapconcat 'identity impl-segments "/")))
 
 ;; Commands
@@ -343,7 +344,7 @@ Retuns the problem overlay if such a position is found, otherwise nil."
     (clojure-test-clear
      (lambda (&rest args)
        ;; clojure-test-eval will wrap in with-out-str
-       (clojure-test-eval (format "(clojure.core/load-file %s)"
+       (clojure-test-eval (format "(clojure.core/load-file \"%s\")"
                                   (expand-file-name (buffer-file-name)))
                          (lambda (&rest args)
                            (clojure-test-eval "(binding [clojure.test/report
@@ -428,7 +429,7 @@ Retuns the problem overlay if such a position is found, otherwise nil."
     (define-key map (kbd "C-c C-'") 'clojure-test-show-result)
     (define-key map (kbd "C-c '")   'clojure-test-show-result)
     (define-key map (kbd "C-c k")   'clojure-test-clear)
-    (define-key map (kbd "C-c t")   'clojure-test-jump-to-implementation)
+    (define-key map (kbd "C-c C-s") 'clojure-jump-between-tests-and-code)
     (define-key map (kbd "M-p")     'clojure-test-previous-problem)
     (define-key map (kbd "M-n")     'clojure-test-next-problem)
     map)
