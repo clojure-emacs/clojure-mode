@@ -51,11 +51,11 @@ project root should have a `src/` directory containing files that
 correspond to their namespace. It should also have a `test/` directory
 containing files that correspond to their namespace, and the test
 namespaces should mirror the implementation namespaces with the
-addition of "test" as the second-to-last segment of the namespace.
+addition of "-test" as the suffix to the last segment of the namespace.
 
 So `my.project.frob` would be found in `src/my/project/frob.clj` and
-its tests would be in `test/my/project/test/frob.clj` in the
-`my.project.test.frob` namespace.
+its tests would be in `test/my/project/frob_test.clj` in the
+`my.project.frob-test` namespace.
 
 ## Paredit
 
