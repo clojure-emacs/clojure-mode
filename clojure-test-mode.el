@@ -120,11 +120,19 @@
 
 ;;; Code:
 
-(require 'clojure-mode)
 (require 'cl)
+(require 'clojure-mode)
 (require 'which-func)
 (require 'nrepl nil t)
 (require 'slime nil t)
+
+(declare-function nrepl-repl-buffer            "nrepl.el")
+(declare-function nrepl-make-response-handler  "nrepl.el")
+(declare-function nrepl-send-string            "nrepl.el")
+(declare-function nrepl-current-ns             "nrepl.el")
+(declare-function slime-eval-async             "slime.el")
+(declare-function slime-connection-name        "slime.el")
+(declare-function slime-connected-p            "slime.el")
 
 ;; Faces
 
@@ -171,12 +179,9 @@
 (defun clojure-test-make-handler (value-handler)
   (let ((out-handler (lambda (_ out)
                        (with-current-buffer (nrepl-repl-buffer)
-                         (setq ooo out)
                          (insert out)))))
     (nrepl-make-response-handler (current-buffer)
                                  (lambda (buffer value)
-                                   (setq vvv value)
-                                   (message "value: %s" vvv)
                                    (funcall value-handler value))
                                  out-handler out-handler nil)))
 
@@ -278,7 +283,8 @@
 
 (defun clojure-test-highlight-problem (line event message)
   (save-excursion
-    (goto-line line)
+    (goto-char (point-min))
+    (forward-line (1- line))
     (let ((beg (point)))
       (end-of-line)
       (let ((overlay (make-overlay beg (point))))
@@ -458,4 +464,9 @@ with a \"test.\" bit on it."
   (add-hook 'clojure-mode-hook 'clojure-test-maybe-enable))
 
 (provide 'clojure-test-mode)
+
+;; Local Variables:
+;; byte-compile-warnings: (not cl-functions)
+;; End:
+
 ;;; clojure-test-mode.el ends here
