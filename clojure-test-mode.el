@@ -179,12 +179,9 @@
 (defun clojure-test-make-handler (value-handler)
   (let ((out-handler (lambda (_ out)
                        (with-current-buffer (nrepl-repl-buffer)
-                         (setq ooo out)
                          (insert out)))))
     (nrepl-make-response-handler (current-buffer)
                                  (lambda (buffer value)
-                                   (setq vvv value)
-                                   (message "value: %s" vvv)
                                    (funcall value-handler value))
                                  out-handler out-handler nil)))
 
