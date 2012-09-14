@@ -120,9 +120,7 @@
 
 ;;; Code:
 
-(eval-when-compile
-  (require 'cl))
-
+(require 'cl)
 (require 'clojure-mode)
 (require 'which-func)
 (require 'nrepl nil t)
@@ -135,8 +133,6 @@
 (declare-function slime-eval-async             "slime.el")
 (declare-function slime-connection-name        "slime.el")
 (declare-function slime-connected-p            "slime.el")
-(declare-function coerce                       "cl-extra.el")
-(declare-function find-if                      "cl-seq.el")
 
 ;; Faces
 

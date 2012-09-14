@@ -68,7 +68,6 @@
 ;;; Code:
 
 (eval-when-compile
-  (require 'cl)
   (defvar calculate-lisp-indent-last-sexp)
   (defvar font-lock-beg)
   (defvar font-lock-end)
@@ -79,12 +78,12 @@
   (defvar slime-from-lisp-filename-function)
   (defvar slime-to-lisp-filename-function))
 
+(require 'cl)
 (require 'tramp)
 (require 'inf-lisp)
 (require 'imenu)
 
 (declare-function clojure-test-jump-to-implementation  "clojure-test-mode.el")
-(declare-function subseq                               "cl-extra.el")
 (declare-function slime-connect                        "slime.el")
 (declare-function slime-current-connection             "slime.el")
 (declare-function slime-disconnect                     "slime.el")
