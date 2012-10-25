@@ -249,9 +249,10 @@
      #'clojure-test-extract-results)))
 
 (defun clojure-test-extract-results (buffer results)
-  (let ((result-vars (read results)))
-    (mapc #'clojure-test-extract-result result-vars)
-    (clojure-test-echo-results)))
+  (with-current-buffer buffer
+    (let ((result-vars (read results)))
+      (mapc #'clojure-test-extract-result result-vars)
+      (clojure-test-echo-results))))
 
 (defun clojure-test-extract-result (result)
   "Parse the result from a single test. May contain multiple is blocks."
@@ -336,19 +337,6 @@ Retuns the problem overlay if such a position is found, otherwise nil."
 
 ;; Commands
 
-(defun clojure-test-wang ()
-  (interactive)
-  (clojure-test-eval
-   "(doseq [t (vals (ns-interns *ns*))]
-      (alter-meta! t assoc :status [])
-      (alter-meta! t assoc :test nil))"
-   (lambda (buffer value)
-     (message "sup")))
-  ;; (clojure-test-clear
-  ;;  (lambda (buffer value)
-  ;;    (message "cleared tests")))
-  )
-
 (defun clojure-test-run-tests ()
   "Run all the tests in the current namespace."
   (interactive)
@@ -359,35 +347,34 @@ Retuns the problem overlay if such a position is found, otherwise nil."
         (clojure-jump-to-test))
     (clojure-test-clear
      (lambda (buffer value)
-       (message "cleared tests. buffer: %s, value: %s" buffer value)
        (with-current-buffer buffer
          (nrepl-load-current-buffer)
          (clojure-test-eval "(binding [clojure.test/report clojure.test.mode/report]
                                (clojure.test/run-tests))"
-                            #'clojure-test-get-results))
-       ))
-    ))
+                            #'clojure-test-get-results))))))
 
 (defun clojure-test-run-test ()
   "Run the test at point."
   (interactive)
   (save-some-buffers nil (lambda () (equal major-mode 'clojure-mode)))
   (clojure-test-clear
-   (lambda (&rest args)
-     (let* ((f (which-function))
-            (test-name (if (listp f) (first f) f)))
-       (clojure-test-eval
-        (format "(binding [clojure.test/report clojure.test.mode/report]
+   (lambda (buffer value)
+     (with-current-buffer buffer
+       (let* ((f (which-function))
+              (test-name (if (listp f) (first f) f)))
+         (clojure-test-eval
+          (format "(binding [clojure.test/report clojure.test.mode/report]
                    (load-file \"%s\")
                    (clojure.test.mode/clojure-test-mode-test-one-in-ns '%s '%s)
                    (cons (:name (meta (var %s))) (:status (meta (var %s)))))"
-                (buffer-file-name) (clojure-find-ns)
-                test-name test-name test-name)
-        (lambda (result-str)
-          (let ((result (read result-str)))
-            (if (cdr result)
-                (clojure-test-extract-result result)
-              (message "Not in a test.")))))))))
+                  (buffer-file-name) (clojure-find-ns)
+                  test-name test-name test-name)
+          (lambda (buffer result-str)
+            (with-current-buffer buffer
+              (let ((result (read result-str)))
+                (if (cdr result)
+                    (clojure-test-extract-result result)
+                  (message "Not in a test.")))))))))))
 
 (defun clojure-test-show-result ()
   "Show the result of the test under point."
