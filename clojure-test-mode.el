@@ -341,6 +341,7 @@ Retuns the problem overlay if such a position is found, otherwise nil."
   "Run all the tests in the current namespace."
   (interactive)
   (save-some-buffers nil (lambda () (equal major-mode 'clojure-mode)))
+  (nrepl-load-current-buffer)
   (message "Testing...")
   (save-window-excursion
     (if (not (clojure-in-tests-p))
@@ -357,16 +358,17 @@ Retuns the problem overlay if such a position is found, otherwise nil."
   "Run the test at point."
   (interactive)
   (save-some-buffers nil (lambda () (equal major-mode 'clojure-mode)))
+  (nrepl-load-current-buffer)
   (clojure-test-clear
    (lambda (buffer value)
      (with-current-buffer buffer
+       (nrepl-load-current-buffer)
        (let* ((f (which-function))
               (test-name (if (listp f) (first f) f)))
          (clojure-test-eval
           (format "(binding [clojure.test/report clojure.test.mode/report]
-                   (load-file \"%s\")
-                   (clojure.test.mode/clojure-test-mode-test-one-in-ns '%s '%s)
-                   (cons (:name (meta (var %s))) (:status (meta (var %s)))))"
+                     (clojure.test.mode/clojure-test-mode-test-one-in-ns '%s '%s)
+                     (cons (:name (meta (var %s))) (:status (meta (var %s)))))"
                   (buffer-file-name) (clojure-find-ns)
                   test-name test-name test-name)
           (lambda (buffer result-str)
