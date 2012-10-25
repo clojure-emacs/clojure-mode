@@ -123,7 +123,7 @@
 (require 'cl)
 (require 'clojure-mode)
 (require 'which-func)
-(require 'nrepl nil t)
+(require 'nrepl)
 
 (declare-function nrepl-repl-buffer            "nrepl.el")
 (declare-function nrepl-make-response-handler  "nrepl.el")
@@ -406,7 +406,7 @@ Retuns the problem overlay if such a position is found, otherwise nil."
          (problem (clojure-test-find-next-problem here)))
     (if problem
         (goto-char problem)
-      n      (goto-char here)
+      (goto-char here)
       (message "No next problem."))))
 
 (defun clojure-test-previous-problem ()
