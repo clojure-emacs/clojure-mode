@@ -195,7 +195,7 @@
 (defun clojure-test-load-reporting ()
   "Redefine the test-is report function to store results in metadata."
   (when (clojure-test-nrepl-connected-p)
-    (clojure-test-eval
+    (nrepl-send-string-sync
      "(ns clojure.test.mode
         (:use [clojure.test :only [file-position *testing-vars* *test-out*
                                    join-fixtures *report-counters* do-report
@@ -204,17 +204,17 @@
     (def #^{:dynamic true} *clojure-test-mode-out* nil)
     (defn report [event]
      (if-let [current-test (last clojure.test/*testing-vars*)]
-             (alter-meta! current-test
-                          assoc :status (conj (:status (meta current-test))
-                                          [(:type event) (:message event)
-                                           (str (:expected event))
-                                           (str (:actual event))
-                                           (if (and (= (:major *clojure-version*) 1)
-                                                    (< (:minor *clojure-version*) 2))
-                                               ((file-position 2) 1)
-                                               (if (= (:type event) :error)
-                                                   ((file-position 3) 1)
-                                                   (:line event)))])))
+        (alter-meta! current-test
+                     assoc :status (conj (:status (meta current-test))
+                                     [(:type event) (:message event)
+                                      (str (:expected event))
+                                      (str (:actual event))
+                                      (if (and (= (:major *clojure-version*) 1)
+                                               (< (:minor *clojure-version*) 2))
+                                          ((file-position 2) 1)
+                                          (if (= (:type event) :error)
+                                              ((file-position 3) 1)
+                                              (:line event)))])))
      (binding [*test-out* (or *clojure-test-mode-out* *out*)]
        ((.getRawRoot #'clojure.test/report) event)))
 
@@ -266,7 +266,8 @@
                     line event (format "Expected %s, got %s" expected actual)))
           (when (equal :error event)
             (incf clojure-test-error-count)
-            (clojure-test-highlight-problem line event actual)))))))
+            (clojure-test-highlight-problem line event actual))))))
+  (clojure-test-echo-results))
 
 (defun clojure-test-echo-results ()
   (message
@@ -342,39 +343,34 @@ Retuns the problem overlay if such a position is found, otherwise nil."
   (interactive)
   (save-some-buffers nil (lambda () (equal major-mode 'clojure-mode)))
   (message "Testing...")
+  (clojure-test-clear)
   (save-window-excursion
     (if (not (clojure-in-tests-p))
         (clojure-jump-to-test))
-    (clojure-test-clear
-     (lambda (buffer value)
-       (with-current-buffer buffer
-         (nrepl-load-current-buffer)
-         (clojure-test-eval "(binding [clojure.test/report clojure.test.mode/report]
-                               (clojure.test/run-tests))"
-                            #'clojure-test-get-results))))))
+    (clojure-test-eval (format "(binding [clojure.test/report clojure.test.mode/report]
+                                       (clojure.test/run-tests '%s))"
+                               (clojure-find-ns))
+                       #'clojure-test-get-results)))
 
 (defun clojure-test-run-test ()
   "Run the test at point."
   (interactive)
   (save-some-buffers nil (lambda () (equal major-mode 'clojure-mode)))
-  (clojure-test-clear
-   (lambda (buffer value)
-     (with-current-buffer buffer
-       (nrepl-load-current-buffer)
-       (let* ((f (which-function))
-              (test-name (if (listp f) (first f) f)))
-         (clojure-test-eval
-          (format "(binding [clojure.test/report clojure.test.mode/report]
-                     (clojure.test.mode/clojure-test-mode-test-one-in-ns '%s '%s)
-                     (cons (:name (meta (var %s))) (:status (meta (var %s)))))"
-                  (clojure-find-ns)
-                  test-name test-name test-name)
-          (lambda (buffer result-str)
-            (with-current-buffer buffer
-              (let ((result (read result-str)))
-                (if (cdr result)
-                    (clojure-test-extract-result result)
-                  (message "Not in a test.")))))))))))
+  (clojure-test-clear)
+  (let* ((f (which-function))
+         (test-name (if (listp f) (first f) f)))
+    (clojure-test-eval (format "(binding [clojure.test/report clojure.test.mode/report]
+                                  (load-file \"%s\")
+                                  (clojure.test.mode/clojure-test-mode-test-one-in-ns '%s '%s)
+                                  (cons (:name (meta (var %s))) (:status (meta (var %s)))))"
+                               (buffer-file-name) (clojure-find-ns)
+                               test-name test-name test-name)
+                       (lambda (buffer result-str)
+                         (with-current-buffer buffer
+                           (let ((result (read result-str)))
+                             (if (cdr result)
+                                 (clojure-test-extract-result result)
+                               (message "Not in a test."))))))))
 
 (defun clojure-test-show-result ()
   "Show the result of the test under point."
@@ -385,6 +381,12 @@ Retuns the problem overlay if such a position is found, otherwise nil."
         (message (replace-regexp-in-string "%" "%%"
                                            (overlay-get overlay 'message))))))
 
+(defun clojure-test-load-current-buffer ()
+  (let ((command (format "(clojure.core/load-file \"%s\")\n(in-ns '%s)"
+                         (buffer-file-name)
+                         (clojure-find-ns))))
+    (nrepl-send-string-sync command)))
+
 (defun clojure-test-clear (&optional callback)
   "Remove overlays and clear stored results."
   (interactive)
@@ -392,12 +394,7 @@ Retuns the problem overlay if such a position is found, otherwise nil."
   (setq clojure-test-count 0
         clojure-test-failure-count 0
         clojure-test-error-count 0)
-  (nrepl-load-current-buffer)
-  (clojure-test-eval
-   "(doseq [t (vals (ns-interns *ns*))]
-      (alter-meta! t assoc :status [])
-      (alter-meta! t assoc :test nil))"
-   callback))
+  (clojure-test-load-current-buffer))
 
 (defun clojure-test-next-problem ()
   "Go to and describe the next test problem in the buffer."
@@ -468,3 +465,4 @@ with a \"test.\" bit on it."
 ;; End:
 
 ;;; clojure-test-mode.el ends here
+
