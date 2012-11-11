@@ -330,10 +330,9 @@ Retuns the problem overlay if such a position is found, otherwise nil."
           (if (> 0 clojure-test-ns-segment-position)
               (1- (+ (length segments) clojure-test-ns-segment-position))
             clojure-test-ns-segment-position))
-         (before (subseq segments 0 clojure-test-ns-segment-position))
-         (after (subseq segments clojure-test-ns-segment-position))
-         (newfile (replace-regexp-in-string "_test$" "" (car after)))
-         (impl-segments (append before (list newfile))))
+         (before (subseq segments 0 test-position))
+         (after (subseq segments (1+ test-position)))
+         (impl-segments (append before after)))
     (mapconcat 'identity impl-segments "/")))
 
 ;; Commands
