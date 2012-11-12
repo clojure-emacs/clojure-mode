@@ -1190,7 +1190,7 @@ The arguments are dir, hostname, and port.  The return value should be an `alist
 
 ;; Test navigation:
 (defun clojure-in-tests-p ()
-  (or (string-match-p "-test$" (clojure-find-ns))
+  (or (string-match-p "test\." (clojure-find-ns))
       (string-match-p "/test" (buffer-file-name))))
 
 (defun clojure-underscores-for-hyphens (namespace)
