@@ -576,6 +576,7 @@ elements of a def* forms."
   nil)
 
 ;; Docstring positions
+(put 'ns 'clojure-doc-string-elt 2)
 (put 'defn 'clojure-doc-string-elt 2)
 (put 'defn- 'clojure-doc-string-elt 2)
 (put 'defmulti 'clojure-doc-string-elt 2)
