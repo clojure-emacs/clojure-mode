@@ -85,15 +85,10 @@
   (eval-when-compile
     `( ;; Definitions.
       (,(concat "(\\(?:clojure.core/\\)?\\("
-                (regexp-opt '("defn" "defn-" "def" "def-" "defonce"
+                (regexp-opt '("defn" "defn-" "def" "defonce"
                               "defmulti" "defmethod" "defmacro"
                               "defstruct" "deftype" "defprotocol"
-                              "defrecord" "deftest"
-                              "slice" "def\\[a-z\\]"
-                              "defalias" "defhinted" "defmacro-"
-                              "defn-memo" "defnk" "defonce-"
-                              "defstruct-" "defunbound" "defunbound-"
-                              "defvar" "defvar-"))
+                              "defrecord" "deftest" "def\\[a-z\\]"))
                 ;; Function declarations.
                 "\\)\\>"
                 ;; Any whitespace
@@ -588,17 +583,6 @@ elements of a def* forms."
 (put 'definline 'clojure-doc-string-elt 2)
 (put 'defprotocol 'clojure-doc-string-elt 2)
 
-;; Docstring positions - contrib
-(put 'defalias 'clojure-doc-string-elt 3)
-(put 'defmacro- 'clojure-doc-string-elt 2)
-(put 'defn-memo 'clojure-doc-string-elt 2)
-(put 'defnk 'clojure-doc-string-elt 2)
-(put 'defonce- 'clojure-doc-string-elt 3)
-(put 'defunbound 'clojure-doc-string-elt 2)
-(put 'defunbound- 'clojure-doc-string-elt 2)
-(put 'defvar 'clojure-doc-string-elt 3)
-(put 'defvar- 'clojure-doc-string-elt 3)
-
 
 
 (defun clojure-forward-sexp (n)
@@ -828,13 +812,7 @@ use (put-clojure-indent 'some-symbol 'defun)."
   ;; clojure.test
   (testing 1)
   (deftest 'defun)
-  (use-fixtures 'defun)
-
-  ;; contrib
-  (handler-case 1)
-  (handle 1)
-  (dotrace 1)
-  (deftrace 'defun))
+  (use-fixtures 'defun))
 
 
 
