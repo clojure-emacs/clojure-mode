@@ -19,12 +19,14 @@ If you're not already using Marmalade, add this to your
 
 And then you can install:
 
+`M-x package-refresh-contents`
 `M-x package-install [RET] clojure-mode [RET]`
 
 or
 
 ```lisp
 (when (not (package-installed-p 'clojure-mode))
+  (package-refresh-contents)
   (package-install 'clojure-mode))
 ```
 
