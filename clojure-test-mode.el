@@ -326,7 +326,9 @@ Retuns the problem overlay if such a position is found, otherwise nil."
 (defun clojure-test-implementation-for (namespace)
   (let* ((namespace (clojure-underscores-for-hyphens namespace))
          (segments (split-string namespace "\\."))
-         (impl-segments (cons (first segments) (rest (rest segments)))))
+         (namespace-end (split-string (car (last segments)) "_"))
+         (namespace-end (mapconcat 'identity (butlast namespace-end 1) "_"))
+         (impl-segments (append (butlast segments 1) (list namespace-end))))
     (mapconcat 'identity impl-segments "/")))
 
 ;; Commands

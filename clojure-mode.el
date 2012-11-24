@@ -1198,14 +1198,13 @@ The arguments are dir, hostname, and port.  The return value should be an `alist
 
 (defun clojure-test-for (namespace)
   (let* ((namespace (clojure-underscores-for-hyphens namespace))
-         (segments (split-string namespace "\\."))
-         (test-segments (append (list (first segments) "test") (rest segments))))
-    (mapconcat 'identity test-segments "/")))
+         (segments (split-string namespace "\\.")))
+    (mapconcat 'identity segments "/")))
 
 (defun clojure-jump-to-test ()
   "Jump from implementation file to test."
   (interactive)
-  (find-file (format "%stest/%s.clj"
+  (find-file (format "%stest/%s_test.clj"
                      (file-name-as-directory
                       (locate-dominating-file buffer-file-name "src/"))
                      (clojure-test-for (clojure-find-ns)))))
