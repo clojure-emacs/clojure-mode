@@ -342,6 +342,8 @@ Retuns the problem overlay if such a position is found, otherwise nil."
   (interactive)
   (save-some-buffers nil (lambda () (equal major-mode 'clojure-mode)))
   (message "Testing...")
+  (if (not (clojure-in-tests-p))
+      (nrepl-load-file (buffer-file-name)))
   (save-window-excursion
     (if (not (clojure-in-tests-p))
         (clojure-jump-to-test))
