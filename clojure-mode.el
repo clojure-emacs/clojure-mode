@@ -358,7 +358,7 @@ Clojure to load that file."
     (define-key map "\C-c\C-e" 'lisp-eval-last-sexp)
     (define-key map "\C-c\C-l" 'clojure-load-file)
     (define-key map "\C-c\C-r" 'lisp-eval-region)
-    (define-key map (kbd "C-c C-s") 'clojure-jump-between-tests-and-code)
+    (define-key map (kbd "C-c C-t") 'clojure-jump-between-tests-and-code)
     (define-key map "\C-c\C-z" 'clojure-display-inferior-lisp-buffer)
     (define-key map (kbd "C-c M-q") 'clojure-fill-docstring)
     map)
