@@ -45,7 +45,7 @@ Once you have a repl session active, you can run the tests in the
 current buffer with `C-c C-,`. Failing tests and errors will be
 highlighted using overlays. To clear the overlays, use `C-c k`.
 
-You can jump between implementation and test files with `C-c t` if
+You can jump between implementation and test files with `C-c C-t` if
 your project is laid out in a way that clojure-test-mode expects. Your
 project root should have a `src/` directory containing files that
 correspond to their namespace. It should also have a `test/` directory

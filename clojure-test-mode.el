@@ -430,7 +430,7 @@ Retuns the problem overlay if such a position is found, otherwise nil."
     (define-key map (kbd "C-c C-'") 'clojure-test-show-result)
     (define-key map (kbd "C-c '")   'clojure-test-show-result)
     (define-key map (kbd "C-c k")   'clojure-test-clear)
-    (define-key map (kbd "C-c C-s") 'clojure-jump-between-tests-and-code)
+    (define-key map (kbd "C-c C-t") 'clojure-jump-between-tests-and-code)
     (define-key map (kbd "M-p")     'clojure-test-previous-problem)
     (define-key map (kbd "M-n")     'clojure-test-next-problem)
     map)
