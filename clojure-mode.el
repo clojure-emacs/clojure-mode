@@ -1,6 +1,6 @@
 ;;; clojure-mode.el --- Major mode for Clojure code
 
-;; Copyright (C) 2007-2011 Jeffrey Chu, Lennart Staflin, Phil Hagelberg
+;; Copyright (C) 2007-2013 Jeffrey Chu, Lennart Staflin, Phil Hagelberg
 ;;
 ;; Authors: Jeffrey Chu <jochu0@gmail.com>
 ;;          Lennart Staflin <lenst@lysator.liu.se>
@@ -21,11 +21,17 @@
 
 ;;; Installation:
 
-;; Use package.el. You'll need to add Marmalade to your archives:
+;; Use package.el. You'll need to add Marmalade or MELPA to your archives:
 
+;; ;; Marmalade setup
 ;; (require 'package)
 ;; (add-to-list 'package-archives
 ;;              '("marmalade" . "http://marmalade-repo.org/packages/"))
+;;
+;; ;; MELPA setup
+;; (require 'package)
+;; (add-to-list 'package-archives
+;;              '("melpa" . "http://melpa.milkbox.net/packages/") t)
 
 ;; If you use a version of Emacs prior to 24 that doesn't include
 ;; package.el, you can get it from http://bit.ly/pkg-el23. If you have
@@ -37,16 +43,15 @@
 ;; byte-compilation and autoloads.
 
 ;; Using clojure-mode with paredit is highly recommended. It is also
-;; available using package.el from the above archive.
+;; available using package.el from the above archives.
 
 ;; Use paredit as you normally would with any other mode; for instance:
 ;;
 ;;   ;; require or autoload paredit-mode
-;;   (defun turn-on-paredit () (paredit-mode 1))
-;;   (add-hook 'clojure-mode-hook 'turn-on-paredit)
+;;   (add-hook 'clojure-mode-hook 'paredit-mode)
 
-;; See Swank Clojure (http://github.com/technomancy/swank-clojure) for
-;; better interaction with subprocesses via SLIME.
+;; See nREPL.el (http://github.com/kingtim/nrepl.el) for
+;; better interaction with subprocesses via nREPL.
 
 ;;; License:
 
