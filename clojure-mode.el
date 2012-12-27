@@ -1262,7 +1262,7 @@ The arguments are dir, hostname, and port.  The return value should be an `alist
   (add-hook 'slime-connected-hook 'clojure-enable-slime-on-existing-buffers)
   (add-hook 'slime-indentation-update-hooks 'put-clojure-indent)
 
-  (add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
+  (add-to-list 'auto-mode-alist '("\\.clj\\'" . clojure-mode))
   (add-to-list 'interpreter-mode-alist '("jark" . clojure-mode))
   (add-to-list 'interpreter-mode-alist '("cake" . clojure-mode)))
 
