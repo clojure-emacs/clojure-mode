@@ -155,7 +155,7 @@
             "gen-class" "gen-and-load-class" "gen-and-save-class"
             "handler-case" "handle") t)
          "\\>")
-       1 font-lock-builtin-face)
+       1 font-lock-keyword-face)
       ;; Built-ins
       (,(concat
          "(\\(?:clojure.core/\\)?"
@@ -263,7 +263,7 @@
         "with-meta" "with-open" "with-out-str" "with-precision" "xml-seq" "zipmap"
         ) t)
          "\\>")
-       1 font-lock-variable-name-face)
+       1 font-lock-builtin-face)
       ;;Other namespaces in clojure.jar
       (,(concat
          "(\\(?:\.*/\\)?"
