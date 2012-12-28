@@ -8,6 +8,8 @@ Provides Emacs font-lock, indentation, and navigation for the
 Available on both [Marmalade](http://marmalade-repo.org/packages/clojure-mode) and
 [MELPA](http://melpa.milkbox.net) repos.
 
+The latest stable version of `clojure-mode` is available on Marmalade.
+
 If you're not already using Marmalade, add this to your
 `~/.emacs.d/init.el` and load it with `M-x eval-buffer`.
 
@@ -18,7 +20,12 @@ If you're not already using Marmalade, add this to your
 (package-initialize)
 ```
 
-If you'd like to use MELPA add this bit of code instead:
+The version of `clojure-mode` on MELPA is a development snapshot that
+might contain more bugs that usual or experimental work and features
+in progress. Use it on your own risk!
+
+If you're feeling adventurous and you'd like to use MELPA add this bit
+of code instead:
 
 ```lisp
 (require 'package)
