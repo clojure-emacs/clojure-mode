@@ -22,7 +22,7 @@ If you're not already using Marmalade, add this to your
 
 The version of `clojure-mode` on MELPA is a development snapshot that
 might contain more bugs that usual or experimental work and features
-in progress. Use it on your own risk!
+in progress. Use it at your own risk!
 
 If you're feeling adventurous and you'd like to use MELPA add this bit
 of code instead:
