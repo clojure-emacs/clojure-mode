@@ -101,9 +101,9 @@ SLIME.
 
 ## Swank Clojure
 
-SLIME is also available via
-[swank-clojure](http://github.com/technomancy/swank-clojure), though
-it is no longer actively maintained.
+SLIME is available via
+[swank-clojure](http://github.com/technomancy/swank-clojure) in `clojure-mode` 1.x.
+SLIME support was removed in version 2.x in favor of `nrepl.el`.
 
 ## License
 
