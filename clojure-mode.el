@@ -982,17 +982,13 @@ returned."
 
 (defun clojure-test-for (namespace)
   (let* ((namespace (clojure-underscores-for-hyphens namespace))
-         (segments (split-string namespace "\\."))
-         (before (subseq segments 0 clojure-test-ns-segment-position))
-         (after (subseq segments clojure-test-ns-segment-position))
-	 (newfile (car after))
-         (test-segments (append before (list newfile))))
-    (mapconcat 'identity test-segments "/test/")))
+         (segments (split-string namespace "\\.")))
+    (mapconcat 'identity segments "/")))
 
 (defun clojure-jump-to-test ()
   "Jump from implementation file to test."
   (interactive)
-  (find-file (format "%stest/%s.clj"
+  (find-file (format "%stest/%s_test.clj"
                      (file-name-as-directory
                       (locate-dominating-file buffer-file-name "src/"))
                      (clojure-test-for (clojure-find-ns)))))
