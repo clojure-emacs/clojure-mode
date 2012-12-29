@@ -342,10 +342,12 @@ Retuns the problem overlay if such a position is found, otherwise nil."
   (interactive)
   (save-some-buffers nil (lambda () (equal major-mode 'clojure-mode)))
   (message "Testing...")
-  (clojure-test-clear)
+  (if (not (clojure-in-tests-p))
+      (nrepl-load-file (buffer-file-name)))
   (save-window-excursion
     (if (not (clojure-in-tests-p))
         (clojure-jump-to-test))
+    (clojure-test-clear)
     (clojure-test-eval (format "(binding [clojure.test/report clojure.test.mode/report]
                                        (clojure.test/run-tests '%s))"
                                (clojure-find-ns))
