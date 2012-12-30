@@ -1,7 +1,7 @@
 # Clojure Mode
 
 Provides Emacs font-lock, indentation, and navigation for the
-[Clojure language](http://clojure.org).
+[Clojure programming language](http://clojure.org).
 
 ## Installation
 
@@ -13,7 +13,7 @@ MELPA has a development snapshot for users who don't mind breakage but
 don't want to run from a git checkout.
 
 If you're not already using Marmalade, add this to your
-`~/.emacs.d/init.el` and load it with `M-x eval-buffer`.
+`~/.emacs.d/init.el` and load it with <kbd>M-x eval-buffer</kbd>.
 
 ```lisp
 (require 'package)
@@ -34,13 +34,13 @@ of code instead:
 
 And then you can install:
 
-`M-x package-refresh-contents`
-`M-x package-install [RET] clojure-mode [RET]`
+<kbd>M-x package-refresh-contents</kbd>
+<kbd>M-x package-install [RET] clojure-mode [RET]</kbd>
 
 or if you'd rather keep it in your dotfiles:
 
 ```lisp
-(when (not (package-installed-p 'clojure-mode))
+(unless (package-installed-p 'clojure-mode)
   (package-refresh-contents)
   (package-install 'clojure-mode))
 ```
@@ -59,10 +59,10 @@ instructions above should work for clojure-test-mode as well.
 (nrepl.el support is still in progress.)
 
 Once you have a repl session active, you can run the tests in the
-current buffer with `C-c C-,`. Failing tests and errors will be
-highlighted using overlays. To clear the overlays, use `C-c k`.
+current buffer with <kbd>C-c C-,</kbd>. Failing tests and errors will be
+highlighted using overlays. To clear the overlays, use <kbd>C-c k</kbd>.
 
-You can jump between implementation and test files with `C-c C-t` if
+You can jump between implementation and test files with <kbd>C-c C-t</kbd> if
 your project is laid out in a way that clojure-test-mode expects. Your
 project root should have a `src/` directory containing files that
 correspond to their namespace. It should also have a `test/` directory
@@ -76,15 +76,16 @@ its tests would be in `test/my/project/frob_test.clj` in the
 
 ## Paredit
 
-Using clojure-mode with paredit is highly recommended. It is also
-available using package.el from the above archive.
+Using clojure-mode with
+[paredit](http://mumble.net/~campbell/emacs/paredit.el) is highly
+recommended. It is also available using package.el from the above
+archives.
 
-Use paredit as you normally would with any other mode; for instance:
+Use paredit as you normally would any other minor mode; for instance:
 
 ```lisp
-;; (require 'paredit) if you didn't install via package.el
-(defun turn-on-paredit () (paredit-mode 1))
-(add-hook 'clojure-mode-hook 'turn-on-paredit)
+;; (require 'paredit) if you didn't install it via package.el
+(add-hook 'clojure-mode-hook 'paredit-mode)
 ```
 
 See [the cheat sheet](http://www.emacswiki.org/emacs/PareditCheatsheet)
@@ -124,7 +125,7 @@ SLIME support was removed in version 2.x in favor of `nrepl.el`.
 
 ## License
 
-Copyright © 2007-2012 Jeffrey Chu, Lennart Staflin, Phil Hagelberg,
+Copyright © 2007-2013 Jeffrey Chu, Lennart Staflin, Phil Hagelberg,
 and [contributors](https://github.com/technomancy/clojure-mode/contributors).
 
-Distributed under the GNU General Public License; see C-h t to view.
+Distributed under the GNU General Public License; type <kbd>C-h C-c</kbd> to view it.
