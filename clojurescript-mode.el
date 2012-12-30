@@ -1,6 +1,6 @@
 ;;; clojurescript-mode.el --- Major mode for ClojureScript code
 
-;; Copyright (C) 2011 Luke Amdor
+;; Copyright © 2011 Luke Amdor
 ;;
 ;; Authors: Luke Amdor <luke.amdor@gmail.com>
 ;; URL: http://github.com/rubbish/clojurescript-mode

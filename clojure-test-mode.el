@@ -4,7 +4,7 @@
 
 ;; Author: Phil Hagelberg <technomancy@gmail.com>
 ;; URL: http://emacswiki.org/cgi-bin/wiki/ClojureTestMode
-;; Version: 1.6.0
+;; Version: 2.0.0
 ;; Keywords: languages, lisp, test
 ;; Package-Requires: ((clojure-mode "1.7") (nrepl "0.1.5"))
 
@@ -87,8 +87,8 @@
 ;;  * Support narrowing.
 ;;  * Fix a bug in clojure-test-mode-test-one-in-ns.
 
-;; 1.7.0 ???
-;;  * Compatibility with nrepl.el
+;; 2.0.0 2012-12-29
+;;  * Replace slime with nrepl.el
 
 ;;; TODO:
 
