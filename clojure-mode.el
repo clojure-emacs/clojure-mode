@@ -435,8 +435,6 @@ if that value is non-nil."
                       (format clojure-mode-load-command file-name))
   (switch-to-lisp t))
 
-
-
 (defun clojure-match-next-def ()
   "Scans the buffer backwards for the next top-level definition.
 Called by `imenu--generic-function'."
@@ -565,8 +563,6 @@ elements of a def* forms."
 (put 'defmacro 'clojure-doc-string-elt 2)
 (put 'definline 'clojure-doc-string-elt 2)
 (put 'defprotocol 'clojure-doc-string-elt 2)
-
-
 
 (defun clojure-forward-sexp (n)
   "Treat record literals like #user.Foo[1] and #user.Foo{:size 1}
@@ -797,8 +793,6 @@ use (put-clojure-indent 'some-symbol 'defun)."
   (deftest 'defun)
   (use-fixtures 'defun))
 
-
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; Better docstring filling for clojure-mode
@@ -890,8 +884,6 @@ returned."
                (buffer-substring-no-properties (+ 2 (point-min)) (point-max))))))))
     (goto-char old-point)))
 
-
-
 (defconst clojure-namespace-name-regex
   (rx line-start
       "("
@@ -933,8 +925,6 @@ returned."
 ;;           "(ns
 ;;  foo)"
 ;;     "foo"))
-
-
 
 (defun clojure-expected-ns ()
   "Returns the namespace name that the file should have."
