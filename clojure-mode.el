@@ -348,7 +348,6 @@ Clojure to load that file."
     ["Fill Docstring" clojure-fill-docstring]
     ["Jump Between Test and Code" clojure-jump-between-tests-and-code]))
 
-
 (defvar clojure-mode-syntax-table
   (let ((table (copy-syntax-table emacs-lisp-mode-syntax-table)))
     (modify-syntax-entry ?~ "'   " table)
