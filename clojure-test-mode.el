@@ -1,12 +1,12 @@
 ;;; clojure-test-mode.el --- Minor mode for Clojure tests
 
-;; Copyright © 2009-2011 Phil Hagelberg
+;; Copyright © 2009-2013 Phil Hagelberg
 
 ;; Author: Phil Hagelberg <technomancy@gmail.com>
 ;; URL: http://emacswiki.org/cgi-bin/wiki/ClojureTestMode
 ;; Version: 2.0.0
 ;; Keywords: languages, lisp, test
-;; Package-Requires: ((clojure-mode "1.7") (nrepl "0.1.5"))
+;; Package-Requires: ((clojure-mode "2.0.0") (nrepl "0.1.5"))
 
 ;; This file is not part of GNU Emacs.
 
@@ -14,7 +14,7 @@
 
 ;; This file provides support for running Clojure tests (using the
 ;; clojure.test framework) via nrepl.el and seeing feedback in the test
-;; buffer about which tests failed or errored.
+;; buffer about which tests failed or encountered errors.
 
 ;;; Usage:
 
@@ -443,4 +443,3 @@ with a \"test.\" bit on it."
 ;; End:
 
 ;;; clojure-test-mode.el ends here
-
