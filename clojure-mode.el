@@ -60,6 +60,7 @@
 (require 'tramp)
 (require 'inf-lisp)
 (require 'imenu)
+(require 'easymenu)
 
 (declare-function clojure-test-jump-to-implementation  "clojure-test-mode.el")
 
@@ -332,6 +333,21 @@ Clojure to load that file."
     (define-key map (kbd "C-c M-q") 'clojure-fill-docstring)
     map)
   "Keymap for Clojure mode. Inherits from `lisp-mode-shared-map'.")
+
+(easy-menu-define clojure-mode-menu clojure-mode-map
+  "Menu for Clojure mode."
+  '("Clojure"
+    ["Eval Function Definition" lisp-eval-defun]
+    ["Eval Last Sexp" lisp-eval-last-sexp]
+    ["Eval Region" lisp-eval-region]
+    "--"
+    ["Run Inferior Lisp" clojure-display-inferior-lisp-buffer]
+    ["Display Inferior Lisp Buffer" clojure-display-inferior-lisp-buffer]
+    ["Load File" clojure-load-file]
+    "--"
+    ["Fill Docstring" clojure-fill-docstring]
+    ["Jump Between Test and Code" clojure-jump-between-tests-and-code]))
+
 
 (defvar clojure-mode-syntax-table
   (let ((table (copy-syntax-table emacs-lisp-mode-syntax-table)))
