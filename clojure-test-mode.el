@@ -417,7 +417,9 @@ Retuns the problem overlay if such a position is found, otherwise nil."
 
 ;;;###autoload
 (define-minor-mode clojure-test-mode
-  "A minor mode for running Clojure tests."
+  "A minor mode for running Clojure tests.
+
+\\{clojure-test-mode-map}"
   nil " Test" clojure-test-mode-map
   (when (clojure-test-nrepl-connected-p)
     (clojure-test-load-reporting)))
@@ -443,4 +445,3 @@ with a \"test.\" bit on it."
 ;; End:
 
 ;;; clojure-test-mode.el ends here
-
