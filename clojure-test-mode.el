@@ -334,6 +334,7 @@ Retuns the problem overlay if such a position is found, otherwise nil."
   "Run the test at point."
   (interactive)
   (save-some-buffers nil (lambda () (equal major-mode 'clojure-mode)))
+  (imenu--make-index-alist)
   (clojure-test-clear)
   (let* ((f (which-function))
          (test-name (if (listp f) (first f) f)))
