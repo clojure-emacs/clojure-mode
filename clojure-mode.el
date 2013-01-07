@@ -369,8 +369,12 @@ numbers count from the end:
   "Currently package.el doesn't support prerelease version numbers."
   "2.0.0")
 
+;; For compatibility with Emacs < 24, derive conditionally
+(defalias 'clojure-parent-mode
+  (if (fboundp 'prog-mode) 'prog-mode 'fundamental-mode))
+
 ;;;###autoload
-(defun clojure-mode ()
+(define-derived-mode clojure-mode clojure-parent-mode "Clojure"
   "Major mode for editing Clojure code - similar to Lisp mode.
 Commands:
 Delete converts tabs to spaces as it moves back.
@@ -382,15 +386,12 @@ or to switch back to an existing one.
 Entry to this mode calls the value of `clojure-mode-hook'
 if that value is non-nil."
   (interactive)
-  (kill-all-local-variables)
   (use-local-map clojure-mode-map)
-  (setq mode-name "Clojure"
-        major-mode 'clojure-mode
-        imenu-create-index-function
-        (lambda ()
-          (imenu--generic-function '((nil clojure-match-next-def 0))))
-        local-abbrev-table clojure-mode-abbrev-table
-        indent-tabs-mode nil)
+  (set (make-local-variable 'imenu-create-index-function)
+       (lambda ()
+         (imenu--generic-function '((nil clojure-match-next-def 0)))))
+  (set (make-local-variable 'local-abbrev-table) clojure-mode-abbrev-table)
+  (set (make-local-variable 'indent-tabs-mode) nil)
   (lisp-mode-variables nil)
   (set-syntax-table clojure-mode-syntax-table)
   (set (make-local-variable 'comment-start-skip)
@@ -411,10 +412,7 @@ if that value is non-nil."
             (lambda ()
               (when (>= paredit-version 21)
                 (define-key clojure-mode-map "{" 'paredit-open-curly)
-                (define-key clojure-mode-map "}" 'paredit-close-curly))))
-
-  (run-mode-hooks 'clojure-mode-hook)
-  (run-hooks 'prog-mode-hook))
+                (define-key clojure-mode-map "}" 'paredit-close-curly)))))
 
 (defun clojure-display-inferior-lisp-buffer ()
   "Display a buffer bound to `inferior-lisp-buffer'."
