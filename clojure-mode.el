@@ -385,15 +385,11 @@ or to switch back to an existing one.
 
 Entry to this mode calls the value of `clojure-mode-hook'
 if that value is non-nil."
-  (interactive)
-  (use-local-map clojure-mode-map)
   (set (make-local-variable 'imenu-create-index-function)
        (lambda ()
          (imenu--generic-function '((nil clojure-match-next-def 0)))))
-  (set (make-local-variable 'local-abbrev-table) clojure-mode-abbrev-table)
   (set (make-local-variable 'indent-tabs-mode) nil)
   (lisp-mode-variables nil)
-  (set-syntax-table clojure-mode-syntax-table)
   (set (make-local-variable 'comment-start-skip)
        "\\(\\(^\\|[^\\\\\n]\\)\\(\\\\\\\\\\)*\\)\\(;+\\|#|\\) *")
   (set (make-local-variable 'lisp-indent-function)
@@ -407,7 +403,6 @@ if that value is non-nil."
   (set (make-local-variable 'parse-sexp-ignore-comments) t)
 
   (clojure-mode-font-lock-setup)
-
   (add-hook 'paredit-mode-hook
             (lambda ()
               (when (>= paredit-version 21)
