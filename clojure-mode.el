@@ -385,7 +385,6 @@ or to switch back to an existing one.
 
 Entry to this mode calls the value of `clojure-mode-hook'
 if that value is non-nil."
-  (interactive)
   (use-local-map clojure-mode-map)
   (set (make-local-variable 'imenu-create-index-function)
        (lambda ()
