@@ -365,9 +365,13 @@ numbers count from the end:
   leiningen.compile -> leiningen.test.compile (uses 1)
   clojure.http.client -> clojure.http.test.client (uses -1)")
 
-(defun clojure-mode-version ()
-  "Currently package.el doesn't support prerelease version numbers."
-  "2.0.0")
+(defvar clojure-mode-version "2.0.0"
+  "The current version of `clojure-mode'.")
+
+(defun clojure-mode-display-version ()
+  "Display the current `clojure-mode-version' in the minibuffer."
+  (interactive)
+  (message "clojure-mode (version %s)" clojure-mode-version))
 
 ;; For compatibility with Emacs < 24, derive conditionally
 (defalias 'clojure-parent-mode
