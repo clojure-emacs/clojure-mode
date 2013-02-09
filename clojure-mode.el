@@ -943,10 +943,15 @@ returned."
     (replace-regexp-in-string
      "_" "-" (mapconcat 'identity (cdr (split-string relative "/")) "."))))
 
+(defun clojure-insert-ns-form-here ()
+  "Insert a namespace form at point"
+  (interactive)
+  (insert (format "(ns %s)" (clojure-expected-ns))))
+
 (defun clojure-insert-ns-form ()
   (interactive)
   (goto-char (point-min))
-  (insert (format "(ns %s)" (clojure-expected-ns))))
+  (clojure-insert-ns-form-here))
 
 (defun clojure-update-ns ()
   "Updates the namespace of the current buffer. Useful if a file has been renamed."
