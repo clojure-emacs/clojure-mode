@@ -180,16 +180,23 @@
      "(ns clojure.test.mode
         (:use [clojure.test :only [file-position *testing-vars* *test-out*
                                    join-fixtures *report-counters* do-report
-                                   test-var *initial-report-counters*]]))
+                                   test-var *initial-report-counters*]]
+              [clojure.pprint :only [pprint]]))
 
     (def #^{:dynamic true} *clojure-test-mode-out* nil)
+    (def fail-events #{:fail :error})
     (defn report [event]
      (if-let [current-test (last clojure.test/*testing-vars*)]
         (alter-meta! current-test
                      assoc :status (conj (:status (meta current-test))
-                                     [(:type event) (:message event)
-                                      (str (:expected event))
-                                      (str (:actual event))
+                                     [(:type event)
+                                      (:message event)
+                                      (when (fail-events (:type event))
+                                        (str (:expected event)))
+                                      (when (fail-events (:type event))
+                                        (str (:actual event)))
+                                      (when (fail-events (:type event))
+                                        (with-out-str (pprint (:actual event))))
                                       (if (and (= (:major *clojure-version*) 1)
                                                (< (:minor *clojure-version*) 2))
                                           ((file-position 2) 1)
@@ -240,14 +247,17 @@
   (dolist (is-result (rest result))
     (unless (member (aref is-result 0) clojure-test-ignore-results)
       (incf clojure-test-count)
-      (destructuring-bind (event msg expected actual line) (coerce is-result 'list)
+      (destructuring-bind (event msg expected actual pp-actual line)
+          (coerce is-result 'list)
         (if (equal :fail event)
             (progn (incf clojure-test-failure-count)
                    (clojure-test-highlight-problem
-                    line event (format "Expected %s, got %s" expected actual)))
+                    line event (format "Expected %s, got %s" expected actual)
+                    pp-actual))
           (when (equal :error event)
             (incf clojure-test-error-count)
-            (clojure-test-highlight-problem line event actual))))))
+            (clojure-test-highlight-problem
+             line event actual pp-actual))))))
   (clojure-test-echo-results))
 
 (defun clojure-test-echo-results ()
@@ -261,7 +271,7 @@
           ((not (= clojure-test-failure-count 0)) 'clojure-test-failure-face)
           (t 'clojure-test-success-face)))))
 
-(defun clojure-test-highlight-problem (line event message)
+(defun clojure-test-highlight-problem (line event message pp-actual)
   (save-excursion
     (goto-char (point-min))
     (forward-line (1- line))
@@ -271,7 +281,8 @@
         (overlay-put overlay 'face (if (equal event :fail)
                                        'clojure-test-failure-face
                                      'clojure-test-error-face))
-        (overlay-put overlay 'message message)))))
+        (overlay-put overlay 'message message)
+        (overlay-put overlay 'actual pp-actual)))))
 
 ;; Problem navigation
 (defun clojure-test-find-next-problem (here)
@@ -359,6 +370,68 @@ Retuns the problem overlay if such a position is found, otherwise nil."
         (message (replace-regexp-in-string "%" "%%"
                                            (overlay-get overlay 'message))))))
 
+(defun clojure-test-pprint-result ()
+  "Show the result of the test under point."
+  (interactive)
+  (let ((overlay (find-if (lambda (o) (overlay-get o 'message))
+                          (overlays-at (point)))))
+    (when overlay
+      (with-current-buffer (generate-new-buffer " *test-output*")
+        (buffer-disable-undo)
+        (insert (overlay-get overlay 'actual))
+        (switch-to-buffer-other-window (current-buffer))))))
+
+;;; ediff results
+(defvar clojure-test-ediff-buffers nil)
+
+(defun clojure-test-ediff-cleanup ()
+  "A function for ediff-cleanup-hook, to cleanup the temporary ediff buffers"
+  (mapc (lambda (b) (when (get-buffer b) (kill-buffer b)))
+        clojure-test-ediff-buffers))
+
+(defun clojure-test-ediff-result ()
+  "Show the result of the test under point as an ediff"
+  (interactive)
+  (let ((overlay (find-if (lambda (o) (overlay-get o 'message))
+                          (overlays-at (point)))))
+    (if overlay
+        (let* ((m (overlay-get overlay 'actual)))
+          (let ((tmp-buffer (generate-new-buffer " *clojure-test-mode-tmp*"))
+                (exp-buffer (generate-new-buffer " *expected*"))
+                (act-buffer (generate-new-buffer " *actual*")))
+            (with-current-buffer tmp-buffer
+              (insert m)
+              (clojure-mode)
+              (goto-char (point-min))
+              (forward-char) ; skip a paren
+              (paredit-splice-sexp) ; splice
+              (lexical-let ((p (point))) ; delete "not"
+                (forward-sexp)
+                (delete-region p (point)))
+              (lexical-let ((p (point))) ; splice next sexp
+                (forward-sexp)
+                (backward-sexp)
+                (forward-char)
+                (paredit-splice-sexp))
+              (lexical-let ((p (point))) ; delete operator
+                (forward-sexp)
+                (delete-region p (point)))
+              (lexical-let ((p (point))) ; copy first expr
+                (forward-sexp)
+                (lexical-let ((p2 (point)))
+                  (with-current-buffer exp-buffer
+                    (insert-buffer-substring-as-yank tmp-buffer (+ 1 p) p2))))
+              (lexical-let ((p (point))) ; copy next expr
+                (forward-sexp)
+                (lexical-let ((p2 (point)))
+                  (with-current-buffer act-buffer
+                    (insert-buffer-substring-as-yank tmp-buffer (+ 1 p) p2)))))
+            (kill-buffer tmp-buffer)
+            (setq clojure-test-ediff-buffers
+                  (list (buffer-name exp-buffer) (buffer-name act-buffer)))
+            (ediff-buffers
+             (buffer-name exp-buffer) (buffer-name act-buffer)))))))
+
 (defun clojure-test-load-current-buffer ()
   (let ((command (format "(clojure.core/load-file \"%s\")\n(in-ns '%s)"
                          (buffer-file-name)
@@ -406,7 +479,8 @@ Retuns the problem overlay if such a position is found, otherwise nil."
     (define-key map (kbd "C-c C-,") 'clojure-test-run-tests)
     (define-key map (kbd "C-c ,")   'clojure-test-run-tests)
     (define-key map (kbd "C-c M-,") 'clojure-test-run-test)
-    (define-key map (kbd "C-c C-'") 'clojure-test-show-result)
+    (define-key map (kbd "C-c C-'") 'clojure-test-ediff-result)
+    (define-key map (kbd "C-c M-'") 'clojure-test-pprint-result)
     (define-key map (kbd "C-c '")   'clojure-test-show-result)
     (define-key map (kbd "C-c k")   'clojure-test-clear)
     (define-key map (kbd "C-c C-t") 'clojure-jump-between-tests-and-code)
