@@ -195,8 +195,12 @@
                                         (str (:expected event)))
                                       (when (fail-events (:type event))
                                         (str (:actual event)))
-                                      (when (fail-events (:type event))
-                                        (with-out-str (pprint (:actual event))))
+                                      (case (:type event)
+                                        :fail (with-out-str (pprint (:actual event)))
+                                        :error (with-out-str
+                                                (clojure.stacktrace/print-cause-trace
+                                                (:actual event)))
+                                        nil)
                                       (if (and (= (:major *clojure-version*) 1)
                                                (< (:minor *clojure-version*) 2))
                                           ((file-position 2) 1)
