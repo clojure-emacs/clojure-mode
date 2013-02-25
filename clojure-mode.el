@@ -983,17 +983,22 @@ returned."
   (replace-regexp-in-string "-" "_" namespace))
 
 (defun clojure-test-for (namespace)
+  "Returns the path of the test file for the given namespace."
   (let* ((namespace (clojure-underscores-for-hyphens namespace))
          (segments (split-string namespace "\\.")))
-    (mapconcat 'identity segments "/")))
+    (format "%stest/%s_test.clj"
+            (file-name-as-directory
+             (locate-dominating-file buffer-file-name "src/"))
+            (mapconcat 'identity segments "/"))))
+
+(defvar clojure-test-for-fn 'clojure-test-for
+  "Var pointing to the function that will return the full path of the
+Clojure test file for the given namespace.")
 
 (defun clojure-jump-to-test ()
   "Jump from implementation file to test."
   (interactive)
-  (find-file (format "%stest/%s_test.clj"
-                     (file-name-as-directory
-                      (locate-dominating-file buffer-file-name "src/"))
-                     (clojure-test-for (clojure-find-ns)))))
+  (find-file (funcall clojure-test-for-fn (clojure-find-ns))))
 
 (defun clojure-jump-between-tests-and-code ()
   (interactive)
