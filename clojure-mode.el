@@ -309,6 +309,11 @@ Clojure to load that file."
   :type 'string
   :group 'clojure-mode)
 
+(defcustom clojure-mode-inf-lisp-command "lein repl"
+  "The command used by `inferior-lisp-program'."
+  :type 'string
+  :group 'clojure-mode)
+
 (defcustom clojure-mode-use-backtracking-indent t
   "Set to non-nil to enable backtracking/context sensitive indentation."
   :type 'boolean
@@ -399,7 +404,7 @@ if that value is non-nil."
          'clojure-forward-sexp))
   (set (make-local-variable 'lisp-doc-string-elt-property)
        'clojure-doc-string-elt)
-  (set (make-local-variable 'inferior-lisp-program) "lein repl")
+  (set (make-local-variable 'inferior-lisp-program) clojure-mode-inf-lisp-command)
   (set (make-local-variable 'parse-sexp-ignore-comments) t)
 
   (clojure-mode-font-lock-setup)
