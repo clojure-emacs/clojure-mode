@@ -6,7 +6,7 @@
 ;; URL: http://emacswiki.org/cgi-bin/wiki/ClojureTestMode
 ;; Version: 2.0.0
 ;; Keywords: languages, lisp, test
-;; Package-Requires: ((clojure-mode "1.7") (nrepl "0.1.5"))
+;; Package-Requires: ((clojure-mode "1.7") (nrepl "0.1.7"))
 
 ;; This file is not part of GNU Emacs.
 
