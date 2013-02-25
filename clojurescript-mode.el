@@ -1,12 +1,13 @@
 ;;; clojurescript-mode.el --- Major mode for ClojureScript code
 
-;; Copyright © 2011 Luke Amdor
+;; Copyright © 2011-2013 Luke Amdor, Phil Hagelberg
 ;;
 ;; Authors: Luke Amdor <luke.amdor@gmail.com>
-;; URL: http://github.com/rubbish/clojurescript-mode
+;;          Phil Hagelberg <technomancy@gmail.com>
+;; URL: http://github.com/technomancy/clojure-mode
 ;; Version: 0.5
 ;; Keywords: languages, lisp, javascript
-;; Package-Requires: ((clojure-mode "1.7"))
+;; Package-Requires: ((clojure-mode "2.0.0"))
 
 ;; This file is not part of GNU Emacs.
 
@@ -43,8 +44,6 @@
   (defvar paredit-mode)
   (defvar paredit-version))
 
-(declare-function slime-mode "slime.el")
-
 (defvar clojurescript-home
   (getenv "CLOJURESCRIPT_HOME")
   "Path to ClojureScript home directory")
@@ -65,7 +64,7 @@
 
 (defun clojurescript-start-cljs-repl ()
   ;; I know, I know; major facepalm. But that's the way it is.
-  (when (not clojurescript-home)
+  (unless clojurescript-home
     (error "CLOJURESCRIPT_HOME not configured. See ClojureScript docs."))
   (comint-send-string (inferior-lisp-proc) (clojurescript-repl-init-commands)))
 
@@ -89,8 +88,6 @@
   (when (and (featurep 'paredit) paredit-mode (>= paredit-version 21))
     (define-key clojurescript-mode-map "{" 'paredit-open-curly)
     (define-key clojurescript-mode-map "}" 'paredit-close-curly))
-  (when (functionp 'slime-mode)
-    (slime-mode -1))
   (define-key clojurescript-mode-map "\C-x\C-e" 'clojurescript-eval-last-expression)
   (define-key clojurescript-mode-map "\C-c\C-k" 'clojurescript-compile-and-load-file))
 
