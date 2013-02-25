@@ -110,6 +110,8 @@
 (declare-function nrepl-make-response-handler  "nrepl.el")
 (declare-function nrepl-send-string            "nrepl.el")
 (declare-function nrepl-current-ns             "nrepl.el")
+(declare-function nrepl-current-tooling-session "nrepl.el")
+(declare-function nrepl-current-connection-buffer "nrepl.el")
 
 ;; Faces
 
@@ -154,7 +156,7 @@
 ;; Support Functions
 
 (defun clojure-test-nrepl-connected-p ()
-  (get-buffer "*nrepl-connection*"))
+  (nrepl-current-connection-buffer))
 
 (defun clojure-test-make-handler (callback)
   (lexical-let ((buffer (current-buffer))
@@ -171,7 +173,8 @@
 (defun clojure-test-eval (string &optional handler)
   (nrepl-send-string string
                      (clojure-test-make-handler (or handler #'identity))
-                     (or (nrepl-current-ns) "user")))
+                     (or (nrepl-current-ns) "user")
+                     (nrepl-current-tooling-session)))
 
 (defun clojure-test-load-reporting ()
   "Redefine the test-is report function to store results in metadata."
@@ -219,7 +222,9 @@
             ;; Otherwise, just test every var in the namespace.
             (clojure-test-mode-test-one-var ns test-name))
           (do-report {:type :end-test-ns, :ns ns-obj}))
-        (do-report (assoc @*report-counters* :type :summary))))")))
+        (do-report (assoc @*report-counters* :type :summary))))"
+     (or (nrepl-current-ns) "user")
+     (nrepl-current-tooling-session))))
 
 (defun clojure-test-get-results (buffer result)
   (with-current-buffer buffer
