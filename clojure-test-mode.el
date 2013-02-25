@@ -310,12 +310,19 @@ Retuns the problem overlay if such a position is found, otherwise nil."
 ;; File navigation
 
 (defun clojure-test-implementation-for (namespace)
+  "Returns the path of the src file for the given test namespace."
   (let* ((namespace (clojure-underscores-for-hyphens namespace))
          (segments (split-string namespace "\\."))
          (namespace-end (split-string (car (last segments)) "_"))
          (namespace-end (mapconcat 'identity (butlast namespace-end 1) "_"))
          (impl-segments (append (butlast segments 1) (list namespace-end))))
-    (mapconcat 'identity impl-segments "/")))
+    (format "%s/src/%s.clj"
+            (locate-dominating-file buffer-file-name "src/")
+            (mapconcat 'identity impl-segments "/"))))
+
+(defvar clojure-test-implementation-for-fn 'clojure-test-implementation-for
+  "Var pointing to the function that will return the full path of the
+Clojure src file for the given test namespace.")
 
 ;; Commands
 
@@ -403,9 +410,8 @@ Retuns the problem overlay if such a position is found, otherwise nil."
 (defun clojure-test-jump-to-implementation ()
   "Jump from test file to implementation."
   (interactive)
-  (find-file (format "%s/src/%s.clj"
-                     (locate-dominating-file buffer-file-name "src/")
-                     (clojure-test-implementation-for (clojure-find-package)))))
+  (find-file (funcall clojure-test-implementation-for-fn
+                      (clojure-find-package))))
 
 (defvar clojure-test-mode-map
   (let ((map (make-sparse-keymap)))
