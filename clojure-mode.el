@@ -309,6 +309,16 @@ Clojure to load that file."
   :type 'string
   :group 'clojure-mode)
 
+(defcustom clojure-mode-test-dir-name "test"
+  "Usually 'test' but for speclj it should be 'spec'"
+  :type 'string
+  :group 'clojure-mode)
+
+(defcustom clojure-mode-test-namespace-suffix "test"
+  "Usually 'test' but for speclj it should be 'spec'"
+  :type 'string
+  :group 'clojure-mode)
+
 (defcustom clojure-mode-inf-lisp-command "lein repl"
   "The command used by `inferior-lisp-program'."
   :type 'string
@@ -976,8 +986,8 @@ returned."
 
 ;; Test navigation:
 (defun clojure-in-tests-p ()
-  (or (string-match-p "test\." (clojure-find-ns))
-      (string-match-p "/test" (buffer-file-name))))
+  (or (string-match-p (concat clojure-mode-test-namespace-suffix "\.") (clojure-find-ns))
+      (string-match-p (concat "/" clojure-mode-test-dir-name) (buffer-file-name))))
 
 (defun clojure-underscores-for-hyphens (namespace)
   (replace-regexp-in-string "-" "_" namespace))
@@ -986,10 +996,12 @@ returned."
   "Returns the path of the test file for the given namespace."
   (let* ((namespace (clojure-underscores-for-hyphens namespace))
          (segments (split-string namespace "\\.")))
-    (format "%stest/%s_test.clj"
+    (format "%s%s/%s_%s.clj"
             (file-name-as-directory
              (locate-dominating-file buffer-file-name "src/"))
-            (mapconcat 'identity segments "/"))))
+            clojure-mode-test-dir-name
+            (mapconcat 'identity segments "/")
+            clojure-mode-test-namespace-suffix)))
 
 (defvar clojure-test-for-fn 'clojure-test-for
   "Var pointing to the function that will return the full path of the
