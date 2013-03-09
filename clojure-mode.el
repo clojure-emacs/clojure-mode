@@ -947,7 +947,7 @@ returned."
     (replace-regexp-in-string
      "_" "-" (mapconcat 'identity (cdr (split-string relative "/")) "."))))
 
-(defun clojure-insert-ns-form-here ()
+(defun clojure-insert-ns-form-at-point ()
   "Insert a namespace form at point"
   (interactive)
   (insert (format "(ns %s)" (clojure-expected-ns))))
