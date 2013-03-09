@@ -14,14 +14,14 @@
 ;;; Commentary:
 
 ;; Provides font-lock, indentation, and navigation for the Clojure
-;; language. (http://clojure.org)
+;; language(http://clojure.org).
 
 ;; Users of older Emacs (pre-22) should get version 1.4:
 ;; http://github.com/technomancy/clojure-mode/tree/1.4
 
 ;; Slime integration has been removed; see the 1.x releases if you need it.
 
-;; Using clojure-mode with paredit is highly recommended. Use paredit
+;; Using clojure-mode with paredit is highly recommended.  Use paredit
 ;; as you would with any other minor mode; for instance:
 ;;
 ;;   ;; require or autoload paredit-mode
@@ -298,9 +298,9 @@
   :group 'applications)
 
 (defcustom clojure-mode-font-lock-comment-sexp nil
-  "Set to non-nil in order to enable font-lock of (comment...)
-forms. This option is experimental. Changing this will require a
-restart (ie. M-x clojure-mode) of existing clojure mode buffers."
+  "Set to non-nil in order to enable font-lock of (comment...) forms.
+This option is experimental.  Changing this will require a
+restart of `clojure-mode' in currently opened clojure buffers."
   :type 'boolean
   :group 'clojure-mode)
 
@@ -339,7 +339,7 @@ Clojure to load that file."
     (define-key map (kbd "C-c C-z") 'clojure-display-inferior-lisp-buffer)
     (define-key map (kbd "C-c M-q") 'clojure-fill-docstring)
     map)
-  "Keymap for Clojure mode. Inherits from `lisp-mode-shared-map'.")
+  "Keymap for Clojure mode.  Inherits from `lisp-mode-shared-map'.")
 
 (easy-menu-define clojure-mode-menu clojure-mode-map
   "Menu for Clojure mode."
@@ -445,7 +445,7 @@ if that value is non-nil."
       (run-lisp inferior-lisp-program)))
 
 (defun clojure-load-file (file-name)
-  "Load a Lisp file into the inferior Lisp process."
+  "Load a Clojure file FILE-NAME into the inferior Lisp process."
   (interactive (comint-get-source "Load Clojure file: "
                                   clojure-prev-l/c-dir/file
                                   '(clojure-mode) t))
@@ -459,7 +459,7 @@ if that value is non-nil."
 
 
 (defun clojure-match-next-def ()
-  "Scans the buffer backwards for the next top-level definition.
+  "Scan the buffer backwards for the next top level definition.
 Called by `imenu--generic-function'."
   (when (re-search-backward "^\\s *(def\\S *[ \n\t]+" nil t)
     (save-excursion
@@ -570,7 +570,7 @@ in regular expression."
 
 (defun clojure-find-block-comment-start (limit)
   "Search for (comment...) or #_ style block comments and put
-  point at the beginning of the expression."
+point at the beginning of the expression."
   (let ((pos (re-search-forward "\\((comment\\>\\|#_\\)" limit t)))
     (when pos
       (forward-char (- (length (match-string 1))))
@@ -578,9 +578,9 @@ in regular expression."
 
 (defun clojure-font-lock-extend-region-comment ()
   "Move fontification boundaries to always contain
-  entire (comment ..) and #_ sexp. Does not work if you have a
-  white-space between ( and comment, but that is omitted to make
-  this run faster."
+entire (comment ..) and #_ sexp. Does not work if you have a
+white-space between ( and comment, but that is omitted to make
+this run faster."
   (let ((changed nil))
     (goto-char font-lock-beg)
     (condition-case nil (beginning-of-defun) (error nil))
@@ -596,7 +596,7 @@ in regular expression."
     changed))
 
 (defun clojure-font-lock-mark-comment (limit)
-  "Marks all (comment ..) and #_ forms with font-lock-comment-face."
+  "Mark all (comment ..) and #_ forms with font-lock-comment-face."
   (let (pos)
     (while (and (< (point) limit)
                 (setq pos (clojure-find-block-comment-start limit)))
@@ -711,8 +711,9 @@ This function also returns nil meaning don't specify the indentation."
                 indent-point state normal-indent)))))))
 
 (defun clojure-backtracking-indent (indent-point state normal-indent)
-  "Experimental backtracking support. Will upwards in an sexp to
-check for contextual indenting."
+  "Experimental backtracking support.
+
+Will upwards in an sexp to check for contextual indenting."
   (let (indent (path) (depth 0))
     (goto-char (elt state 1))
     (while (and (not indent)
@@ -925,10 +926,10 @@ returned."
 (defun clojure-fill-docstring (&optional argument)
   "Fill the definition that the point is on appropriate for Clojure.
 
-  Fills so that every paragraph has a minimum of two initial spaces,
-  with the exception of the first line. Fill margins are taken from
-  paragraph start, so a paragraph that begins with four spaces will
-  remain indented by four spaces after refilling."
+Fills so that every paragraph has a minimum of two initial spaces,
+with the exception of the first line.  Fill margins are taken from
+paragraph start, so a paragraph that begins with four spaces will
+remain indented by four spaces after refilling."
   (interactive "P")
   (if (and (fboundp 'paredit-in-string-p) paredit-mode)
       (unless (paredit-in-string-p)
@@ -1000,7 +1001,7 @@ returned."
 
 
 (defun clojure-expected-ns ()
-  "Returns the namespace name that the file should have."
+  "Return the namespace name that the file should have."
   (let* ((project-dir (file-truename
                        (locate-dominating-file default-directory
                                                "project.clj")))
@@ -1009,12 +1010,14 @@ returned."
      "_" "-" (mapconcat 'identity (cdr (split-string relative "/")) "."))))
 
 (defun clojure-insert-ns-form ()
+  "Insert ns form at the beginning of the current buffer."
   (interactive)
   (goto-char (point-min))
   (insert (format "(ns %s)" (clojure-expected-ns))))
 
 (defun clojure-update-ns ()
-  "Updates the namespace of the current buffer. Useful if a file has been renamed."
+  "Update the namespace of the current buffer.
+Useful if a file has been renamed."
   (interactive)
   (let ((nsname (clojure-expected-ns)))
     (when nsname
@@ -1026,6 +1029,7 @@ returned."
               (error "Namespace not found"))))))))
 
 (defun clojure-find-ns ()
+  "Find the ns of the current buffer."
   (let ((regexp clojure-namespace-name-regex))
     (save-restriction
       (save-excursion
@@ -1037,14 +1041,16 @@ returned."
 
 ;; Test navigation:
 (defun clojure-in-tests-p ()
+  "Check if we're in a test file or ns."
   (or (string-match-p "test\." (clojure-find-ns))
       (string-match-p "/test" (buffer-file-name))))
 
 (defun clojure-underscores-for-hyphens (namespace)
+  "Replace underscores in NAMESPACE with hyphens."
   (replace-regexp-in-string "-" "_" namespace))
 
 (defun clojure-test-for (namespace)
-  "Returns the path of the test file for the given namespace."
+  "Return the path of the test file for the given NAMESPACE."
   (let* ((namespace (clojure-underscores-for-hyphens namespace))
          (segments (split-string namespace "\\.")))
     (format "%stest/%s_test.clj"
@@ -1053,8 +1059,7 @@ returned."
             (mapconcat 'identity segments "/"))))
 
 (defvar clojure-test-for-fn 'clojure-test-for
-  "Var pointing to the function that will return the full path of the
-Clojure test file for the given namespace.")
+  "The function that will return the full path of the Clojure test file for the given namespace.")
 
 (defun clojure-jump-to-test ()
   "Jump from implementation file to test."
@@ -1062,6 +1067,7 @@ Clojure test file for the given namespace.")
   (find-file (funcall clojure-test-for-fn (clojure-find-ns))))
 
 (defun clojure-jump-between-tests-and-code ()
+  "Jump between tests and code."
   (interactive)
   (if (clojure-in-tests-p)
       (clojure-test-jump-to-implementation)
