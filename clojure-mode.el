@@ -240,39 +240,39 @@
          "(\\(?:\.*/\\)?"
          (regexp-opt
           '(;; clojure.inspector
-        "atom?" "collection-tag" "get-child" "get-child-count" "inspect"
-        "inspect-table" "inspect-tree" "is-leaf" "list-model" "list-provider"
-        ;; clojure.main
-        "load-script" "main" "repl" "repl-caught" "repl-exception"
-        "repl-prompt" "repl-read" "skip-if-eol" "skip-whitespace" "with-bindings"
-        ;; clojure.set
-        "difference" "index" "intersection" "join" "map-invert"
-        "project" "rename" "rename-keys" "select" "union"
-        ;; clojure.stacktrace
-        "e" "print-cause-trace" "print-stack-trace" "print-throwable" "print-trace-element"
-        ;; clojure.template
-        "do-template" "apply-template"
-        ;; clojure.test
-        "*initial-report-counters*" "*load-tests*" "*report-counters*" "*stack-trace-depth*" "*test-out*"
-        "*testing-contexts*" "*testing-vars*" "are" "assert-any" "assert-expr"
-        "assert-predicate" "compose-fixtures" "deftest" "deftest-" "file-position"
-        "function?" "get-possibly-unbound-var" "inc-report-counter" "is" "join-fixtures"
-        "report" "run-all-tests" "run-tests" "set-test" "successful?"
-        "test-all-vars" "test-ns" "test-var" "testing" "testing-contexts-str"
-        "testing-vars-str" "try-expr" "use-fixtures" "with-test" "with-test-out"
-        ;; clojure.walk
-        "keywordize-keys" "macroexpand-all" "postwalk" "postwalk-demo" "postwalk-replace"
-        "prewalk" "prewalk-demo" "prewalk-replace" "stringify-keys" "walk"
-        ;; clojure.xml
-        "*current*" "*sb*" "*stack*" "*state*" "attrs"
-        "content" "content-handler" "element" "emit" "emit-element"
-        ;; clojure.zip
-        "append-child" "branch?" "children" "down" "edit"
-        "end?" "insert-child" "insert-left" "insert-right" "left"
-        "leftmost" "lefts" "make-node" "next" "node"
-        "path" "prev" "remove" "replace" "right"
-        "rightmost" "rights" "root" "seq-zip" "up"
-        ) t)
+            "atom?" "collection-tag" "get-child" "get-child-count" "inspect"
+            "inspect-table" "inspect-tree" "is-leaf" "list-model" "list-provider"
+            ;; clojure.main
+            "load-script" "main" "repl" "repl-caught" "repl-exception"
+            "repl-prompt" "repl-read" "skip-if-eol" "skip-whitespace" "with-bindings"
+            ;; clojure.set
+            "difference" "index" "intersection" "join" "map-invert"
+            "project" "rename" "rename-keys" "select" "union"
+            ;; clojure.stacktrace
+            "e" "print-cause-trace" "print-stack-trace" "print-throwable" "print-trace-element"
+            ;; clojure.template
+            "do-template" "apply-template"
+            ;; clojure.test
+            "*initial-report-counters*" "*load-tests*" "*report-counters*" "*stack-trace-depth*" "*test-out*"
+            "*testing-contexts*" "*testing-vars*" "are" "assert-any" "assert-expr"
+            "assert-predicate" "compose-fixtures" "deftest" "deftest-" "file-position"
+            "function?" "get-possibly-unbound-var" "inc-report-counter" "is" "join-fixtures"
+            "report" "run-all-tests" "run-tests" "set-test" "successful?"
+            "test-all-vars" "test-ns" "test-var" "testing" "testing-contexts-str"
+            "testing-vars-str" "try-expr" "use-fixtures" "with-test" "with-test-out"
+            ;; clojure.walk
+            "keywordize-keys" "macroexpand-all" "postwalk" "postwalk-demo" "postwalk-replace"
+            "prewalk" "prewalk-demo" "prewalk-replace" "stringify-keys" "walk"
+            ;; clojure.xml
+            "*current*" "*sb*" "*stack*" "*state*" "attrs"
+            "content" "content-handler" "element" "emit" "emit-element"
+            ;; clojure.zip
+            "append-child" "branch?" "children" "down" "edit"
+            "end?" "insert-child" "insert-left" "insert-right" "left"
+            "leftmost" "lefts" "make-node" "next" "node"
+            "path" "prev" "remove" "replace" "right"
+            "rightmost" "rights" "root" "seq-zip" "up"
+            ) t)
          "\\>")
        1 font-lock-type-face)
       ;; Constant values (keywords), including as metadata e.g. ^:static
@@ -442,7 +442,7 @@ if that value is non-nil."
   (interactive)
   (if (and inferior-lisp-buffer (get-buffer inferior-lisp-buffer))
       (pop-to-buffer inferior-lisp-buffer t)
-      (run-lisp inferior-lisp-program)))
+    (run-lisp inferior-lisp-program)))
 
 (defun clojure-load-file (file-name)
   "Load a Clojure file FILE-NAME into the inferior Lisp process."
@@ -773,7 +773,7 @@ Will upwards in an sexp to check for contextual indenting."
 (defmacro define-clojure-indent (&rest kvs)
   `(progn
      ,@(mapcar (lambda (x) `(put-clojure-indent
-                        (quote ,(first x)) ,(second x))) kvs)))
+                             (quote ,(first x)) ,(second x))) kvs)))
 
 (defun add-custom-clojure-indents (name value)
   (custom-set-default name value)
@@ -849,11 +849,15 @@ use (put-clojure-indent 'some-symbol 'defun)."
   ;; clojure.test
   (testing 1)
   (deftest 'defun)
+<<<<<<< HEAD
   (are 1)
+=======
+>>>>>>> Indentation adjustments
   (use-fixtures 'defun))
 
 
 
+<<<<<<< HEAD
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; Better docstring filling for clojure-mode
@@ -877,11 +881,31 @@ return nil."
                 (and (char-equal ?# (char-before beg)) (1- beg))
               (when (not (char-equal ?# (char-before beg)))
                 beg))))))))
+=======
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; Better docstring filling for clojure-mode
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun clojure-string-start ()
+  "Return the position of the \" that begins the string at point."
+  (save-excursion
+    (save-match-data
+      ;; Find a quote that appears immediately after whitespace,
+      ;; beginning of line, or an open paren, brace, or bracket
+      (re-search-backward "\\(\\s-\\|^\\|(\\|\\[\\|{\\)\\(\"\\)")
+      (match-beginning 2))))
+>>>>>>> Indentation adjustments
 
 (defun clojure-char-at-point ()
   "Return the char at point or nil if at buffer end."
   (when (not (= (point) (point-max)))
+<<<<<<< HEAD
    (buffer-substring-no-properties (point) (1+ (point)))))
+=======
+    (buffer-substring-no-properties (point) (1+ (point)))))
+>>>>>>> Indentation adjustments
 
 (defun clojure-char-before-point ()
   "Return the char before point or nil if at buffer beginning."
