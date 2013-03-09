@@ -690,7 +690,7 @@ check for contextual indenting."
                            (< p (length def)))
                       (setq def (nth p def))
                     (if (listp def)
-                        (setq def (car (last def)))
+                        (setq def (first (last def)))
                       (setq def nil))))
                 (goto-char (elt state 1))
                 (when def
@@ -878,10 +878,10 @@ returned."
     (save-restriction
       (save-excursion
         (let* ((string-region (clojure-docstring-start+end-points))
-               (string-start (1+ (car string-region)))
-               (string-end (cdr string-region))
-               (string (buffer-substring-no-properties (1+ (car string-region))
-                                                       (cdr string-region))))
+               (string-start (1+ (first string-region)))
+               (string-end (rest string-region))
+               (string (buffer-substring-no-properties (1+ (first string-region))
+                                                       (rest string-region))))
           (delete-region string-start string-end)
           (insert
            (with-temp-buffer
@@ -945,7 +945,7 @@ returned."
                                                "project.clj")))
          (relative (substring (file-truename (buffer-file-name)) (length project-dir) -4)))
     (replace-regexp-in-string
-     "_" "-" (mapconcat 'identity (cdr (split-string relative "/")) "."))))
+     "_" "-" (mapconcat 'identity (rest (split-string relative "/")) "."))))
 
 (defun clojure-insert-ns-form ()
   (interactive)
