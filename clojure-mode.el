@@ -547,7 +547,7 @@ in regular expression."
 	(when (and (or (and (listp face)
 			    (memq 'font-lock-string-face face))
 		       (eq 'font-lock-string-face face))
-		   (ignore-errors (clojure-string-start t)))
+		   (clojure-string-start t))
 	  (throw 'found t))))))
 
 (defun clojure-find-block-comment-start (limit)
