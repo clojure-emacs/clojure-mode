@@ -186,7 +186,7 @@
         "load-file" "load-reader" "load-string" "loaded-libs" "locking"
         "long" "long-array" "longs" "loop" "macroexpand"
         "macroexpand-1" "make-array" "make-hierarchy" "map" "map?"
-        "mapcat" "max" "max-key" "memfn" "memoize"
+        "map-indexed" "mapcat" "max" "max-key" "memfn" "memoize"
         "merge" "merge-with" "meta" "method-sig" "methods"
         "min" "min-key" "mod" "name" "namespace"
         "neg?" "newline" "next" "nfirst" "nil?"
