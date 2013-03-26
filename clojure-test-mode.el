@@ -4,7 +4,7 @@
 
 ;; Author: Phil Hagelberg <technomancy@gmail.com>
 ;; URL: http://emacswiki.org/cgi-bin/wiki/ClojureTestMode
-;; Version: 2.0.0
+;; Version: 2.1.0
 ;; Keywords: languages, lisp, test
 ;; Package-Requires: ((clojure-mode "1.7") (nrepl "0.1.7"))
 
