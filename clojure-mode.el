@@ -1012,6 +1012,7 @@ Clojure test file for the given namespace.")
   (put 'clojure-mode-load-command 'safe-local-variable 'stringp)
 
   (add-to-list 'auto-mode-alist '("\\.clj\\'" . clojure-mode))
+  (add-to-list 'auto-mode-alist '("\\.cljs\\'" . clojure-mode))
   (add-to-list 'interpreter-mode-alist '("jark" . clojure-mode))
   (add-to-list 'interpreter-mode-alist '("cake" . clojure-mode)))
 
