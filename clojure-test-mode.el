@@ -336,8 +336,13 @@ Retuns the problem overlay if such a position is found, otherwise nil."
          (namespace-end (split-string (car (last segments)) "_"))
          (namespace-end (mapconcat 'identity (butlast namespace-end 1) "_"))
          (impl-segments (append (butlast segments 1) (list namespace-end))))
-    (format "%s/src/%s.clj"
-            (locate-dominating-file buffer-file-name "src/")
+    (format "%s/%s.clj"
+            (file-truename
+             (concat
+              (file-name-as-directory
+               (locate-dominating-file buffer-file-name "src/"))
+              (file-name-as-directory
+               (concat "src/" clojure-source-nested-directory))))
             (mapconcat 'identity impl-segments "/"))))
 
 (defvar clojure-test-implementation-for-fn 'clojure-test-implementation-for

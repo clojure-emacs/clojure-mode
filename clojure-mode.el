@@ -999,9 +999,13 @@ returned."
   "Returns the path of the test file for the given namespace."
   (let* ((namespace (clojure-underscores-for-hyphens namespace))
          (segments (split-string namespace "\\.")))
-    (format "%stest/%s_test.clj"
-            (file-name-as-directory
-             (locate-dominating-file buffer-file-name "src/"))
+    (format "%s%s_test.clj"
+            (file-truename
+             (concat
+              (file-name-as-directory
+               (locate-dominating-file buffer-file-name "src/"))
+              (file-name-as-directory
+               (concat "test/" clojure-source-nested-directory))))
             (mapconcat 'identity segments "/"))))
 
 (defvar clojure-test-for-fn 'clojure-test-for
