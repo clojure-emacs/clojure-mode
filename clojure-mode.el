@@ -739,6 +739,18 @@ use (put-clojure-indent 'some-symbol 'defun)."
   :group 'clojure-mode
   :set 'add-custom-clojure-indents)
 
+(defcustom clojure-source-nested-directory ""
+  "Custom source path (nested inside the 'src' and 'test' directories).
+If your source is in PROJECT_ROOT/src/clojure instead of
+PROJECT_ROOT/src and your tests are in PROJECT_ROOT/test/clojure
+then set this value to '/clojure' (note the leading '/'). This
+affect setting/updating the namespace and switching from test to
+implementation.
+
+Note that it should be the same heirarchy for both src and test!"
+  :group 'clojure-mode
+  :type 'string)
+
 (define-clojure-indent
   ;; built-ins
   (ns 1)
@@ -943,9 +955,10 @@ returned."
   (let* ((project-dir (file-truename
                        (locate-dominating-file default-directory
                                                "project.clj")))
+         (depth (length (split-string clojure-source-nested-directory "/")))
          (relative (substring (file-truename (buffer-file-name)) (length project-dir) -4)))
     (replace-regexp-in-string
-     "_" "-" (mapconcat 'identity (cdr (split-string relative "/")) "."))))
+     "_" "-" (mapconcat 'identity (nthcdr depth (split-string relative "/")) "."))))
 
 (defun clojure-insert-ns-form ()
   (interactive)
