@@ -1027,6 +1027,7 @@ Clojure test file for the given namespace.")
 (progn
   (put 'clojure-test-ns-segment-position 'safe-local-variable 'integerp)
   (put 'clojure-mode-load-command 'safe-local-variable 'stringp)
+  (put 'clojure-source-nested-directory 'safe-local-variable 'stringp)
 
   (add-to-list 'auto-mode-alist '("\\.clj\\'" . clojure-mode))
   (add-to-list 'auto-mode-alist '("\\.dtm\\'" . clojure-mode))
