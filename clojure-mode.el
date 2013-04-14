@@ -797,6 +797,7 @@ use (put-clojure-indent 'some-symbol 'defun)."
   ;; clojure.test
   (testing 1)
   (deftest 'defun)
+  (are 1)
   (use-fixtures 'defun))
 
 
