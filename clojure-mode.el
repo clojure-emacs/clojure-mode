@@ -284,9 +284,10 @@
       ("\\<[A-Z][a-zA-Z0-9_]*[a-zA-Z0-9/$_]+\\>" 0 font-lock-preprocessor-face) ;; Foo Bar$Baz Qux_ World_OpenUDP
       ("\\<[a-zA-Z]+\\.[a-zA-Z0-9._]*[A-Z]+[a-zA-Z0-9/.$]*\\>" 0 font-lock-preprocessor-face) ;; Foo/Bar foo.bar.Baz foo.Bar/baz
       ("[a-z]*[A-Z]+[a-z][a-zA-Z0-9$]*\\>" 0 font-lock-preprocessor-face) ;; fooBar
-      ("\\<[A-Z][a-zA-Z0-9$]*\\.\\>" 0 font-lock-preprocessor-face))) ;; Foo. BarBaz. Qux$Quux. Corge9.
-
-
+      ("\\<[A-Z][a-zA-Z0-9$]*\\.\\>" 0 font-lock-preprocessor-face) ;; Foo. BarBaz. Qux$Quux. Corge9.
+      ;; Highlight grouping constructs in regular expressions
+      (clojure-mode-font-lock-regexp-groups
+       (1 'font-lock-regexp-grouping-construct prepend))))
   "Default expressions to highlight in Clojure mode.")
 
 (defgroup clojure-mode nil
@@ -516,6 +517,38 @@ elements of a def* forms."
             (setq font-lock-end def-end
                   changed t)))))
     changed))
+
+(defun clojure-mode-font-lock-regexp-groups (bound)
+  "A function run by font-lock to highlight grouping constructs
+in regular expression."
+  (catch 'found
+    (while (re-search-forward (concat
+                               ;; A group may start using several alternatives:
+                               "\\(\\(?:"
+                               ;; 1. (? special groups
+                               "(\\?\\(?:"
+                               ;; a) non-capturing group (?:X)
+                               ;; b) independent non-capturing group (?>X)
+                               ;; c) zero-width positive lookahead (?=X)
+                               ;; d) zero-width negative lookahead (?!X)
+                               "[:=!>]\\|"
+                               ;; e) zero-width positive lookbehind (?<=X)
+                               ;; f) zero-width negative lookbehind (?<!X)
+                               "<[=!]\\|"
+                               ;; g) named capturing group (?<name>X)
+                               "<[[:alnum:]]+>"
+                               "\\)\\|" ;; end of special groups
+                               ;; 2. normal capturing groups (
+                               ;; 3. we also highlight alternative
+                               ;; separarators |, and closing parens )
+                               "[|()]"
+                               "\\)\\)") bound t)
+      (let ((face (get-text-property (1- (point)) 'face)))
+        (when (and (or (and (listp face)
+                            (memq 'font-lock-string-face face))
+                       (eq 'font-lock-string-face face))
+                   (clojure-string-start t))
+          (throw 'found t))))))
 
 (defun clojure-find-block-comment-start (limit)
   "Search for (comment...) or #_ style block comments and put
@@ -808,14 +841,23 @@ use (put-clojure-indent 'some-symbol 'defun)."
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun clojure-string-start ()
-  "Return the position of the \" that begins the string at point."
-  (save-excursion
-    (save-match-data
-      ;; Find a quote that appears immediately after whitespace,
-      ;; beginning of line, or an open paren, brace, or bracket
-      (re-search-backward "\\(\\s-\\|^\\|(\\|\\[\\|{\\)\\(\"\\)")
-      (match-beginning 2))))
+(defun clojure-string-start (&optional regex)
+  "Return the position of the \" that begins the string at point.
+If REGEX is non-nil, return the position of the # that begins
+the regex at point.  If point is not inside a string or regex,
+return nil."
+  (when (nth 3 (syntax-ppss)) ;; Are we really in a string?
+    (save-excursion
+      (save-match-data
+        ;; Find a quote that appears immediately after whitespace,
+        ;; beginning of line, hash, or an open paren, brace, or bracket
+        (re-search-backward "\\(\\s-\\|^\\|#\\|(\\|\\[\\|{\\)\\(\"\\)")
+        (let ((beg (match-beginning 2)))
+          (when beg
+            (if regex
+                (and (char-equal ?# (char-before beg)) (1- beg))
+              (when (not (char-equal ?# (char-before beg)))
+                beg))))))))
 
 (defun clojure-char-at-point ()
   "Return the char at point or nil if at buffer end."
