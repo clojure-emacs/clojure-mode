@@ -521,13 +521,24 @@ Clojure src file for the given test namespace.")
 
 (add-hook 'nrepl-connected-hook 'clojure-test-load-reporting)
 
+(defconst clojure-test-regex
+  (rx "clojure.test"))
+
+(defun clojure-find-clojure-test ()
+  (let ((regexp clojure-test-regex))
+    (save-restriction
+      (save-excursion
+        (goto-char (point-min))
+        (when (re-search-forward regexp nil t)
+          (match-string-no-properties 0))))))
+
 ;;;###autoload
 (progn
   (defun clojure-test-maybe-enable ()
     "Enable clojure-test-mode if the current buffer contains a namespace
 with a \"test.\" bit on it."
-    (let ((ns (clojure-find-package))) ; defined in clojure-mode.el
-      (when (and ns (string-match "test\\(\\.\\|$\\)" ns))
+    (let ((res (clojure-find-clojure-test)))
+      (when (and res (string-match "clojure\\.test" res))
         (save-window-excursion
           (clojure-test-mode t)))))
 
