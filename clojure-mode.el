@@ -275,7 +275,7 @@
          "\\>")
        1 font-lock-type-face)
       ;; Constant values (keywords), including as metadata e.g. ^:static
-      ("\\<^?:\\(\\sw\\|#\\)+\\>" 0 font-lock-constant-face)
+      ("\\<^?:\\(\\sw\\)+\\>" 0 font-lock-constant-face)
       ;; Meta type annotation #^Type or ^Type
       ("#?^\\sw+" 0 font-lock-preprocessor-face)
       ("\\<io\\!\\>" 0 font-lock-warning-face)
@@ -365,6 +365,8 @@ Clojure to load that file."
     (modify-syntax-entry ?\[ "(]" table)
     (modify-syntax-entry ?\] ")[" table)
     (modify-syntax-entry ?^ "'" table)
+    ;; Make hash a usual word character
+    (modify-syntax-entry ?# "w" table)
     table))
 
 (defvar clojure-mode-abbrev-table nil
