@@ -950,12 +950,20 @@ returned."
 
 
 
+(defun clojure-source-nested-directory ()
+  "clojure-source-nested-directory should start with a slash and end without."
+  (if (string= "" clojure-source-nested-directory)
+      clojure-source-nested-directory
+    (replace-regexp-in-string
+     "/$" ""
+     (file-truename (concat "/" clojure-source-nested-directory)))))
+
 (defun clojure-expected-ns ()
   "Returns the namespace name that the file should have."
   (let* ((project-dir (file-truename
                        (locate-dominating-file default-directory
                                                "project.clj")))
-         (depth (length (split-string clojure-source-nested-directory "/")))
+         (depth (length (split-string (clojure-source-nested-directory) "/")))
          (relative (substring (file-truename (buffer-file-name)) (length project-dir) -4)))
     (replace-regexp-in-string
      "_" "-" (mapconcat 'identity (nthcdr depth (split-string relative "/")) "."))))
@@ -1005,7 +1013,7 @@ returned."
               (file-name-as-directory
                (locate-dominating-file buffer-file-name "src/"))
               (file-name-as-directory
-               (concat "test/" clojure-source-nested-directory))))
+               (concat "test/" (clojure-source-nested-directory)))))
             (mapconcat 'identity segments "/"))))
 
 (defvar clojure-test-for-fn 'clojure-test-for

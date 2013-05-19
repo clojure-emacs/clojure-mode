@@ -117,6 +117,7 @@
 (declare-function nrepl-current-ns             "nrepl.el")
 (declare-function nrepl-current-tooling-session "nrepl.el")
 (declare-function nrepl-current-connection-buffer "nrepl.el")
+(declare-function clojure-source-nested-directory "clojure-mode.el")
 
 ;; Faces
 
@@ -342,7 +343,7 @@ Retuns the problem overlay if such a position is found, otherwise nil."
               (file-name-as-directory
                (locate-dominating-file buffer-file-name "src/"))
               (file-name-as-directory
-               (concat "src/" clojure-source-nested-directory))))
+               (concat "src/" (clojure-source-nested-directory)))))
             (mapconcat 'identity impl-segments "/"))))
 
 (defvar clojure-test-implementation-for-fn 'clojure-test-implementation-for
