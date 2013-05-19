@@ -1023,11 +1023,19 @@ Clojure test file for the given namespace.")
       (clojure-test-jump-to-implementation)
     (clojure-jump-to-test)))
 
+(defun safe-nested-directory-p (v)
+  "Tests whether the nested directory value is safe for .dir-locals.el.
+
+It mainly guards against errors trying to make the nested
+directory not a subdir of the original source directory"
+  (and (stringp v)
+       (not (string-match-p "\\.\\." v))))
+
 ;;;###autoload
 (progn
   (put 'clojure-test-ns-segment-position 'safe-local-variable 'integerp)
   (put 'clojure-mode-load-command 'safe-local-variable 'stringp)
-  (put 'clojure-source-nested-directory 'safe-local-variable 'stringp)
+  (put 'clojure-source-nested-directory 'safe-local-variable 'safe-nested-directory-p)
 
   (add-to-list 'auto-mode-alist '("\\.clj\\'" . clojure-mode))
   (add-to-list 'auto-mode-alist '("\\.dtm\\'" . clojure-mode))
