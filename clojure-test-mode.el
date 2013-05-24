@@ -536,12 +536,10 @@ Clojure src file for the given test namespace.")
 ;;;###autoload
 (progn
   (defun clojure-test-maybe-enable ()
-    "Enable clojure-test-mode if the current buffer contains a namespace
-with a \"test.\" bit on it."
-    (let ((res (clojure-find-clojure-test)))
-      (when (and res (string-match "clojure\\.test" res))
-        (save-window-excursion
-          (clojure-test-mode t)))))
+    "Enable clojure-test-mode if the current buffer contains a \"clojure.test\" bit in it."
+    (when (clojure-find-clojure-test)
+      (save-window-excursion
+        (clojure-test-mode t))))
 
   (add-hook 'clojure-mode-hook 'clojure-test-maybe-enable))
 
