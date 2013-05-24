@@ -528,9 +528,10 @@ Clojure src file for the given test namespace.")
   (let ((regexp clojure-test-regex))
     (save-restriction
       (save-excursion
-        (goto-char (point-min))
-        (when (re-search-forward regexp nil t)
-          (match-string-no-properties 0))))))
+        (save-match-data
+          (goto-char (point-min))
+          (when (re-search-forward regexp nil t)
+            (match-string-no-properties 0)))))))
 
 ;;;###autoload
 (progn
