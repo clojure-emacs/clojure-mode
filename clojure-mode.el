@@ -401,6 +401,22 @@ numbers count from the end:
 (defalias 'clojure-parent-mode
   (if (fboundp 'prog-mode) 'prog-mode 'fundamental-mode))
 
+(defun clojure-space-for-delimiter-p (endp delim)
+  (if (eq major-mode 'clojure-mode)
+      (save-excursion
+        (backward-char)
+        (if (and (or (char-equal delim ?\()
+                     (char-equal delim ?\")
+                     (char-equal delim ?{))
+                 (not endp))
+            (if (char-equal (char-after) ?#)
+                (and (not (bobp))
+                     (or (char-equal ?w (char-syntax (char-before)))
+                         (char-equal ?_ (char-syntax (char-before)))))
+              t)
+          t))
+    t))
+
 ;;;###autoload
 (define-derived-mode clojure-mode clojure-parent-mode "Clojure"
   "Major mode for editing Clojure code - similar to Lisp mode.
@@ -435,7 +451,9 @@ if that value is non-nil."
             (lambda ()
               (when (>= paredit-version 21)
                 (define-key clojure-mode-map "{" 'paredit-open-curly)
-                (define-key clojure-mode-map "}" 'paredit-close-curly)))))
+                (define-key clojure-mode-map "}" 'paredit-close-curly)
+                (add-to-list 'paredit-space-for-delimiter-predicates
+                             'clojure-space-for-delimiter-p)))))
 
 (defun clojure-display-inferior-lisp-buffer ()
   "Display a buffer bound to `inferior-lisp-buffer'."
