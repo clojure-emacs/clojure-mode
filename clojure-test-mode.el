@@ -295,6 +295,7 @@
         (overlay-put overlay 'face (if (equal event :fail)
                                        'clojure-test-failure-face
                                      'clojure-test-error-face))
+        (overlay-put overlay 'help-echo message)
         (overlay-put overlay 'message message)
         (overlay-put overlay 'actual pp-actual)))))
 
