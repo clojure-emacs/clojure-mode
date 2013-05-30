@@ -276,9 +276,9 @@
          "\\>")
        1 font-lock-type-face)
       ;; Constant values (keywords), including as metadata e.g. ^:static
-      ("\\<^?:\\(\\sw\\)+\\>" 0 font-lock-constant-face)
+      ("\\<^?:\\(\\sw\\|\\s_\\)+\\(\\>\\|\\_>\\)" 0 font-lock-constant-face)
       ;; Meta type annotation #^Type or ^Type
-      ("#?^\\sw+" 0 font-lock-preprocessor-face)
+      ("#?^\\(\\sw\\|\\s_\\)+" 0 font-lock-preprocessor-face)
       ("\\<io\\!\\>" 0 font-lock-warning-face)
 
       ;;Java interop highlighting
@@ -367,7 +367,7 @@ Clojure to load that file."
     (modify-syntax-entry ?\] ")[" table)
     (modify-syntax-entry ?^ "'" table)
     ;; Make hash a usual word character
-    (modify-syntax-entry ?# "w" table)
+    (modify-syntax-entry ?# "_ p" table)
     table))
 
 (defvar clojure-mode-abbrev-table nil
@@ -400,6 +400,22 @@ numbers count from the end:
 ;; For compatibility with Emacs < 24, derive conditionally
 (defalias 'clojure-parent-mode
   (if (fboundp 'prog-mode) 'prog-mode 'fundamental-mode))
+
+(defun clojure-space-for-delimiter-p (endp delim)
+  (if (eq major-mode 'clojure-mode)
+      (save-excursion
+        (backward-char)
+        (if (and (or (char-equal delim ?\()
+                     (char-equal delim ?\")
+                     (char-equal delim ?{))
+                 (not endp))
+            (if (char-equal (char-after) ?#)
+                (and (not (bobp))
+                     (or (char-equal ?w (char-syntax (char-before)))
+                         (char-equal ?_ (char-syntax (char-before)))))
+              t)
+          t))
+    t))
 
 ;;;###autoload
 (define-derived-mode clojure-mode clojure-parent-mode "Clojure"
@@ -435,7 +451,9 @@ if that value is non-nil."
             (lambda ()
               (when (>= paredit-version 21)
                 (define-key clojure-mode-map "{" 'paredit-open-curly)
-                (define-key clojure-mode-map "}" 'paredit-close-curly)))))
+                (define-key clojure-mode-map "}" 'paredit-close-curly)
+                (add-to-list 'paredit-space-for-delimiter-predicates
+                             'clojure-space-for-delimiter-p)))))
 
 (defun clojure-display-inferior-lisp-buffer ()
   "Display a buffer bound to `inferior-lisp-buffer'."
