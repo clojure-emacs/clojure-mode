@@ -525,6 +525,7 @@ Clojure src file for the given test namespace.")
 (defconst clojure-test-regex
   (rx "clojure.test"))
 
+;;;###autoload
 (defun clojure-find-clojure-test ()
   (let ((regexp clojure-test-regex))
     (save-restriction
