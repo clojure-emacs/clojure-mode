@@ -417,6 +417,22 @@ numbers count from the end:
           t))
     t))
 
+(defun clojure-no-space-after-tag (endp delimiter)
+  "Do not insert a space between a reader-literal tag and an
+  opening delimiter, except \". This allows you to write things
+  like #db/id[:db.part/user] without inserting a space between
+  the tag and the opening bracket."
+  (if endp
+      t
+    (or (char-equal delimiter ?\")
+        (save-excursion
+          (let ((orig-point (point)))
+            (not (and (re-search-backward
+                       "#\\([a-zA-Z0-9._-]+/\\)?[a-zA-Z0-9._-]+"
+                       (line-beginning-position)
+                       t)
+                      (= orig-point (match-end 0)))))))))
+
 ;;;###autoload
 (define-derived-mode clojure-mode clojure-parent-mode "Clojure"
   "Major mode for editing Clojure code - similar to Lisp mode.
@@ -453,7 +469,9 @@ if that value is non-nil."
                 (define-key clojure-mode-map "{" 'paredit-open-curly)
                 (define-key clojure-mode-map "}" 'paredit-close-curly)
                 (add-to-list 'paredit-space-for-delimiter-predicates
-                             'clojure-space-for-delimiter-p)))))
+                             'clojure-space-for-delimiter-p)
+                (add-to-list 'paredit-space-for-delimiter-predicates
+                             'clojure-no-space-after-tag)))))
 
 (defun clojure-display-inferior-lisp-buffer ()
   "Display a buffer bound to `inferior-lisp-buffer'."
