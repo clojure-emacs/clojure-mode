@@ -975,6 +975,7 @@ returned."
 
 (defconst clojure-namespace-name-regex
   (rx line-start
+      (zero-or-more whitespace)
       "("
       (zero-or-one (group (regexp "clojure.core/")))
       (zero-or-one (submatch "in-"))
