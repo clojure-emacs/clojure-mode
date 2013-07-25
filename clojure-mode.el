@@ -956,17 +956,19 @@ returned."
   (let ((old-point (point)))
     (save-restriction
       (save-excursion
-        (let* ((string-region (clojure-docstring-start+end-points))
-               (string-start (1+ (car string-region)))
+        (let* ((clojure-fill-column fill-column)
+               (string-region (clojure-docstring-start+end-points))
+               (string-start (car string-region))
                (string-end (cdr string-region))
-               (string (buffer-substring-no-properties (1+ (car string-region))
-                                                       (cdr string-region))))
+               (string (buffer-substring-no-properties string-start
+                                                       string-end)))
           (delete-region string-start string-end)
           (insert
            (with-temp-buffer
              (insert string)
              (let ((left-margin 2))
                (delete-trailing-whitespace)
+               (setq fill-column clojure-fill-column)
                (fill-region (point-min) (point-max))
                (buffer-substring-no-properties (+ 2 (point-min)) (point-max))))))))
     (goto-char old-point)))
