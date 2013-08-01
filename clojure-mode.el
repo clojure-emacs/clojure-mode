@@ -862,7 +862,7 @@ returned."
   (forward-char)
   (set-mark (clojure-string-end)))
 
-(defvar clojure-docstring-indent-level 3)
+(defvar clojure-docstring-indent-level 2)
 
 (defun clojure-fill-docstring (&optional argument)
   "Fill the definition that the point is on appropriate for Clojure.
