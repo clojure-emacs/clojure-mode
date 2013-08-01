@@ -940,6 +940,8 @@ returned."
   (forward-char)
   (set-mark (clojure-string-end)))
 
+(defvar clojure-docstring-indent-level 2)
+
 (defun clojure-fill-docstring (&optional argument)
   "Fill the definition that the point is on appropriate for Clojure.
 
@@ -966,11 +968,11 @@ returned."
           (insert
            (with-temp-buffer
              (insert string)
-             (let ((left-margin 2))
+             (let ((left-margin clojure-docstring-indent-level))
                (delete-trailing-whitespace)
                (setq fill-column clojure-fill-column)
                (fill-region (point-min) (point-max))
-               (buffer-substring-no-properties (+ 2 (point-min)) (point-max))))))))
+               (buffer-substring-no-properties (+ clojure-docstring-indent-level (point-min)) (point-max))))))))
     (goto-char old-point)))
 
 
