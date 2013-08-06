@@ -53,6 +53,7 @@
   (defvar calculate-lisp-indent-last-sexp)
   (defvar font-lock-beg)
   (defvar font-lock-end)
+  (defvar paredit-space-for-delimiter-predicates)
   (defvar paredit-version)
   (defvar paredit-mode))
 
