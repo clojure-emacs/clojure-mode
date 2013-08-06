@@ -300,7 +300,7 @@
 
 (defcustom clojure-mode-font-lock-comment-sexp nil
   "Set to non-nil in order to enable font-lock of (comment...)
-forms. This option is experimental. Changing this will require a
+forms.  This option is experimental.  Changing this will require a
 restart (ie. M-x clojure-mode) of existing clojure mode buffers."
   :type 'boolean
   :group 'clojure-mode)
@@ -340,7 +340,7 @@ Clojure to load that file."
     (define-key map (kbd "C-c C-z") 'clojure-display-inferior-lisp-buffer)
     (define-key map (kbd "C-c M-q") 'clojure-fill-docstring)
     map)
-  "Keymap for Clojure mode. Inherits from `lisp-mode-shared-map'.")
+  "Keymap for Clojure mode.  Inherits from `lisp-mode-shared-map'.")
 
 (easy-menu-define clojure-mode-menu clojure-mode-map
   "Menu for Clojure mode."
@@ -464,7 +464,7 @@ if that value is non-nil."
       (run-lisp inferior-lisp-program)))
 
 (defun clojure-load-file (file-name)
-  "Load a Lisp file into the inferior Lisp process."
+  "Load a Clojure file FILE-NAME into the inferior Clojure process."
   (interactive (comint-get-source "Load Clojure file: "
                                   clojure-prev-l/c-dir/file
                                   '(clojure-mode) t))
@@ -478,7 +478,7 @@ if that value is non-nil."
 
 
 (defun clojure-match-next-def ()
-  "Scans the buffer backwards for the next top-level definition.
+  "Scans the buffer backwards for the next top level definition.
 Called by `imenu--generic-function'."
   (when (re-search-backward "^\\s *(def\\S *[ \n\t]+" nil t)
     (save-excursion
@@ -514,9 +514,9 @@ Called by `imenu--generic-function'."
 
 (defun clojure-font-lock-def-at-point (point)
   "Find the position range between the top-most def* and the
-fourth element afterwards. Note that this means there's no
-gaurantee of proper font locking in def* forms that are not at
-top-level."
+fourth element afterwards using POINT.  Note that this means there's no
+guarantee of proper font locking in def* forms that are not at
+top level."
   (goto-char point)
   (condition-case nil
       (beginning-of-defun)
@@ -589,7 +589,7 @@ in regular expression."
 
 (defun clojure-find-block-comment-start (limit)
   "Search for (comment...) or #_ style block comments and put
-  point at the beginning of the expression."
+point at the beginning of the expression."
   (let ((pos (re-search-forward "\\((comment\\>\\|#_\\)" limit t)))
     (when pos
       (forward-char (- (length (match-string 1))))
@@ -597,9 +597,9 @@ in regular expression."
 
 (defun clojure-font-lock-extend-region-comment ()
   "Move fontification boundaries to always contain
-  entire (comment ..) and #_ sexp. Does not work if you have a
-  white-space between ( and comment, but that is omitted to make
-  this run faster."
+entire (comment ..) and #_ sexp. Does not work if you have a
+white-space between ( and comment, but that is omitted to make
+this run faster."
   (let ((changed nil))
     (goto-char font-lock-beg)
     (condition-case nil (beginning-of-defun) (error nil))
@@ -615,7 +615,7 @@ in regular expression."
     changed))
 
 (defun clojure-font-lock-mark-comment (limit)
-  "Marks all (comment ..) and #_ forms with font-lock-comment-face."
+  "Mark all (comment ..) and #_ forms with font-lock-comment-face."
   (let (pos)
     (while (and (< (point) limit)
                 (setq pos (clojure-find-block-comment-start limit)))
