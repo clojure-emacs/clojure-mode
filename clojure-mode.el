@@ -809,6 +809,18 @@ use (put-clojure-indent 'some-symbol 'defun)."
   :group 'clojure-mode
   :set 'add-custom-clojure-indents)
 
+(defcustom clojure-source-nested-directory ""
+  "Custom source path (nested inside the 'src' and 'test' directories).
+If your source is in PROJECT_ROOT/src/clojure instead of
+PROJECT_ROOT/src and your tests are in PROJECT_ROOT/test/clojure
+then set this value to '/clojure' (note the leading '/'). This
+affect setting/updating the namespace and switching from test to
+implementation.
+
+Note that it should be the same heirarchy for both src and test!"
+  :group 'clojure-mode
+  :type 'string)
+
 (define-clojure-indent
   ;; built-ins
   (ns 1)
@@ -1023,14 +1035,23 @@ returned."
 
 
 
+(defun clojure-source-nested-directory ()
+  "clojure-source-nested-directory should start with a slash and end without."
+  (if (string= "" clojure-source-nested-directory)
+      clojure-source-nested-directory
+    (replace-regexp-in-string
+     "/$" ""
+     (file-truename (concat "/" clojure-source-nested-directory)))))
+
 (defun clojure-expected-ns ()
   "Returns the namespace name that the file should have."
   (let* ((project-dir (file-truename
                        (locate-dominating-file default-directory
                                                "project.clj")))
+         (depth (length (split-string (clojure-source-nested-directory) "/")))
          (relative (substring (file-truename (buffer-file-name)) (length project-dir) -4)))
     (replace-regexp-in-string
-     "_" "-" (mapconcat 'identity (cdr (split-string relative "/")) "."))))
+     "_" "-" (mapconcat 'identity (nthcdr depth (split-string relative "/")) "."))))
 
 (defun clojure-insert-ns-form-at-point ()
   "Insert a namespace form at point"
@@ -1076,9 +1097,13 @@ returned."
   "Returns the path of the test file for the given namespace."
   (let* ((namespace (clojure-underscores-for-hyphens namespace))
          (segments (split-string namespace "\\.")))
-    (format "%stest/%s_test.clj"
-            (file-name-as-directory
-             (locate-dominating-file buffer-file-name "src/"))
+    (format "%s%s_test.clj"
+            (file-truename
+             (concat
+              (file-name-as-directory
+               (locate-dominating-file buffer-file-name "src/"))
+              (file-name-as-directory
+               (concat "test/" (clojure-source-nested-directory)))))
             (mapconcat 'identity segments "/"))))
 
 (defvar clojure-test-for-fn 'clojure-test-for
@@ -1096,10 +1121,19 @@ Clojure test file for the given namespace.")
       (clojure-test-jump-to-implementation)
     (clojure-jump-to-test)))
 
+(defun safe-nested-directory-p (v)
+  "Tests whether the nested directory value is safe for .dir-locals.el.
+
+It mainly guards against errors trying to make the nested
+directory not a subdir of the original source directory"
+  (and (stringp v)
+       (not (string-match-p "\\.\\." v))))
+
 ;;;###autoload
 (progn
   (put 'clojure-test-ns-segment-position 'safe-local-variable 'integerp)
   (put 'clojure-mode-load-command 'safe-local-variable 'stringp)
+  (put 'clojure-source-nested-directory 'safe-local-variable 'safe-nested-directory-p)
 
   (add-to-list 'auto-mode-alist '("\\.clj\\'" . clojure-mode))
   (add-to-list 'auto-mode-alist '("\\.cljs\\'" . clojure-mode))

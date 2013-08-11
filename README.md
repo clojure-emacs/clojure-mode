@@ -134,6 +134,31 @@ SLIME is available via
 [swank-clojure](http://github.com/technomancy/swank-clojure) in `clojure-mode` 1.x.
 SLIME support was removed in version 2.x in favor of `nrepl.el`.
 
+## Customizing the source path
+
+In some cases you may want your clojure source to be under a nested
+directory inside `src` (e.g. you have more then one language) so you
+put your clojure code in `PROJECT_ROOT/src/clj` and your clojure tests
+in `PROJECT_ROOT/test/clj`. This breaks 2 features:
+
+* Jumping to test/implementation.
+* Creating/updating the `ns` form.
+
+In order to get these features back you have to specify the path
+inside the `src` and `test` directories. This is done by setting the
+`clojure-source-nested-directory` variable. While it could be set
+globally (which will affect *all* your projects) it's meant to be set
+on per-project basis via the [directory variables][dv] mechanism.
+Here's a sample `.dir-locals.el` file that matches the example above.
+It should be created at the project root:
+
+```elisp
+((clojure-mode
+  (clojure-source-nested-directory . "/clj")))
+```
+
+[dv]: http://www.gnu.org/software/emacs/manual/html_node/emacs/Directory-Variables.html
+
 ## License
 
 Copyright © 2007-2013 Jeffrey Chu, Lennart Staflin, Phil Hagelberg,
