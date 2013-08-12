@@ -339,6 +339,7 @@ Clojure to load that file."
     (define-key map (kbd "C-c C-t") 'clojure-jump-between-tests-and-code)
     (define-key map (kbd "C-c C-z") 'clojure-display-inferior-lisp-buffer)
     (define-key map (kbd "C-c M-q") 'clojure-fill-docstring)
+    (define-key map (kbd "C-:") 'clojure-toggle-keyword-string)
     map)
   "Keymap for Clojure mode.  Inherits from `lisp-mode-shared-map'.")
 
