@@ -558,8 +558,9 @@ elements of a def* forms."
     changed))
 
 (defun clojure-mode-font-lock-regexp-groups (bound)
-  "A function run by font-lock to highlight grouping constructs
-in regular expression."
+  "Highlight grouping constructs in regular expression.
+
+BOUND denotes the maximum number of characters (relative to the point) to check."
   (catch 'found
     (while (re-search-forward (concat
                                ;; A group may start using several alternatives:
@@ -590,17 +591,19 @@ in regular expression."
           (throw 'found t))))))
 
 (defun clojure-find-block-comment-start (limit)
-  "Search for (comment...) or #_ style block comments and put
-point at the beginning of the expression."
+  "Search for (comment...) or #_ style block comments.
+Places point at the beginning of the expression.
+
+LIMIT denotes the maximum number of characters (relative to the point) to check."
   (let ((pos (re-search-forward "\\((comment\\>\\|#_\\)" limit t)))
     (when pos
       (forward-char (- (length (match-string 1))))
       pos)))
 
 (defun clojure-font-lock-extend-region-comment ()
-  "Move fontification boundaries to always contain
-entire (comment ..) and #_ sexp. Does not work if you have a
-white-space between ( and comment, but that is omitted to make
+  "Move fontification boundaries to always contain entire (comment ..) and #_ sexp.
+
+Does not work if you have a  whitespace between ( and comment, but that is omitted to make
 this run faster."
   (let ((changed nil))
     (goto-char font-lock-beg)
@@ -617,7 +620,9 @@ this run faster."
     changed))
 
 (defun clojure-font-lock-mark-comment (limit)
-  "Mark all (comment ..) and #_ forms with font-lock-comment-face."
+  "Mark all (comment ..) and #_ forms with `font-lock-comment-face'.
+
+LIMIT denotes the maximum number of characters (relative to the point) to check."
   (let (pos)
     (while (and (< (point) limit)
                 (setq pos (clojure-find-block-comment-start limit)))
@@ -732,8 +737,9 @@ This function also returns nil meaning don't specify the indentation."
                 indent-point state normal-indent)))))))
 
 (defun clojure-backtracking-indent (indent-point state normal-indent)
-  "Experimental backtracking support. Will upwards in an sexp to
-check for contextual indenting."
+  "Experimental backtracking support.
+
+Will upwards in an sexp to check for contextual indenting."
   (let (indent (path) (depth 0))
     (goto-char (elt state 1))
     (while (and (not indent)
@@ -974,10 +980,10 @@ returned."
 (defun clojure-fill-docstring (&optional argument)
   "Fill the definition that the point is on appropriate for Clojure.
 
-  Fills so that every paragraph has a minimum of two initial spaces,
-  with the exception of the first line. Fill margins are taken from
-  paragraph start, so a paragraph that begins with four spaces will
-  remain indented by four spaces after refilling."
+Fills so that every paragraph has a minimum of two initial spaces,
+with the exception of the first line.  Fill margins are taken from
+paragraph start, so a paragraph that begins with four spaces will
+remain indented by four spaces after refilling."
   (interactive "P")
   (if (and (fboundp 'paredit-in-string-p) paredit-mode)
       (unless (paredit-in-string-p)
@@ -1052,7 +1058,7 @@ returned."
 
 
 (defun clojure-expected-ns ()
-  "Returns the namespace name that the file should have."
+  "Return the namespace name that the file should have."
   (let* ((project-dir (file-truename
                        (locate-dominating-file default-directory
                                                "project.clj")))
@@ -1061,17 +1067,19 @@ returned."
      "_" "-" (mapconcat 'identity (cdr (split-string relative "/")) "."))))
 
 (defun clojure-insert-ns-form-at-point ()
-  "Insert a namespace form at point"
+  "Insert a namespace form at point."
   (interactive)
   (insert (format "(ns %s)" (clojure-expected-ns))))
 
 (defun clojure-insert-ns-form ()
+  "Insert a namespace form at the beginning of the buffer."
   (interactive)
   (goto-char (point-min))
   (clojure-insert-ns-form-at-point))
 
 (defun clojure-update-ns ()
-  "Updates the namespace of the current buffer. Useful if a file has been renamed."
+  "Update the namespace of the current buffer.
+Useful if a file has been renamed."
   (interactive)
   (let ((nsname (clojure-expected-ns)))
     (when nsname
@@ -1083,6 +1091,7 @@ returned."
               (error "Namespace not found"))))))))
 
 (defun clojure-find-ns ()
+  "Find the namespace of the current Clojure buffer."
   (let ((regexp clojure-namespace-name-regex))
     (save-restriction
       (save-excursion
@@ -1101,7 +1110,7 @@ returned."
   (replace-regexp-in-string "-" "_" namespace))
 
 (defun clojure-test-for (namespace)
-  "Returns the path of the test file for the given namespace."
+  "Return the path of the test file for the given NAMESPACE."
   (let* ((namespace (clojure-underscores-for-hyphens namespace))
          (segments (split-string namespace "\\.")))
     (format "%stest/%s_test.clj"
@@ -1119,6 +1128,7 @@ Clojure test file for the given namespace.")
   (find-file (funcall clojure-test-for-fn (clojure-find-ns))))
 
 (defun clojure-jump-between-tests-and-code ()
+  "Jump between implementation and related test file."
   (interactive)
   (if (clojure-in-tests-p)
       (clojure-test-jump-to-implementation)
