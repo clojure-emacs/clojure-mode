@@ -354,6 +354,7 @@ Clojure to load that file."
     ["Display Inferior Lisp Buffer" clojure-display-inferior-lisp-buffer]
     ["Load File" clojure-load-file]
     "--"
+    ["Toggle between string & keyword" clojure-toggle-keyword-string]
     ["Fill Docstring" clojure-fill-docstring]
     ["Jump Between Test and Code" clojure-jump-between-tests-and-code]))
 
