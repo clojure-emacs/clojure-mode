@@ -296,7 +296,9 @@
 (defgroup clojure-mode nil
   "A mode for Clojure"
   :prefix "clojure-mode-"
-  :group 'applications)
+  :group 'languages
+  :link '(url-link :tag "Github" "https://github.com/clojure-emacs/clojure-mode")
+  :link '(emacs-commentary-link :tag "Commentary" "clojure-mode"))
 
 (defcustom clojure-mode-font-lock-comment-sexp nil
   "Set to non-nil in order to enable font-lock of (comment...)
