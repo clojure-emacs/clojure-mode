@@ -295,19 +295,19 @@
 
 (defgroup clojure-mode nil
   "A mode for Clojure"
-  :prefix "clojure-mode-"
+  :prefix "clojure-"
   :group 'languages
   :link '(url-link :tag "Github" "https://github.com/clojure-emacs/clojure-mode")
   :link '(emacs-commentary-link :tag "Commentary" "clojure-mode"))
 
-(defcustom clojure-mode-font-lock-comment-sexp nil
+(defcustom clojure-font-lock-comment-sexp nil
   "Set to non-nil in order to enable font-lock of (comment...)
 forms.  This option is experimental.  Changing this will require a
 restart (ie. M-x clojure-mode) of existing clojure mode buffers."
   :type 'boolean
   :group 'clojure-mode)
 
-(defcustom clojure-mode-load-command  "(clojure.core/load-file \"%s\")\n"
+(defcustom clojure-load-command  "(clojure.core/load-file \"%s\")\n"
   "*Format-string for building a Clojure expression to load a file.
 This format string should use `%s' to substitute a file name
 and should result in a Clojure expression that will command the inferior
@@ -315,12 +315,12 @@ Clojure to load that file."
   :type 'string
   :group 'clojure-mode)
 
-(defcustom clojure-mode-inf-lisp-command "lein repl"
+(defcustom clojure-inf-lisp-command "lein repl"
   "The command used by `inferior-lisp-program'."
   :type 'string
   :group 'clojure-mode)
 
-(defcustom clojure-mode-use-backtracking-indent t
+(defcustom clojure-use-backtracking-indent t
   "Set to non-nil to enable backtracking/context sensitive indentation."
   :type 'boolean
   :group 'clojure-mode)
@@ -448,7 +448,7 @@ if that value is non-nil."
          'clojure-forward-sexp))
   (set (make-local-variable 'lisp-doc-string-elt-property)
        'clojure-doc-string-elt)
-  (set (make-local-variable 'inferior-lisp-program) clojure-mode-inf-lisp-command)
+  (set (make-local-variable 'inferior-lisp-program) clojure-inf-lisp-command)
   (set (make-local-variable 'parse-sexp-ignore-comments) t)
 
   (clojure-mode-font-lock-setup)
@@ -476,7 +476,7 @@ if that value is non-nil."
   (setq clojure-prev-l/c-dir/file (cons (file-name-directory file-name)
                                         (file-name-nondirectory file-name)))
   (comint-send-string (inferior-lisp-proc)
-                      (format clojure-mode-load-command file-name))
+                      (format clojure-load-command file-name))
   (switch-to-lisp t))
 
 
@@ -499,7 +499,7 @@ Called by `imenu--generic-function'."
   (add-to-list 'font-lock-extend-region-functions
                'clojure-font-lock-extend-region-def t)
 
-  (when clojure-mode-font-lock-comment-sexp
+  (when clojure-font-lock-comment-sexp
     (add-to-list 'font-lock-extend-region-functions
                  'clojure-font-lock-extend-region-comment t)
     (make-local-variable 'clojure-font-lock-keywords)
@@ -734,7 +734,7 @@ This function also returns nil meaning don't specify the indentation."
                                      indent-point normal-indent))
               (method
                (funcall method indent-point state))
-              (clojure-mode-use-backtracking-indent
+              (clojure-use-backtracking-indent
                (clojure-backtracking-indent
                 indent-point state normal-indent)))))))
 
@@ -1139,7 +1139,7 @@ Clojure test file for the given namespace.")
 ;;;###autoload
 (progn
   (put 'clojure-test-ns-segment-position 'safe-local-variable 'integerp)
-  (put 'clojure-mode-load-command 'safe-local-variable 'stringp)
+  (put 'clojure-load-command 'safe-local-variable 'stringp)
 
   (add-to-list 'auto-mode-alist '("\\.clj\\'" . clojure-mode))
   (add-to-list 'auto-mode-alist '("\\.cljs\\'" . clojure-mode))
