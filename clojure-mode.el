@@ -293,7 +293,7 @@
        (1 'font-lock-regexp-grouping-construct prepend))))
   "Default expressions to highlight in Clojure mode.")
 
-(defgroup clojure-mode nil
+(defgroup clojure nil
   "A mode for Clojure"
   :prefix "clojure-"
   :group 'languages
@@ -305,7 +305,7 @@
 forms.  This option is experimental.  Changing this will require a
 restart (ie. M-x clojure-mode) of existing clojure mode buffers."
   :type 'boolean
-  :group 'clojure-mode)
+  :group 'clojure)
 
 (defcustom clojure-load-command  "(clojure.core/load-file \"%s\")\n"
   "*Format-string for building a Clojure expression to load a file.
@@ -313,22 +313,22 @@ This format string should use `%s' to substitute a file name
 and should result in a Clojure expression that will command the inferior
 Clojure to load that file."
   :type 'string
-  :group 'clojure-mode)
+  :group 'clojure)
 
 (defcustom clojure-inf-lisp-command "lein repl"
   "The command used by `inferior-lisp-program'."
   :type 'string
-  :group 'clojure-mode)
+  :group 'clojure)
 
 (defcustom clojure-use-backtracking-indent t
   "Set to non-nil to enable backtracking/context sensitive indentation."
   :type 'boolean
-  :group 'clojure-mode)
+  :group 'clojure)
 
 (defcustom clojure-max-backtracking 3
   "Maximum amount to backtrack up a list to check for context."
   :type 'integer
-  :group 'clojure-mode)
+  :group 'clojure)
 
 (defvar clojure-mode-map
   (let ((map (make-sparse-keymap)))
@@ -811,7 +811,7 @@ get emacs to indent your own macros the same as it does the
 built-ins like with-open. To set manually from lisp code,
 use (put-clojure-indent 'some-symbol 'defun)."
   :type '(repeat symbol)
-  :group 'clojure-mode
+  :group 'clojure
   :set 'add-custom-clojure-indents)
 
 (define-clojure-indent
