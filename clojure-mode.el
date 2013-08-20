@@ -389,7 +389,7 @@ numbers count from the end:
   leiningen.compile -> leiningen.test.compile (uses 1)
   clojure.http.client -> clojure.http.test.client (uses -1)")
 
-(defvar clojure-mode-version "2.1.0"
+(defconst clojure-mode-version "2.1.0"
   "The current version of `clojure-mode'.")
 
 (defun clojure-mode-display-version ()
