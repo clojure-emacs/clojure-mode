@@ -305,7 +305,8 @@
 forms.  This option is experimental.  Changing this will require a
 restart (ie. M-x clojure-mode) of existing clojure mode buffers."
   :type 'boolean
-  :group 'clojure)
+  :group 'clojure
+  :safe 'booleanp)
 
 (defcustom clojure-load-command  "(clojure.core/load-file \"%s\")\n"
   "*Format-string for building a Clojure expression to load a file.
@@ -313,22 +314,26 @@ This format string should use `%s' to substitute a file name
 and should result in a Clojure expression that will command the inferior
 Clojure to load that file."
   :type 'string
-  :group 'clojure)
+  :group 'clojure
+  :safe 'stringp)
 
 (defcustom clojure-inf-lisp-command "lein repl"
   "The command used by `inferior-lisp-program'."
   :type 'string
-  :group 'clojure)
+  :group 'clojure
+  :safe 'stringp)
 
 (defcustom clojure-use-backtracking-indent t
   "Set to non-nil to enable backtracking/context sensitive indentation."
   :type 'boolean
-  :group 'clojure)
+  :group 'clojure
+  :safe 'booleanp)
 
 (defcustom clojure-max-backtracking 3
   "Maximum amount to backtrack up a list to check for context."
   :type 'integer
-  :group 'clojure)
+  :group 'clojure
+  :safe 'integerp)
 
 (defvar clojure-mode-map
   (let ((map (make-sparse-keymap)))
@@ -1133,9 +1138,6 @@ Clojure test file for the given namespace.")
 
 ;;;###autoload
 (progn
-  (put 'clojure-test-ns-segment-position 'safe-local-variable 'integerp)
-  (put 'clojure-load-command 'safe-local-variable 'stringp)
-
   (add-to-list 'auto-mode-alist '("\\.clj\\'" . clojure-mode))
   (add-to-list 'auto-mode-alist '("\\.cljs\\'" . clojure-mode))
   (add-to-list 'auto-mode-alist '("\\.dtm\\'" . clojure-mode))
