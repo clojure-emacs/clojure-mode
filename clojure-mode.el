@@ -375,11 +375,6 @@ Clojure to load that file."
     (modify-syntax-entry ?# "_ p" table)
     table))
 
-(defvar clojure-mode-abbrev-table nil
-  "Abbrev table used in clojure-mode buffers.")
-
-(define-abbrev-table 'clojure-mode-abbrev-table ())
-
 (defvar clojure-prev-l/c-dir/file nil
   "Record last directory and file used in loading or compiling.
 This holds a cons cell of the form `(DIRECTORY . FILE)'
