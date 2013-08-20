@@ -979,14 +979,14 @@ returned."
 
 (defvar clojure-docstring-indent-level 2)
 
-(defun clojure-fill-docstring (&optional argument)
+(defun clojure-fill-docstring ()
   "Fill the definition that the point is on appropriate for Clojure.
 
 Fills so that every paragraph has a minimum of two initial spaces,
 with the exception of the first line.  Fill margins are taken from
 paragraph start, so a paragraph that begins with four spaces will
 remain indented by four spaces after refilling."
-  (interactive "P")
+  (interactive)
   (if (and (fboundp 'paredit-in-string-p) paredit-mode)
       (unless (paredit-in-string-p)
         (error "Must be inside a string")))
