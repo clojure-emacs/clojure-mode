@@ -1105,10 +1105,15 @@ Useful if a file has been renamed."
 
 ;; Test navigation:
 (defun clojure-in-tests-p ()
+  "Check whether the current file is a test file.
+
+Two checks are made - whether the namespace of the file has the
+word test in it and whether the file lives under the test/ directory."
   (or (string-match-p "test\." (clojure-find-ns))
       (string-match-p "/test" (buffer-file-name))))
 
 (defun clojure-underscores-for-hyphens (namespace)
+  "Replace all hyphens in NAMESPACE with underscores."
   (replace-regexp-in-string "-" "_" namespace))
 
 (defun clojure-test-for (namespace)
@@ -1121,8 +1126,7 @@ Useful if a file has been renamed."
             (mapconcat 'identity segments "/"))))
 
 (defvar clojure-test-for-fn 'clojure-test-for
-  "Var pointing to the function that will return the full path of the
-Clojure test file for the given namespace.")
+  "The function that will return the full path of the Clojure test file for the given namespace.")
 
 (defun clojure-jump-to-test ()
   "Jump from implementation file to test."
