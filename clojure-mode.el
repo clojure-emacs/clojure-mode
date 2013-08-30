@@ -335,6 +335,19 @@ Clojure to load that file."
   :group 'clojure
   :safe 'integerp)
 
+(defcustom clojure-omit-space-between-tag-and-delimiters (list ?\[ ?\{)
+  "List of opening delimiter characters allowed to appear
+immediately after a reader literal tag with no space, as
+in :db/id[:db.part/user]"
+  :type '(set (const :tag "[" ?\[)
+              (const :tag "{" ?\{)
+              (const :tag "(" ?\()
+              (const :tag "\"" ?\"))
+  :group 'clojure
+  :safe (lambda (value)
+          (and (listp value)
+               (every characterp value))))
+
 (defvar clojure-mode-map
   (let ((map (make-sparse-keymap)))
     (set-keymap-parent map lisp-mode-shared-map)
@@ -424,12 +437,13 @@ numbers count from the end:
 
 (defun clojure-no-space-after-tag (endp delimiter)
   "Do not insert a space between a reader-literal tag and an
-  opening delimiter, except \". This allows you to write things
-  like #db/id[:db.part/user] without inserting a space between
-  the tag and the opening bracket."
+  opening delimiter in the list
+  clojure-omit-space-between-tag-and-delimiters. Allows you to
+  write things like #db/id[:db.part/user] without inserting a
+  space between the tag and the opening bracket."
   (if endp
       t
-    (or (char-equal delimiter ?\")
+    (or (not (member delimiter clojure-omit-space-between-tag-and-delimiters))
         (save-excursion
           (let ((orig-point (point)))
             (not (and (re-search-backward
