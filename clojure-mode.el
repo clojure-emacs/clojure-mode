@@ -1064,7 +1064,9 @@ remain indented by four spaces after refilling."
   (let* ((project-dir (file-truename
                        (locate-dominating-file default-directory
                                                "project.clj")))
-         (relative (substring (file-truename (buffer-file-name)) (length project-dir) -4)))
+         (relative (substring (file-truename (buffer-file-name))
+                              (length project-dir)
+                              (- (length (file-name-extension (buffer-file-name) t))))))
     (replace-regexp-in-string
      "_" "-" (mapconcat 'identity (cdr (split-string relative "/")) "."))))
 
