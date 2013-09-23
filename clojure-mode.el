@@ -49,6 +49,15 @@
 
 ;;; Code:
 
+
+;;; Compatibility
+(eval-and-compile
+  ;; `setq-local' for Emacs 24.2 and below
+  (unless (fboundp 'setq-local)
+    (defmacro setq-local (var val)
+      "Set variable VAR to value VAL in current buffer."
+      `(set (make-local-variable ',var) ,val))))
+
 (eval-when-compile
   (defvar calculate-lisp-indent-last-sexp)
   (defvar font-lock-beg)
@@ -464,22 +473,19 @@ or to switch back to an existing one.
 
 Entry to this mode calls the value of `clojure-mode-hook'
 if that value is non-nil."
-  (set (make-local-variable 'imenu-create-index-function)
-       (lambda ()
-         (imenu--generic-function '((nil clojure-match-next-def 0)))))
-  (set (make-local-variable 'indent-tabs-mode) nil)
+  (setq-local imenu-create-index-function
+              (lambda ()
+                (imenu--generic-function '((nil clojure-match-next-def 0)))))
+  (setq-local indent-tabs-mode nil)
   (lisp-mode-variables nil)
-  (set (make-local-variable 'comment-start-skip)
-       "\\(\\(^\\|[^\\\\\n]\\)\\(\\\\\\\\\\)*\\)\\(;+\\|#|\\) *")
-  (set (make-local-variable 'lisp-indent-function)
-       'clojure-indent-function)
+  (setq-local comment-start-skip
+              "\\(\\(^\\|[^\\\\\n]\\)\\(\\\\\\\\\\)*\\)\\(;+\\|#|\\) *")
+  (setq-local lisp-indent-function 'clojure-indent-function)
   (when (< emacs-major-version 24)
-    (set (make-local-variable 'forward-sexp-function)
-         'clojure-forward-sexp))
-  (set (make-local-variable 'lisp-doc-string-elt-property)
-       'clojure-doc-string-elt)
-  (set (make-local-variable 'inferior-lisp-program) clojure-inf-lisp-command)
-  (set (make-local-variable 'parse-sexp-ignore-comments) t)
+    (setq-local forward-sexp-function 'clojure-forward-sexp))
+  (setq-local lisp-doc-string-elt-property 'clojure-doc-string-elt)
+  (setq-local inferior-lisp-program clojure-inf-lisp-command)
+  (setq-local parse-sexp-ignore-comments t)
 
   (clojure-mode-font-lock-setup)
   (add-hook 'paredit-mode-hook
@@ -527,7 +533,7 @@ Called by `imenu--generic-function'."
 (defun clojure-mode-font-lock-setup ()
   "Configures font-lock for editing Clojure code."
   (interactive)
-  (set (make-local-variable 'font-lock-multiline) t)
+  (setq-local font-lock-multiline t)
   (add-to-list 'font-lock-extend-region-functions
                'clojure-font-lock-extend-region-def t)
 
@@ -537,7 +543,7 @@ Called by `imenu--generic-function'."
     (make-local-variable 'clojure-font-lock-keywords)
     (add-to-list 'clojure-font-lock-keywords
                  'clojure-font-lock-mark-comment t)
-    (set (make-local-variable 'open-paren-in-column-0-is-defun-start) nil))
+    (setq-local open-paren-in-column-0-is-defun-start nil))
 
   (setq font-lock-defaults
         '(clojure-font-lock-keywords    ; keywords
