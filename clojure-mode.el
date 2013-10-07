@@ -241,7 +241,8 @@
         "var?" "vary-meta" "vec" "vector" "vector?"
         "when" "when-first" "when-let" "when-not" "while"
         "with-bindings" "with-bindings*" "with-in-str" "with-loading-context" "with-local-vars"
-        "with-meta" "with-open" "with-out-str" "with-precision" "xml-seq" "zipmap"
+        "with-meta" "with-open" "with-out-str" "with-precision"
+        "with-redefs" "with-redefs-fn" "xml-seq" "zipmap"
         ) t)
          "\\>")
        1 font-lock-builtin-face)
