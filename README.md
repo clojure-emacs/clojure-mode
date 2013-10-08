@@ -134,6 +134,67 @@ SLIME is available via
 [swank-clojure](http://github.com/technomancy/swank-clojure) in `clojure-mode` 1.x.
 SLIME support was removed in version 2.x in favor of `nrepl.el`.
 
+## Indentation options
+
+Characterizing the default indentation rules of clojure-mode is difficult to do
+in summary; this is one attempt:
+
+1. Bodies of parenthesized forms are indented such that arguments are aligned to
+  the start column of the first argument, _except_ for a class of forms
+  identified by the symbol in function position, the bodies of which are
+  indented two spaces, regardless of the position of their first argument (this
+  is called "defun" indentation, for historical reasons):
+  1. Known special forms (e.g. `case`, `try`, etc)
+  2. Nearly all "core" macros that ship as part of Clojure itself
+  3. Userland macros (and any other form?) that are locally registered via
+  `put-clojure-indent`, `define-clojure-indent` (helpers for adding mappings to
+  `clojure-indent-function`).
+2. The bodies of certain more complicated macros and special forms
+  (e.g. `letfn`, `deftype`, `extend-protocol`, etc) are indented using a
+  contextual backtracking indentation method, controlled by
+  `clojure-backtracking-indent`.
+3. The bodies of other forms (e.g. vector, map, and set literals) are indented
+  such that each new line within the form is set just inside of the opening
+  delimiter of the form.
+
+Please see the docstrings of the elisp functions/vars noted above for
+information about customizing this indentation behaviour.
+
+### "Always 2 spaces" option
+
+A simplified indentation style is available by setting
+`clojure-defun-style-default-indent` to true in e.g. your `init.el`:
+
+```
+(setq clojure-defun-style-default-indent t)
+```
+
+This causes "defun" indentation rules to apply by default for any parenthesized
+form that does not otherwise have an indentation rule set on
+`clojure-indent-function`.  The practical effect is that nearly all
+parenthesized forms are indented with two spaces, regardless of the position of
+the first argument.
+
+So, clojure-mode defaults would format code like this:
+
+```clojure 
+(some-very-long-function-name arg1
+                              (other-long-function-name arg2
+                                                        arg3))
+```
+
+whereas turning on the "always 2 spaces" option yields this:
+
+```clojure
+(some-very-long-function-name arg1
+  (other-long-function-name arg2
+    arg3))
+```
+
+Aside from horizontal "stride", this option eliminates the need to maintain
+local configuration in order to indent the bodies of projects' macros
+"properly", since all parenthesized forms are treated identically.
+
 ## License
 
 Copyright © 2007-2013 Jeffrey Chu, Lennart Staflin, Phil Hagelberg,
