@@ -333,6 +333,13 @@ Clojure to load that file."
   :group 'clojure
   :safe 'stringp)
 
+(defcustom clojure-defun-style-default-indent nil
+  "Default indenting of function and macro forms using defun rules unless
+otherwise defined via `put-clojure-indent`, `define-clojure-indent`, etc."
+  :type 'boolean
+  :group 'clojure
+  :safe 'booleanp)
+
 (defcustom clojure-use-backtracking-indent t
   "Set to non-nil to enable backtracking/context sensitive indentation."
   :type 'boolean
@@ -762,6 +769,9 @@ This function also returns nil meaning don't specify the indentation."
                (goto-char open-paren)
                (1+ (current-column)))
               ((or (eq method 'defun)
+                   (and clojure-defun-style-default-indent
+                        ;; largely to preserve useful alignment of :require, etc in ns
+                        (not (string-match "^:" function)))
                    (and (null method)
                         (> (length function) 3)
                         (string-match "\\`\\(?:\\S +/\\)?\\(def\\|with-\\)"
