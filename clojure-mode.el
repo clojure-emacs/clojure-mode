@@ -363,7 +363,7 @@ in :db/id[:db.part/user]"
   :group 'clojure
   :safe (lambda (value)
           (and (listp value)
-               (every characterp value))))
+               (every 'characterp value))))
 
 (defvar clojure-mode-map
   (let ((map (make-sparse-keymap)))
