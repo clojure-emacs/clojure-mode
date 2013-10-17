@@ -6,7 +6,7 @@
 ;; URL: http://emacswiki.org/cgi-bin/wiki/ClojureTestMode
 ;; Version: 2.1.0
 ;; Keywords: languages, lisp, test
-;; Package-Requires: ((clojure-mode "1.7") (nrepl "0.1.7"))
+;; Package-Requires: ((clojure-mode "1.7") (cider "0.3.0"))
 
 ;; This file is not part of GNU Emacs.
 
@@ -109,14 +109,14 @@
 (require 'cl)
 (require 'clojure-mode)
 (require 'which-func)
-(require 'nrepl)
+(require 'nrepl-client)
 
-(declare-function nrepl-repl-buffer            "nrepl.el")
-(declare-function nrepl-make-response-handler  "nrepl.el")
-(declare-function nrepl-send-string            "nrepl.el")
-(declare-function nrepl-current-ns             "nrepl.el")
-(declare-function nrepl-current-tooling-session "nrepl.el")
-(declare-function nrepl-current-connection-buffer "nrepl.el")
+(declare-function nrepl-repl-buffer            "nrepl-client.el")
+(declare-function nrepl-make-response-handler  "nrepl-client.el")
+(declare-function nrepl-send-string            "nrepl-client.el")
+(declare-function nrepl-current-ns             "nrepl-client.el")
+(declare-function nrepl-current-tooling-session "nrepl-client.el")
+(declare-function nrepl-current-connection-buffer "nrepl-client.el")
 
 ;; Faces
 
