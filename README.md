@@ -56,7 +56,7 @@ and `require`ing it.
 
 This source repository also includes `clojure-test-mode.el`, which
 provides support for running Clojure tests (using the `clojure.test`
-framework) via nrepl.el and seeing feedback in the test buffer about
+framework) via CIDER and seeing feedback in the test buffer about
 which tests failed or errored. The installation instructions above
 should work for clojure-test-mode as well.
 
@@ -117,10 +117,10 @@ opened, you can use <kbd>C-c C-r</kbd> to evaluate the region or
 If you don't use Leiningen, you can set `inferior-lisp-program` to
 a different REPL command.
 
-### nrepl.el
+### CIDER
 
 You can also use [Leiningen](http://leiningen.org) to start an
-enhanced REPL via [nrepl.el](https://github.com/clojure-emacs/nrepl.el).
+enhanced REPL via [CIDER](https://github.com/clojure-emacs/cider).
 
 ### Ritz
 
@@ -132,7 +132,7 @@ SLIME.
 
 SLIME is available via
 [swank-clojure](http://github.com/technomancy/swank-clojure) in `clojure-mode` 1.x.
-SLIME support was removed in version 2.x in favor of `nrepl.el`.
+SLIME support was removed in version 2.x in favor of `CIDER`.
 
 ## Indentation options
 
@@ -177,7 +177,7 @@ the first argument.
 
 So, clojure-mode defaults would format code like this:
 
-```clojure 
+```clojure
 (some-very-long-function-name arg1
                               (other-long-function-name arg2
                                                         arg3))
