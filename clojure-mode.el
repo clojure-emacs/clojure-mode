@@ -1195,6 +1195,7 @@ word test in it and whether the file lives under the test/ directory."
 (progn
   (add-to-list 'auto-mode-alist '("\\.clj\\'" . clojure-mode))
   (add-to-list 'auto-mode-alist '("\\.cljs\\'" . clojure-mode))
+  (add-to-list 'auto-mode-alist '("\\.cljx\\'" . clojure-mode))
   (add-to-list 'auto-mode-alist '("\\.dtm\\'" . clojure-mode))
   (add-to-list 'auto-mode-alist '("\\.edn\\'" . clojure-mode))
   (add-to-list 'interpreter-mode-alist '("jark" . clojure-mode))
