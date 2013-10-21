@@ -110,13 +110,7 @@
 (require 'clojure-mode)
 (require 'which-func)
 (require 'nrepl-client)
-
-(declare-function nrepl-repl-buffer            "nrepl-client.el")
-(declare-function nrepl-make-response-handler  "nrepl-client.el")
-(declare-function nrepl-send-string            "nrepl-client.el")
-(declare-function nrepl-current-ns             "nrepl-client.el")
-(declare-function nrepl-current-tooling-session "nrepl-client.el")
-(declare-function nrepl-current-connection-buffer "nrepl-client.el")
+(require 'cider-interaction)
 
 ;; Faces
 
@@ -178,7 +172,7 @@
 (defun clojure-test-eval (string &optional handler)
   (nrepl-send-string string
                      (clojure-test-make-handler (or handler #'identity))
-                     (or (nrepl-current-ns) "user")
+                     (or (cider-current-ns) "user")
                      (nrepl-current-tooling-session)))
 
 (defun clojure-test-load-reporting ()
@@ -239,7 +233,7 @@
             (clojure-test-mode-test-one-var ns test-name))
           (do-report {:type :end-test-ns, :ns ns-obj}))
         (do-report (assoc @*report-counters* :type :summary))))"
-     (or (nrepl-current-ns) "user")
+     (or (cider-current-ns) "user")
      (nrepl-current-tooling-session))))
 
 (defun clojure-test-get-results (buffer result)
@@ -353,7 +347,7 @@ Clojure src file for the given test namespace.")
   (save-some-buffers nil (lambda () (equal major-mode 'clojure-mode)))
   (message "Testing...")
   (if (not (clojure-in-tests-p))
-      (nrepl-load-file (buffer-file-name)))
+      (cider-load-file (buffer-file-name)))
   (save-window-excursion
     (if (not (clojure-in-tests-p))
         (clojure-jump-to-test))
