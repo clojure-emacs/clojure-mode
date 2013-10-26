@@ -164,9 +164,9 @@
                                  (lambda (buffer value)
                                    (funcall callback buffer value))
                                  (lambda (buffer value)
-                                   (nrepl-emit-interactive-output value))
+                                   (cider-emit-interactive-output value))
                                  (lambda (buffer err)
-                                   (nrepl-emit-interactive-output err))
+                                   (cider-emit-interactive-output err))
                                  '())))
 
 (defun clojure-test-eval (string &optional handler)
