@@ -455,7 +455,7 @@ Clojure src file for the given test namespace.")
                          (clojure-find-ns))))
     (nrepl-send-string-sync command)))
 
-(defun clojure-test-clear (&optional callback)
+(defun clojure-test-clear ()
   "Remove overlays and clear stored results."
   (interactive)
   (remove-overlays)
