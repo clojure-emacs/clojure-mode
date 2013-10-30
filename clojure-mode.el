@@ -496,6 +496,7 @@ if that value is non-nil."
   (setq-local parse-sexp-ignore-comments t)
 
   (clojure-mode-font-lock-setup)
+  (setq-local open-paren-in-column-0-is-defun-start nil)
   (add-hook 'paredit-mode-hook
             (lambda ()
               (when (>= paredit-version 21)
