@@ -772,7 +772,8 @@ This function also returns nil meaning don't specify the indentation."
               ((or (eq method 'defun)
                    (and clojure-defun-style-default-indent
                         ;; largely to preserve useful alignment of :require, etc in ns
-                        (not (string-match "^:" function)))
+                        (not (string-match "^:" function))
+                        (not method))
                    (and (null method)
                         (> (length function) 3)
                         (string-match "\\`\\(?:\\S +/\\)?\\(def\\|with-\\)"
