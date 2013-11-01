@@ -27,7 +27,7 @@
 ;;   ;; require or autoload paredit-mode
 ;;   (add-hook 'clojure-mode-hook 'paredit-mode)
 
-;; See nREPL.el (http://github.com/clojure-emacs/nrepl.el) for
+;; See CIDER (http://github.com/clojure-emacs/cider) for
 ;; better interaction with subprocesses via nREPL.
 
 ;;; License:
