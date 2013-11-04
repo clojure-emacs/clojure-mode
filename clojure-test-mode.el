@@ -164,9 +164,9 @@
                                  (lambda (buffer value)
                                    (funcall callback buffer value))
                                  (lambda (buffer value)
-                                   (nrepl-emit-interactive-output value))
+                                   (cider-emit-interactive-output value))
                                  (lambda (buffer err)
-                                   (nrepl-emit-interactive-output err))
+                                   (cider-emit-interactive-output err))
                                  '())))
 
 (defun clojure-test-eval (string &optional handler)
@@ -184,7 +184,6 @@
                                    join-fixtures *report-counters* do-report
                                    test-var *initial-report-counters*]]
               [clojure.pprint :only [pprint]]))
-
     (def #^{:dynamic true} *clojure-test-mode-out* nil)
     (def fail-events #{:fail :error})
     (defn report [event]
