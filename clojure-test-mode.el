@@ -166,9 +166,9 @@
                                  (lambda (buffer value)
                                    (funcall callback buffer value))
                                  (lambda (buffer value)
-                                   (nrepl-emit-interactive-output value))
+                                   (cider-emit-interactive-output value))
                                  (lambda (buffer err)
-                                   (nrepl-emit-interactive-output err))
+                                   (cider-emit-interactive-output err))
                                  '())))
 
 (defun clojure-test-eval (string &optional handler)
@@ -457,7 +457,7 @@ Clojure src file for the given test namespace.")
                          (clojure-find-ns))))
     (nrepl-send-string-sync command)))
 
-(defun clojure-test-clear (&optional callback)
+(defun clojure-test-clear ()
   "Remove overlays and clear stored results."
   (interactive)
   (remove-overlays)
