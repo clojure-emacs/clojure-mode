@@ -155,7 +155,9 @@
 ;; Support Functions
 
 (defun clojure-test-nrepl-connected-p ()
-  (nrepl-current-connection-buffer))
+  (condition-case nil
+      (nrepl-current-connection-buffer)
+    (error nil)))
 
 (defun clojure-test-make-handler (callback)
   (lexical-let ((buffer (current-buffer))
