@@ -154,11 +154,6 @@
 
 ;; Support Functions
 
-(defun clojure-test-nrepl-connected-p ()
-  (condition-case nil
-      (nrepl-current-connection-buffer)
-    (error nil)))
-
 (defun clojure-test-make-handler (callback)
   (lexical-let ((buffer (current-buffer))
                 (callback callback))
@@ -179,7 +174,7 @@
 
 (defun clojure-test-load-reporting ()
   "Redefine the test-is report function to store results in metadata."
-  (when (clojure-test-nrepl-connected-p)
+  (when (cider-connected-p)
     (nrepl-send-string-sync
      "(ns clojure.test.mode
         (:use [clojure.test :only [file-position *testing-vars* *test-out*
@@ -513,7 +508,7 @@ Clojure src file for the given test namespace.")
 
 \\{clojure-test-mode-map}"
   nil " Test" clojure-test-mode-map
-  (when (clojure-test-nrepl-connected-p)
+  (when (cider-connected-p)
     (clojure-test-load-reporting)))
 
 (add-hook 'nrepl-connected-hook 'clojure-test-load-reporting)
