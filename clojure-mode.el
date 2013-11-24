@@ -100,7 +100,7 @@
        (1 font-lock-keyword-face)
        (2 font-lock-function-name-face nil t))
 
-      (,(concat "(\\(\\(?:[a-z\.-]+/\\)?def\[a-z\]*-?\\)"
+      (,(concat "(\\(\\(?:[a-z\.-]+/\\)?def\[a-z\-\]*-?\\)"
                 ;; Function declarations.
                 "\\>"
                 ;; Any whitespace
