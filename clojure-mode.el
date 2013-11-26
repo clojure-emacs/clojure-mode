@@ -393,7 +393,8 @@ in :db/id[:db.part/user]"
     "--"
     ["Toggle between string & keyword" clojure-toggle-keyword-string]
     ["Fill Docstring" clojure-fill-docstring]
-    ["Jump Between Test and Code" clojure-jump-between-tests-and-code]))
+    ["Jump Between Test and Code" clojure-jump-between-tests-and-code]
+    ["Jump to Project File" clojure-jump-to-project]))
 
 (defvar clojure-mode-syntax-table
   (let ((table (copy-syntax-table emacs-lisp-mode-syntax-table)))
@@ -1192,6 +1193,24 @@ word test in it and whether the file lives under the test/ directory."
   (if (clojure-in-tests-p)
       (clojure-test-jump-to-implementation)
     (clojure-jump-to-test)))
+
+(defun clojure-project-file (namespace)
+  "Return the path of the test file for the given NAMESPACE."
+  (let* ((namespace (clojure-underscores-for-hyphens namespace))
+         (segments (split-string namespace "\\.")))
+    (format "%s/project.clj"
+            (file-name-as-directory
+             (locate-dominating-file buffer-file-name "src/"))
+            )))
+
+(defvar clojure-project-file-fn 'clojure-project-file
+  "The function that will return the full path of the lein project file for the given namespace.")
+
+(defun clojure-jump-to-project ()
+  "Jump from clojure file to project file."
+  (interactive)
+  (find-file (funcall clojure-project-file-fn (clojure-find-ns))))
+
 
 ;;;###autoload
 (progn
