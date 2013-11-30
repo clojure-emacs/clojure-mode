@@ -365,6 +365,23 @@ in :db/id[:db.part/user]"
           (and (listp value)
                (every 'characterp value))))
 
+(defcustom clojure-test-dir-prefix "test"
+  "Used by clojure-test-for-fn to resolve a test namespace for the current
+buffer.  This is the path component between the project root and the test.
+Leiningen puts sources and tests in <root>/src and <root>/test respectively.
+Omit leading and trailing slashes!"
+  :type 'string
+  :group 'clojure
+  :safe 'stringp)
+
+(defcustom clojure-src-dir-prefix "src"
+  "The folder that contains the source namespaces. Used by
+clojure-test-implementation-for to resolve a test namespace
+to its corresponding source. Omit leading and trailing slashes!"
+  :type 'string
+  :group 'clojure
+  :safe 'stringp)
+
 (defvar clojure-mode-map
   (let ((map (make-sparse-keymap)))
     (set-keymap-parent map lisp-mode-shared-map)
@@ -1173,9 +1190,10 @@ word test in it and whether the file lives under the test/ directory."
   "Return the path of the test file for the given NAMESPACE."
   (let* ((namespace (clojure-underscores-for-hyphens namespace))
          (segments (split-string namespace "\\.")))
-    (format "%stest/%s_test.clj"
+    (format "%s/%s/%s_test.clj"
             (file-name-as-directory
              (locate-dominating-file buffer-file-name "src/"))
+            clojure-test-dir-prefix
             (mapconcat 'identity segments "/"))))
 
 (defvar clojure-test-for-fn 'clojure-test-for
