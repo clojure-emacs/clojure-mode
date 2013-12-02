@@ -437,7 +437,8 @@ numbers count from the end:
   (if (fboundp 'prog-mode) 'prog-mode 'fundamental-mode))
 
 (defun clojure-space-for-delimiter-p (endp delim)
-  (if (eq major-mode 'clojure-mode)
+  "Prevent paredit from inserting unneeded spaces."
+  (if (derived-mode-p 'clojure-mode)
       (save-excursion
         (backward-char)
         (if (and (or (char-equal delim ?\()
