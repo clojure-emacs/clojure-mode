@@ -485,7 +485,7 @@ Clojure src file for the given test namespace.")
   "Jump from test file to implementation."
   (interactive)
   (find-file (funcall clojure-test-implementation-for-fn
-                      (clojure-find-package))))
+                      (clojure-find-ns))))
 
 (defvar clojure-test-mode-map
   (let ((map (make-sparse-keymap)))
