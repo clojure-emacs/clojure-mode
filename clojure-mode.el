@@ -288,7 +288,7 @@
        1 font-lock-builtin-face)
       ;; Constant values (keywords), including as metadata e.g. ^:static
       ("\\<^?:\\(\\sw\\|\\s_\\)+\\(\\>\\|\\_>\\)" 0 font-lock-constant-face)
-      ;; Meta type annotation #^Type or ^Type
+      ;; Meta type hint #^Type or ^Type
       ("\\(#?^\\)\\(\\(\\sw\\|\\s_\\)+\\)"
        (1 font-lock-preprocessor-face)
        (2 font-lock-type-face))
