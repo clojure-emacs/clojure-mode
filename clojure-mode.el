@@ -292,7 +292,6 @@
       ("\\(#?^\\)\\(\\(\\sw\\|\\s_\\)+\\)"
        (1 font-lock-preprocessor-face)
        (2 font-lock-type-face))
-      ("\\<io\\!\\>" 0 font-lock-warning-face)
 
       ;;Java interop highlighting
       ("\\<\\.-?[a-z][a-zA-Z0-9]*\\>" 0 font-lock-preprocessor-face) ;; .foo .barBaz .qux01 .-flibble .-flibbleWobble
