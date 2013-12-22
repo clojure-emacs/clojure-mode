@@ -285,7 +285,7 @@
         "rightmost" "rights" "root" "seq-zip" "up"
         ) t)
          "\\>")
-       1 font-lock-type-face)
+       1 font-lock-builtin-face)
       ;; Constant values (keywords), including as metadata e.g. ^:static
       ("\\<^?:\\(\\sw\\|\\s_\\)+\\(\\>\\|\\_>\\)" 0 font-lock-constant-face)
       ;; Meta type annotation #^Type or ^Type
