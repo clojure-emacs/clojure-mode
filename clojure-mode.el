@@ -289,7 +289,9 @@
       ;; Constant values (keywords), including as metadata e.g. ^:static
       ("\\<^?:\\(\\sw\\|\\s_\\)+\\(\\>\\|\\_>\\)" 0 font-lock-constant-face)
       ;; Meta type annotation #^Type or ^Type
-      ("#?^\\(\\sw\\|\\s_\\)+" 0 font-lock-preprocessor-face)
+      ("\\(#?^\\)\\(\\(\\sw\\|\\s_\\)+\\)"
+       (1 font-lock-preprocessor-face)
+       (2 font-lock-type-face))
       ("\\<io\\!\\>" 0 font-lock-warning-face)
 
       ;;Java interop highlighting
