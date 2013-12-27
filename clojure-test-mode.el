@@ -4,7 +4,7 @@
 
 ;; Author: Phil Hagelberg <technomancy@gmail.com>
 ;; URL: http://emacswiki.org/cgi-bin/wiki/ClojureTestMode
-;; Version: 2.1.0
+;; Version: 3.0.0
 ;; Keywords: languages, lisp, test
 ;; Package-Requires: ((clojure-mode "1.7") (cider "0.4.0"))
 
@@ -94,6 +94,11 @@
 
 ;; 2.0.0 2012-12-29
 ;;  * Replace slime with nrepl.el
+
+;; 3.0.0 2013-12-27
+;;  * Replace nrepl.el with cider
+;;  * Improve clojure-test-maybe-enable heuristic
+;;  * Obsolete clojure-test-jump-to-implementation in favour of other libs
 
 ;;; TODO:
 
@@ -486,6 +491,9 @@ Clojure src file for the given test namespace.")
   (interactive)
   (find-file (funcall clojure-test-implementation-for-fn
                       (clojure-find-ns))))
+
+(make-obsolete 'clojure-test-jump-to-implementation
+               "use projectile or toggle.el instead." "3.0.0")
 
 (defvar clojure-test-mode-map
   (let ((map (make-sparse-keymap)))
