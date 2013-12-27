@@ -2,9 +2,9 @@
 
 ;; Copyright © 2007-2013 Jeffrey Chu, Lennart Staflin, Phil Hagelberg
 ;;
-;; Authors: Jeffrey Chu <jochu0@gmail.com>
-;;          Lennart Staflin <lenst@lysator.liu.se>
-;;          Phil Hagelberg <technomancy@gmail.com>
+;; Author: Jeffrey Chu <jochu0@gmail.com>
+;;         Lennart Staflin <lenst@lysator.liu.se>
+;;         Phil Hagelberg <technomancy@gmail.com>
 ;; URL: http://github.com/clojure-emacs/clojure-mode
 ;; Version: 2.1.1
 ;; Keywords: languages, lisp
