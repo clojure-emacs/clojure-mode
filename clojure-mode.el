@@ -286,6 +286,27 @@
         ) t)
          "\\>")
        1 font-lock-builtin-face)
+      ;; core.async control structures
+      (,(concat
+         "(\\(?:\.*/\\)?"
+         (regexp-opt '("alt!" "alt!!" "go" "go-loop") t) "\\>")
+       1 font-lock-keyword-face)
+      ;; core.async
+      (,(concat
+         "(\\(?:\.*/\\)?"
+         (regexp-opt
+          '(
+        "<!" "<!!" ">!" ">!!" "admix" "alt!" "alt!!" "alts!" "alts!!"
+        "buffer" "chan" "close!" "do-alts" "dropping-buffer" "filter<" "filter>"
+        "go" "go-loop" "into" "map" "map<" "map>" "mapcat<" "mapcat>" "merge"
+        "mix" "mult" "onto-chan" "partition" "partition-by" "pipe" "pub" "put!"
+        "reduce" "remove<" "remove>" "sliding-buffer" "solo-mode" "split" "sub"
+        "take" "take!" "tap" "thread" "thread-call" "timeout" "to-chan" "toggle"
+        "unblocking-buffer?" "unique" "unmix" "unmix-all" "unsub" "unsub-all"
+        "untap" "untap-all"
+        ) t)
+         "\\>")
+       1 font-lock-builtin-face)
       ;; Constant values (keywords), including as metadata e.g. ^:static
       ("\\<^?:\\(\\sw\\|\\s_\\)+\\(\\>\\|\\_>\\)" 0 font-lock-constant-face)
       ;; Meta type hint #^Type or ^Type
@@ -942,7 +963,14 @@ use (put-clojure-indent 'some-symbol 'defun)."
   (testing 1)
   (deftest 'defun)
   (are 1)
-  (use-fixtures 'defun))
+  (use-fixtures 'defun)
+
+  ;; core.async
+  (alt! 0)
+  (alt!! 0)
+  (go 0)
+  (go-loop 1)
+  (thread 0))
 
 
 
