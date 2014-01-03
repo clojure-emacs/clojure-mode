@@ -296,7 +296,12 @@
 
       ;;; ## Java interop highlighting ##
       ;; .foo .barBaz .qux01 .-flibble .-flibbleWobble
-      ("\\<\\.-?[a-z][a-zA-Z0-9]*\\>"
+      (,(rx word-start
+            ?.
+            (optional ?-)
+            (any "a-z")
+            (zero-or-more (any "a-z" "A-Z" "0-9"))
+            word-end)
        0 font-lock-preprocessor-face)
       ;; Foo Bar$Baz Qux_ World_OpenUDP
       (,(rx word-start
