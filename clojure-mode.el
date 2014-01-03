@@ -302,7 +302,13 @@
       ("\\<[A-Z][a-zA-Z0-9_]*[a-zA-Z0-9/$_]+\\>"
        0 font-lock-preprocessor-face)
       ;; Foo/Bar foo.bar.Baz foo.Bar/baz
-      ("\\<[a-zA-Z]+\\.[a-zA-Z0-9._]*[A-Z]+[a-zA-Z0-9/.$]*\\>"
+      (,(rx word-start
+            (one-or-more (any "a-z" "A-Z"))
+            ?.
+            (zero-or-more (any "a-z" "A-Z" "0-9" ?. ?_))
+            (one-or-more (any "A-Z"))
+            (zero-or-more (any "a-z" "A-Z" "0-9" ?/ ?. ?$))
+            word-end)
        0 font-lock-preprocessor-face)
       ;; fooBar
       (,(rx (zero-or-more (any "a-z"))
