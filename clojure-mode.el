@@ -111,11 +111,10 @@
        (1 font-lock-keyword-face)
        (2 font-lock-function-name-face nil t))
       ;; Deprecated functions
-      (,(concat
-         "(\\(?:clojure.core/\\)?"
-         (regexp-opt
-          '("add-watcher" "remove-watcher" "add-classpath") t)
-         "\\>")
+      (,(rx ?\(
+            (optional "clojure.core/")
+            (submatch (or "add-watcher" "remove-watcher" "add-classpath"))
+            word-end)
        1 font-lock-warning-face)
       ;; Control structures
       (,(rx ?\(
