@@ -100,14 +100,28 @@
        (1 font-lock-keyword-face)
        (2 font-lock-function-name-face nil t))
 
-      (,(concat "(\\(\\(?:[a-z\.-]+/\\)?def\[a-z\-\]*-?\\)"
-                ;; Function declarations.
-                "\\>"
-                ;; Any whitespace
-                "[ \r\n\t]*"
-                ;; Possibly type or metadata
-                "\\(?:#?^\\(?:{[^}]*}\\|\\sw+\\)[ \r\n\t]*\\)*"
-                "\\(\\sw+\\)?")
+      (,(rx ?\(
+            (submatch (optional (one-or-more (any "a-z" ?. ?-))
+                                ?/)
+                      "def"
+                      (zero-or-more (any "a-z" ?-))
+                      (optional ?-))
+            ;; Function declarations
+            word-end
+            ;; Any whitespace
+            (zero-or-more (any " \r\n\t"))
+            ;; Possibly type or metadata
+            (zero-or-more (optional ?#)
+                          ?^
+                          (or (and ?{
+                                   (zero-or-more (not-char ?}))
+                                   ?})
+                              (one-or-more
+                               (syntax word)))
+                          (zero-or-more
+                           (any " \r\n\t")))
+            (optional (submatch
+                       (one-or-more (syntax word)))))
        (1 font-lock-keyword-face)
        (2 font-lock-function-name-face nil t))
       ;; Deprecated functions
