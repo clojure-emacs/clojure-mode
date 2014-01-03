@@ -118,23 +118,22 @@
          "\\>")
        1 font-lock-warning-face)
       ;; Control structures
-      (,(concat
-         "(\\(?:clojure.core/\\)?"
-         (regexp-opt
-          '("let" "letfn" "do"
-            "case" "cond" "condp"
-            "for" "loop" "recur"
-            "when" "when-not" "when-let" "when-first"
-            "if" "if-let" "if-not"
-            "." ".." "->" "->>" "doto"
-            "and" "or"
-            "dosync" "doseq" "dotimes" "dorun" "doall"
-            "load" "import" "unimport" "ns" "in-ns" "refer"
-            "try" "catch" "finally" "throw"
-            "with-open" "with-local-vars" "binding"
-            "gen-class" "gen-and-load-class" "gen-and-save-class"
-            "handler-case" "handle") t)
-         "\\>")
+      (,(rx ?\(
+            (optional "clojure.core/")
+            (submatch (or "let" "letfn" "do"
+                          "case" "cond" "condp"
+                          "for" "loop" "recur"
+                          "when" "when-not" "when-let" "when-first"
+                          "if" "if-let" "if-not"
+                          "." ".." "->" "->>" "doto"
+                          "and" "or"
+                          "dosync" "doseq" "dotimes" "dorun" "doall"
+                          "load" "import" "unimport" "ns" "in-ns" "refer"
+                          "try" "catch" "finally" "throw"
+                          "with-open" "with-local-vars" "binding"
+                          "gen-class" "gen-and-load-class" "gen-and-save-class"
+                          "handler-case" "handle"))
+            word-end)
        1 font-lock-keyword-face)
       ;; Built-ins
       (,(rx ?\(
