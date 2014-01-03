@@ -305,7 +305,11 @@
       ("\\<[a-zA-Z]+\\.[a-zA-Z0-9._]*[A-Z]+[a-zA-Z0-9/.$]*\\>"
        0 font-lock-preprocessor-face)
       ;; fooBar
-      ("[a-z]*[A-Z]+[a-z][a-zA-Z0-9$]*\\>"
+      (,(rx (zero-or-more (any "a-z"))
+            (one-or-more (any "A-Z"))
+            (any "a-z")
+            (zero-or-more (any "a-z" "A-Z" "0-9" ?$))
+            word-end)
        0 font-lock-preprocessor-face)
       ;; Foo. BarBaz. Qux$Quux. Corge9.
       (,(rx word-start
