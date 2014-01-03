@@ -287,7 +287,14 @@
          "\\>")
        1 font-lock-builtin-face)
       ;; Constant values (keywords), including as metadata e.g. ^:static
-      ("\\<^?:\\(\\sw\\|\\s_\\)+\\(\\>\\|\\_>\\)"
+      (,(rx word-start
+            (optional ?^)
+            ?:
+            (one-or-more (submatch
+                          (or (syntax word)
+                              (syntax symbol))))
+            (submatch
+             (or word-end symbol-end)))
        0 font-lock-constant-face)
       ;; Meta type hint #^Type or ^Type
       (,(rx (submatch (optional ?#)
