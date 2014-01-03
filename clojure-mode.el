@@ -290,7 +290,13 @@
       ("\\<^?:\\(\\sw\\|\\s_\\)+\\(\\>\\|\\_>\\)"
        0 font-lock-constant-face)
       ;; Meta type hint #^Type or ^Type
-      ("\\(#?^\\)\\(\\(\\sw\\|\\s_\\)+\\)"
+      (,(rx (submatch (optional ?#)
+                      ?^)
+            (submatch
+             (one-or-more
+              (submatch
+               (or (syntax word)
+                   (syntax symbol))))))
        (1 font-lock-preprocessor-face)
        (2 font-lock-type-face))
 
