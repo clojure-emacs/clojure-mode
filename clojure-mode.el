@@ -287,18 +287,29 @@
          "\\>")
        1 font-lock-builtin-face)
       ;; Constant values (keywords), including as metadata e.g. ^:static
-      ("\\<^?:\\(\\sw\\|\\s_\\)+\\(\\>\\|\\_>\\)" 0 font-lock-constant-face)
+      ("\\<^?:\\(\\sw\\|\\s_\\)+\\(\\>\\|\\_>\\)"
+       0 font-lock-constant-face)
       ;; Meta type hint #^Type or ^Type
       ("\\(#?^\\)\\(\\(\\sw\\|\\s_\\)+\\)"
        (1 font-lock-preprocessor-face)
        (2 font-lock-type-face))
 
-      ;;Java interop highlighting
-      ("\\<\\.-?[a-z][a-zA-Z0-9]*\\>" 0 font-lock-preprocessor-face) ;; .foo .barBaz .qux01 .-flibble .-flibbleWobble
-      ("\\<[A-Z][a-zA-Z0-9_]*[a-zA-Z0-9/$_]+\\>" 0 font-lock-preprocessor-face) ;; Foo Bar$Baz Qux_ World_OpenUDP
-      ("\\<[a-zA-Z]+\\.[a-zA-Z0-9._]*[A-Z]+[a-zA-Z0-9/.$]*\\>" 0 font-lock-preprocessor-face) ;; Foo/Bar foo.bar.Baz foo.Bar/baz
-      ("[a-z]*[A-Z]+[a-z][a-zA-Z0-9$]*\\>" 0 font-lock-preprocessor-face) ;; fooBar
-      ("\\<[A-Z][a-zA-Z0-9$]*\\.\\>" 0 font-lock-type-face) ;; Foo. BarBaz. Qux$Quux. Corge9.
+      ;;; ## Java interop highlighting ##
+      ;; .foo .barBaz .qux01 .-flibble .-flibbleWobble
+      ("\\<\\.-?[a-z][a-zA-Z0-9]*\\>"
+       0 font-lock-preprocessor-face)
+      ;; Foo Bar$Baz Qux_ World_OpenUDP
+      ("\\<[A-Z][a-zA-Z0-9_]*[a-zA-Z0-9/$_]+\\>"
+       0 font-lock-preprocessor-face)
+      ;; Foo/Bar foo.bar.Baz foo.Bar/baz
+      ("\\<[a-zA-Z]+\\.[a-zA-Z0-9._]*[A-Z]+[a-zA-Z0-9/.$]*\\>"
+       0 font-lock-preprocessor-face)
+      ;; fooBar
+      ("[a-z]*[A-Z]+[a-z][a-zA-Z0-9$]*\\>"
+       0 font-lock-preprocessor-face)
+      ;; Foo. BarBaz. Qux$Quux. Corge9.
+      ("\\<[A-Z][a-zA-Z0-9$]*\\.\\>"
+       0 font-lock-type-face)
       ;; Highlight grouping constructs in regular expressions
       (clojure-mode-font-lock-regexp-groups
        (1 'font-lock-regexp-grouping-construct prepend))))
