@@ -299,7 +299,11 @@
       ("\\<\\.-?[a-z][a-zA-Z0-9]*\\>"
        0 font-lock-preprocessor-face)
       ;; Foo Bar$Baz Qux_ World_OpenUDP
-      ("\\<[A-Z][a-zA-Z0-9_]*[a-zA-Z0-9/$_]+\\>"
+      (,(rx word-start
+            (any "A-Z")
+            (zero-or-more (any "a-z" "A-Z" "0-9" ?_))
+            (one-or-more (any "a-z" "A-Z" "0-9" ?/ ?$ ?_))
+            word-end)
        0 font-lock-preprocessor-face)
       ;; Foo/Bar foo.bar.Baz foo.Bar/baz
       (,(rx word-start
