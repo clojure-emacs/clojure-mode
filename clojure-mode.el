@@ -92,11 +92,18 @@
        (1 font-lock-keyword-face)
        (2 font-lock-function-name-face nil t))
       ;; (fn name? args ...)
-      (,(concat "(\\(?:clojure.core/\\)?\\(fn\\)[ \t]+"
-                ;; Possibly type
-                "\\(?:#?^\\sw+[ \t]*\\)?"
-                ;; Possibly name
-                "\\(t\\sw+\\)?" )
+      (,(rx ?\(
+            (optional "clojure.core/")
+            (submatch "fn")
+            (one-or-more (any " \t"))
+            ;; Possibly type
+            (optional (optional ?#)
+                      ?^
+                      (one-or-more (syntax word))
+                      (zero-or-more (any " \t")))
+            ;; Possibly name
+            (optional (submatch "t"
+                                (one-or-more (syntax word)))))
        (1 font-lock-keyword-face)
        (2 font-lock-function-name-face nil t))
 
