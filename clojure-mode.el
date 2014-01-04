@@ -77,18 +77,29 @@
 (defconst clojure-font-lock-keywords
   (eval-when-compile
     `( ;; Definitions.
-      (,(concat "(\\(?:clojure.core/\\)?\\("
-                (regexp-opt '("defn" "defn-" "def" "defonce"
-                              "defmulti" "defmethod" "defmacro"
-                              "defstruct" "deftype" "defprotocol"
-                              "defrecord" "deftest" "def\\[a-z\\]"))
-                ;; Function declarations.
-                "\\)\\>"
-                ;; Any whitespace
-                "[ \r\n\t]*"
-                ;; Possibly type or metadata
-                "\\(?:#?^\\(?:{[^}]*}\\|\\sw+\\)[ \r\n\t]*\\)*"
-                "\\(\\sw+\\)?")
+      (,(rx ?\(
+            (optional "clojure.core/")
+            (submatch (or "defn" "defn-" "def" "defonce"
+                          "defmulti" "defmethod" "defmacro"
+                          "defstruct" "deftype" "defprotocol"
+                          "defrecord" "deftest" (and "def"
+                                                     (any "a-z"))))
+            ;; Function declarations.
+            word-end
+            ;; Any whitespace
+            (zero-or-more (any " \r\n\t"))
+            ;; Possibly type or metadata
+            (zero-or-more (optional ?#)
+                          ?^
+                          (or (and ?{
+                                   (zero-or-more (not-char ?}))
+                                   ?})
+                              (one-or-more
+                               (syntax word)))
+                          (zero-or-more
+                           (any " \r\n\t")))
+            (optional (submatch
+                       (one-or-more (syntax word)))))
        (1 font-lock-keyword-face)
        (2 font-lock-function-name-face nil t))
       ;; (fn name? args ...)
