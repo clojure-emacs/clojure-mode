@@ -377,6 +377,7 @@ in :db/id[:db.part/user]"
     (define-key map (kbd "C-c C-t") 'clojure-jump-between-tests-and-code)
     (define-key map (kbd "C-c C-z") 'clojure-display-inferior-lisp-buffer)
     (define-key map (kbd "C-c M-q") 'clojure-fill-docstring)
+    (define-key map (kbd "C-c C-a") 'clojure-edit-namespace)
     (define-key map (kbd "C-:") 'clojure-toggle-keyword-string)
     map)
   "Keymap for Clojure mode.  Inherits from `lisp-mode-shared-map'.")
@@ -1168,6 +1169,43 @@ Useful if a file has been renamed."
           (match-string-no-properties 4))))))
 
 (define-obsolete-function-alias 'clojure-find-package 'clojure-find-ns)
+
+;; Edit the namespace without moving in the current buffer
+(defun clojure-find-ns-location ()
+  "Return the start of the namespace declaration."
+  (interactive)
+  (save-match-data
+    (save-excursion
+      (goto-char (point-min))
+      (when (re-search-forward clojure-namespace-name-regex nil t)
+        (match-beginning 0)))))
+
+(defun clojure-indirect-namespace-buffer-name (file)
+  "Return a buffer name in which to edit the namespace
+for the given FILE."
+  (concat "*Namespace: "
+          (file-name-nondirectory file) "*"))
+
+(defun clojure-edit-namespace ()
+  "Edit the namespace in a temporary buffer."
+  (interactive)
+  (let ((ns-location
+         (clojure-find-ns-location)))
+    (unless ns-location
+      (message "Cannot locate namespace form"))
+    ;; check if buffer already exists, is so switch to it
+    (let* ((ns-buffer-name
+           (clojure-indirect-namespace-buffer-name
+            (buffer-file-name (current-buffer))))
+           (ns-buffer
+            (or (get-buffer ns-buffer-name)
+                (prog1
+                    (clone-indirect-buffer ns-buffer-name t)
+                  (goto-char ns-location)
+                  (narrow-to-region
+                   (car (bounds-of-thing-at-point 'sexp))
+                   (cdr (bounds-of-thing-at-point 'sexp)))))))
+      (switch-to-buffer ns-buffer-name))))
 
 ;; Test navigation:
 (defun clojure-in-tests-p ()
