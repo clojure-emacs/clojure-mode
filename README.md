@@ -142,41 +142,6 @@ in summary; this is one attempt:
 Please see the docstrings of the elisp functions/vars noted above for
 information about customizing this indentation behaviour.
 
-### "Always 2 spaces" option
-
-A simplified indentation style is available by setting
-`clojure-defun-style-default-indent` to true in e.g. your `init.el`:
-
-```
-(setq clojure-defun-style-default-indent t)
-```
-
-This causes "defun" indentation rules to apply by default for any parenthesized
-form that does not otherwise have an indentation rule set on
-`clojure-indent-function`.  The practical effect is that nearly all
-parenthesized forms are indented with two spaces, regardless of the position of
-the first argument.
-
-So, clojure-mode defaults would format code like this:
-
-```clojure
-(some-very-long-function-name arg1
-                              (other-long-function-name arg2
-                                                        arg3))
-```
-
-whereas turning on the "always 2 spaces" option yields this:
-
-```clojure
-(some-very-long-function-name arg1
-  (other-long-function-name arg2
-    arg3))
-```
-
-Aside from horizontal "stride", this option eliminates the need to maintain
-local configuration in order to indent the bodies of projects' macros
-"properly", since all parenthesized forms are treated identically.
-
 ## License
 
 Copyright © 2007-2013 Jeffrey Chu, Lennart Staflin, Phil Hagelberg,
