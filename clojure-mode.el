@@ -228,7 +228,7 @@
         "set-validator!" "set?" "short" "short-array" "shorts"
         "shutdown-agents" "slurp" "some" "some->" "some->>" "sort" "sort-by"
         "sorted-map" "sorted-map-by" "sorted-set" "sorted-set-by" "sorted?"
-        "special-form-anchor" "special-symbol?" "spit" "split-at" "split-with" "str"
+        "special-form-anchor" "special-symbol?" "specify" "specify!" "spit" "split-at" "split-with" "str"
         "stream?" "string?" "struct" "struct-map" "subs"
         "subseq" "subvec" "supers" "swap!" "symbol"
         "symbol?" "sync" "syntax-symbol-anchor" "take" "take-last"
@@ -879,6 +879,8 @@ Will upwards in an sexp to check for contextual indenting."
 (put 'defprotocol 'clojure-backtracking-indent '(4 (2)))
 (put 'extend-type 'clojure-backtracking-indent '(4 (2)))
 (put 'extend-protocol 'clojure-backtracking-indent '(4 (2)))
+(put 'specify 'clojure-backtracking-indent '(4 (2)))
+(put 'specify! 'clojure-backtracking-indent '(4 (2)))
 
 (defun put-clojure-indent (sym indent)
   (put sym 'clojure-indent-function indent))
