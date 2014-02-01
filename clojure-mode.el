@@ -182,7 +182,7 @@
         "false?" "ffirst" "file-seq" "filter" "filterv" "find" "find-doc"
         "find-ns" "find-var" "first" "flatten" "float" "float-array"
         "float?" "floats" "flush" "fn" "fn?"
-        "fnext" "force" "format" "future"
+        "fnext" "force" "format" "frequencies" "future"
         "future-call" "future-cancel" "future-cancelled?" "future-done?" "future?"
         "gen-interface" "gensym" "get" "get-in"
         "get-method" "get-proxy-class" "get-thread-bindings" "get-validator" "group-by"
