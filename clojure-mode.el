@@ -554,7 +554,7 @@ if that value is non-nil."
 (defun clojure-match-next-def ()
   "Scans the buffer backwards for the next top-level definition.
 Called by `imenu--generic-function'."
-  (when (re-search-backward "^(def\sw*" nil t)
+  (when (re-search-backward "^(def\\sw*" nil t)
     (save-excursion
       (let (found?
             (start (point)))
