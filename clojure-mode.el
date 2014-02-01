@@ -191,7 +191,7 @@
         "init-proxy" "instance?" "int" "int-array" "integer?"
         "interleave" "intern" "interpose" "into" "into-array"
         "ints" "io!" "isa?" "iterate" "iterator-seq"
-        "juxt" "key" "keys" "keyword" "keyword?"
+        "juxt" "keep" "keep-indexed" "key" "keys" "keyword" "keyword?"
         "last" "lazy-cat" "lazy-seq"
         "line-seq" "list" "list*" "list?"
         "load-file" "load-reader" "load-string" "loaded-libs" "locking"
