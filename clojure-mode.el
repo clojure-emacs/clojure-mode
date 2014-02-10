@@ -321,6 +321,10 @@
       ("\\<[a-zA-Z]+\\.[a-zA-Z0-9._]*[A-Z]+[a-zA-Z0-9/.$]*\\>" 0 font-lock-preprocessor-face) ;; Foo/Bar foo.bar.Baz foo.Bar/baz
       ("[a-z]*[A-Z]+[a-z][a-zA-Z0-9$]*\\>" 0 font-lock-preprocessor-face) ;; fooBar
       ("\\<[A-Z][a-zA-Z0-9$]*\\.\\>" 0 font-lock-type-face) ;; Foo. BarBaz. Qux$Quux. Corge9.
+      
+      ;; Anything list that doesn't match, treat as function call
+      ("(\\(\\w+\\)" 1 font-lock-function-name-face) ;; List as function name : (foo
+      
       ;; Highlight grouping constructs in regular expressions
       (clojure-mode-font-lock-regexp-groups
        (1 'font-lock-regexp-grouping-construct prepend))))
