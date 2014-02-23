@@ -160,7 +160,7 @@
         "bigdec" "bigint" "bit-and" "bit-and-not"
         "bit-clear" "bit-flip" "bit-not" "bit-or" "bit-set"
         "bit-shift-left" "bit-shift-right" "bit-test" "bit-xor" "boolean"
-        "boolean-array" "booleans" "bound-fn" "bound-fn*" "butlast"
+        "boolean-array" "booleans" "bound-fn" "bound-fn*" "bound?" "butlast"
         "byte" "byte-array" "bytes" "cast" "char"
         "char-array" "char-escape-string" "char-name-string" "char?" "chars"
         "chunk" "chunk-append" "chunk-buffer" "chunk-cons" "chunk-first"
