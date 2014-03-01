@@ -398,7 +398,6 @@ in :db/id[:db.part/user]"
     (define-key map (kbd "C-c C-r") 'lisp-eval-region)
     (define-key map (kbd "C-c C-t") 'clojure-jump-between-tests-and-code)
     (define-key map (kbd "C-c C-z") 'clojure-display-inferior-lisp-buffer)
-    (define-key map (kbd "C-c M-q") 'clojure-fill-docstring)
     (define-key map (kbd "C-:") 'clojure-toggle-keyword-string)
     map)
   "Keymap for Clojure mode.  Inherits from `lisp-mode-shared-map'.")
@@ -415,7 +414,6 @@ in :db/id[:db.part/user]"
     ["Load File" clojure-load-file]
     "--"
     ["Toggle between string & keyword" clojure-toggle-keyword-string]
-    ["Fill Docstring" clojure-fill-docstring]
     ["Jump Between Test and Code" clojure-jump-between-tests-and-code]))
 
 (defvar clojure-mode-syntax-table
@@ -510,6 +508,7 @@ if that value is non-nil."
                 (imenu--generic-function '((nil clojure-match-next-def 0)))))
   (setq-local indent-tabs-mode nil)
   (lisp-mode-variables nil)
+  (setq fill-paragraph-function 'clojure-fill-paragraph)
   (setq-local comment-start-skip
               "\\(\\(^\\|[^\\\\\n]\\)\\(\\\\\\\\\\)*\\)\\(;+\\|#|\\) *")
   (setq-local lisp-indent-function 'clojure-indent-function)
@@ -530,6 +529,13 @@ if that value is non-nil."
                              'clojure-space-for-delimiter-p)
                 (add-to-list 'paredit-space-for-delimiter-predicates
                              'clojure-no-space-after-tag)))))
+
+(defun clojure-fill-paragraph (&optional justify)
+  "Use `clojure-fill-docstring' in docstrings.
+Use `fill-paragraph-function' elsewhere."
+  (if (eq (get-text-property (point) 'face) 'font-lock-doc-face)
+      (clojure-fill-docstring)
+    (lisp-fill-paragraph justify)))
 
 (defun clojure-display-inferior-lisp-buffer ()
   "Display a buffer bound to `inferior-lisp-buffer'."
@@ -1075,16 +1081,13 @@ returned."
 (defvar clojure-docstring-indent-level 2)
 
 (defun clojure-fill-docstring ()
-  "Fill the definition that the point is on appropriate for Clojure.
+  "Fill docstring under point.
 
 Fills so that every paragraph has a minimum of two initial spaces,
 with the exception of the first line.  Fill margins are taken from
 paragraph start, so a paragraph that begins with four spaces will
 remain indented by four spaces after refilling."
   (interactive)
-  (if (and (fboundp 'paredit-in-string-p) paredit-mode)
-      (unless (paredit-in-string-p)
-        (error "Must be inside a string")))
   ;; Oddly, save-excursion doesn't do a good job of preserving point.
   ;; It's probably because we delete the string and then re-insert it.
   (let ((old-point (point)))
@@ -1104,7 +1107,8 @@ remain indented by four spaces after refilling."
                (delete-trailing-whitespace)
                (setq fill-column clojure-fill-column)
                (fill-region (point-min) (point-max))
-               (buffer-substring-no-properties (+ clojure-docstring-indent-level (point-min)) (point-max))))))))
+               (buffer-substring-no-properties
+		(+ clojure-docstring-indent-level (point-min)) (point-max))))))))
     (goto-char old-point)))
 
 
