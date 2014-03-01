@@ -398,7 +398,6 @@ in :db/id[:db.part/user]"
     (define-key map (kbd "C-c C-r") 'lisp-eval-region)
     (define-key map (kbd "C-c C-t") 'clojure-jump-between-tests-and-code)
     (define-key map (kbd "C-c C-z") 'clojure-display-inferior-lisp-buffer)
-    (define-key map (kbd "C-c M-q") 'clojure-fill-docstring)
     (define-key map (kbd "C-:") 'clojure-toggle-keyword-string)
     map)
   "Keymap for Clojure mode.  Inherits from `lisp-mode-shared-map'.")
@@ -415,7 +414,6 @@ in :db/id[:db.part/user]"
     ["Load File" clojure-load-file]
     "--"
     ["Toggle between string & keyword" clojure-toggle-keyword-string]
-    ["Fill Docstring" clojure-fill-docstring]
     ["Jump Between Test and Code" clojure-jump-between-tests-and-code]))
 
 (defvar clojure-mode-syntax-table
