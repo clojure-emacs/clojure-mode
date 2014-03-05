@@ -968,6 +968,11 @@ use (put-clojure-indent 'some-symbol 'defun)."
   (are 1)
   (use-fixtures 'defun)
 
+  ;; core.logic
+  (run 'defun)
+  (run* 'defun)
+  (fresh 'defun)
+  
   ;; core.async
   (alt! 0)
   (alt!! 0)
