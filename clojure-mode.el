@@ -142,109 +142,109 @@
          "(\\(?:clojure.core/\\)?"
          (regexp-opt
           '("*" "*1" "*2" "*3" "*agent*"
-        "*allow-unresolved-vars*" "*assert*" "*clojure-version*" "*command-line-args*" "*compile-files*"
-        "*compile-path*" "*e" "*err*" "*file*" "*flush-on-newline*"
-        "*in*" "*macro-meta*" "*math-context*" "*ns*" "*out*"
-        "*print-dup*" "*print-length*" "*print-level*" "*print-meta*" "*print-readably*"
-        "*read-eval*" "*source-path*" "*use-context-classloader*" "*warn-on-reflection*" "+"
-        "-" "/"
-        "<" "<=" "=" "==" ">"
-        ">=" "accessor" "aclone"
-        "agent" "agent-errors" "aget" "alength" "alias"
-        "all-ns" "alter" "alter-meta!" "alter-var-root" "amap"
-        "ancestors" "apply" "areduce" "array-map" "as->"
-        "aset" "aset-boolean" "aset-byte" "aset-char" "aset-double"
-        "aset-float" "aset-int" "aset-long" "aset-short" "assert"
-        "assoc" "assoc!" "assoc-in" "associative?" "atom"
-        "await" "await-for" "await1" "bases" "bean"
-        "bigdec" "bigint" "bit-and" "bit-and-not"
-        "bit-clear" "bit-flip" "bit-not" "bit-or" "bit-set"
-        "bit-shift-left" "bit-shift-right" "bit-test" "bit-xor" "boolean"
-        "boolean-array" "booleans" "bound-fn" "bound-fn*" "butlast"
-        "byte" "byte-array" "bytes" "cast" "char"
-        "char-array" "char-escape-string" "char-name-string" "char?" "chars"
-        "chunk" "chunk-append" "chunk-buffer" "chunk-cons" "chunk-first"
-        "chunk-next" "chunk-rest" "chunked-seq?" "class" "class?"
-        "clear-agent-errors" "clojure-version" "coll?" "comment" "commute"
-        "comp" "comparator" "compare" "compare-and-set!" "compile"
-        "complement" "concat" "cond->" "cond->>" "conj"
-        "conj!" "cons" "constantly" "construct-proxy" "contains?"
-        "count" "counted?" "create-ns" "create-struct" "cycle"
-        "dec" "decimal?" "declare" "definline" "defmacro"
-        "defmethod" "defmulti" "defn" "defn-" "defonce"
-        "defstruct" "delay" "delay?" "deliver" "deref"
-        "derive" "descendants" "destructure" "disj" "disj!"
-        "dissoc" "dissoc!" "distinct" "distinct?"
-        "doc"
-        "double" "double-array" "doubles" "drop"
-        "drop-last" "drop-while" "empty" "empty?" "ensure"
-        "enumeration-seq" "eval" "even?" "every?"
-        "extend" "extend-protocol" "extend-type" "extends?" "extenders" "ex-info" "ex-data"
-        "false?" "ffirst" "file-seq" "filter" "filterv" "find" "find-doc"
-        "find-ns" "find-var" "first" "flatten" "float" "float-array"
-        "float?" "floats" "flush" "fn" "fn?"
-        "fnext" "force" "format" "frequencies" "future"
-        "future-call" "future-cancel" "future-cancelled?" "future-done?" "future?"
-        "gen-interface" "gensym" "get" "get-in"
-        "get-method" "get-proxy-class" "get-thread-bindings" "get-validator" "group-by"
-        "hash" "hash-map" "hash-set" "identical?" "identity"
-        "ifn?" "inc"
-        "init-proxy" "instance?" "int" "int-array" "integer?"
-        "interleave" "intern" "interpose" "into" "into-array"
-        "ints" "io!" "isa?" "iterate" "iterator-seq"
-        "juxt" "keep" "keep-indexed" "key" "keys" "keyword" "keyword?"
-        "last" "lazy-cat" "lazy-seq"
-        "line-seq" "list" "list*" "list?"
-        "load-file" "load-reader" "load-string" "loaded-libs" "locking"
-        "long" "long-array" "longs" "macroexpand"
-        "macroexpand-1" "make-array" "make-hierarchy" "map" "mapv" "map?"
-        "map-indexed" "mapcat" "max" "max-key" "memfn" "memoize"
-        "merge" "merge-with" "meta" "method-sig" "methods"
-        "min" "min-key" "mod" "name" "namespace"
-        "neg?" "newline" "next" "nfirst" "nil?"
-        "nnext" "not" "not-any?" "not-empty" "not-every?"
-        "not=" "ns-aliases" "ns-imports" "ns-interns"
-        "ns-map" "ns-name" "ns-publics" "ns-refers" "ns-resolve"
-        "ns-unalias" "ns-unmap" "nth" "nthnext" "num"
-        "number?" "odd?" "parents" "partial"
-        "partition" "partition-all" "partition-by" "pcalls" "peek" "persistent!" "pmap"
-        "pop" "pop!" "pop-thread-bindings" "pos?" "pr"
-        "pr-str" "prefer-method" "prefers" "primitives-classnames" "print"
-        "print-ctor" "print-doc" "print-dup" "print-method" "print-namespace-doc"
-        "print-simple" "print-special-doc" "print-str" "printf" "println"
-        "println-str" "prn" "prn-str" "promise" "proxy"
-        "proxy-call-with-super" "proxy-mappings" "proxy-name" "proxy-super" "push-thread-bindings"
-        "pvalues" "quot" "rand" "rand-int" "range"
-        "ratio?" "rational?" "rationalize" "re-find" "re-groups"
-        "re-matcher" "re-matches" "re-pattern" "re-seq" "read"
-        "read-line" "read-string" "reify" "reduce" "reduce-kv" "ref" "ref-history-count"
-        "ref-max-history" "ref-min-history" "ref-set" "refer-clojure"
-        "release-pending-sends" "rem" "remove" "remove-method" "remove-ns"
-        "repeat" "repeatedly" "replace" "replicate"
-        "require" "reset!" "reset-meta!" "resolve" "rest"
-        "resultset-seq" "reverse" "reversible?" "rseq" "rsubseq"
-        "satisfies?" "second" "select-keys" "send" "send-off" "send-via" "seq"
-        "seq?" "seque" "sequence" "sequential?" "set"
-        "set-agent-send-executor!" "set-agent-send-off-executor!"
-        "set-validator!" "set?" "short" "short-array" "shorts"
-        "shutdown-agents" "slurp" "some" "some->" "some->>" "sort" "sort-by"
-        "sorted-map" "sorted-map-by" "sorted-set" "sorted-set-by" "sorted?"
-        "special-form-anchor" "special-symbol?" "specify" "specify!" "spit" "split-at" "split-with" "str"
-        "stream?" "string?" "struct" "struct-map" "subs"
-        "subseq" "subvec" "supers" "swap!" "symbol"
-        "symbol?" "sync" "syntax-symbol-anchor" "take" "take-last"
-        "take-nth" "take-while" "test" "the-ns" "time"
-        "to-array" "to-array-2d" "trampoline" "transient" "tree-seq"
-        "true?" "type" "unchecked-add" "unchecked-dec" "unchecked-divide"
-        "unchecked-inc" "unchecked-multiply" "unchecked-negate" "unchecked-remainder" "unchecked-subtract"
-        "underive" "unquote" "unquote-splicing" "update-in" "update-proxy"
-        "use" "val" "vals" "var-get" "var-set"
-        "var?" "vary-meta" "vec" "vector" "vector?"
-        "while"
-        "with-bindings" "with-bindings*" "with-in-str" "with-loading-context"
-        "with-meta" "with-out-str" "with-precision"
-        "with-redefs" "with-redefs-fn" "xml-seq" "zero?" "zipmap"
-        ) t)
+            "*allow-unresolved-vars*" "*assert*" "*clojure-version*" "*command-line-args*" "*compile-files*"
+            "*compile-path*" "*e" "*err*" "*file*" "*flush-on-newline*"
+            "*in*" "*macro-meta*" "*math-context*" "*ns*" "*out*"
+            "*print-dup*" "*print-length*" "*print-level*" "*print-meta*" "*print-readably*"
+            "*read-eval*" "*source-path*" "*use-context-classloader*" "*warn-on-reflection*" "+"
+            "-" "/"
+            "<" "<=" "=" "==" ">"
+            ">=" "accessor" "aclone"
+            "agent" "agent-errors" "aget" "alength" "alias"
+            "all-ns" "alter" "alter-meta!" "alter-var-root" "amap"
+            "ancestors" "apply" "areduce" "array-map" "as->"
+            "aset" "aset-boolean" "aset-byte" "aset-char" "aset-double"
+            "aset-float" "aset-int" "aset-long" "aset-short" "assert"
+            "assoc" "assoc!" "assoc-in" "associative?" "atom"
+            "await" "await-for" "await1" "bases" "bean"
+            "bigdec" "bigint" "bit-and" "bit-and-not"
+            "bit-clear" "bit-flip" "bit-not" "bit-or" "bit-set"
+            "bit-shift-left" "bit-shift-right" "bit-test" "bit-xor" "boolean"
+            "boolean-array" "booleans" "bound-fn" "bound-fn*" "butlast"
+            "byte" "byte-array" "bytes" "cast" "char"
+            "char-array" "char-escape-string" "char-name-string" "char?" "chars"
+            "chunk" "chunk-append" "chunk-buffer" "chunk-cons" "chunk-first"
+            "chunk-next" "chunk-rest" "chunked-seq?" "class" "class?"
+            "clear-agent-errors" "clojure-version" "coll?" "comment" "commute"
+            "comp" "comparator" "compare" "compare-and-set!" "compile"
+            "complement" "concat" "cond->" "cond->>" "conj"
+            "conj!" "cons" "constantly" "construct-proxy" "contains?"
+            "count" "counted?" "create-ns" "create-struct" "cycle"
+            "dec" "decimal?" "declare" "definline" "defmacro"
+            "defmethod" "defmulti" "defn" "defn-" "defonce"
+            "defstruct" "delay" "delay?" "deliver" "deref"
+            "derive" "descendants" "destructure" "disj" "disj!"
+            "dissoc" "dissoc!" "distinct" "distinct?"
+            "doc"
+            "double" "double-array" "doubles" "drop"
+            "drop-last" "drop-while" "empty" "empty?" "ensure"
+            "enumeration-seq" "eval" "even?" "every?"
+            "extend" "extend-protocol" "extend-type" "extends?" "extenders" "ex-info" "ex-data"
+            "false?" "ffirst" "file-seq" "filter" "filterv" "find" "find-doc"
+            "find-ns" "find-var" "first" "flatten" "float" "float-array"
+            "float?" "floats" "flush" "fn" "fn?"
+            "fnext" "force" "format" "frequencies" "future"
+            "future-call" "future-cancel" "future-cancelled?" "future-done?" "future?"
+            "gen-interface" "gensym" "get" "get-in"
+            "get-method" "get-proxy-class" "get-thread-bindings" "get-validator" "group-by"
+            "hash" "hash-map" "hash-set" "identical?" "identity"
+            "ifn?" "inc"
+            "init-proxy" "instance?" "int" "int-array" "integer?"
+            "interleave" "intern" "interpose" "into" "into-array"
+            "ints" "io!" "isa?" "iterate" "iterator-seq"
+            "juxt" "keep" "keep-indexed" "key" "keys" "keyword" "keyword?"
+            "last" "lazy-cat" "lazy-seq"
+            "line-seq" "list" "list*" "list?"
+            "load-file" "load-reader" "load-string" "loaded-libs" "locking"
+            "long" "long-array" "longs" "macroexpand"
+            "macroexpand-1" "make-array" "make-hierarchy" "map" "mapv" "map?"
+            "map-indexed" "mapcat" "max" "max-key" "memfn" "memoize"
+            "merge" "merge-with" "meta" "method-sig" "methods"
+            "min" "min-key" "mod" "name" "namespace"
+            "neg?" "newline" "next" "nfirst" "nil?"
+            "nnext" "not" "not-any?" "not-empty" "not-every?"
+            "not=" "ns-aliases" "ns-imports" "ns-interns"
+            "ns-map" "ns-name" "ns-publics" "ns-refers" "ns-resolve"
+            "ns-unalias" "ns-unmap" "nth" "nthnext" "num"
+            "number?" "odd?" "parents" "partial"
+            "partition" "partition-all" "partition-by" "pcalls" "peek" "persistent!" "pmap"
+            "pop" "pop!" "pop-thread-bindings" "pos?" "pr"
+            "pr-str" "prefer-method" "prefers" "primitives-classnames" "print"
+            "print-ctor" "print-doc" "print-dup" "print-method" "print-namespace-doc"
+            "print-simple" "print-special-doc" "print-str" "printf" "println"
+            "println-str" "prn" "prn-str" "promise" "proxy"
+            "proxy-call-with-super" "proxy-mappings" "proxy-name" "proxy-super" "push-thread-bindings"
+            "pvalues" "quot" "rand" "rand-int" "range"
+            "ratio?" "rational?" "rationalize" "re-find" "re-groups"
+            "re-matcher" "re-matches" "re-pattern" "re-seq" "read"
+            "read-line" "read-string" "reify" "reduce" "reduce-kv" "ref" "ref-history-count"
+            "ref-max-history" "ref-min-history" "ref-set" "refer-clojure"
+            "release-pending-sends" "rem" "remove" "remove-method" "remove-ns"
+            "repeat" "repeatedly" "replace" "replicate"
+            "require" "reset!" "reset-meta!" "resolve" "rest"
+            "resultset-seq" "reverse" "reversible?" "rseq" "rsubseq"
+            "satisfies?" "second" "select-keys" "send" "send-off" "send-via" "seq"
+            "seq?" "seque" "sequence" "sequential?" "set"
+            "set-agent-send-executor!" "set-agent-send-off-executor!"
+            "set-validator!" "set?" "short" "short-array" "shorts"
+            "shutdown-agents" "slurp" "some" "some->" "some->>" "sort" "sort-by"
+            "sorted-map" "sorted-map-by" "sorted-set" "sorted-set-by" "sorted?"
+            "special-form-anchor" "special-symbol?" "specify" "specify!" "spit" "split-at" "split-with" "str"
+            "stream?" "string?" "struct" "struct-map" "subs"
+            "subseq" "subvec" "supers" "swap!" "symbol"
+            "symbol?" "sync" "syntax-symbol-anchor" "take" "take-last"
+            "take-nth" "take-while" "test" "the-ns" "time"
+            "to-array" "to-array-2d" "trampoline" "transient" "tree-seq"
+            "true?" "type" "unchecked-add" "unchecked-dec" "unchecked-divide"
+            "unchecked-inc" "unchecked-multiply" "unchecked-negate" "unchecked-remainder" "unchecked-subtract"
+            "underive" "unquote" "unquote-splicing" "update-in" "update-proxy"
+            "use" "val" "vals" "var-get" "var-set"
+            "var?" "vary-meta" "vec" "vector" "vector?"
+            "while"
+            "with-bindings" "with-bindings*" "with-in-str" "with-loading-context"
+            "with-meta" "with-out-str" "with-precision"
+            "with-redefs" "with-redefs-fn" "xml-seq" "zero?" "zipmap"
+            ) t)
          "\\>")
        1 font-lock-builtin-face)
       ;;Other namespaces in clojure.jar
@@ -252,39 +252,39 @@
          "(\\(?:\.*/\\)?"
          (regexp-opt
           '(;; clojure.inspector
-        "atom?" "collection-tag" "get-child" "get-child-count" "inspect"
-        "inspect-table" "inspect-tree" "is-leaf" "list-model" "list-provider"
-        ;; clojure.main
-        "load-script" "main" "repl" "repl-caught" "repl-exception"
-        "repl-prompt" "repl-read" "skip-if-eol" "skip-whitespace" "with-bindings"
-        ;; clojure.set
-        "difference" "index" "intersection" "join" "map-invert"
-        "project" "rename" "rename-keys" "select" "union"
-        ;; clojure.stacktrace
-        "e" "print-cause-trace" "print-stack-trace" "print-throwable" "print-trace-element"
-        ;; clojure.template
-        "do-template" "apply-template"
-        ;; clojure.test
-        "*initial-report-counters*" "*load-tests*" "*report-counters*" "*stack-trace-depth*" "*test-out*"
-        "*testing-contexts*" "*testing-vars*" "are" "assert-any" "assert-expr"
-        "assert-predicate" "compose-fixtures" "deftest" "deftest-" "file-position"
-        "function?" "get-possibly-unbound-var" "inc-report-counter" "is" "join-fixtures"
-        "report" "run-all-tests" "run-tests" "set-test" "successful?"
-        "test-all-vars" "test-ns" "test-var" "testing" "testing-contexts-str"
-        "testing-vars-str" "try-expr" "use-fixtures" "with-test" "with-test-out"
-        ;; clojure.walk
-        "keywordize-keys" "macroexpand-all" "postwalk" "postwalk-demo" "postwalk-replace"
-        "prewalk" "prewalk-demo" "prewalk-replace" "stringify-keys" "walk"
-        ;; clojure.xml
-        "*current*" "*sb*" "*stack*" "*state*" "attrs"
-        "content" "content-handler" "element" "emit" "emit-element"
-        ;; clojure.zip
-        "append-child" "branch?" "children" "down" "edit"
-        "end?" "insert-child" "insert-left" "insert-right" "left"
-        "leftmost" "lefts" "make-node" "next" "node"
-        "path" "prev" "remove" "replace" "right"
-        "rightmost" "rights" "root" "seq-zip" "up"
-        ) t)
+            "atom?" "collection-tag" "get-child" "get-child-count" "inspect"
+            "inspect-table" "inspect-tree" "is-leaf" "list-model" "list-provider"
+            ;; clojure.main
+            "load-script" "main" "repl" "repl-caught" "repl-exception"
+            "repl-prompt" "repl-read" "skip-if-eol" "skip-whitespace" "with-bindings"
+            ;; clojure.set
+            "difference" "index" "intersection" "join" "map-invert"
+            "project" "rename" "rename-keys" "select" "union"
+            ;; clojure.stacktrace
+            "e" "print-cause-trace" "print-stack-trace" "print-throwable" "print-trace-element"
+            ;; clojure.template
+            "do-template" "apply-template"
+            ;; clojure.test
+            "*initial-report-counters*" "*load-tests*" "*report-counters*" "*stack-trace-depth*" "*test-out*"
+            "*testing-contexts*" "*testing-vars*" "are" "assert-any" "assert-expr"
+            "assert-predicate" "compose-fixtures" "deftest" "deftest-" "file-position"
+            "function?" "get-possibly-unbound-var" "inc-report-counter" "is" "join-fixtures"
+            "report" "run-all-tests" "run-tests" "set-test" "successful?"
+            "test-all-vars" "test-ns" "test-var" "testing" "testing-contexts-str"
+            "testing-vars-str" "try-expr" "use-fixtures" "with-test" "with-test-out"
+            ;; clojure.walk
+            "keywordize-keys" "macroexpand-all" "postwalk" "postwalk-demo" "postwalk-replace"
+            "prewalk" "prewalk-demo" "prewalk-replace" "stringify-keys" "walk"
+            ;; clojure.xml
+            "*current*" "*sb*" "*stack*" "*state*" "attrs"
+            "content" "content-handler" "element" "emit" "emit-element"
+            ;; clojure.zip
+            "append-child" "branch?" "children" "down" "edit"
+            "end?" "insert-child" "insert-left" "insert-right" "left"
+            "leftmost" "lefts" "make-node" "next" "node"
+            "path" "prev" "remove" "replace" "right"
+            "rightmost" "rights" "root" "seq-zip" "up"
+            ) t)
          "\\>")
        1 font-lock-builtin-face)
       ;; core.async control structures
@@ -297,15 +297,15 @@
          "(\\(?:clojure.core.async/\\)?"
          (regexp-opt
           '(
-        "<!" "<!!" ">!" ">!!" "admix" "alts!" "alts!!"
-        "buffer" "chan" "close!" "do-alts" "dropping-buffer" "filter<" "filter>"
-        "into" "map" "map<" "map>" "mapcat<" "mapcat>" "merge"
-        "mix" "mult" "onto-chan" "partition" "partition-by" "pipe" "pub" "put!"
-        "reduce" "remove<" "remove>" "sliding-buffer" "solo-mode" "split" "sub"
-        "take" "take!" "tap" "thread" "thread-call" "timeout" "to-chan" "toggle"
-        "unblocking-buffer?" "unique" "unmix" "unmix-all" "unsub" "unsub-all"
-        "untap" "untap-all"
-        ) t)
+            "<!" "<!!" ">!" ">!!" "admix" "alts!" "alts!!"
+            "buffer" "chan" "close!" "do-alts" "dropping-buffer" "filter<" "filter>"
+            "into" "map" "map<" "map>" "mapcat<" "mapcat>" "merge"
+            "mix" "mult" "onto-chan" "partition" "partition-by" "pipe" "pub" "put!"
+            "reduce" "remove<" "remove>" "sliding-buffer" "solo-mode" "split" "sub"
+            "take" "take!" "tap" "thread" "thread-call" "timeout" "to-chan" "toggle"
+            "unblocking-buffer?" "unique" "unmix" "unmix-all" "unsub" "unsub-all"
+            "untap" "untap-all"
+            ) t)
          "\\>")
        1 font-lock-builtin-face)
       ;; Constant values (keywords), including as metadata e.g. ^:static
@@ -552,7 +552,7 @@ justify as well."
   (interactive)
   (if (and inferior-lisp-buffer (get-buffer inferior-lisp-buffer))
       (pop-to-buffer inferior-lisp-buffer t)
-      (run-lisp inferior-lisp-program)))
+    (run-lisp inferior-lisp-program)))
 
 (defun clojure-load-file (file-name)
   "Load a Clojure file FILE-NAME into the inferior Clojure process."
@@ -907,7 +907,7 @@ Will upwards in an sexp to check for contextual indenting."
 (defmacro define-clojure-indent (&rest kvs)
   `(progn
      ,@(mapcar (lambda (x) `(put-clojure-indent
-                        (quote ,(first x)) ,(second x))) kvs)))
+                             (quote ,(first x)) ,(second x))) kvs)))
 
 (defun add-custom-clojure-indents (name value)
   (custom-set-default name value)
@@ -1022,7 +1022,7 @@ return nil."
 (defun clojure-char-at-point ()
   "Return the char at point or nil if at buffer end."
   (when (not (= (point) (point-max)))
-   (buffer-substring-no-properties (point) (1+ (point)))))
+    (buffer-substring-no-properties (point) (1+ (point)))))
 
 (defun clojure-char-before-point ()
   "Return the char before point or nil if at buffer beginning."
@@ -1120,7 +1120,7 @@ remain indented by four spaces after refilling."
                (setq fill-column clojure-fill-column)
                (fill-region (point-min) (point-max))
                (buffer-substring-no-properties
-		(+ clojure-docstring-indent-level (point-min)) (point-max))))))))
+                (+ clojure-docstring-indent-level (point-min)) (point-max))))))))
     (goto-char old-point)))
 
 
@@ -1268,6 +1268,7 @@ word test in it and whether the file lives under the test/ directory."
 
 ;; Local Variables:
 ;; byte-compile-warnings: (not cl-functions)
+;; indent-tabs-mode: nil
 ;; End:
 
 ;;; clojure-mode.el ends here
