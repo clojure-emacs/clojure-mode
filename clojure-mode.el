@@ -532,7 +532,10 @@ if that value is non-nil."
 
 (defun clojure-fill-paragraph (&optional justify)
   "Use `clojure-fill-docstring' in docstrings.
-Use `fill-paragraph-function' elsewhere."
+Use `fill-paragraph-function' elsewhere.
+
+If JUSTIFY is non-nil (interactively, with prefix argument),
+justify as well."
   (if (eq (get-text-property (point) 'face) 'font-lock-doc-face)
       (clojure-fill-docstring)
     (lisp-fill-paragraph justify)))
