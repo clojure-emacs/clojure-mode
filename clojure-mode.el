@@ -357,14 +357,14 @@ Clojure to load that file."
   :safe 'stringp)
 
 (defcustom clojure-defun-style-default-indent nil
-  "Default indenting of function and macro forms using defun rules unless
-otherwise defined via `put-clojure-indent`, `define-clojure-indent`, etc."
+  "When non-nil, use default indenting for functions and macros.
+Otherwise check `define-clojure-indent` and `put-clojure-indent`."
   :type 'boolean
   :group 'clojure
   :safe 'booleanp)
 
 (defcustom clojure-use-backtracking-indent t
-  "Set to non-nil to enable backtracking/context sensitive indentation."
+  "When non-nil, enable context sensitive indentation."
   :type 'boolean
   :group 'clojure
   :safe 'booleanp)
@@ -375,10 +375,9 @@ otherwise defined via `put-clojure-indent`, `define-clojure-indent`, etc."
   :group 'clojure
   :safe 'integerp)
 
-(defcustom clojure-omit-space-between-tag-and-delimiters (list ?\[ ?\{)
-  "List of opening delimiter characters allowed to appear
-immediately after a reader literal tag with no space, as
-in :db/id[:db.part/user]"
+(defcustom clojure-omit-space-between-tag-and-delimiters '(?\[ ?\{)
+  "Allowed opening delimiter characters after a reader literal tag.
+For example, \[ is allowed in :db/id[:db.part/user]."
   :type '(set (const :tag "[" ?\[)
               (const :tag "{" ?\{)
               (const :tag "(" ?\()
@@ -458,7 +457,9 @@ numbers count from the end:
   (if (fboundp 'prog-mode) 'prog-mode 'fundamental-mode))
 
 (defun clojure-space-for-delimiter-p (endp delim)
-  "Prevent paredit from inserting unneeded spaces."
+  "Prevent paredit from inserting useless spaces.
+See `paredit-space-for-delimiter-predicates' for the meaning of
+ENDP and DELIM."
   (if (derived-mode-p 'clojure-mode)
       (save-excursion
         (backward-char)
@@ -475,11 +476,18 @@ numbers count from the end:
     t))
 
 (defun clojure-no-space-after-tag (endp delimiter)
-  "Do not insert a space between a reader-literal tag and an
-  opening delimiter in the list
-  clojure-omit-space-between-tag-and-delimiters. Allows you to
-  write things like #db/id[:db.part/user] without inserting a
-  space between the tag and the opening bracket."
+  "Prevent inserting a space after a reader-literal tag?
+
+When a reader-literal tag is followed be an opening delimiter
+listed in `clojure-omit-space-between-tag-and-delimiters', this
+function returns t.
+
+This allows you to write things like #db/id[:db.part/user]
+without inserting a space between the tag and the opening
+bracket.
+
+See `paredit-space-for-delimiter-predicates' for the meaning of
+ENDP and DELIMITER."
   (if endp
       t
     (or (not (member delimiter clojure-omit-space-between-tag-and-delimiters))
@@ -517,7 +525,6 @@ if that value is non-nil."
   (setq-local lisp-doc-string-elt-property 'clojure-doc-string-elt)
   (setq-local inferior-lisp-program clojure-inf-lisp-command)
   (setq-local parse-sexp-ignore-comments t)
-
   (clojure-mode-font-lock-setup)
   (setq-local open-paren-in-column-0-is-defun-start nil)
   (add-hook 'paredit-mode-hook
@@ -608,10 +615,9 @@ Called by `imenu--generic-function'."
            . lisp-font-lock-syntactic-face-function))))
 
 (defun clojure-font-lock-def-at-point (point)
-  "Find the position range between the top-most def* and the
-fourth element afterwards using POINT.  Note that this means there's no
-guarantee of proper font locking in def* forms that are not at
-top level."
+  "Range between the top-most def* and the fourth element after POINT.
+Note that this means that there is no guarantee of proper font
+locking in def* forms that are not at top level."
   (goto-char point)
   (condition-case nil
       (beginning-of-defun)
@@ -630,8 +636,7 @@ top level."
       (cons beg-def (point)))))
 
 (defun clojure-font-lock-extend-region-def ()
-  "Move fontification boundaries to always include the first four
-elements of a def* forms."
+  "Set region boundaries to include the first four elements of def* forms."
   (let ((changed nil))
     (let ((def (clojure-font-lock-def-at-point font-lock-beg)))
       (when def
@@ -694,10 +699,11 @@ LIMIT denotes the maximum number of characters (relative to the point) to check.
       pos)))
 
 (defun clojure-font-lock-extend-region-comment ()
-  "Move fontification boundaries to always contain entire (comment ..) and #_ sexp.
+  "Set region boundaries to contain (comment ..) and #_ sexp entirely.
 
-Does not work if you have a  whitespace between ( and comment, but that is omitted to make
-this run faster."
+This does not work if there is a whitespace between an opening
+parenthesis and \"comment\", but this omission allows the
+function to run faster."
   (let ((changed nil))
     (goto-char font-lock-beg)
     (condition-case nil (beginning-of-defun) (error nil))
@@ -741,10 +747,13 @@ LIMIT denotes the maximum number of characters (relative to the point) to check.
 
 
 (defun clojure-forward-sexp (n)
-  "Treat record literals like #user.Foo[1] and #user.Foo{:size 1}
-as a single sexp so that slime will send them properly. Arguably
-this behavior is unintuitive for the user pressing (eg) C-M-f
-himself, but since these are single objects I think it's right."
+  "Move forward across one balanced Clojure expression (sexp).
+
+It treats record literals like #user.Foo[1] and #user.Foo{:size 1}
+as a single sexp so that slime will send them properly.
+
+This behavior may not be intuitive when the user presses C-M-f, but
+since these are single objects this behavior is okay."
   (let ((dir (if (> n 0) 1 -1))
         (forward-sexp-function nil)) ; force the built-in version
     (while (not (zerop n))
@@ -907,11 +916,11 @@ Will upwards in an sexp to check for contextual indenting."
           value))
 
 (defcustom clojure-defun-indents nil
-  "List of symbols to give defun-style indentation to in Clojure
-code, in addition to those that are built-in. You can use this to
-get emacs to indent your own macros the same as it does the
-built-ins like with-open. To set manually from lisp code,
-use (put-clojure-indent 'some-symbol 'defun)."
+  "List of additional symbols with defun-style indentation in Clojure.
+
+You can use this to let Emacs indent your own macros the same way
+that it indents built-in macros like with-open.  To manually set
+it from Lisp code, use (put-clojure-indent 'some-symbol 'defun)."
   :type '(repeat symbol)
   :group 'clojure
   :set 'add-custom-clojure-indents)
