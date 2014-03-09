@@ -358,7 +358,7 @@ Clojure to load that file."
 
 (defcustom clojure-defun-style-default-indent nil
   "When non-nil, use default indenting for functions and macros.
-Otherwise check `define-clojure-indent` and `put-clojure-indent`."
+Otherwise check `define-clojure-indent' and `put-clojure-indent'."
   :type 'boolean
   :group 'clojure
   :safe 'booleanp)
