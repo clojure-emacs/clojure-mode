@@ -747,6 +747,7 @@ LIMIT denotes the maximum number of characters (relative to the point) to check.
 
 
 (defun clojure-forward-sexp (n)
+  ;; FIXME: The reference to Slime is outdated here.
   "Move forward across one balanced Clojure expression (sexp).
 
 It treats record literals like #user.Foo[1] and #user.Foo{:size 1}
