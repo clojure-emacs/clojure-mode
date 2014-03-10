@@ -125,8 +125,8 @@
           '("let" "letfn" "do"
             "case" "cond" "condp"
             "for" "loop" "recur"
-            "when" "when-not" "when-let" "when-first"
-            "if" "if-let" "if-not"
+            "when" "when-not" "when-let" "when-first" "when-some"
+            "if" "if-let" "if-not" "if-some"
             "." ".." "->" "->>" "doto"
             "and" "or"
             "dosync" "doseq" "dotimes" "dorun" "doall"
@@ -200,7 +200,7 @@
         "macroexpand-1" "make-array" "make-hierarchy" "map" "mapv" "map?"
         "map-indexed" "mapcat" "max" "max-key" "memfn" "memoize"
         "merge" "merge-with" "meta" "method-sig" "methods"
-        "min" "min-key" "mod" "name" "namespace"
+        "min" "min-key" "mix-collection-hash" "mod" "name" "namespace"
         "neg?" "newline" "next" "nfirst" "nil?"
         "nnext" "not" "not-any?" "not-empty" "not-every?"
         "not=" "ns-aliases" "ns-imports" "ns-interns"
@@ -227,7 +227,7 @@
         "seq?" "seque" "sequence" "sequential?" "set"
         "set-agent-send-executor!" "set-agent-send-off-executor!"
         "set-validator!" "set?" "short" "short-array" "shorts"
-        "shutdown-agents" "slurp" "some" "some->" "some->>" "sort" "sort-by"
+        "shutdown-agents" "slurp" "some" "some->" "some->>" "some?" "sort" "sort-by"
         "sorted-map" "sorted-map-by" "sorted-set" "sorted-set-by" "sorted?"
         "special-form-anchor" "special-symbol?" "specify" "specify!" "spit" "split-at" "split-with" "str"
         "stream?" "string?" "struct" "struct-map" "subs"
@@ -237,7 +237,7 @@
         "to-array" "to-array-2d" "trampoline" "transient" "tree-seq"
         "true?" "type" "unchecked-add" "unchecked-dec" "unchecked-divide"
         "unchecked-inc" "unchecked-multiply" "unchecked-negate" "unchecked-remainder" "unchecked-subtract"
-        "underive" "unquote" "unquote-splicing" "update-in" "update-proxy"
+        "underive" "unsigned-bit-shift-right" "unquote" "unquote-splicing" "update-in" "update-proxy"
         "use" "val" "vals" "var-get" "var-set"
         "var?" "vary-meta" "vec" "vector" "vector?"
         "while"
@@ -252,39 +252,39 @@
          "(\\(?:\.*/\\)?"
          (regexp-opt
           '(;; clojure.inspector
-            "atom?" "collection-tag" "get-child" "get-child-count" "inspect"
-            "inspect-table" "inspect-tree" "is-leaf" "list-model" "list-provider"
-            ;; clojure.main
-            "load-script" "main" "repl" "repl-caught" "repl-exception"
-            "repl-prompt" "repl-read" "skip-if-eol" "skip-whitespace" "with-bindings"
-            ;; clojure.set
-            "difference" "index" "intersection" "join" "map-invert"
-            "project" "rename" "rename-keys" "select" "union"
-            ;; clojure.stacktrace
-            "e" "print-cause-trace" "print-stack-trace" "print-throwable" "print-trace-element"
-            ;; clojure.template
-            "do-template" "apply-template"
-            ;; clojure.test
-            "*initial-report-counters*" "*load-tests*" "*report-counters*" "*stack-trace-depth*" "*test-out*"
-            "*testing-contexts*" "*testing-vars*" "are" "assert-any" "assert-expr"
-            "assert-predicate" "compose-fixtures" "deftest" "deftest-" "file-position"
-            "function?" "get-possibly-unbound-var" "inc-report-counter" "is" "join-fixtures"
-            "report" "run-all-tests" "run-tests" "set-test" "successful?"
-            "test-all-vars" "test-ns" "test-var" "testing" "testing-contexts-str"
-            "testing-vars-str" "try-expr" "use-fixtures" "with-test" "with-test-out"
-            ;; clojure.walk
-            "keywordize-keys" "macroexpand-all" "postwalk" "postwalk-demo" "postwalk-replace"
-            "prewalk" "prewalk-demo" "prewalk-replace" "stringify-keys" "walk"
-            ;; clojure.xml
-            "*current*" "*sb*" "*stack*" "*state*" "attrs"
-            "content" "content-handler" "element" "emit" "emit-element"
-            ;; clojure.zip
-            "append-child" "branch?" "children" "down" "edit"
-            "end?" "insert-child" "insert-left" "insert-right" "left"
-            "leftmost" "lefts" "make-node" "next" "node"
-            "path" "prev" "remove" "replace" "right"
-            "rightmost" "rights" "root" "seq-zip" "up"
-            ) t)
+        "atom?" "collection-tag" "get-child" "get-child-count" "inspect"
+        "inspect-table" "inspect-tree" "is-leaf" "list-model" "list-provider"
+        ;; clojure.main
+        "load-script" "main" "repl" "repl-caught" "repl-exception"
+        "repl-prompt" "repl-read" "skip-if-eol" "skip-whitespace" "with-bindings"
+        ;; clojure.set
+        "difference" "index" "intersection" "join" "map-invert"
+        "project" "rename" "rename-keys" "select" "union"
+        ;; clojure.stacktrace
+        "e" "print-cause-trace" "print-stack-trace" "print-throwable" "print-trace-element"
+        ;; clojure.template
+        "do-template" "apply-template"
+        ;; clojure.test
+        "*initial-report-counters*" "*load-tests*" "*report-counters*" "*stack-trace-depth*" "*test-out*"
+        "*testing-contexts*" "*testing-vars*" "are" "assert-any" "assert-expr"
+        "assert-predicate" "compose-fixtures" "deftest" "deftest-" "file-position"
+        "function?" "get-possibly-unbound-var" "inc-report-counter" "is" "join-fixtures"
+        "report" "run-all-tests" "run-tests" "set-test" "successful?"
+        "test-all-vars" "test-ns" "test-var" "test-vars" "testing" "testing-contexts-str"
+        "testing-vars-str" "try-expr" "use-fixtures" "with-test" "with-test-out"
+        ;; clojure.walk
+        "keywordize-keys" "macroexpand-all" "postwalk" "postwalk-demo" "postwalk-replace"
+        "prewalk" "prewalk-demo" "prewalk-replace" "stringify-keys" "walk"
+        ;; clojure.xml
+        "*current*" "*sb*" "*stack*" "*state*" "attrs"
+        "content" "content-handler" "element" "emit" "emit-element"
+        ;; clojure.zip
+        "append-child" "branch?" "children" "down" "edit"
+        "end?" "insert-child" "insert-left" "insert-right" "left"
+        "leftmost" "lefts" "make-node" "next" "node"
+        "path" "prev" "remove" "replace" "right"
+        "rightmost" "rights" "root" "seq-zip" "up"
+        ) t)
          "\\>")
        1 font-lock-builtin-face)
       ;; core.async control structures
@@ -973,6 +973,8 @@ it from Lisp code, use (put-clojure-indent 'some-symbol 'defun)."
   (dotimes 1)
   (when-let 1)
   (if-let 1)
+  (when-some 1)
+  (if-some 1)
 
   ;; data structures
   (defstruct 1)
