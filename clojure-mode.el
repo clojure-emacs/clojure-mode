@@ -285,10 +285,6 @@
             "leftmost" "lefts" "make-node" "next" "node"
             "path" "prev" "remove" "replace" "right"
             "rightmost" "rights" "root" "seq-zip" "up"
-            ;; clojure.core.typed
-            "ann-form" "cf" "defprotocol>" "doseq>" "dotimes>" "fn>"
-            "for>" "into-array>" "let-fn>" "loop>" "pfn>" "ref>"
-            "tc-ignore" "var>"
             ) t)
          "\\>")
        1 font-lock-builtin-face)
@@ -310,6 +306,17 @@
             "take" "take!" "tap" "thread" "thread-call" "timeout" "to-chan" "toggle"
             "unblocking-buffer?" "unique" "unmix" "unmix-all" "unsub" "unsub-all"
             "untap" "untap-all"
+            ) t)
+         "\\>")
+       1 font-lock-builtin-face)
+      ;; clojure.core.typed
+      (,(concat
+         "(\\(?:clojure.core.typed/\\)?"
+         (regexp-opt
+          '(
+            "ann-form" "cf" "defprotocol>" "doseq>" "dotimes>" "fn>"
+            "for>" "into-array>" "let-fn>" "loop>" "pfn>" "ref>"
+            "tc-ignore" "var>"
             ) t)
          "\\>")
        1 font-lock-builtin-face)
@@ -998,7 +1005,7 @@ it from Lisp code, use (put-clojure-indent 'some-symbol 'defun)."
   (run 'defun)
   (run* 'defun)
   (fresh 'defun)
-  
+
   ;; core.async
   (alt! 0)
   (alt!! 0)
