@@ -82,7 +82,8 @@
                 (regexp-opt '("defn" "defn-" "def" "defonce"
                               "defmulti" "defmethod" "defmacro"
                               "defstruct" "deftype" "defprotocol"
-                              "defrecord" "deftest" "def\\[a-z\\]"))
+                              "defrecord" "deftest" "def\\[a-z\\]"
+                              "ann"))
                 ;; Function declarations.
                 "\\)\\>"
                 ;; Any whitespace
@@ -284,6 +285,10 @@
             "leftmost" "lefts" "make-node" "next" "node"
             "path" "prev" "remove" "replace" "right"
             "rightmost" "rights" "root" "seq-zip" "up"
+            ;; clojure.core.typed
+            "ann-form" "cf" "defprotocol>" "doseq>" "dotimes>" "fn>"
+            "for>" "into-array>" "let-fn>" "loop>" "pfn>" "ref>"
+            "tc-ignore" "var>"
             ) t)
          "\\>")
        1 font-lock-builtin-face)
