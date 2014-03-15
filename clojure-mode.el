@@ -353,6 +353,10 @@ restart (ie. M-x clojure-mode) of existing clojure mode buffers."
   :group 'clojure
   :safe 'booleanp)
 
+(make-obsolete-variable 'clojure-font-lock-comment-sexp
+                        "This will be removed in the next major clojure-mode release."
+                        "2.2")
+
 (defcustom clojure-load-command  "(clojure.core/load-file \"%s\")\n"
   "*Format-string for building a Clojure expression to load a file.
 This format string should use `%s' to substitute a file name
