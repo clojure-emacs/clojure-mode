@@ -1132,7 +1132,7 @@ remain indented by four spaces after refilling."
         (let* ((clojure-fill-column fill-column)
                (string-region (clojure-docstring-start+end-points))
                (string-start (car string-region))
-               (string-end (cdr string-region))
+               (string-end (1+ (cdr string-region)))
                (string (buffer-substring-no-properties string-start
                                                        string-end)))
           (delete-region string-start string-end)
