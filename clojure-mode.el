@@ -532,7 +532,7 @@ if that value is non-nil."
                 (imenu--generic-function '((nil clojure-match-next-def 0)))))
   (setq-local indent-tabs-mode nil)
   (lisp-mode-variables nil)
-  (setq fill-paragraph-function 'clojure-fill-paragraph)
+  (setq fill-paragraph-function 'lisp-fill-paragraph)
   (setq-local comment-start-skip
               "\\(\\(^\\|[^\\\\\n]\\)\\(\\\\\\\\\\)*\\)\\(;+\\|#|\\) *")
   (setq-local lisp-indent-function 'clojure-indent-function)
@@ -552,16 +552,6 @@ if that value is non-nil."
                              'clojure-space-for-delimiter-p)
                 (add-to-list 'paredit-space-for-delimiter-predicates
                              'clojure-no-space-after-tag)))))
-
-(defun clojure-fill-paragraph (&optional justify)
-  "Use `clojure-fill-docstring' in docstrings.
-Use `fill-paragraph-function' elsewhere.
-
-If JUSTIFY is non-nil (interactively, with prefix argument),
-justify as well."
-  (if (eq (get-text-property (point) 'face) 'font-lock-doc-face)
-      (clojure-fill-docstring)
-    (lisp-fill-paragraph justify)))
 
 (defun clojure-display-inferior-lisp-buffer ()
   "Display a buffer bound to `inferior-lisp-buffer'."
@@ -1113,39 +1103,6 @@ returned."
     (let* ((result (buffer-substring-no-properties begin (point))))
       (delete-region begin (point))
       result)))
-
-(defvar clojure-docstring-indent-level 2)
-
-(defun clojure-fill-docstring ()
-  "Fill docstring under point.
-
-Fills so that every paragraph has a minimum of two initial spaces,
-with the exception of the first line.  Fill margins are taken from
-paragraph start, so a paragraph that begins with four spaces will
-remain indented by four spaces after refilling."
-  (interactive)
-  ;; Oddly, save-excursion doesn't do a good job of preserving point.
-  ;; It's probably because we delete the string and then re-insert it.
-  (let ((old-point (point)))
-    (save-restriction
-      (save-excursion
-        (let* ((clojure-fill-column fill-column)
-               (string-region (clojure-docstring-start+end-points))
-               (string-start (car string-region))
-               (string-end (cdr string-region))
-               (string (buffer-substring-no-properties string-start
-                                                       string-end)))
-          (delete-region string-start string-end)
-          (insert
-           (with-temp-buffer
-             (insert string)
-             (let ((left-margin clojure-docstring-indent-level))
-               (delete-trailing-whitespace)
-               (setq fill-column clojure-fill-column)
-               (fill-region (point-min) (point-max))
-               (buffer-substring-no-properties
-                (+ clojure-docstring-indent-level (point-min)) (point-max))))))))
-    (goto-char old-point)))
 
 
 
