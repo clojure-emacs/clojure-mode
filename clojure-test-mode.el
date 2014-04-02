@@ -121,27 +121,25 @@
 
 (defface clojure-test-failure-face
   '((((class color) (background light))
-     :background "orange red") ;; TODO: Hard to read strings over this.
+     (:background "orange red")) ;; TODO: Hard to read strings over this.
     (((class color) (background dark))
-     :background "firebrick"))
+     (:background "firebrick")))
   "Face for failures in Clojure tests."
   :group 'clojure-test-mode)
 
 (defface clojure-test-error-face
   '((((class color) (background light))
-     :background "orange1")
+     (:background "orange1"))
     (((class color) (background dark))
-     :background "orange4"))
+     (:background "orange4")))
   "Face for errors in Clojure tests."
   :group 'clojure-test-mode)
 
 (defface clojure-test-success-face
   '((((class color) (background light))
-     :foreground "black"
-     :background "green")
+     (:foreground "black" :background "green"))
     (((class color) (background dark))
-     :foreground "black"
-     :background "green"))
+     (:foreground "black" :background "green")))
   "Face for success in Clojure tests."
   :group 'clojure-test-mode)
 

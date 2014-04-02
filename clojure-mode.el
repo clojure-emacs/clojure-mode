@@ -72,6 +72,7 @@
 (require 'inf-lisp)
 (require 'imenu)
 (require 'easymenu)
+(require 'overlay)
 
 (declare-function clojure-test-jump-to-implementation  "clojure-test-mode.el")
 
@@ -405,7 +406,10 @@ For example, \[ is allowed in :db/id[:db.part/user]."
 
 (defvar clojure-mode-map
   (let ((map (make-sparse-keymap)))
-    (set-keymap-parent map lisp-mode-shared-map)
+    (set-keymap-parent map 
+ 		       (cond
+ 			((boundp 'lisp-mode-shared-map) lisp-mode-shared-map)
+ 			((boundp 'shared-lisp-mode-map) shared-lisp-mode-map)))
     (define-key map (kbd "C-M-x")   'lisp-eval-defun)
     (define-key map (kbd "C-x C-e") 'lisp-eval-last-sexp)
     (define-key map (kbd "C-c C-e") 'lisp-eval-last-sexp)
