@@ -397,6 +397,12 @@ Otherwise check `define-clojure-indent' and `put-clojure-indent'."
   :group 'clojure
   :safe 'integerp)
 
+(defcustom clojure-docstring-fill-column 72
+  "Value of `fill-column' to use when filling a docstring."
+  :type 'integer
+  :group 'clojure
+  :safe 'integerp)
+
 (defcustom clojure-omit-space-between-tag-and-delimiters '(?\[ ?\{)
   "Allowed opening delimiter characters after a reader literal tag.
 For example, \[ is allowed in :db/id[:db.part/user]."
@@ -542,7 +548,9 @@ value is non-nil."
                 (imenu--generic-function '((nil clojure-match-next-def 0)))))
   (setq-local indent-tabs-mode nil)
   (lisp-mode-variables nil)
-  (setq fill-paragraph-function 'lisp-fill-paragraph)
+  (setq fill-paragraph-function 'clojure-fill-paragraph)
+  (setq adaptive-fill-function 'clojure-adaptive-fill-function)
+  (setq-local normal-auto-fill-function 'clojure-auto-fill-function)
   (setq-local comment-start-skip
               "\\(\\(^\\|[^\\\\\n]\\)\\(\\\\\\\\\\)*\\)\\(;+\\|#|\\) *")
   (setq-local lisp-indent-function 'clojure-indent-function)
@@ -562,6 +570,39 @@ value is non-nil."
                              'clojure-space-for-delimiter-p)
                 (add-to-list 'paredit-space-for-delimiter-predicates
                              'clojure-no-space-after-tag)))))
+
+(defsubst clojure-in-docstring-p ()
+  "Is point in a docstring?"
+  (eq (get-text-property (1- (point-at-eol)) 'face)
+      'font-lock-doc-face))
+
+(defun clojure-adaptive-fill-function ()
+  "Clojure adaptive fill function.
+This only takes care of filling docstring correctly."
+  (if (clojure-in-docstring-p) "  "))
+
+(defun clojure-fill-paragraph (&optional justify)
+  (if (clojure-in-docstring-p)
+      (let ((paragraph-start
+             (concat paragraph-start
+                     "\\|\\s-*\\([(;:\"[]\\|~@\\|`(\\|#'(\\)"))
+            (paragraph-separate
+             (concat paragraph-separate "\\|\\s-*\".*[,\\.]$"))
+            (fill-column (or clojure-docstring-fill-column fill-column))
+            (fill-prefix "  "))
+        (fill-paragraph justify))
+    (fill-paragraph justify)))
+
+(defun clojure-auto-fill-function ()
+  "Clojure auto-fill function."
+  ;; Check if auto-filling is meaningful.
+  (let ((fc (current-fill-column)))
+    (when (and fc (> (current-column) fc))
+      (let ((fill-column (if (clojure-in-docstring-p)
+                             clojure-docstring-fill-column
+                           fill-column))
+            (fill-prefix (clojure-adaptive-fill-function)))
+	(when fill-prefix (do-auto-fill))))))
 
 (defun clojure-display-inferior-lisp-buffer ()
   "Display a buffer bound to `inferior-lisp-buffer'."
