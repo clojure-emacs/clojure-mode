@@ -2,10 +2,10 @@
 
 ;; Copyright © 2007-2013 Jeffrey Chu, Lennart Staflin, Phil Hagelberg
 ;;
-;; Author: Jeffrey Chu <jochu0@gmail.com>
-;;         Lennart Staflin <lenst@lysator.liu.se>
-;;         Phil Hagelberg <technomancy@gmail.com>
-;;         Bozhidar Batsov <bozhidar@batsov.com>
+;; Authors: Jeffrey Chu <jochu0@gmail.com>
+;;       Lennart Staflin <lenst@lysator.liu.se>
+;;       Phil Hagelberg <technomancy@gmail.com>
+;;       Bozhidar Batsov <bozhidar@batsov.com>
 ;; URL: http://github.com/clojure-emacs/clojure-mode
 ;; Version: 2.1.1
 ;; Keywords: languages, lisp
@@ -77,14 +77,14 @@
 
 (defconst clojure-font-lock-keywords
   (eval-when-compile
-    `( ;; Definitions.
+    `(;; Definitions
       (,(concat "(\\(?:clojure.core/\\)?\\("
                 (regexp-opt '("defn" "defn-" "def" "defonce"
                               "defmulti" "defmethod" "defmacro"
                               "defstruct" "deftype" "defprotocol"
                               "defrecord" "deftest" "def\\[a-z\\]"
                               "ann"))
-                ;; Function declarations.
+                ;; Function declarations
                 "\\)\\>"
                 ;; Any whitespace
                 "[ \r\n\t]*"
@@ -103,7 +103,7 @@
        (2 font-lock-function-name-face nil t))
 
       (,(concat "(\\(\\(?:[a-z\.-]+/\\)?def\[a-z\-\]*-?\\)"
-                ;; Function declarations.
+                ;; Function declarations
                 "\\>"
                 ;; Any whitespace
                 "[ \r\n\t]*"
@@ -248,7 +248,7 @@
             ) t)
          "\\>")
        1 font-lock-builtin-face)
-      ;;Other namespaces in clojure.jar
+      ;; Other namespaces in clojure.jar
       (,(concat
          "(\\(?:\.*/\\)?"
          (regexp-opt
@@ -327,12 +327,17 @@
        (1 font-lock-preprocessor-face)
        (2 font-lock-type-face))
 
-      ;;Java interop highlighting
-      ("\\<\\.-?[a-z][a-zA-Z0-9]*\\>" 0 font-lock-preprocessor-face) ;; .foo .barBaz .qux01 .-flibble .-flibbleWobble
-      ("\\<[A-Z][a-zA-Z0-9_]*[a-zA-Z0-9/$_]+\\>" 0 font-lock-preprocessor-face) ;; Foo Bar$Baz Qux_ World_OpenUDP
-      ("\\<[a-zA-Z]+\\.[a-zA-Z0-9._]*[A-Z]+[a-zA-Z0-9/.$]*\\>" 0 font-lock-preprocessor-face) ;; Foo/Bar foo.bar.Baz foo.Bar/baz
-      ("[a-z]*[A-Z]+[a-z][a-zA-Z0-9$]*\\>" 0 font-lock-preprocessor-face) ;; fooBar
-      ("\\<[A-Z][a-zA-Z0-9$]*\\.\\>" 0 font-lock-type-face) ;; Foo. BarBaz. Qux$Quux. Corge9.
+      ;; Java interop highlighting
+      ;; .foo .barBaz .qux01 .-flibble .-flibbleWobble
+      ("\\<\\.-?[a-z][a-zA-Z0-9]*\\>" 0 font-lock-preprocessor-face)
+      ;; Foo Bar$Baz Qux_ World_OpenUDP
+      ("\\<[A-Z][a-zA-Z0-9_]*[a-zA-Z0-9/$_]+\\>" 0 font-lock-preprocessor-face)
+      ;; Foo/Bar foo.bar.Baz foo.Bar/baz
+      ("\\<[a-zA-Z]+\\.[a-zA-Z0-9._]*[A-Z]+[a-zA-Z0-9/.$]*\\>" 0 font-lock-preprocessor-face)
+      ;; fooBar
+      ("[a-z]*[A-Z]+[a-z][a-zA-Z0-9$]*\\>" 0 font-lock-preprocessor-face)
+      ;; Foo. BarBaz. Qux$Quux. Corge9.
+      ("\\<[A-Z][a-zA-Z0-9$]*\\.\\>" 0 font-lock-type-face) 
       ;; Highlight grouping constructs in regular expressions
       (clojure-mode-font-lock-regexp-groups
        (1 'font-lock-regexp-grouping-construct prepend))))
@@ -346,22 +351,23 @@
   :link '(emacs-commentary-link :tag "Commentary" "clojure-mode"))
 
 (defcustom clojure-font-lock-comment-sexp nil
-  "Set to non-nil in order to enable font-lock of (comment...)
-forms.  This option is experimental.  Changing this will require a
-restart (ie. M-x clojure-mode) of existing clojure mode buffers."
+  "Set to non-nil to enable fontification of (comment...) forms.
+If you change this option, use M-x clojure-mode to restart clojure mode.
+This option is experimental."
   :type 'boolean
   :group 'clojure
   :safe 'booleanp)
 
-(make-obsolete-variable 'clojure-font-lock-comment-sexp
-                        "This will be removed in the next major clojure-mode release."
-                        "2.2")
+(make-obsolete-variable
+ 'clojure-font-lock-comment-sexp
+ "This option will be removed in the next major clojure-mode release."
+ "2.2")
 
 (defcustom clojure-load-command  "(clojure.core/load-file \"%s\")\n"
-  "*Format-string for building a Clojure expression to load a file.
-This format string should use `%s' to substitute a file name
-and should result in a Clojure expression that will command the inferior
-Clojure to load that file."
+  "Format-string for building a Clojure expression to load a file.
+This format string should use `%s' to substitute a file name and
+should result in a Clojure expression that will command the
+inferior Clojure to load that file."
   :type 'string
   :group 'clojure
   :safe 'stringp)
@@ -387,6 +393,12 @@ Otherwise check `define-clojure-indent' and `put-clojure-indent'."
 
 (defcustom clojure-max-backtracking 3
   "Maximum amount to backtrack up a list to check for context."
+  :type 'integer
+  :group 'clojure
+  :safe 'integerp)
+
+(defcustom clojure-docstring-fill-column 72
+  "Value of `fill-column' to use when filling a docstring."
   :type 'integer
   :group 'clojure
   :safe 'integerp)
@@ -517,22 +529,28 @@ ENDP and DELIMITER."
 
 ;;;###autoload
 (define-derived-mode clojure-mode clojure-parent-mode "Clojure"
-  "Major mode for editing Clojure code - similar to Lisp mode.
+  "Major mode for editing Clojure code.
+
 Commands:
 Delete converts tabs to spaces as it moves back.
-Blank lines separate paragraphs.  Semicolons start comments.
-\\{clojure-mode-map}
-Note that `run-lisp' may be used either to start an inferior Lisp job
-or to switch back to an existing one.
+Blank lines separate paragraphs.
+Semicolons start comments.
 
-Entry to this mode calls the value of `clojure-mode-hook'
-if that value is non-nil."
+\\{clojure-mode-map}
+
+Note that `run-lisp' may be used either to start an inferior Lisp
+job or to switch back to an existing one.
+
+Entry to this mode calls the value of `clojure-mode-hook' if that
+value is non-nil."
   (setq-local imenu-create-index-function
               (lambda ()
                 (imenu--generic-function '((nil clojure-match-next-def 0)))))
   (setq-local indent-tabs-mode nil)
   (lisp-mode-variables nil)
-  (setq fill-paragraph-function 'lisp-fill-paragraph)
+  (setq fill-paragraph-function 'clojure-fill-paragraph)
+  (setq adaptive-fill-function 'clojure-adaptive-fill-function)
+  (setq-local normal-auto-fill-function 'clojure-auto-fill-function)
   (setq-local comment-start-skip
               "\\(\\(^\\|[^\\\\\n]\\)\\(\\\\\\\\\\)*\\)\\(;+\\|#|\\) *")
   (setq-local lisp-indent-function 'clojure-indent-function)
@@ -552,6 +570,39 @@ if that value is non-nil."
                              'clojure-space-for-delimiter-p)
                 (add-to-list 'paredit-space-for-delimiter-predicates
                              'clojure-no-space-after-tag)))))
+
+(defsubst clojure-in-docstring-p ()
+  "Is point in a docstring?"
+  (eq (get-text-property (1- (point-at-eol)) 'face)
+      'font-lock-doc-face))
+
+(defun clojure-adaptive-fill-function ()
+  "Clojure adaptive fill function.
+This only takes care of filling docstring correctly."
+  (if (clojure-in-docstring-p) "  "))
+
+(defun clojure-fill-paragraph (&optional justify)
+  (if (clojure-in-docstring-p)
+      (let ((paragraph-start
+             (concat paragraph-start
+                     "\\|\\s-*\\([(;:\"[]\\|~@\\|`(\\|#'(\\)"))
+            (paragraph-separate
+             (concat paragraph-separate "\\|\\s-*\".*[,\\.]$"))
+            (fill-column (or clojure-docstring-fill-column fill-column))
+            (fill-prefix "  "))
+        (fill-paragraph justify))
+    (fill-paragraph justify)))
+
+(defun clojure-auto-fill-function ()
+  "Clojure auto-fill function."
+  ;; Check if auto-filling is meaningful.
+  (let ((fc (current-fill-column)))
+    (when (and fc (> (current-column) fc))
+      (let ((fill-column (if (clojure-in-docstring-p)
+                             clojure-docstring-fill-column
+                           fill-column))
+            (fill-prefix (clojure-adaptive-fill-function)))
+	(when fill-prefix (do-auto-fill))))))
 
 (defun clojure-display-inferior-lisp-buffer ()
   "Display a buffer bound to `inferior-lisp-buffer'."
@@ -651,7 +702,6 @@ locking in def* forms that are not at top level."
                      (< font-lock-beg def-end))
             (setq font-lock-beg def-beg
                   changed t)))))
-
     (let ((def (clojure-font-lock-def-at-point font-lock-end)))
       (when def
         (destructuring-bind (def-beg . def-end) def
@@ -664,7 +714,8 @@ locking in def* forms that are not at top level."
 (defun clojure-mode-font-lock-regexp-groups (bound)
   "Highlight grouping constructs in regular expression.
 
-BOUND denotes the maximum number of characters (relative to the point) to check."
+BOUND denotes the maximum number of characters (relative to the
+point) to check."
   (catch 'found
     (while (re-search-forward (concat
                                ;; A group may start using several alternatives:
@@ -698,7 +749,8 @@ BOUND denotes the maximum number of characters (relative to the point) to check.
   "Search for (comment...) or #_ style block comments.
 Places point at the beginning of the expression.
 
-LIMIT denotes the maximum number of characters (relative to the point) to check."
+LIMIT denotes the maximum number of characters (relative to the
+point) to check."
   (let ((pos (re-search-forward "\\((comment\\>\\|#_\\)" limit t)))
     (when pos
       (forward-char (- (length (match-string 1))))
@@ -727,7 +779,8 @@ function to run faster."
 (defun clojure-font-lock-mark-comment (limit)
   "Mark all (comment ..) and #_ forms with `font-lock-comment-face'.
 
-LIMIT denotes the maximum number of characters (relative to the point) to check."
+LIMIT denotes the maximum number of characters (relative to the
+point) to check."
   (let (pos)
     (while (and (< (point) limit)
                 (setq pos (clojure-find-block-comment-start limit)))
@@ -785,12 +838,15 @@ STATE is the `parse-partial-sexp' state for that position.
 
 If the current line is in a call to a Lisp function
 which has a non-nil property `lisp-indent-function',
-that specifies how to do the indentation.  The property value can be
-* `defun', meaning indent `defun'-style;
-* an integer N, meaning indent the first N arguments specially
+that specifies how to do the indentation.
+
+The property value can be
+
+- `defun', meaning indent `defun'-style;
+- an integer N, meaning indent the first N arguments specially
   like ordinary function arguments and then indent any further
   arguments like a body;
-* a function to call just as this function was called.
+- a function to call just as this function was called.
   If that function returns nil, that means it doesn't specify
   the indentation.
 
@@ -825,7 +881,6 @@ This function also returns nil meaning don't specify the indentation."
                              (last
                               (split-string (substring-no-properties function) "/")))))
         (setq method (get (intern-soft function-tail) 'clojure-indent-function))
-
         (cond ((member (char-after open-paren) '(?\[ ?\{))
                (goto-char open-paren)
                (1+ (current-column)))
@@ -839,7 +894,6 @@ This function also returns nil meaning don't specify the indentation."
                         (string-match "\\`\\(?:\\S +/\\)?\\(def\\|with-\\)"
                                       function)))
                (lisp-indent-defform state indent-point))
-
               ((integerp method)
                (lisp-indent-specform method state
                                      indent-point normal-indent))
@@ -1017,9 +1071,9 @@ it from Lisp code, use (put-clojure-indent 'some-symbol 'defun)."
 
 (defun clojure-string-start (&optional regex)
   "Return the position of the \" that begins the string at point.
-If REGEX is non-nil, return the position of the # that begins
-the regex at point.  If point is not inside a string or regex,
-return nil."
+If REGEX is non-nil, return the position of the # that begins the
+regex at point.  If point is not inside a string or regex, return
+nil."
   (when (nth 3 (syntax-ppss)) ;; Are we really in a string?
     (save-excursion
       (save-match-data
