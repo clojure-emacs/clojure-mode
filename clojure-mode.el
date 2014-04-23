@@ -73,7 +73,8 @@
 (require 'imenu)
 (require 'easymenu)
 
-(declare-function clojure-test-jump-to-implementation  "clojure-test-mode.el")
+(declare-function clojure-test-jump-to-implementation  "clojure-test-mode")
+(declare-function lisp-fill-paragraph  "lisp-mode" (&optional justify))
 
 (defconst clojure-font-lock-keywords
   (eval-when-compile
@@ -591,7 +592,7 @@ This only takes care of filling docstring correctly."
             (fill-column (or clojure-docstring-fill-column fill-column))
             (fill-prefix "  "))
         (fill-paragraph justify))
-    (fill-paragraph justify)))
+    (lisp-fill-paragraph justify)))
 
 (defun clojure-auto-fill-function ()
   "Clojure auto-fill function."
