@@ -116,6 +116,7 @@
 (require 'which-func)
 (require 'nrepl-client)
 (require 'cider-interaction)
+(require 'tramp)
 
 ;; Faces
 
@@ -176,6 +177,13 @@
                      (clojure-test-make-handler (or handler #'identity))
                      (or (cider-current-ns) "user")
                      (nrepl-current-tooling-session)))
+
+(defun clojure-test--server-filename (name)
+  "Return the nREPL server relative filename for NAME."
+  (if (tramp-tramp-file-p name)
+      (with-parsed-tramp-file-name name nil
+        localname)
+    name))
 
 (defun clojure-test-load-reporting ()
   "Redefine the test-is report function to store results in metadata."
@@ -371,7 +379,9 @@ Clojure src file for the given test namespace.")
                                   (load-file \"%s\")
                                   (clojure.test.mode/clojure-test-mode-test-one-in-ns '%s '%s)
                                   (cons (:name (meta (var %s))) (:status (meta (var %s)))))"
-                               (buffer-file-name) (clojure-find-ns)
+                               (clojure-test--server-filename
+                                (buffer-file-name))
+                               (clojure-find-ns)
                                test-name test-name test-name)
                        (lambda (buffer result-str)
                          (with-current-buffer buffer
@@ -453,7 +463,7 @@ Clojure src file for the given test namespace.")
 
 (defun clojure-test-load-current-buffer ()
   (let ((command (format "(clojure.core/load-file \"%s\")\n(in-ns '%s)"
-                         (buffer-file-name)
+                         (clojure-test--server-filename (buffer-file-name))
                          (clojure-find-ns))))
     (nrepl-send-string-sync command)))
 
