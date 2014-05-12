@@ -398,7 +398,7 @@ Otherwise check `define-clojure-indent' and `put-clojure-indent'."
   :group 'clojure
   :safe 'integerp)
 
-(defcustom clojure-docstring-fill-column 72
+(defcustom clojure-docstring-fill-column fill-column
   "Value of `fill-column' to use when filling a docstring."
   :type 'integer
   :group 'clojure
