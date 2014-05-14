@@ -17,7 +17,7 @@ don't want to run from a git checkout.
 If you're not already using Marmalade, add this to your
 `~/.emacs.d/init.el` and load it with <kbd>M-x eval-buffer</kbd>.
 
-```lisp
+```el
 (require 'package)
 (add-to-list 'package-archives
              '("marmalade" . "http://marmalade-repo.org/packages/"))
@@ -27,7 +27,7 @@ If you're not already using Marmalade, add this to your
 If you're feeling adventurous and you'd like to use MELPA add this bit
 of code instead:
 
-```lisp
+```el
 (require 'package)
 (add-to-list 'package-archives
              '("melpa" . "http://melpa.milkbox.net/packages/") t)
@@ -42,7 +42,7 @@ And then you can install:
 
 or if you'd rather keep it in your dotfiles:
 
-```lisp
+```el
 (unless (package-installed-p 'clojure-mode)
   (package-refresh-contents)
   (package-install 'clojure-mode))
@@ -76,7 +76,7 @@ It is also available using package.el from the above archives.
 
 Use Paredit as you normally would any other minor mode; for instance:
 
-```lisp
+```el
 ;; (require 'paredit) if you didn't install it via package.el
 (add-hook 'clojure-mode-hook 'paredit-mode)
 ```
