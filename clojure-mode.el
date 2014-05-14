@@ -604,7 +604,7 @@ This only takes care of filling docstring correctly."
                              clojure-docstring-fill-column
                            fill-column))
             (fill-prefix (clojure-adaptive-fill-function)))
-	(when fill-prefix (do-auto-fill))))))
+        (when fill-prefix (do-auto-fill))))))
 
 (defun clojure-display-inferior-lisp-buffer ()
   "Display a buffer bound to `inferior-lisp-buffer'."
