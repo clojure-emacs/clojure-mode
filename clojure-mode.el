@@ -1,6 +1,7 @@
 ;;; clojure-mode.el --- Major mode for Clojure code
 
-;; Copyright © 2007-2013 Jeffrey Chu, Lennart Staflin, Phil Hagelberg
+;; Copyright © 2007-2014 Jeffrey Chu, Lennart Staflin, Phil Hagelberg
+;; Copyright © 2013-2014 Bozhidar Batsov
 ;;
 ;; Authors: Jeffrey Chu <jochu0@gmail.com>
 ;;       Lennart Staflin <lenst@lysator.liu.se>
@@ -338,7 +339,7 @@
       ;; fooBar
       ("[a-z]*[A-Z]+[a-z][a-zA-Z0-9$]*\\>" 0 font-lock-preprocessor-face)
       ;; Foo. BarBaz. Qux$Quux. Corge9.
-      ("\\<[A-Z][a-zA-Z0-9$]*\\.\\>" 0 font-lock-type-face) 
+      ("\\<[A-Z][a-zA-Z0-9$]*\\.\\>" 0 font-lock-type-face)
       ;; Highlight grouping constructs in regular expressions
       (clojure-mode-font-lock-regexp-groups
        (1 'font-lock-regexp-grouping-construct prepend))))

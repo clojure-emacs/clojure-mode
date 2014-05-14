@@ -144,7 +144,7 @@ information about customizing this indentation behaviour.
 
 ## License
 
-Copyright © 2007-2013 Jeffrey Chu, Lennart Staflin, Phil Hagelberg,
+Copyright © 2007-2014 Jeffrey Chu, Lennart Staflin, Phil Hagelberg, Bozhidar Batsov
 and [contributors](https://github.com/clojure-emacs/clojure-mode/contributors).
 
 Distributed under the GNU General Public License; type <kbd>C-h C-c</kbd> to view it.
