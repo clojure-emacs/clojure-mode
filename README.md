@@ -133,7 +133,7 @@ in summary; this is one attempt:
   such that each new line within the form is set just inside of the opening
   delimiter of the form.
 
-Please see the docstrings of the elisp functions/vars noted above for
+Please see the docstrings of the Emacs Lisp functions/vars noted above for
 information about customizing this indentation behaviour.
 
 ## License
