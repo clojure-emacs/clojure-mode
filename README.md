@@ -104,12 +104,6 @@ a different REPL command.
 You can also use [Leiningen](http://leiningen.org) to start an
 enhanced REPL via [CIDER](https://github.com/clojure-emacs/cider).
 
-### Ritz
-
-Another option is [Ritz](https://github.com/pallet/ritz), which is a
-bit more complicated but offers advanced debugging functionality using
-SLIME.
-
 ### Swank Clojure
 
 SLIME is available via
