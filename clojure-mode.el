@@ -798,6 +798,7 @@ point) to check."
 
 ;; Docstring positions
 (put 'ns 'clojure-doc-string-elt 2)
+(put 'def 'clojure-doc-string-elt 2)
 (put 'defn 'clojure-doc-string-elt 2)
 (put 'defn- 'clojure-doc-string-elt 2)
 (put 'defmulti 'clojure-doc-string-elt 2)
