@@ -528,18 +528,7 @@ ENDP and DELIMITER."
 (define-derived-mode clojure-mode clojure-parent-mode "Clojure"
   "Major mode for editing Clojure code.
 
-Commands:
-Delete converts tabs to spaces as it moves back.
-Blank lines separate paragraphs.
-Semicolons start comments.
-
-\\{clojure-mode-map}
-
-Note that `run-lisp' may be used either to start an inferior Lisp
-job or to switch back to an existing one.
-
-Entry to this mode calls the value of `clojure-mode-hook' if that
-value is non-nil."
+\\{clojure-mode-map}"
   (setq-local imenu-create-index-function
               (lambda ()
                 (imenu--generic-function '((nil clojure-match-next-def 0)))))
