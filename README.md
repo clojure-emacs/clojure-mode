@@ -69,7 +69,7 @@ highlighted using overlays. To clear the overlays, use <kbd>C-c k</kbd>.
 The mode is **deprecated** (more details
 [here](https://github.com/clojure-emacs/clojure-mode/issues/214) and
 will not be improved/maintained anymore. At some point similar functionality will be
-provided in CIDER itself. _You're welcome to help make this sooner rather than later_.
+provided in CIDER itself. _You're welcome to help make this happen sooner rather than later_.
 
 ## Paredit
 
