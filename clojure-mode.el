@@ -114,13 +114,6 @@
                 "\\(\\sw+\\)?")
        (1 font-lock-keyword-face)
        (2 font-lock-function-name-face nil t))
-      ;; Deprecated functions
-      (,(concat
-         "(\\(?:clojure.core/\\)?"
-         (regexp-opt
-          '("add-watcher" "remove-watcher" "add-classpath") t)
-         "\\>")
-       1 font-lock-warning-face)
       ;; Control structures
       (,(concat
          "(\\(?:clojure.core/\\)?"
