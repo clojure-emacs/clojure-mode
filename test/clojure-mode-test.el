@@ -40,15 +40,22 @@
      (goto-char (point-min))
      ,@body))
 
-(defun clojure-test-face-at (pos &optional content)
-  "Get the face at POS in CONTENT.
+(defun clojure-get-face-at-range (start end)
+  (let ((start-face (get-text-property start 'face))
+        (all-faces (cl-loop for i from start to end collect (get-text-property i 'face))))
+    (if (cl-every (lambda (face) (eq face start-face)) all-faces)
+        start-face
+      'various-faces)))
 
-If CONTENT is not given, return the face at POS in the current
+(defun clojure-test-face-at (start end &optional content)
+  "Get the face between START and END in CONTENT.
+
+If CONTENT is not given, return the face at the specified range in the current
 buffer."
   (if content
       (clojure-test-with-temp-buffer content
-        (get-text-property pos 'face))
-    (get-text-property pos 'face)))
+        (clojure-get-face-at-range start end))
+    (clojure-get-face-at-range start end)))
 
 (defconst clojure-test-syntax-classes
   [whitespace punctuation word symbol open-paren close-paren expression-prefix
@@ -72,7 +79,7 @@ POS."
 
 (ert-deftest clojure-mode-syntax-table/fontify-clojure-keyword ()
   :tags '(fontification syntax-table)
-  (should (eq (clojure-test-face-at 2 "{:something 20}") 'font-lock-constant-face)))
+  (should (eq (clojure-test-face-at 2 11 "{:something 20}") 'font-lock-constant-face)))
 
 (provide 'clojure-mode-test)
 
