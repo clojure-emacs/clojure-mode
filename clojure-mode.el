@@ -558,7 +558,7 @@ ENDP and DELIMITER."
                              'clojure-no-space-after-tag)))))
 
 (defsubst clojure-in-docstring-p ()
-  "Is point in a docstring?"
+  "Check whether point is in a docstring."
   (eq (get-text-property (1- (point-at-eol)) 'face)
       'font-lock-doc-face))
 
