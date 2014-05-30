@@ -1,3 +1,5 @@
+[![travis][badge-travis]][travis]
+
 # Clojure Mode
 
 Provides Emacs font-lock, indentation, and navigation for the
@@ -149,3 +151,5 @@ Copyright © 2007-2014 Jeffrey Chu, Lennart Staflin, Phil Hagelberg, Bozhidar Ba
 and [contributors](https://github.com/clojure-emacs/clojure-mode/contributors).
 
 Distributed under the GNU General Public License; type <kbd>C-h C-c</kbd> to view it.
+
+[travis]: https://travis-ci.org/clojure-emacs/clojure-mode

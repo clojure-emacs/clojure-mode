@@ -5,3 +5,4 @@
 
 # Emacs byte-compiled files
 *.elc
+.cask
