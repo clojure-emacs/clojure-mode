@@ -54,6 +54,8 @@ and `require`ing it.
 
 ## Clojure Test Mode
 
+**Deprecated**
+
 This source repository also includes `clojure-test-mode.el`, which
 provides support for running Clojure tests (using the `clojure.test`
 framework) via CIDER and seeing feedback in the test buffer about
@@ -63,6 +65,11 @@ should work for clojure-test-mode as well.
 Once you have a repl session active, you can run the tests in the
 current buffer with <kbd>C-c C-,</kbd>. Failing tests and errors will be
 highlighted using overlays. To clear the overlays, use <kbd>C-c k</kbd>.
+
+The mode is **deprecated** (more details
+[here](https://github.com/clojure-emacs/clojure-mode/issues/214) and
+will not be improved/maintained anymore. At some point similar functionality will be
+provided in CIDER itself. _You're welcome to help make this sooner rather than later_.
 
 ## Paredit
 
