@@ -330,7 +330,7 @@
       ;; foo.bar.baz
       ("\\<[a-z][a-z0-9_-]+\\.\\([a-z][a-z0-9_-]+\\.?\\)+" 0 font-lock-type-face)
       ;; foo/ Foo/
-      ("\\<\\([a-zA-Z][a-z0-9_-]+\\)/" 1 font-lock-type-face)
+      ("\\<\\([a-zA-Z][a-z0-9_-]*\\)/" 1 font-lock-type-face)
       ;; fooBar
       ("[a-z]+[A-Z]+[a-z][a-zA-Z0-9$]*\\>" 0 font-lock-preprocessor-face)
       ;; Foo. BarBaz. Qux$Quux. Corge9.
