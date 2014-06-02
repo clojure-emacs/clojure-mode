@@ -114,6 +114,11 @@
                 "\\(\\sw+\\)?")
        (1 font-lock-keyword-face)
        (2 font-lock-function-name-face nil t))
+      ;; (ns namespace)
+      (,(concat "(\\(?:clojure.core/\\)?ns[ \t]+"
+                ;; namespace
+                "\\(\\sw+\\)" )
+       (1 font-lock-type-face nil t))
       ;; Control structures
       (,(concat
          "(\\(?:clojure.core/\\)?"
