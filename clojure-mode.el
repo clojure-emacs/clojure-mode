@@ -119,7 +119,7 @@
                 ;; namespace
                 "\\(\\sw+\\)" )
        (1 font-lock-type-face nil t))
-      ;; Control structures
+      ;; Special forms & control structures
       (,(concat
          "(\\(?:clojure.core/\\)?"
          (regexp-opt
@@ -135,7 +135,7 @@
             "try" "catch" "finally" "throw"
             "with-open" "with-local-vars" "binding"
             "gen-class" "gen-and-load-class" "gen-and-save-class"
-            "handler-case" "handle") t)
+            "handler-case" "handle" "var") t)
          "\\>")
        1 font-lock-keyword-face)
       ;; Built-ins
