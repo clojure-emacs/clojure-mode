@@ -1075,7 +1075,7 @@ nil."
         (let ((beg (match-beginning 2)))
           (when beg
             (if regex
-                (and (char-equal ?# (char-before beg)) (1- beg))
+                (and (char-before beg) (char-equal ?# (char-before beg)) (1- beg))
               (when (not (char-equal ?# (char-before beg)))
                 beg))))))))
 
