@@ -103,7 +103,7 @@
                 "\\(t\\sw+\\)?" )
        (1 font-lock-keyword-face)
        (2 font-lock-function-name-face nil t))
-
+      ;; TODO: Merge this with the definitions sections
       (,(concat "(\\(\\(?:[a-z\.-]+/\\)?def\[a-z\-\]*-?\\)"
                 ;; Function declarations
                 "\\>"
