@@ -138,6 +138,12 @@
             "handler-case" "handle" "var") t)
          "\\>")
        1 font-lock-keyword-face)
+      ;; Global constants - nil, true, false
+      (,(concat
+         (regexp-opt
+          '("true" "false" "nil") t)
+         "\\>")
+       0 font-lock-constant-face)
       ;; Built-ins
       (,(concat
          "(\\(?:clojure.core/\\)?"
