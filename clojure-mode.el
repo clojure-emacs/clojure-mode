@@ -336,16 +336,14 @@
       ;; Java interop highlighting
       ;; .foo .barBaz .qux01 .-flibble .-flibbleWobble
       ("\\<\\.-?[a-z][a-zA-Z0-9]*\\>" 0 font-lock-preprocessor-face)
-      ;; Foo Bar$Baz Qux_ World_OpenUDP
-      ("\\<\\.?[A-Z][a-zA-Z0-9_]*[a-zA-Z0-9$_]+\\>" 0 font-lock-type-face)
+      ;; Foo Bar$Baz Qux_ World_OpenUDP Foo. Babylon15.
+      ("\\(?:\\<\\|\\.\\)\\([A-Z][a-zA-Z0-9_]*[a-zA-Z0-9$_]+\\.?\\>\\)" 1 font-lock-type-face)
       ;; foo.bar.baz
       ("\\<[a-z][a-z0-9_-]+\\.\\([a-z][a-z0-9_-]+\\.?\\)+" 0 font-lock-type-face)
       ;; foo/ Foo/
       ("\\<\\([a-zA-Z][a-z0-9_-]*\\)/" 1 font-lock-type-face)
       ;; fooBar
       ("\\<[a-z]+[A-Z]+[a-z][a-zA-Z0-9$]*\\>" 0 font-lock-preprocessor-face)
-      ;; Foo. BarBaz. Qux$Quux. Corge9.
-      ("\\<\\.[A-Z][a-zA-Z0-9$]*\\.\\>" 0 font-lock-type-face)
       ;; Highlight grouping constructs in regular expressions
       (clojure-mode-font-lock-regexp-groups
        (1 'font-lock-regexp-grouping-construct prepend))))
