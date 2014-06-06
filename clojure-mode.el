@@ -343,7 +343,7 @@
       ;; foo/ Foo/
       ("\\<\\([a-zA-Z][a-z0-9_-]*\\)/" 1 font-lock-type-face)
       ;; fooBar
-      ("[a-z]+[A-Z]+[a-z][a-zA-Z0-9$]*\\>" 0 font-lock-preprocessor-face)
+      ("\\<[a-z]+[A-Z]+[a-z][a-zA-Z0-9$]*\\>" 0 font-lock-preprocessor-face)
       ;; Foo. BarBaz. Qux$Quux. Corge9.
       ("\\<\\.[A-Z][a-zA-Z0-9$]*\\.\\>" 0 font-lock-type-face)
       ;; Highlight grouping constructs in regular expressions
