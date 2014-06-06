@@ -55,26 +55,37 @@ On Emacs 23 you will need to get [package.el](http://bit.ly/pkg-el23)
 yourself or install manually by placing `clojure-mode.el` on your `load-path`
 and `require`ing it.
 
-## Clojure Test Mode
+## Configuration
 
-**Deprecated**
+To see a list of available configuration options do `M-x customize-group RET clojure`.
 
-This source repository also includes `clojure-test-mode.el`, which
-provides support for running Clojure tests (using the `clojure.test`
-framework) via CIDER and seeing feedback in the test buffer about
-which tests failed or errored. The installation instructions above
-should work for clojure-test-mode as well.
+### Indentation options
 
-Once you have a repl session active, you can run the tests in the
-current buffer with <kbd>C-c C-,</kbd>. Failing tests and errors will be
-highlighted using overlays. To clear the overlays, use <kbd>C-c k</kbd>.
+Characterizing the default indentation rules of clojure-mode is difficult to do
+in summary; this is one attempt:
 
-The mode is **deprecated** (more details
-[here](https://github.com/clojure-emacs/clojure-mode/issues/214)) and
-will not be improved/maintained anymore. At some point similar functionality will be
-provided in CIDER itself. _You're welcome to help make this happen sooner rather than later_.
+1. Bodies of parenthesized forms are indented such that arguments are aligned to
+  the start column of the first argument, _except_ for a class of forms
+  identified by the symbol in function position, the bodies of which are
+  indented two spaces, regardless of the position of their first argument (this
+  is called "defun" indentation, for historical reasons):
+  1. Known special forms (e.g. `case`, `try`, etc)
+  2. Nearly all "core" macros that ship as part of Clojure itself
+  3. Userland macros (and any other form?) that are locally registered via
+  `put-clojure-indent`, `define-clojure-indent` (helpers for adding mappings to
+  `clojure-indent-function`).
+2. The bodies of certain more complicated macros and special forms
+  (e.g. `letfn`, `deftype`, `extend-protocol`, etc) are indented using a
+  contextual backtracking indentation method, controlled by
+  `clojure-backtracking-indent`.
+3. The bodies of other forms (e.g. vector, map, and set literals) are indented
+  such that each new line within the form is set just inside of the opening
+  delimiter of the form.
 
-## Paredit
+Please see the docstrings of the Emacs Lisp functions/vars noted above for
+information about customizing this indentation behaviour.
+
+### Paredit
 
 Using clojure-mode with
 [Paredit](http://mumble.net/~campbell/emacs/paredit.el) is highly
@@ -120,31 +131,24 @@ SLIME is available via
 [swank-clojure](http://github.com/technomancy/swank-clojure) in `clojure-mode` 1.x.
 SLIME support was removed in version 2.x in favor of `CIDER`.
 
-## Indentation options
+## Clojure Test Mode
 
-Characterizing the default indentation rules of clojure-mode is difficult to do
-in summary; this is one attempt:
+**Deprecated**
 
-1. Bodies of parenthesized forms are indented such that arguments are aligned to
-  the start column of the first argument, _except_ for a class of forms
-  identified by the symbol in function position, the bodies of which are
-  indented two spaces, regardless of the position of their first argument (this
-  is called "defun" indentation, for historical reasons):
-  1. Known special forms (e.g. `case`, `try`, etc)
-  2. Nearly all "core" macros that ship as part of Clojure itself
-  3. Userland macros (and any other form?) that are locally registered via
-  `put-clojure-indent`, `define-clojure-indent` (helpers for adding mappings to
-  `clojure-indent-function`).
-2. The bodies of certain more complicated macros and special forms
-  (e.g. `letfn`, `deftype`, `extend-protocol`, etc) are indented using a
-  contextual backtracking indentation method, controlled by
-  `clojure-backtracking-indent`.
-3. The bodies of other forms (e.g. vector, map, and set literals) are indented
-  such that each new line within the form is set just inside of the opening
-  delimiter of the form.
+This source repository also includes `clojure-test-mode.el`, which
+provides support for running Clojure tests (using the `clojure.test`
+framework) via CIDER and seeing feedback in the test buffer about
+which tests failed or errored. The installation instructions above
+should work for clojure-test-mode as well.
 
-Please see the docstrings of the Emacs Lisp functions/vars noted above for
-information about customizing this indentation behaviour.
+Once you have a repl session active, you can run the tests in the
+current buffer with <kbd>C-c C-,</kbd>. Failing tests and errors will be
+highlighted using overlays. To clear the overlays, use <kbd>C-c k</kbd>.
+
+The mode is **deprecated** (more details
+[here](https://github.com/clojure-emacs/clojure-mode/issues/214)) and
+will not be improved/maintained anymore. At some point similar functionality will be
+provided in CIDER itself. _You're welcome to help make this happen sooner rather than later_.
 
 ## License
 
