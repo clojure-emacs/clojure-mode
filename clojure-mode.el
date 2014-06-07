@@ -72,7 +72,6 @@
 (require 'tramp)
 (require 'inf-lisp)
 (require 'imenu)
-(require 'easymenu)
 
 (declare-function clojure-test-jump-to-implementation  "clojure-test-mode")
 (declare-function lisp-fill-paragraph  "lisp-mode" (&optional justify))
