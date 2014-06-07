@@ -1124,7 +1124,7 @@ returned."
 (defun clojure-toggle-keyword-string ()
   "Convert the string or keyword at (point) from string->keyword or keyword->string."
   (interactive)
-  (let* ((original-point (point)))
+  (let ((original-point (point)))
     (while (and (> (point) 1)
                 (not (equal "\"" (buffer-substring-no-properties (point) (+ 1 (point)))))
                 (not (equal ":" (buffer-substring-no-properties (point) (+ 1 (point))))))
@@ -1141,9 +1141,9 @@ returned."
 (defun clojure-delete-and-extract-sexp ()
   "Delete the sexp and return it."
   (interactive)
-  (let* ((begin (point)))
+  (let ((begin (point)))
     (forward-sexp)
-    (let* ((result (buffer-substring-no-properties begin (point))))
+    (let ((result (buffer-substring-no-properties begin (point))))
       (delete-region begin (point))
       result)))
 
