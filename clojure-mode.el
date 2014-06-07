@@ -802,11 +802,10 @@ point) to check."
 
 
 (defun clojure-forward-sexp (n)
-  ;; FIXME: The reference to Slime is outdated here.
   "Move forward across one balanced Clojure expression (sexp).
 
 It treats record literals like #user.Foo[1] and #user.Foo{:size 1}
-as a single sexp so that slime will send them properly.
+as a single sexp so that CIDER will send them properly.
 
 This behavior may not be intuitive when the user presses C-M-f, but
 since these are single objects this behavior is okay."
