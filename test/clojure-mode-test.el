@@ -81,6 +81,17 @@ POS."
   :tags '(fontification syntax-table)
   (should (eq (clojure-test-face-at 2 11 "{:something 20}") 'font-lock-constant-face)))
 
+(ert-deftest clojure-mode-syntax-table/type ()
+  :tags '(fontification syntax-table)
+  (should (eq (clojure-test-face-at 1 9 "SomeClass") 'font-lock-type-face)))
+
+(ert-deftest clojure-mode-syntax-table/namespaced-symbol ()
+  :tags '(fontification syntax-table)
+  (clojure-test-with-temp-buffer "clo.core/something"
+    (should (eq (clojure-test-face-at 9 9) nil))
+    (should (eq (clojure-test-face-at 1 8) 'font-lock-type-face))
+    (should (eq (clojure-test-face-at 10 18) nil))))
+
 (provide 'clojure-mode-test)
 
 ;; Local Variables:
