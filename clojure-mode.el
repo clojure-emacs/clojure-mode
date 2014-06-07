@@ -1114,12 +1114,6 @@ returned."
         (re-search-forward "[^\\]\\\(\\\"\\)")
         (match-beginning 1)))))
 
-(defun clojure-docstring-start+end-points ()
-  "Return the start and end points of the string at point as a cons."
-  (if (and (fboundp 'paredit-string-start+end-points) paredit-mode)
-      (paredit-string-start+end-points)
-    (cons (clojure-string-start) (clojure-string-end))))
-
 (defun clojure-mark-string ()
   "Mark the string at point."
   (interactive)
