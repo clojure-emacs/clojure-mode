@@ -24,6 +24,7 @@
 ;;; Code:
 
 (require 'clojure-mode)
+(require 'cl-lib)
 (require 'ert)
 
 
