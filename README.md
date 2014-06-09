@@ -10,20 +10,20 @@ A more thorough walkthrough is available at [clojure-doc.org](http://clojure-doc
 
 ## Installation
 
-Available on both [Marmalade](http://marmalade-repo.org/packages/clojure-mode) and
+Available on both [MELPA Stable](http://melpa-stable.milkbox.net) and
 [MELPA](http://melpa.milkbox.net) repos.
 
-Marmalade is recommended as it has the latest stable version, but
+MELPA Stable is recommended as it has the latest stable version, but
 MELPA has a development snapshot for users who don't mind breakage but
 don't want to run from a git checkout.
 
-If you're not already using Marmalade, add this to your
+If you're not already using MELPA Stable, add this to your
 `~/.emacs.d/init.el` and load it with <kbd>M-x eval-buffer</kbd>.
 
 ```el
 (require 'package)
 (add-to-list 'package-archives
-             '("marmalade" . "http://marmalade-repo.org/packages/"))
+             '("melpa-stable" . "http://melpa-stable.milkbox.net/packages/"))
 (package-initialize)
 ```
 
