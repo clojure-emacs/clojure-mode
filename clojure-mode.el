@@ -8,7 +8,7 @@
 ;;       Phil Hagelberg <technomancy@gmail.com>
 ;;       Bozhidar Batsov <bozhidar@batsov.com>
 ;; URL: http://github.com/clojure-emacs/clojure-mode
-;; Version: 2.2.0
+;; Version: 3.0.0-cvs
 ;; Keywords: languages, lisp
 
 ;; This file is not part of GNU Emacs.
@@ -489,7 +489,7 @@ numbers count from the end:
   leiningen.compile -> leiningen.test.compile (uses 1)
   clojure.http.client -> clojure.http.test.client (uses -1)")
 
-(defconst clojure-mode-version "2.2.0"
+(defconst clojure-mode-version "3.0.0-snapshot"
   "The current version of `clojure-mode'.")
 
 (defun clojure-mode-display-version ()
