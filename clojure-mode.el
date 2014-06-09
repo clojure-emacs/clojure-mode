@@ -367,19 +367,6 @@
   :link '(url-link :tag "Github" "https://github.com/clojure-emacs/clojure-mode")
   :link '(emacs-commentary-link :tag "Commentary" "clojure-mode"))
 
-(defcustom clojure-font-lock-comment-sexp nil
-  "Set to non-nil to enable fontification of (comment...) forms.
-If you change this option, use M-x clojure-mode to restart clojure mode.
-This option is experimental."
-  :type 'boolean
-  :group 'clojure
-  :safe 'booleanp)
-
-(make-obsolete-variable
- 'clojure-font-lock-comment-sexp
- "This option will be removed in the next major clojure-mode release."
- "2.2")
-
 (defcustom clojure-load-command  "(clojure.core/load-file \"%s\")\n"
   "Format-string for building a Clojure expression to load a file.
 This format string should use `%s' to substitute a file name and
@@ -659,15 +646,6 @@ Called by `imenu--generic-function'."
   (setq-local font-lock-multiline t)
   (add-to-list 'font-lock-extend-region-functions
                'clojure-font-lock-extend-region-def t)
-
-  (when clojure-font-lock-comment-sexp
-    (add-to-list 'font-lock-extend-region-functions
-                 'clojure-font-lock-extend-region-comment t)
-    (make-local-variable 'clojure-font-lock-keywords)
-    (add-to-list 'clojure-font-lock-keywords
-                 'clojure-font-lock-mark-comment t)
-    (setq-local open-paren-in-column-0-is-defun-start nil))
-
   (setq font-lock-defaults
         '(clojure-font-lock-keywords    ; keywords
           nil nil
@@ -761,44 +739,6 @@ point) to check."
     (when pos
       (forward-char (- (length (match-string 1))))
       pos)))
-
-(defun clojure-font-lock-extend-region-comment ()
-  "Set region boundaries to contain (comment ..) and #_ sexp entirely.
-
-This does not work if there is a whitespace between an opening
-parenthesis and \"comment\", but this omission allows the
-function to run faster."
-  (let ((changed nil))
-    (goto-char font-lock-beg)
-    (condition-case nil (beginning-of-defun) (error nil))
-    (let ((pos (clojure-find-block-comment-start font-lock-end)))
-      (when pos
-        (when (< (point) font-lock-beg)
-          (setq font-lock-beg (point)
-                changed t))
-        (condition-case nil (forward-sexp) (error nil))
-        (when (> (point) font-lock-end)
-          (setq font-lock-end (point)
-                changed t))))
-    changed))
-
-(defun clojure-font-lock-mark-comment (limit)
-  "Mark all (comment ..) and #_ forms with `font-lock-comment-face'.
-
-LIMIT denotes the maximum number of characters (relative to the
-point) to check."
-  (let (pos)
-    (while (and (< (point) limit)
-                (setq pos (clojure-find-block-comment-start limit)))
-      (when pos
-        (condition-case nil
-            (add-text-properties (point)
-                                 (progn
-                                   (forward-sexp)
-                                   (point))
-                                 '(face font-lock-comment-face multiline t))
-          (error (forward-char 8))))))
-  nil)
 
 ;; Docstring positions
 (put 'ns 'clojure-doc-string-elt 2)
