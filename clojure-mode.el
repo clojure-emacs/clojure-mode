@@ -78,15 +78,36 @@
 
 (defconst clojure-font-lock-keywords
   (eval-when-compile
-    `(;; Definitions
+    `(;; Top-level variable definition
       (,(concat "(\\(?:clojure.core/\\)?\\("
-                (regexp-opt '("defn" "defn-" "def" "defonce"
-                              "defmulti" "defmethod" "defmacro"
-                              "defstruct" "deftype" "defprotocol"
-                              "defrecord" "deftest" "def\\[a-z\\]"
-                              "ann"))
-                ;; Function declarations
+                (regexp-opt '("def" "defonce"))
+                ;; variable declarations
                 "\\)\\>"
+                ;; Any whitespace
+                "[ \r\n\t]*"
+                ;; Possibly type or metadata
+                "\\(?:#?^\\(?:{[^}]*}\\|\\sw+\\)[ \r\n\t]*\\)*"
+                "\\(\\sw+\\)?")
+       (1 font-lock-keyword-face)
+       (2 font-lock-variable-name-face nil t))
+      ;; Type definition
+      (,(concat "(\\(?:clojure.core/\\)?\\("
+                (regexp-opt '("defstruct" "deftype" "defprotocol"
+                              "defrecord"))
+                ;; type declarations
+                "\\)\\>"
+                ;; Any whitespace
+                "[ \r\n\t]*"
+                ;; Possibly type or metadata
+                "\\(?:#?^\\(?:{[^}]*}\\|\\sw+\\)[ \r\n\t]*\\)*"
+                "\\(\\sw+\\)?")
+       (1 font-lock-keyword-face)
+       (2 font-lock-type-face nil t))
+      ;; Function definition (anything that starts with def and is not
+      ;; listed above)
+      (,(concat "(\\(?:[a-z\.-]+/\\)?\\(def\[a-z\-\]*-?\\)"
+                ;; Function declarations
+                "\\>"
                 ;; Any whitespace
                 "[ \r\n\t]*"
                 ;; Possibly type or metadata
@@ -104,17 +125,6 @@
        (2 font-lock-function-name-face nil t))
       ;; lambda arguments - %, %1, %2, etc
       ("\\<%[1-9]?" (0 font-lock-variable-name-face))
-      ;; TODO: Merge this with the definitions sections
-      (,(concat "(\\(?:[a-z\.-]+/\\)?\\(def\[a-z\-\]*-?\\)"
-                ;; Function declarations
-                "\\>"
-                ;; Any whitespace
-                "[ \r\n\t]*"
-                ;; Possibly type or metadata
-                "\\(?:#?^\\(?:{[^}]*}\\|\\sw+\\)[ \r\n\t]*\\)*"
-                "\\(\\sw+\\)?")
-       (1 font-lock-keyword-face)
-       (2 font-lock-function-name-face nil t))
       ;; (ns namespace)
       (,(concat "(\\(?:clojure.core/\\)?ns[ \t]+"
                 ;; namespace
