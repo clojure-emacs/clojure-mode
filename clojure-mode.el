@@ -76,107 +76,6 @@
 (declare-function clojure-test-jump-to-implementation  "clojure-test-mode")
 (declare-function lisp-fill-paragraph  "lisp-mode" (&optional justify))
 
-(defconst clojure-font-lock-keywords
-  (eval-when-compile
-    `(;; Top-level variable definition
-      (,(concat "(\\(?:clojure.core/\\)?\\("
-                (regexp-opt '("def" "defonce"))
-                ;; variable declarations
-                "\\)\\>"
-                ;; Any whitespace
-                "[ \r\n\t]*"
-                ;; Possibly type or metadata
-                "\\(?:#?^\\(?:{[^}]*}\\|\\sw+\\)[ \r\n\t]*\\)*"
-                "\\(\\sw+\\)?")
-       (1 font-lock-keyword-face)
-       (2 font-lock-variable-name-face nil t))
-      ;; Type definition
-      (,(concat "(\\(?:clojure.core/\\)?\\("
-                (regexp-opt '("defstruct" "deftype" "defprotocol"
-                              "defrecord"))
-                ;; type declarations
-                "\\)\\>"
-                ;; Any whitespace
-                "[ \r\n\t]*"
-                ;; Possibly type or metadata
-                "\\(?:#?^\\(?:{[^}]*}\\|\\sw+\\)[ \r\n\t]*\\)*"
-                "\\(\\sw+\\)?")
-       (1 font-lock-keyword-face)
-       (2 font-lock-type-face nil t))
-      ;; Function definition (anything that starts with def and is not
-      ;; listed above)
-      (,(concat "(\\(?:[a-z\.-]+/\\)?\\(def\[a-z\-\]*-?\\)"
-                ;; Function declarations
-                "\\>"
-                ;; Any whitespace
-                "[ \r\n\t]*"
-                ;; Possibly type or metadata
-                "\\(?:#?^\\(?:{[^}]*}\\|\\sw+\\)[ \r\n\t]*\\)*"
-                "\\(\\sw+\\)?")
-       (1 font-lock-keyword-face)
-       (2 font-lock-function-name-face nil t))
-      ;; (fn name? args ...)
-      (,(concat "(\\(?:clojure.core/\\)?\\(fn\\)[ \t]+"
-                ;; Possibly type
-                "\\(?:#?^\\sw+[ \t]*\\)?"
-                ;; Possibly name
-                "\\(t\\sw+\\)?" )
-       (1 font-lock-keyword-face)
-       (2 font-lock-function-name-face nil t))
-      ;; lambda arguments - %, %1, %2, etc
-      ("\\<%[1-9]?" (0 font-lock-variable-name-face))
-      ;; (ns namespace)
-      (,(concat "(\\(?:clojure.core/\\)?ns[ \t]+"
-                ;; namespace
-                "\\(\\sw+\\)" )
-       (1 font-lock-type-face nil t))
-      ;; Special forms & control structures
-      (,(concat
-         "(\\(?:clojure.core/\\)?"
-         (regexp-opt
-          '("let" "letfn" "do"
-            "case" "cond" "condp"
-            "for" "loop" "recur"
-            "when" "when-not" "when-let" "when-first" "when-some"
-            "if" "if-let" "if-not" "if-some"
-            "." ".." "->" "->>" "doto"
-            "and" "or"
-            "dosync" "doseq" "dotimes" "dorun" "doall"
-            "load" "import" "unimport" "ns" "in-ns" "refer"
-            "try" "catch" "finally" "throw"
-            "with-open" "with-local-vars" "binding"
-            "gen-class" "gen-and-load-class" "gen-and-save-class"
-            "handler-case" "handle" "var" "declare") t)
-         "\\>")
-       1 font-lock-keyword-face)
-      ;; Global constants - nil, true, false
-      (,(concat
-         (regexp-opt
-          '("true" "false" "nil") t)
-         "\\>")
-       0 font-lock-constant-face)
-      ;; Constant values (keywords), including as metadata e.g. ^:static
-      ("\\<^?:\\(\\sw\\|\\s_\\)+\\(\\>\\|\\_>\\)" 0 font-lock-constant-face)
-      ;; Meta type hint #^Type or ^Type
-      ("\\(#?^\\)\\(\\(\\sw\\|\\s_\\)+\\)"
-       (1 font-lock-preprocessor-face)
-       (2 font-lock-type-face))
-      ;; Java interop highlighting
-      ;; .foo .barBaz .qux01 .-flibble .-flibbleWobble
-      ("\\<\\.-?[a-z][a-zA-Z0-9]*\\>" 0 font-lock-preprocessor-face)
-      ;; Foo Bar$Baz Qux_ World_OpenUDP Foo. Babylon15.
-      ("\\(?:\\<\\|\\.\\)\\([A-Z][a-zA-Z0-9_]*[a-zA-Z0-9$_]+\\.?\\>\\)" 1 font-lock-type-face)
-      ;; foo.bar.baz
-      ("\\<[a-z][a-z0-9_-]+\\.\\([a-z][a-z0-9_-]+\\.?\\)+" 0 font-lock-type-face)
-      ;; foo/ Foo/
-      ("\\<\\([a-zA-Z][a-z0-9_-]*\\)/" 1 font-lock-type-face)
-      ;; fooBar
-      ("\\<[a-z]+[A-Z]+[a-z][a-zA-Z0-9$]*\\>" 0 font-lock-preprocessor-face)
-      ;; Highlight grouping constructs in regular expressions
-      (clojure-mode-font-lock-regexp-groups
-       (1 'font-lock-regexp-grouping-construct prepend))))
-  "Default expressions to highlight in Clojure mode.")
-
 (defgroup clojure nil
   "A mode for Clojure"
   :prefix "clojure-"
@@ -456,6 +355,107 @@ Called by `imenu--generic-function'."
               (setq found? t)
               (set-match-data (list def-beg def-end)))))
         (goto-char start)))))
+
+(defconst clojure-font-lock-keywords
+  (eval-when-compile
+    `(;; Top-level variable definition
+      (,(concat "(\\(?:clojure.core/\\)?\\("
+                (regexp-opt '("def" "defonce"))
+                ;; variable declarations
+                "\\)\\>"
+                ;; Any whitespace
+                "[ \r\n\t]*"
+                ;; Possibly type or metadata
+                "\\(?:#?^\\(?:{[^}]*}\\|\\sw+\\)[ \r\n\t]*\\)*"
+                "\\(\\sw+\\)?")
+       (1 font-lock-keyword-face)
+       (2 font-lock-variable-name-face nil t))
+      ;; Type definition
+      (,(concat "(\\(?:clojure.core/\\)?\\("
+                (regexp-opt '("defstruct" "deftype" "defprotocol"
+                              "defrecord"))
+                ;; type declarations
+                "\\)\\>"
+                ;; Any whitespace
+                "[ \r\n\t]*"
+                ;; Possibly type or metadata
+                "\\(?:#?^\\(?:{[^}]*}\\|\\sw+\\)[ \r\n\t]*\\)*"
+                "\\(\\sw+\\)?")
+       (1 font-lock-keyword-face)
+       (2 font-lock-type-face nil t))
+      ;; Function definition (anything that starts with def and is not
+      ;; listed above)
+      (,(concat "(\\(?:[a-z\.-]+/\\)?\\(def\[a-z\-\]*-?\\)"
+                ;; Function declarations
+                "\\>"
+                ;; Any whitespace
+                "[ \r\n\t]*"
+                ;; Possibly type or metadata
+                "\\(?:#?^\\(?:{[^}]*}\\|\\sw+\\)[ \r\n\t]*\\)*"
+                "\\(\\sw+\\)?")
+       (1 font-lock-keyword-face)
+       (2 font-lock-function-name-face nil t))
+      ;; (fn name? args ...)
+      (,(concat "(\\(?:clojure.core/\\)?\\(fn\\)[ \t]+"
+                ;; Possibly type
+                "\\(?:#?^\\sw+[ \t]*\\)?"
+                ;; Possibly name
+                "\\(t\\sw+\\)?" )
+       (1 font-lock-keyword-face)
+       (2 font-lock-function-name-face nil t))
+      ;; lambda arguments - %, %1, %2, etc
+      ("\\<%[1-9]?" (0 font-lock-variable-name-face))
+      ;; (ns namespace)
+      (,(concat "(\\(?:clojure.core/\\)?ns[ \t]+"
+                ;; namespace
+                "\\(\\sw+\\)" )
+       (1 font-lock-type-face nil t))
+      ;; Special forms & control structures
+      (,(concat
+         "(\\(?:clojure.core/\\)?"
+         (regexp-opt
+          '("let" "letfn" "do"
+            "case" "cond" "condp"
+            "for" "loop" "recur"
+            "when" "when-not" "when-let" "when-first" "when-some"
+            "if" "if-let" "if-not" "if-some"
+            "." ".." "->" "->>" "doto"
+            "and" "or"
+            "dosync" "doseq" "dotimes" "dorun" "doall"
+            "load" "import" "unimport" "ns" "in-ns" "refer"
+            "try" "catch" "finally" "throw"
+            "with-open" "with-local-vars" "binding"
+            "gen-class" "gen-and-load-class" "gen-and-save-class"
+            "handler-case" "handle" "var" "declare") t)
+         "\\>")
+       1 font-lock-keyword-face)
+      ;; Global constants - nil, true, false
+      (,(concat
+         (regexp-opt
+          '("true" "false" "nil") t)
+         "\\>")
+       0 font-lock-constant-face)
+      ;; Constant values (keywords), including as metadata e.g. ^:static
+      ("\\<^?:\\(\\sw\\|\\s_\\)+\\(\\>\\|\\_>\\)" 0 font-lock-constant-face)
+      ;; Meta type hint #^Type or ^Type
+      ("\\(#?^\\)\\(\\(\\sw\\|\\s_\\)+\\)"
+       (1 font-lock-preprocessor-face)
+       (2 font-lock-type-face))
+      ;; Java interop highlighting
+      ;; .foo .barBaz .qux01 .-flibble .-flibbleWobble
+      ("\\<\\.-?[a-z][a-zA-Z0-9]*\\>" 0 font-lock-preprocessor-face)
+      ;; Foo Bar$Baz Qux_ World_OpenUDP Foo. Babylon15.
+      ("\\(?:\\<\\|\\.\\)\\([A-Z][a-zA-Z0-9_]*[a-zA-Z0-9$_]+\\.?\\>\\)" 1 font-lock-type-face)
+      ;; foo.bar.baz
+      ("\\<[a-z][a-z0-9_-]+\\.\\([a-z][a-z0-9_-]+\\.?\\)+" 0 font-lock-type-face)
+      ;; foo/ Foo/
+      ("\\<\\([a-zA-Z][a-z0-9_-]*\\)/" 1 font-lock-type-face)
+      ;; fooBar
+      ("\\<[a-z]+[A-Z]+[a-z][a-zA-Z0-9$]*\\>" 0 font-lock-preprocessor-face)
+      ;; Highlight grouping constructs in regular expressions
+      (clojure-mode-font-lock-regexp-groups
+       (1 'font-lock-regexp-grouping-construct prepend))))
+  "Default expressions to highlight in Clojure mode.")
 
 (defun clojure-mode-font-lock-setup ()
   "Configures font-lock for editing Clojure code."
