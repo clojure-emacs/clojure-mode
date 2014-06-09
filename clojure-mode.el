@@ -1189,8 +1189,6 @@ Useful if a file has been renamed."
         (when (re-search-forward regexp nil t)
           (match-string-no-properties 4))))))
 
-(define-obsolete-function-alias 'clojure-find-package 'clojure-find-ns)
-
 ;; Test navigation:
 (defun clojure-in-tests-p ()
   "Check whether the current file is a test file.
