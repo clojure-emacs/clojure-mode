@@ -55,6 +55,11 @@ On Emacs 23 you will need to get [package.el](http://bit.ly/pkg-el23)
 yourself or install manually by placing `clojure-mode.el` on your `load-path`
 and `require`ing it.
 
+### Extra font-locking
+
+Prior to version 3.0 `clojure-mode` bundled **unreliable** font-locking for some built-in vars.
+In 3.0 this was extracted from `clojure-mode` and moved to a separate package - [clojure-mode-extra-font-locking](https://github.com/clojure-emacs/clojure-mode/blob/master/clojure-mode-extra-font-locking.el).
+
 ## Configuration
 
 To see a list of available configuration options do `M-x customize-group RET clojure`.
