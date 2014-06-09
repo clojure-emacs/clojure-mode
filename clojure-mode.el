@@ -546,17 +546,6 @@ point) to check."
                    (clojure-string-start t))
           (throw 'found t))))))
 
-(defun clojure-find-block-comment-start (limit)
-  "Search for (comment...) or #_ style block comments.
-Places point at the beginning of the expression.
-
-LIMIT denotes the maximum number of characters (relative to the
-point) to check."
-  (let ((pos (re-search-forward "\\((comment\\>\\|#_\\)" limit t)))
-    (when pos
-      (forward-char (- (length (match-string 1))))
-      pos)))
-
 ;; Docstring positions
 (put 'ns 'clojure-doc-string-elt 2)
 (put 'def 'clojure-doc-string-elt 2)
