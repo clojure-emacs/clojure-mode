@@ -105,7 +105,7 @@
       ;; lambda arguments - %, %1, %2, etc
       ("\\<%[1-9]?" (0 font-lock-variable-name-face))
       ;; TODO: Merge this with the definitions sections
-      (,(concat "(\\(\\(?:[a-z\.-]+/\\)?def\[a-z\-\]*-?\\)"
+      (,(concat "(\\(?:[a-z\.-]+/\\)?\\(def\[a-z\-\]*-?\\)"
                 ;; Function declarations
                 "\\>"
                 ;; Any whitespace
