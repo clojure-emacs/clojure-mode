@@ -146,7 +146,7 @@
             "try" "catch" "finally" "throw"
             "with-open" "with-local-vars" "binding"
             "gen-class" "gen-and-load-class" "gen-and-save-class"
-            "handler-case" "handle" "var") t)
+            "handler-case" "handle" "var" "declare") t)
          "\\>")
        1 font-lock-keyword-face)
       ;; Global constants - nil, true, false
@@ -188,7 +188,7 @@
             "complement" "concat" "cond->" "cond->>" "conj"
             "conj!" "cons" "constantly" "construct-proxy" "contains?"
             "count" "counted?" "create-ns" "create-struct" "cycle"
-            "dec" "decimal?" "declare" "definline" "defmacro"
+            "dec" "decimal?" "definline" "defmacro"
             "defmethod" "defmulti" "defn" "defn-" "defonce"
             "defstruct" "delay" "delay?" "deliver" "deref"
             "derive" "descendants" "destructure" "disj" "disj!"
