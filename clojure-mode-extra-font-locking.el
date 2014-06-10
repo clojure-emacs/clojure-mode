@@ -33,6 +33,8 @@
 
 ;;; Code:
 
+(require 'clojure-mode)
+
 (defvar clojure-built-in-vars
   '(;; clojure.core
     "*" "*1" "*2" "*3" "*agent*"
