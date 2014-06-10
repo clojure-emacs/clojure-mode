@@ -146,22 +146,20 @@ For example, \[ is allowed in :db/id[:db.part/user]."
     (define-key map (kbd "C-c C-t") 'clojure-jump-between-tests-and-code)
     (define-key map (kbd "C-c C-z") 'clojure-display-inferior-lisp-buffer)
     (define-key map (kbd "C-:") 'clojure-toggle-keyword-string)
+    (easy-menu-define clojure-mode-menu map "Clojure Mode menu"
+      '("Clojure"
+        ["Eval Function Definition" lisp-eval-defun]
+        ["Eval Last Sexp" lisp-eval-last-sexp]
+        ["Eval Region" lisp-eval-region]
+        "--"
+        ["Run Inferior Lisp" clojure-display-inferior-lisp-buffer]
+        ["Display Inferior Lisp Buffer" clojure-display-inferior-lisp-buffer]
+        ["Load File" clojure-load-file]
+        "--"
+        ["Toggle between string & keyword" clojure-toggle-keyword-string]
+        ["Jump Between Test and Code" clojure-jump-between-tests-and-code]))
     map)
   "Keymap for Clojure mode.  Inherits from `lisp-mode-shared-map'.")
-
-(easy-menu-define clojure-mode-menu clojure-mode-map
-  "Menu for Clojure mode."
-  '("Clojure"
-    ["Eval Function Definition" lisp-eval-defun]
-    ["Eval Last Sexp" lisp-eval-last-sexp]
-    ["Eval Region" lisp-eval-region]
-    "--"
-    ["Run Inferior Lisp" clojure-display-inferior-lisp-buffer]
-    ["Display Inferior Lisp Buffer" clojure-display-inferior-lisp-buffer]
-    ["Load File" clojure-load-file]
-    "--"
-    ["Toggle between string & keyword" clojure-toggle-keyword-string]
-    ["Jump Between Test and Code" clojure-jump-between-tests-and-code]))
 
 (defvar clojure-mode-syntax-table
   (let ((table (copy-syntax-table emacs-lisp-mode-syntax-table)))
@@ -1039,9 +1037,7 @@ word test in it and whether the file lives under the test/ directory."
 (progn
   (add-to-list 'auto-mode-alist '("\\.clj[sx]?\\'" . clojure-mode))
   (add-to-list 'auto-mode-alist '("\\.dtm\\'" . clojure-mode))
-  (add-to-list 'auto-mode-alist '("\\.edn\\'" . clojure-mode))
-  (add-to-list 'interpreter-mode-alist '("jark" . clojure-mode))
-  (add-to-list 'interpreter-mode-alist '("cake" . clojure-mode)))
+  (add-to-list 'auto-mode-alist '("\\.edn\\'" . clojure-mode)))
 
 (provide 'clojure-mode)
 
