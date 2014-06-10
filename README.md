@@ -57,8 +57,10 @@ and `require`ing it.
 
 ### Extra font-locking
 
-Prior to version 3.0 `clojure-mode` bundled **unreliable** font-locking for some built-in vars.
-In 3.0 this was extracted from `clojure-mode` and moved to a separate package - [clojure-mode-extra-font-locking][].
+Prior to version 3.0 `clojure-mode` bundled **unreliable**
+font-locking for some built-in vars.  In 3.0 this was extracted from
+`clojure-mode` and moved to a separate package -
+[clojure-mode-extra-font-locking][].
 
 ## Configuration
 
@@ -90,25 +92,63 @@ in summary; this is one attempt:
 Please see the docstrings of the Emacs Lisp functions/vars noted above for
 information about customizing this indentation behaviour.
 
-### Paredit
+## Related packages
 
-Using clojure-mode with
-[Paredit](http://mumble.net/~campbell/emacs/paredit.el) is highly
-recommended. It helps ensure the structure of your forms is not
-compromised and offers a number of operations that work on code
-structure at a higher level than just characters and words.
-
-It is also available using package.el from the above archives.
-
-Use Paredit as you normally would any other minor mode; for instance:
+* [clojure-mode-extra-font-locking][] provides additional font-locking
+for built-in methods and macros.  The font-locking is pretty
+imprecise, because it doesn't take namespaces into account and it
+won't font-lock a functions at all possible positions in a sexp, but
+if you don't mind its imperfections you can easily enable it:
 
 ```el
-;; (require 'paredit) if you didn't install it via package.el
+(require 'clojure-mode-extra-font-locking)
+```
+
+The code in `clojure-mode-font-locking` used to be bundled with
+`clojure-mode` before version 3.0.
+
+* [clj-refactor][] provides simple refactoring support.
+
+* Enabling `CamelCase` support for editing commands(like
+`forward-word`, `backward-word`, etc) in `clojure-mode` is quite
+useful since we often have to deal with Java class and method
+names. The built-in Emacs minor mode `subword-mode` provides such
+functionality:
+
+```el
+(add-hook 'clojure-mode-hook 'subword-mode)
+```
+
+* The use of [paredit][] when editing Clojure (or any other Lisp) code
+is highly recommended. It helps ensure the structure of your forms is
+not compromised and offers a number of operations that work on code
+structure at a higher level than just characters and words. To enable
+it for Clojure buffers:
+
+```el
 (add-hook 'clojure-mode-hook 'paredit-mode)
 ```
 
-See [the cheat sheet](http://www.emacswiki.org/emacs/PareditCheatsheet)
-for Paredit usage hints.
+* [smartparens][] is an excellent
+  (newer) alternative to paredit. Many Clojure hackers have adopted it
+  recently and you might want to give it a try as well. To enable
+  `smartparens` use the following code:
+
+```el
+(add-hook 'clojure-mode-hook 'smartparens-strict-mode)
+```
+
+* [RainbowDelimiters][] is a
+  minor mode which highlights parentheses, brackets, and braces
+  according to their depth. Each successive level is highlighted in a
+  different color. This makes it easy to spot matching delimiters,
+  orient yourself in the code, and tell which statements are at a
+  given depth. Assuming you've already installed `RainbowDelimiters` you can
+  enable it like this:
+
+```el
+(add-hook 'clojure-mode-hook 'rainbow-delimiters-mode)
+```
 
 ## REPL Interaction
 
@@ -173,3 +213,7 @@ Distributed under the GNU General Public License; type <kbd>C-h C-c</kbd> to vie
 [melpa]: http://melpa.milkbox.net
 [melpa stable]: http://melpa-stable.milkbox.net
 [clojure-mode-extra-font-locking]: https://github.com/clojure-emacs/clojure-mode/blob/master/clojure-mode-extra-font-locking.el
+[clj-refactor]: https://github.com/clojure-emacs/clj-refactor.el
+[paredit]: http://mumble.net/~campbell/emacs/paredit.html
+[smartparens]: https://github.com/Fuco1/smartparens
+[RainbowDelimiters]: https://github.com/jlr/rainbow-delimiters
