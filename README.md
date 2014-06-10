@@ -10,8 +10,8 @@ A more thorough walkthrough is available at [clojure-doc.org](http://clojure-doc
 
 ## Installation
 
-Available on both [MELPA Stable](http://melpa-stable.milkbox.net) and
-[MELPA](http://melpa.milkbox.net) repos.
+Available on both [MELPA Stable][] and
+[MELPA][] repos.
 
 MELPA Stable is recommended as it has the latest stable version, but
 MELPA has a development snapshot for users who don't mind breakage but
@@ -58,7 +58,7 @@ and `require`ing it.
 ### Extra font-locking
 
 Prior to version 3.0 `clojure-mode` bundled **unreliable** font-locking for some built-in vars.
-In 3.0 this was extracted from `clojure-mode` and moved to a separate package - [clojure-mode-extra-font-locking](https://github.com/clojure-emacs/clojure-mode/blob/master/clojure-mode-extra-font-locking.el).
+In 3.0 this was extracted from `clojure-mode` and moved to a separate package - [clojure-mode-extra-font-locking][].
 
 ## Configuration
 
@@ -118,7 +118,7 @@ and evaluating code interactively.
 ### Basic REPL
 
 Use <kbd>M-x run-lisp</kbd> to open a simple REPL subprocess using
-[Leiningen](http://github.com/technomancy/leiningen). Once that has
+[Leiningen][]. Once that has
 opened, you can use <kbd>C-c C-r</kbd> to evaluate the region or
 <kbd>C-c C-l</kbd> to load the whole file.
 
@@ -127,13 +127,13 @@ a different REPL command.
 
 ### CIDER
 
-You can also use [Leiningen](http://leiningen.org) to start an
-enhanced REPL via [CIDER](https://github.com/clojure-emacs/cider).
+You can also use [Leiningen][] to start an
+enhanced REPL via [CIDER][].
 
 ### Swank Clojure
 
 SLIME is available via
-[swank-clojure](http://github.com/technomancy/swank-clojure) in `clojure-mode` 1.x.
+[swank-clojure][] in `clojure-mode` 1.x.
 SLIME support was removed in version 2.x in favor of `CIDER`.
 
 ## Clojure Test Mode
@@ -158,7 +158,7 @@ provided in CIDER itself. _You're welcome to help make this happen sooner rather
 ## License
 
 Copyright © 2007-2014 Jeffrey Chu, Lennart Staflin, Phil Hagelberg, Bozhidar Batsov
-and [contributors](https://github.com/clojure-emacs/clojure-mode/contributors).
+and [contributors][].
 
 Distributed under the GNU General Public License; type <kbd>C-h C-c</kbd> to view it.
 
@@ -166,3 +166,10 @@ Distributed under the GNU General Public License; type <kbd>C-h C-c</kbd> to vie
 [COPYING]: http://www.gnu.org/copyleft/gpl.html
 [badge-travis]: https://travis-ci.org/clojure-emacs/clojure-mode.svg?branch=master
 [travis]: https://travis-ci.org/clojure-emacs/clojure-mode
+[swank-clojure]: http://github.com/technomancy/swank-clojure
+[CIDER]: https://github.com/clojure-emacs/cider
+[Leiningen]: http://leiningen.org
+[contributors]: https://github.com/clojure-emacs/clojure-mode/contributors
+[melpa]: http://melpa.milkbox.net
+[melpa stable]: http://melpa-stable.milkbox.net
+[clojure-mode-extra-font-locking]: https://github.com/clojure-emacs/clojure-mode/blob/master/clojure-mode-extra-font-locking.el
