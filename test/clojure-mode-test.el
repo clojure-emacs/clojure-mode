@@ -93,6 +93,13 @@ POS."
     (should (eq (clojure-test-face-at 1 8) 'font-lock-type-face))
     (should (eq (clojure-test-face-at 10 18) nil))))
 
+(ert-deftest clojure-mode-syntax-table/static-method ()
+  :tags '(fontification syntax-table)
+  (clojure-test-with-temp-buffer "Class/methodName"
+                                 (should (eq (clojure-test-face-at 6 6) nil))
+                                 (should (eq (clojure-test-face-at 1 5) 'font-lock-type-face))
+                                 (should (eq (clojure-test-face-at 7 16) 'font-lock-preprocessor-face))))
+
 (ert-deftest clojure-mode-syntax-table/namespaced-def ()
   :tags '(fontification syntax-table)
   (clojure-test-with-temp-buffer "(clo/defbar foo nil)"
