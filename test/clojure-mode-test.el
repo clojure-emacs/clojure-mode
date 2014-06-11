@@ -100,6 +100,18 @@ POS."
                                  (should (eq (clojure-test-face-at 1 5) 'font-lock-type-face))
                                  (should (eq (clojure-test-face-at 7 16) 'font-lock-preprocessor-face))))
 
+(ert-deftest clojure-mode-syntax-table/constant ()
+  :tags '(fontification syntax-table)
+  (should (eq (clojure-test-face-at 1 5 "CONST") 'font-lock-constant-face))
+  (should (eq (clojure-test-face-at 1 10 "CONST_NAME") 'font-lock-constant-face)))
+
+(ert-deftest clojure-mode-syntax-table/class-constant ()
+  :tags '(fontification syntax-table)
+  (clojure-test-with-temp-buffer "Class/CONST_NAME"
+                                 (should (eq (clojure-test-face-at 6 6) nil))
+                                 (should (eq (clojure-test-face-at 1 5) 'font-lock-type-face))
+                                 (should (eq (clojure-test-face-at 7 16) 'font-lock-constant-face))))
+
 (ert-deftest clojure-mode-syntax-table/namespaced-def ()
   :tags '(fontification syntax-table)
   (clojure-test-with-temp-buffer "(clo/defbar foo nil)"

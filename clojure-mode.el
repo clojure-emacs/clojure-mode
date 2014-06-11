@@ -440,6 +440,8 @@ Called by `imenu--generic-function'."
        (1 font-lock-preprocessor-face)
        (2 font-lock-type-face))
       ;; Java interop highlighting
+      ;; CONST SOME_CONST (optionally prefixed by /)
+      ("\\(?:\\<\\|/\\)\\([A-Z]+\\|\\([A-Z]+_[A-Z1-9_]+\\)\\)\\>" 1 font-lock-constant-face)
       ;; .foo .barBaz .qux01 .-flibble .-flibbleWobble
       ("\\<\\.-?[a-z][a-zA-Z0-9]*\\>" 0 font-lock-preprocessor-face)
       ;; Foo Bar$Baz Qux_ World_OpenUDP Foo. Babylon15.
