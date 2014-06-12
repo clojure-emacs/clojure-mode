@@ -1036,10 +1036,8 @@ word test in it and whether the file lives under the test/ directory."
     (clojure-jump-to-test)))
 
 ;;;###autoload
-(progn
-  (add-to-list 'auto-mode-alist '("\\.clj[sx]?\\'" . clojure-mode))
-  (add-to-list 'auto-mode-alist '("\\.dtm\\'" . clojure-mode))
-  (add-to-list 'auto-mode-alist '("\\.edn\\'" . clojure-mode)))
+(add-to-list 'auto-mode-alist
+             '("\\.\\(clj[sx]?\\|dtm\\|edn\\)\\'" . clojure-mode))
 
 (provide 'clojure-mode)
 
