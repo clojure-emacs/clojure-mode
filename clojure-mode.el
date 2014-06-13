@@ -440,7 +440,9 @@ Called by `imenu--generic-function'."
             "*read-eval*" "*source-path*"
             "*use-context-classloader*" "*warn-on-reflection*") t)
          "\\>")
-       0 font-lock-built-in-face)
+       0 font-lock-builtin-face)
+      ;; Dynamic variables - *something*
+      ("\\<\\*[a-z-]*\\*\\>" 0 font-lock-variable-name-face)
       ;; Global constants - nil, true, false
       (,(concat
          "\\<"
