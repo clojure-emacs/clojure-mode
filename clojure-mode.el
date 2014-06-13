@@ -429,6 +429,7 @@ Called by `imenu--generic-function'."
        1 font-lock-keyword-face)
       ;; Global constants - nil, true, false
       (,(concat
+         "\\<"
          (regexp-opt
           '("true" "false" "nil") t)
          "\\>")

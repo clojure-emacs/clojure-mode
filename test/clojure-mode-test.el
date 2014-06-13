@@ -145,6 +145,11 @@ POS."
     (should (eq (clojure-test-face-at 7 8) 'font-lock-variable-name-face))
     (should (eq (clojure-test-face-at 10 11) 'font-lock-variable-name-face))))
 
+(ert-deftest clojure-mode-syntax-table/nil ()
+  :tags '(fontification syntax-table)
+  (should (eq (clojure-test-face-at 4 6 "(= nil x)") 'font-lock-constant-face))
+  (should-not (eq (clojure-test-face-at 3 5 "(fnil x)") 'font-lock-constant-face)))
+
 (provide 'clojure-mode-test)
 
 ;; Local Variables:
