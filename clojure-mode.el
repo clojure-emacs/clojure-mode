@@ -427,6 +427,20 @@ Called by `imenu--generic-function'."
             "handler-case" "handle" "var" "declare") t)
          "\\>")
        1 font-lock-keyword-face)
+      (,(concat
+         "\\<"
+         (regexp-opt
+          '("*1" "*2" "*3" "*agent*"
+            "*allow-unresolved-vars*" "*assert*" "*clojure-version*"
+            "*command-line-args*" "*compile-files*"
+            "*compile-path*" "*e" "*err*" "*file*" "*flush-on-newline*"
+            "*in*" "*macro-meta*" "*math-context*" "*ns*" "*out*"
+            "*print-dup*" "*print-length*" "*print-level*"
+            "*print-meta*" "*print-readably*"
+            "*read-eval*" "*source-path*"
+            "*use-context-classloader*" "*warn-on-reflection*") t)
+         "\\>")
+       0 font-lock-variable-name-face)
       ;; Global constants - nil, true, false
       (,(concat
          "\\<"

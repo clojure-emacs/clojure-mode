@@ -37,12 +37,6 @@
 
 (defvar clojure-built-in-vars
   '(;; clojure.core
-    "*1" "*2" "*3" "*agent*"
-    "*allow-unresolved-vars*" "*assert*" "*clojure-version*" "*command-line-args*" "*compile-files*"
-    "*compile-path*" "*e" "*err*" "*file*" "*flush-on-newline*"
-    "*in*" "*macro-meta*" "*math-context*" "*ns*" "*out*"
-    "*print-dup*" "*print-length*" "*print-level*" "*print-meta*" "*print-readably*"
-    "*read-eval*" "*source-path*" "*use-context-classloader*" "*warn-on-reflection*"
     "accessor" "aclone"
     "agent" "agent-errors" "aget" "alength" "alias"
     "all-ns" "alter" "alter-meta!" "alter-var-root" "amap"
