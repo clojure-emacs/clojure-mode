@@ -37,7 +37,7 @@
 
 (defvar clojure-built-in-vars
   '(;; clojure.core
-    "*" "*1" "*2" "*3" "*agent*"
+    "*1" "*2" "*3" "*agent*"
     "*allow-unresolved-vars*" "*assert*" "*clojure-version*" "*command-line-args*" "*compile-files*"
     "*compile-path*" "*e" "*err*" "*file*" "*flush-on-newline*"
     "*in*" "*macro-meta*" "*math-context*" "*ns*" "*out*"
