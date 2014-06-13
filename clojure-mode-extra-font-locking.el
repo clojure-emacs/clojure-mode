@@ -144,8 +144,7 @@
     ;; clojure.template
     "do-template" "apply-template"
     ;; clojure.test
-    "*initial-report-counters*" "*load-tests*" "*report-counters*" "*stack-trace-depth*" "*test-out*"
-    "*testing-contexts*" "*testing-vars*" "are" "assert-any" "assert-expr"
+    "are" "assert-any" "assert-expr"
     "assert-predicate" "compose-fixtures" "deftest" "deftest-" "file-position"
     "function?" "get-possibly-unbound-var" "inc-report-counter" "is" "join-fixtures"
     "report" "run-all-tests" "run-tests" "set-test" "successful?"
@@ -155,7 +154,7 @@
     "keywordize-keys" "macroexpand-all" "postwalk" "postwalk-demo" "postwalk-replace"
     "prewalk" "prewalk-demo" "prewalk-replace" "stringify-keys" "walk"
     ;; clojure.xml
-    "*current*" "*sb*" "*stack*" "*state*" "attrs"
+    "attrs"
     "content" "content-handler" "element" "emit" "emit-element"
     ;; clojure.zip
     "append-child" "branch?" "children" "down" "edit"
@@ -165,11 +164,25 @@
     "rightmost" "rights" "root" "seq-zip" "up"
     ))
 
+(defvar clojure-built-in-dynamic-vars
+  '(;; clojure.test
+    "*initial-report-counters*" "*load-tests*" "*report-counters*" "*stack-trace-depth*" "*test-out*"
+    "*testing-contexts*" "*testing-vars*"
+    ;; clojure.xml
+    "*current*" "*sb*" "*stack*" "*state*"
+    ))
+
 (font-lock-add-keywords 'clojure-mode
                         `((,(concat "(\\(?:\.*/\\)?"
                                     (regexp-opt clojure-built-in-vars t)
                                     "\\>")
                            1 font-lock-builtin-face)))
+
+(font-lock-add-keywords 'clojure-mode
+                        `((,(concat "\\<"
+                                    (regexp-opt clojure-built-in-dynamic-vars t)
+                                    "\\>")
+                           0 font-lock-builtin-face)))
 
 (provide 'clojure-mode-extra-font-locking)
 
