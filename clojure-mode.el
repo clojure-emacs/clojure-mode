@@ -181,15 +181,6 @@ For example, \[ is allowed in :db/id[:db.part/user]."
 This holds a cons cell of the form `(DIRECTORY . FILE)'
 describing the last `clojure-load-file' or `clojure-compile-file' command.")
 
-(defvar clojure-test-ns-segment-position -1
-  "Which segment of the ns is \"test\" inserted in your test name convention.
-
-Customize this depending on your project's conventions. Negative
-numbers count from the end:
-
-  leiningen.compile -> leiningen.test.compile (uses 1)
-  clojure.http.client -> clojure.http.test.client (uses -1)")
-
 (defconst clojure-mode-version "3.0.0-snapshot"
   "The current version of `clojure-mode'.")
 
