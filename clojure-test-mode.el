@@ -118,7 +118,7 @@
 (require 'cider-interaction)
 (require 'tramp)
 
-(message "Warning: clojure-test-mode is deprecated and is no longer maintained")
+(message "Warning: clojure-test-mode is deprecated and is no longer maintained. Use CIDER 0.7+ instead of it.")
 
 ;; Faces
 
