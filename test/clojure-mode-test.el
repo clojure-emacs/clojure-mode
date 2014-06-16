@@ -158,6 +158,13 @@ POS."
   :tags '(fontification syntax-table)
   (should (eq (clojure-test-face-at 4 8 "(= false x)") 'font-lock-constant-face)))
 
+(ert-deftest clojure-mode-syntax-table/characters ()
+  :tags '(fontification syntax-table)
+  (should (eq (clojure-test-face-at 1 2 "\\a") 'font-lock-string-face))
+  (should (eq (clojure-test-face-at 1 8 "\\newline") 'font-lock-string-face))
+  (should (eq (clojure-test-face-at 1 2 "\\1") 'font-lock-string-face))
+  (should (eq (clojure-test-face-at 1 6 "\\u0032") 'font-lock-string-face)))
+
 (provide 'clojure-mode-test)
 
 ;; Local Variables:

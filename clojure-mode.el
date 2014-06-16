@@ -441,6 +441,8 @@ Called by `imenu--generic-function'."
           '("true" "false" "nil") t)
          "\\>")
        0 font-lock-constant-face)
+      ;; Character literals - \1, \a, \newline, \u0000
+      ("\\\\[a-z0-9]+\\>" 0 font-lock-string-face)
       ;; Constant values (keywords), including as metadata e.g. ^:static
       ("\\<^?:\\(\\sw\\|\\s_\\)+\\(\\>\\|\\_>\\)" 0 font-lock-constant-face)
       ;; Meta type hint #^Type or ^Type
