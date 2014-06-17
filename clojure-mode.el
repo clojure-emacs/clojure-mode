@@ -73,7 +73,6 @@
 (require 'inf-lisp)
 (require 'imenu)
 
-(declare-function clojure-test-jump-to-implementation  "clojure-test-mode")
 (declare-function lisp-fill-paragraph  "lisp-mode" (&optional justify))
 
 (defgroup clojure nil
@@ -143,7 +142,6 @@ For example, \[ is allowed in :db/id[:db.part/user]."
     (define-key map (kbd "C-c C-e") 'lisp-eval-last-sexp)
     (define-key map (kbd "C-c C-l") 'clojure-load-file)
     (define-key map (kbd "C-c C-r") 'lisp-eval-region)
-    (define-key map (kbd "C-c C-t") 'clojure-jump-between-tests-and-code)
     (define-key map (kbd "C-c C-z") 'clojure-display-inferior-lisp-buffer)
     (define-key map (kbd "C-:") 'clojure-toggle-keyword-string)
     (easy-menu-define clojure-mode-menu map "Clojure Mode menu"
@@ -1023,46 +1021,6 @@ Returns a list pair, e.g. (\"defn\" \"abc\") or (\"deftest\" \"some-test\")."
       (when (search-forward-regexp re nil t)
         (list (match-string 1)
               (match-string 2))))))
-
-;; Test navigation:
-(defun clojure-in-tests-p ()
-  "Check whether the current file is a test file.
-
-Two checks are made - whether the namespace of the file has the
-word test in it and whether the file lives under the test/ directory."
-  (or (string-match-p "test\." (clojure-find-ns))
-      (string-match-p "/test" (buffer-file-name))))
-
-(defun clojure-underscores-for-hyphens (namespace)
-  "Replace all hyphens in NAMESPACE with underscores."
-  (replace-regexp-in-string "-" "_" namespace))
-
-(defun clojure-test-for (namespace)
-  "Return the path of the test file for the given NAMESPACE."
-  (let* ((namespace (clojure-underscores-for-hyphens namespace))
-         (segments (split-string namespace "\\.")))
-    (format "%stest/%s_test.clj"
-            (file-name-as-directory
-             (locate-dominating-file buffer-file-name "src/"))
-            (mapconcat 'identity segments "/"))))
-
-(defvar clojure-test-for-fn 'clojure-test-for
-  "The function that will return the full path of the Clojure test file for the given namespace.")
-
-(defun clojure-jump-to-test ()
-  "Jump from implementation file to test."
-  (interactive)
-  (find-file (funcall clojure-test-for-fn (clojure-find-ns))))
-
-(make-obsolete 'clojure-jump-to-test
-               "use projectile or toggle.el instead." "2.1.1")
-
-(defun clojure-jump-between-tests-and-code ()
-  "Jump between implementation and related test file."
-  (interactive)
-  (if (clojure-in-tests-p)
-      (clojure-test-jump-to-implementation)
-    (clojure-jump-to-test)))
 
 ;;;###autoload
 (add-to-list 'auto-mode-alist
