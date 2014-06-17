@@ -1005,6 +1005,25 @@ Useful if a file has been renamed."
         (when (re-search-forward regexp nil t)
           (match-string-no-properties 4))))))
 
+(defun clojure-find-def ()
+  "Find the var declaration macro and symbol name of the current form.
+Returns a list pair, e.g. (\"defn\" \"abc\") or (\"deftest\" \"some-test\")."
+  (let ((re (concat "(\\(?:\\sw+/\\)?"
+                    ;; Declaration
+                    "\\(def\\sw*\\)\\>"
+                    ;; Any whitespace
+                    "[ \r\n\t]*"
+                    ;; Possibly type or metadata
+                    "\\(?:#?^\\(?:{[^}]*}\\|\\sw+\\)[ \r\n\t]*\\)*"
+                    ;; Symbol name
+                    "\\(\\sw+\\)")))
+    (save-excursion
+      (unless (looking-at re)
+        (beginning-of-defun))
+      (when (search-forward-regexp re nil t)
+        (list (match-string 1)
+              (match-string 2))))))
+
 ;; Test navigation:
 (defun clojure-in-tests-p ()
   "Check whether the current file is a test file.
