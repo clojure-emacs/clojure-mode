@@ -146,8 +146,8 @@ For example, \[ is allowed in :db/id[:db.part/user]."
     (define-key map (kbd "C-:") 'clojure-toggle-keyword-string)
     (easy-menu-define clojure-mode-menu map "Clojure Mode menu"
       '("Clojure"
-        ["Eval Function Definition" lisp-eval-defun]
-        ["Eval Last Sexp" lisp-eval-last-sexp]
+        ["Eval Top-Level Expression" lisp-eval-defun]
+        ["Eval Last Expression" lisp-eval-last-sexp]
         ["Eval Region" lisp-eval-region]
         "--"
         ["Run Inferior Lisp" clojure-display-inferior-lisp-buffer]
