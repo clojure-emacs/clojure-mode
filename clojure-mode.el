@@ -155,7 +155,12 @@ For example, \[ is allowed in :db/id[:db.part/user]."
         ["Load File" clojure-load-file]
         "--"
         ["Toggle between string & keyword" clojure-toggle-keyword-string]
-        ["Jump Between Test and Code" clojure-jump-between-tests-and-code]))
+        ["Mark string" clojure-mark-string]
+        ["Insert ns form at point" clojure-insert-ns-form-at-point]
+        ["Insert ns form at beginning" clojure-insert-ns-form]
+        ["Update ns form" clojure-update-ns]
+        "--"
+        ["Version" clojure-mode-display-version]))
     map)
   "Keymap for Clojure mode.  Inherits from `lisp-mode-shared-map'.")
 
