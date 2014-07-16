@@ -1,24 +1,5 @@
-(ns clojure-mode.test
-  (:use [clojure.test]))
-
-(deftest test-str
-  (is (= "o hai" (str "o" "hai"))))
-
-(deftest test-errs
-  (is (({} :hi)))
-  (is (str "This one doesn't actually error."))
-  (is (= 0 (/ 9 0))))
-
-(deftest test-bad-math
-  (is (= 0 (* 8 2)))
-  (is (= 5 (+ 2 2))))
-
-(deftest test-something-that-actually-works
-  (is (= 1 1)))
-
-;; For debugging
-;; (map #(cons (str (:name (meta %))) (:status (meta %))) (vals (ns-interns *ns*)))
-;; (insert (pp the-result))
+(ns clojure-mode.demo
+  (:use [clojure.something]))
 
 (comment ;; for indentation
   (with-hi heya
@@ -33,6 +14,14 @@
   (clo/defguppy gurgle
     minnow))
 
+;; cljx
+(defn x-to-string
+  [x]
+  (let [buf #+clj (StringBuilder.) #+cljs (gstring/StringBuffer.)]
+    (.append buf "x is: ")
+    (.append buf (str x))))
+
+;; useful for testing docstring filling
 (defn say-hello
   "This is a long doc string to test clojure-fill-docstring. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus sed nunc luctus leo ultricies semper. Nullam id tempor mi. Cras adipiscing scelerisque purus, at semper magna tincidunt ut. Sed eget dolor vitae enim feugiat porttitor. Etiam vulputate pulvinar lacinia. Nam vitae nisl sit amet libero pulvinar pretium nec a dui. Ut luctus elit eu nulla posuere nec feugiat ipsum vehicula. Quisque eu pulvinar neque. Fusce fermentum adipiscing mauris, sit amet accumsan ante dignissim ac. Pellentesque molestie mollis condimentum.
 
