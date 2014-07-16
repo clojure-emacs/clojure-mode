@@ -165,6 +165,11 @@ POS."
   (should (eq (clojure-test-face-at 1 2 "\\1") 'font-lock-string-face))
   (should (eq (clojure-test-face-at 1 6 "\\u0032") 'font-lock-string-face)))
 
+(ert-deftest clojure-mode-syntax-table/cljx ()
+  :tags '(fontification syntax-table)
+  (should (eq (clojure-test-face-at 1 5 "#+clj x") 'font-lock-preprocessor-face))
+  (should (eq (clojure-test-face-at 1 6 "#+cljs x") 'font-lock-preprocessor-face)))
+
 (provide 'clojure-mode-test)
 
 ;; Local Variables:
