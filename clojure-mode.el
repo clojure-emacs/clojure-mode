@@ -82,6 +82,24 @@
   :link '(url-link :tag "Github" "https://github.com/clojure-emacs/clojure-mode")
   :link '(emacs-commentary-link :tag "Commentary" "clojure-mode"))
 
+(defface clojure-keyword-face
+  '((t (:inherit font-lock-constant-face)))
+  "Face used to font-lock Clojure keywords (:something)."
+  :group 'clojure
+  :package-version '(clojure-mode . "3.0.0"))
+
+(defface clojure-character-face
+  '((t (:inherit font-lock-string-face)))
+  "Face used to font-lock Clojure character literals."
+  :group 'clojure
+  :package-version '(clojure-mode . "3.0.0"))
+
+(defface clojure-interop-method-face
+  '((t (:inherit font-lock-preprocessor-face)))
+  "Face used to font-lock interop method names (camelCase)."
+  :group 'clojure
+  :package-version '(clojure-mode . "3.0.0"))
+
 (defcustom clojure-load-command  "(clojure.core/load-file \"%s\")\n"
   "Format-string for building a Clojure expression to load a file.
 This format string should use `%s' to substitute a file name and
@@ -442,9 +460,9 @@ Called by `imenu--generic-function'."
          "\\>")
        0 font-lock-constant-face)
       ;; Character literals - \1, \a, \newline, \u0000
-      ("\\\\[a-z0-9]+\\>" 0 font-lock-string-face)
+      ("\\\\[a-z0-9]+\\>" 0 'clojure-character-face)
       ;; Constant values (keywords), including as metadata e.g. ^:static
-      ("\\<^?:\\(\\sw\\|\\s_\\)+\\(\\>\\|\\_>\\)" 0 font-lock-constant-face)
+      ("\\<^?:\\(\\sw\\|\\s_\\)+\\(\\>\\|\\_>\\)" 0 'clojure-keyword-face)
       ;; Meta type hint #^Type or ^Type
       ("\\(#?^\\)\\(\\(\\sw\\|\\s_\\)+\\)"
        (1 font-lock-preprocessor-face)
@@ -455,7 +473,7 @@ Called by `imenu--generic-function'."
       ;; CONST SOME_CONST (optionally prefixed by /)
       ("\\(?:\\<\\|/\\)\\([A-Z]+\\|\\([A-Z]+_[A-Z1-9_]+\\)\\)\\>" 1 font-lock-constant-face)
       ;; .foo .barBaz .qux01 .-flibble .-flibbleWobble
-      ("\\<\\.-?[a-z][a-zA-Z0-9]*\\>" 0 font-lock-preprocessor-face)
+      ("\\<\\.-?[a-z][a-zA-Z0-9]*\\>" 0 clojure-interop-method-face)
       ;; Foo Bar$Baz Qux_ World_OpenUDP Foo. Babylon15.
       ("\\(?:\\<\\|\\.\\)\\([A-Z][a-zA-Z0-9_]*[a-zA-Z0-9$_]+\\.?\\>\\)" 1 font-lock-type-face)
       ;; foo.bar.baz
@@ -463,7 +481,7 @@ Called by `imenu--generic-function'."
       ;; foo/ Foo/
       ("\\<\\([a-zA-Z][a-z0-9_-]*\\)/" 1 font-lock-type-face)
       ;; fooBar
-      ("\\(?:\\<\\|/\\)\\([a-z]+[A-Z]+[a-z][a-zA-Z0-9$]*\\>\\)" 1 font-lock-preprocessor-face)
+      ("\\(?:\\<\\|/\\)\\([a-z]+[A-Z]+[a-z][a-zA-Z0-9$]*\\>\\)" 1 'clojure-interop-method-face)
       ;; Highlight grouping constructs in regular expressions
       (clojure-mode-font-lock-regexp-groups
        (1 'font-lock-regexp-grouping-construct prepend))))
