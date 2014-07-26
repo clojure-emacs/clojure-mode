@@ -454,7 +454,8 @@ Called by `imenu--generic-function'."
             "*print-dup*" "*print-length*" "*print-level*"
             "*print-meta*" "*print-readably*"
             "*read-eval*" "*source-path*"
-            "*use-context-classloader*" "*warn-on-reflection*") t)
+            "*use-context-classloader*" "*warn-on-reflection*")
+          t)
          "\\>")
        0 font-lock-builtin-face)
       ;; Dynamic variables - *something*
@@ -575,7 +576,8 @@ point) to check."
                                ;; 3. we also highlight alternative
                                ;; separarators |, and closing parens )
                                "[|()]"
-                               "\\)\\)") bound t)
+                               "\\)\\)")
+                              bound t)
       (let ((face (get-text-property (1- (point)) 'face)))
         (when (and (or (and (listp face)
                             (memq 'font-lock-string-face face))
@@ -757,7 +759,8 @@ Will upwards in an sexp to check for contextual indenting."
 (defmacro define-clojure-indent (&rest kvs)
   `(progn
      ,@(mapcar (lambda (x) `(put-clojure-indent
-                             (quote ,(first x)) ,(second x))) kvs)))
+                             (quote ,(first x)) ,(second x)))
+               kvs)))
 
 (defun add-custom-clojure-indents (name value)
   (custom-set-default name value)
