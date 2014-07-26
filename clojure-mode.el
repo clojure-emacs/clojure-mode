@@ -298,6 +298,7 @@ This only takes care of filling docstring correctly."
   (if (clojure-in-docstring-p) "  "))
 
 (defun clojure-fill-paragraph (&optional justify)
+  "Like `fill-paragraph' but handle Clojure docstrings."
   (if (clojure-in-docstring-p)
       (let ((paragraph-start
              (concat paragraph-start
@@ -307,7 +308,13 @@ This only takes care of filling docstring correctly."
             (fill-column (or clojure-docstring-fill-column fill-column))
             (fill-prefix "  "))
         (fill-paragraph justify))
-    (lisp-fill-paragraph justify)))
+    (let ((paragraph-start (concat paragraph-start
+                                   "\\|\\s-*\\([(;:\"[]\\|`(\\|#'(\\)"))
+          (paragraph-separate
+           (concat paragraph-separate "\\|\\s-*\".*[,\\.[]$")))
+      (fill-paragraph justify)
+      ;; Always return `t'
+      t)))
 
 (defun clojure-auto-fill-function ()
   "Clojure auto-fill function."
