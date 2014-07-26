@@ -269,6 +269,7 @@ ENDP and DELIMITER."
   (setq-local normal-auto-fill-function 'clojure-auto-fill-function)
   (setq-local comment-start-skip
               "\\(\\(^\\|[^\\\\\n]\\)\\(\\\\\\\\\\)*\\)\\(;+\\|#|\\) *")
+  (setq-local indent-line-function 'clojure-indent-line)
   (setq-local lisp-indent-function 'clojure-indent-function)
   (when (< emacs-major-version 24)
     (setq-local forward-sexp-function 'clojure-forward-sexp))
@@ -617,6 +618,14 @@ since these are single objects this behavior is okay."
                (looking-at "#\\w")))
         (forward-sexp dir)) ; if so, jump over it
       (setq n (- n dir)))))
+
+(defun clojure-indent-line ()
+  "Indent current line as Clojure code."
+  (if (clojure-in-docstring-p)
+      (save-excursion
+        (beginning-of-line)
+        (when (looking-at "^\\s-*") (replace-match "  ")))
+    (lisp-indent-line)))
 
 (defun clojure-indent-function (indent-point state)
   "This function is the normal value of the variable `lisp-indent-function'.
