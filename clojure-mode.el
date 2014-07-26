@@ -269,6 +269,7 @@ ENDP and DELIMITER."
   (setq-local normal-auto-fill-function 'clojure-auto-fill-function)
   (setq-local comment-start-skip
               "\\(\\(^\\|[^\\\\\n]\\)\\(\\\\\\\\\\)*\\)\\(;+\\|#|\\) *")
+  (setq-local indent-line-function 'clojure-indent-line)
   (setq-local lisp-indent-function 'clojure-indent-function)
   (when (< emacs-major-version 24)
     (setq-local forward-sexp-function 'clojure-forward-sexp))
@@ -298,6 +299,7 @@ This only takes care of filling docstring correctly."
   (if (clojure-in-docstring-p) "  "))
 
 (defun clojure-fill-paragraph (&optional justify)
+  "Like `fill-paragraph' but handle Clojure docstrings."
   (if (clojure-in-docstring-p)
       (let ((paragraph-start
              (concat paragraph-start
@@ -307,7 +309,13 @@ This only takes care of filling docstring correctly."
             (fill-column (or clojure-docstring-fill-column fill-column))
             (fill-prefix "  "))
         (fill-paragraph justify))
-    (lisp-fill-paragraph justify)))
+    (let ((paragraph-start (concat paragraph-start
+                                   "\\|\\s-*\\([(;:\"[]\\|`(\\|#'(\\)"))
+          (paragraph-separate
+           (concat paragraph-separate "\\|\\s-*\".*[,\\.[]$")))
+      (fill-paragraph justify)
+      ;; Always return `t'
+      t)))
 
 (defun clojure-auto-fill-function ()
   "Clojure auto-fill function."
@@ -447,7 +455,8 @@ Called by `imenu--generic-function'."
             "*print-dup*" "*print-length*" "*print-level*"
             "*print-meta*" "*print-readably*"
             "*read-eval*" "*source-path*"
-            "*use-context-classloader*" "*warn-on-reflection*") t)
+            "*use-context-classloader*" "*warn-on-reflection*")
+          t)
          "\\>")
        0 font-lock-builtin-face)
       ;; Dynamic variables - *something*
@@ -568,7 +577,8 @@ point) to check."
                                ;; 3. we also highlight alternative
                                ;; separarators |, and closing parens )
                                "[|()]"
-                               "\\)\\)") bound t)
+                               "\\)\\)")
+                              bound t)
       (let ((face (get-text-property (1- (point)) 'face)))
         (when (and (or (and (listp face)
                             (memq 'font-lock-string-face face))
@@ -608,6 +618,14 @@ since these are single objects this behavior is okay."
                (looking-at "#\\w")))
         (forward-sexp dir)) ; if so, jump over it
       (setq n (- n dir)))))
+
+(defun clojure-indent-line ()
+  "Indent current line as Clojure code."
+  (if (clojure-in-docstring-p)
+      (save-excursion
+        (beginning-of-line)
+        (when (looking-at "^\\s-*") (replace-match "  ")))
+    (lisp-indent-line)))
 
 (defun clojure-indent-function (indent-point state)
   "This function is the normal value of the variable `lisp-indent-function'.
@@ -750,7 +768,8 @@ Will upwards in an sexp to check for contextual indenting."
 (defmacro define-clojure-indent (&rest kvs)
   `(progn
      ,@(mapcar (lambda (x) `(put-clojure-indent
-                             (quote ,(first x)) ,(second x))) kvs)))
+                             (quote ,(first x)) ,(second x)))
+               kvs)))
 
 (defun add-custom-clojure-indents (name value)
   (custom-set-default name value)
