@@ -140,6 +140,15 @@ Otherwise check `define-clojure-indent' and `put-clojure-indent'."
   :group 'clojure
   :safe 'integerp)
 
+(defcustom clojure-docstring-fill-prefix-width 2
+  "Width of `fill-prefix' when filling a docstring.
+The default value conforms with the de facto convention for
+Clojure docstrings, aligning the second line with the opening
+double quotes on the third column."
+  :type 'integer
+  :group 'clojure
+  :safe 'integerp)
+
 (defcustom clojure-omit-space-between-tag-and-delimiters '(?\[ ?\{)
   "Allowed opening delimiter characters after a reader literal tag.
 For example, \[ is allowed in :db/id[:db.part/user]."
@@ -296,7 +305,8 @@ ENDP and DELIMITER."
 (defun clojure-adaptive-fill-function ()
   "Clojure adaptive fill function.
 This only takes care of filling docstring correctly."
-  (if (clojure-in-docstring-p) "  "))
+  (if (clojure-in-docstring-p)
+      (make-string clojure-docstring-fill-prefix-width ? )))
 
 (defun clojure-fill-paragraph (&optional justify)
   "Like `fill-paragraph' but handle Clojure docstrings."
@@ -307,7 +317,7 @@ This only takes care of filling docstring correctly."
             (paragraph-separate
              (concat paragraph-separate "\\|\\s-*\".*[,\\.]$"))
             (fill-column (or clojure-docstring-fill-column fill-column))
-            (fill-prefix "  "))
+            (fill-prefix (make-string clojure-docstring-fill-prefix-width ? )))
         (fill-paragraph justify))
     (let ((paragraph-start (concat paragraph-start
                                    "\\|\\s-*\\([(;:\"[]\\|`(\\|#'(\\)"))
@@ -624,7 +634,9 @@ since these are single objects this behavior is okay."
   (if (clojure-in-docstring-p)
       (save-excursion
         (beginning-of-line)
-        (when (looking-at "^\\s-*") (replace-match "  ")))
+        (when (looking-at "^\\s-*")
+          (replace-match
+           (make-string clojure-docstring-fill-prefix-width ? ))))
     (lisp-indent-line)))
 
 (defun clojure-indent-function (indent-point state)
