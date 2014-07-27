@@ -311,8 +311,8 @@ It is simply `clojure-docstring-fill-prefix-width' number of spaces."
 (defun clojure-adaptive-fill-function ()
   "Clojure adaptive fill function.
 This only takes care of filling docstring correctly."
-  (if (clojure-in-docstring-p)
-      (clojure-docstring-fill-prefix)))
+  (when (clojure-in-docstring-p)
+    (clojure-docstring-fill-prefix)))
 
 (defun clojure-fill-paragraph (&optional justify)
   "Like `fill-paragraph' but handle Clojure docstrings."
