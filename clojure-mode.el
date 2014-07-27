@@ -302,11 +302,17 @@ ENDP and DELIMITER."
   (eq (get-text-property (1- (point-at-eol)) 'face)
       'font-lock-doc-face))
 
+(defsubst clojure-docstring-fill-prefix ()
+  "The prefix string used by `clojure-fill-paragraph'.
+
+It is simply `clojure-docstring-fill-prefix-width' number of spaces."
+  (make-string clojure-docstring-fill-prefix-width ? ))
+
 (defun clojure-adaptive-fill-function ()
   "Clojure adaptive fill function.
 This only takes care of filling docstring correctly."
   (if (clojure-in-docstring-p)
-      (make-string clojure-docstring-fill-prefix-width ? )))
+      (clojure-docstring-fill-prefix)))
 
 (defun clojure-fill-paragraph (&optional justify)
   "Like `fill-paragraph' but handle Clojure docstrings."
@@ -317,7 +323,7 @@ This only takes care of filling docstring correctly."
             (paragraph-separate
              (concat paragraph-separate "\\|\\s-*\".*[,\\.]$"))
             (fill-column (or clojure-docstring-fill-column fill-column))
-            (fill-prefix (make-string clojure-docstring-fill-prefix-width ? )))
+            (fill-prefix (clojure-docstring-fill-prefix)))
         (fill-paragraph justify))
     (let ((paragraph-start (concat paragraph-start
                                    "\\|\\s-*\\([(;:\"[]\\|`(\\|#'(\\)"))
@@ -635,8 +641,7 @@ since these are single objects this behavior is okay."
       (save-excursion
         (beginning-of-line)
         (when (looking-at "^\\s-*")
-          (replace-match
-           (make-string clojure-docstring-fill-prefix-width ? ))))
+          (replace-match (clojure-docstring-fill-prefix))))
     (lisp-indent-line)))
 
 (defun clojure-indent-function (indent-point state)
