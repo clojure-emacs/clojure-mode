@@ -140,7 +140,7 @@ Otherwise check `define-clojure-indent' and `put-clojure-indent'."
   :group 'clojure
   :safe 'integerp)
 
-(defcustom clojure-docstring-fill-prefix 2
+(defcustom clojure-docstring-fill-prefix-width 2
   "Width of `fill-prefix' when filling a docstring.
 The default value conforms with the de facto convention for
 Clojure docstrings, aligning the second line with the opening
@@ -263,7 +263,6 @@ ENDP and DELIMITER."
                        t)
                       (= orig-point (match-end 0)))))))))
 
-(defvar clojure-docstring-fill-prefix-string)
 ;;;###autoload
 (define-derived-mode clojure-mode clojure-parent-mode "Clojure"
   "Major mode for editing Clojure code.
@@ -288,8 +287,6 @@ ENDP and DELIMITER."
   (setq-local parse-sexp-ignore-comments t)
   (clojure-mode-font-lock-setup)
   (setq-local open-paren-in-column-0-is-defun-start nil)
-  (setq clojure-docstring-fill-prefix-string
-        (make-string clojure-docstring-fill-prefix ? ))
   (add-hook 'paredit-mode-hook
             (lambda ()
               (when (>= paredit-version 21)
@@ -309,7 +306,7 @@ ENDP and DELIMITER."
   "Clojure adaptive fill function.
 This only takes care of filling docstring correctly."
   (if (clojure-in-docstring-p)
-      clojure-docstring-fill-prefix-string))
+      (make-string clojure-docstring-fill-prefix-width ? )))
 
 (defun clojure-fill-paragraph (&optional justify)
   "Like `fill-paragraph' but handle Clojure docstrings."
@@ -320,7 +317,7 @@ This only takes care of filling docstring correctly."
             (paragraph-separate
              (concat paragraph-separate "\\|\\s-*\".*[,\\.]$"))
             (fill-column (or clojure-docstring-fill-column fill-column))
-            (fill-prefix clojure-docstring-fill-prefix-string))
+            (fill-prefix (make-string clojure-docstring-fill-prefix-width ? )))
         (fill-paragraph justify))
     (let ((paragraph-start (concat paragraph-start
                                    "\\|\\s-*\\([(;:\"[]\\|`(\\|#'(\\)"))
@@ -638,7 +635,8 @@ since these are single objects this behavior is okay."
       (save-excursion
         (beginning-of-line)
         (when (looking-at "^\\s-*")
-          (replace-match clojure-docstring-fill-prefix-string)))
+          (replace-match
+           (make-string clojure-docstring-fill-prefix-width ? ))))
     (lisp-indent-line)))
 
 (defun clojure-indent-function (indent-point state)
