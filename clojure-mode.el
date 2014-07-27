@@ -140,6 +140,15 @@ Otherwise check `define-clojure-indent' and `put-clojure-indent'."
   :group 'clojure
   :safe 'integerp)
 
+(defcustom clojure-docstring-fill-prefix 2
+  "Width of `fill-prefix' when filling a docstring.
+The default value conforms with the de facto convention for
+Clojure docstrings, aligning the second line with the opening
+double quotes on the third column."
+  :type 'integer
+  :group 'clojure
+  :safe 'integerp)
+
 (defcustom clojure-omit-space-between-tag-and-delimiters '(?\[ ?\{)
   "Allowed opening delimiter characters after a reader literal tag.
 For example, \[ is allowed in :db/id[:db.part/user]."
@@ -254,6 +263,7 @@ ENDP and DELIMITER."
                        t)
                       (= orig-point (match-end 0)))))))))
 
+(defvar clojure-docstring-fill-prefix-string)
 ;;;###autoload
 (define-derived-mode clojure-mode clojure-parent-mode "Clojure"
   "Major mode for editing Clojure code.
@@ -278,6 +288,8 @@ ENDP and DELIMITER."
   (setq-local parse-sexp-ignore-comments t)
   (clojure-mode-font-lock-setup)
   (setq-local open-paren-in-column-0-is-defun-start nil)
+  (setq clojure-docstring-fill-prefix-string
+        (make-string clojure-docstring-fill-prefix ? ))
   (add-hook 'paredit-mode-hook
             (lambda ()
               (when (>= paredit-version 21)
@@ -296,7 +308,8 @@ ENDP and DELIMITER."
 (defun clojure-adaptive-fill-function ()
   "Clojure adaptive fill function.
 This only takes care of filling docstring correctly."
-  (if (clojure-in-docstring-p) "  "))
+  (if (clojure-in-docstring-p)
+      clojure-docstring-fill-prefix-string))
 
 (defun clojure-fill-paragraph (&optional justify)
   "Like `fill-paragraph' but handle Clojure docstrings."
@@ -307,7 +320,7 @@ This only takes care of filling docstring correctly."
             (paragraph-separate
              (concat paragraph-separate "\\|\\s-*\".*[,\\.]$"))
             (fill-column (or clojure-docstring-fill-column fill-column))
-            (fill-prefix "  "))
+            (fill-prefix clojure-docstring-fill-prefix-string))
         (fill-paragraph justify))
     (let ((paragraph-start (concat paragraph-start
                                    "\\|\\s-*\\([(;:\"[]\\|`(\\|#'(\\)"))
@@ -624,7 +637,8 @@ since these are single objects this behavior is okay."
   (if (clojure-in-docstring-p)
       (save-excursion
         (beginning-of-line)
-        (when (looking-at "^\\s-*") (replace-match "  ")))
+        (when (looking-at "^\\s-*")
+          (replace-match clojure-docstring-fill-prefix-string)))
     (lisp-indent-line)))
 
 (defun clojure-indent-function (indent-point state)
