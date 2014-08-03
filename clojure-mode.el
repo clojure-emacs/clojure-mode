@@ -329,7 +329,8 @@ This only takes care of filling docstring correctly."
                                    "\\|\\s-*\\([(;:\"[]\\|`(\\|#'(\\)"))
           (paragraph-separate
            (concat paragraph-separate "\\|\\s-*\".*[,\\.[]$")))
-      (fill-paragraph justify)
+      (or (fill-comment-paragraph justify)
+          (fill-paragraph justify))
       ;; Always return `t'
       t)))
 
@@ -342,7 +343,7 @@ This only takes care of filling docstring correctly."
                              clojure-docstring-fill-column
                            fill-column))
             (fill-prefix (clojure-adaptive-fill-function)))
-        (when fill-prefix (do-auto-fill))))))
+        (do-auto-fill)))))
 
 (defun clojure-display-inferior-lisp-buffer ()
   "Display a buffer bound to `inferior-lisp-buffer'."
