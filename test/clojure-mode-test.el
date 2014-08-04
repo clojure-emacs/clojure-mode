@@ -171,6 +171,12 @@ POS."
   :tags '(fontification syntax-table)
   (should (eq (clojure-test-face-at 4 8 "(= false x)") 'font-lock-constant-face)))
 
+(ert-deftest clojure-mode-syntax-table/keyword-meta ()
+  :tags '(fontification syntax-table)
+  (clojure-test-with-temp-buffer "^:meta-data"
+    (should (eq (clojure-test-face-at 1 1) nil))
+    (should (eq (clojure-test-face-at 2 11) 'clojure-keyword-face))))
+
 (ert-deftest clojure-mode-syntax-table/characters ()
   :tags '(fontification syntax-table)
   (should (eq (clojure-test-face-at 1 2 "\\a") 'clojure-character-face))

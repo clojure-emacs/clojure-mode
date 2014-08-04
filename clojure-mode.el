@@ -489,7 +489,7 @@ Called by `imenu--generic-function'."
       ;; FIXME: handle properly punctuations characters (commas after a character are problematic)
       ("\\\\[a-z0-9]+\\>" 0 'clojure-character-face)
       ;; Constant values (keywords), including as metadata e.g. ^:static
-      ("\\<^?:\\(\\sw\\|\\s_\\)+\\(\\>\\|\\_>\\)" 0 'clojure-keyword-face)
+      ("\\<^?\\(:\\(\\sw\\|\\s_\\)+\\(\\>\\|\\_>\\)\\)" 1 'clojure-keyword-face)
       ;; cljx annotations (#+clj and #+cljs)
       ("#\\+cljs?\\>" 0 font-lock-preprocessor-face)
       ;; Java interop highlighting
