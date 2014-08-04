@@ -1,3 +1,4 @@
+;;; font locking
 (ns clojure-mode.demo
   (:use [clojure.something]))
 
@@ -13,6 +14,9 @@
 
   (clo/defguppy gurgle
     minnow))
+
+;; character literals
+[\a \newline \,, dfdfdf  \.]
 
 ;; cljx
 (defn x-to-string
