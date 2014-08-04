@@ -86,6 +86,12 @@ POS."
   :tags '(fontification syntax-table)
   (should (eq (clojure-test-face-at 1 9 "SomeClass") 'font-lock-type-face)))
 
+(ert-deftest clojure-mode-syntax-table/type-hint ()
+  :tags '(fontification syntax-table)
+  (clojure-test-with-temp-buffer "#^SomeClass"
+    (should (eq (clojure-test-face-at 3 11) 'font-lock-type-face))
+    (should (eq (clojure-test-face-at 1 2) nil))))
+
 (ert-deftest clojure-mode-syntax-table/constructor ()
   :tags '(fontification syntax-table)
   (should (eq (clojure-test-face-at 2 11 "(SomeClass.)") 'font-lock-type-face))

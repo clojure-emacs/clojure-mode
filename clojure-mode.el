@@ -490,10 +490,6 @@ Called by `imenu--generic-function'."
       ("\\\\[a-z0-9]+\\>" 0 'clojure-character-face)
       ;; Constant values (keywords), including as metadata e.g. ^:static
       ("\\<^?:\\(\\sw\\|\\s_\\)+\\(\\>\\|\\_>\\)" 0 'clojure-keyword-face)
-      ;; Meta type hint #^Type or ^Type
-      ("\\(#?^\\)\\(\\(\\sw\\|\\s_\\)+\\)"
-       (1 font-lock-preprocessor-face)
-       (2 font-lock-type-face))
       ;; cljx annotations (#+clj and #+cljs)
       ("#\\+cljs?\\>" 0 font-lock-preprocessor-face)
       ;; Java interop highlighting
@@ -502,7 +498,7 @@ Called by `imenu--generic-function'."
       ;; .foo .barBaz .qux01 .-flibble .-flibbleWobble
       ("\\<\\.-?[a-z][a-zA-Z0-9]*\\>" 0 'clojure-interop-method-face)
       ;; Foo Bar$Baz Qux_ World_OpenUDP Foo. Babylon15.
-      ("\\(?:\\<\\|\\.\\|/\\)\\([A-Z][a-zA-Z0-9_]*[a-zA-Z0-9$_]+\\.?\\>\\)" 1 font-lock-type-face)
+      ("\\(?:\\<\\|\\.\\|/\\|#?^\\)\\([A-Z][a-zA-Z0-9_]*[a-zA-Z0-9$_]+\\.?\\>\\)" 1 font-lock-type-face)
       ;; foo.bar.baz
       ("\\<[a-z][a-z0-9_-]+\\.\\([a-z][a-z0-9_-]+\\.?\\)+" 0 font-lock-type-face)
       ;; foo/ Foo/
