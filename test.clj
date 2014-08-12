@@ -1,6 +1,7 @@
 ;;; font locking
 (ns clojure-mode.demo
-  (:use [clojure.something]))
+  (:require [clojure.something]
+            [something.s]))
 
 (comment ;; for indentation
   (with-hi heya

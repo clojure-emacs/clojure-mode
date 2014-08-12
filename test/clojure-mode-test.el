@@ -99,6 +99,11 @@ POS."
     (should (eq (clojure-test-face-at 2 3) 'font-lock-type-face))
     (should (eq (clojure-test-face-at 5 14) 'font-lock-type-face))))
 
+(ert-deftest clojure-mode-syntax-table/namespace ()
+  :tags '(fontification syntax-table)
+  (should (eq (clojure-test-face-at 1 5 "one.p") 'font-lock-type-face))
+  (should (eq (clojure-test-face-at 1 11 "one.p.top13") 'font-lock-type-face)))
+
 (ert-deftest clojure-mode-syntax-table/namespaced-symbol ()
   :tags '(fontification syntax-table)
   (clojure-test-with-temp-buffer "clo.core/something"

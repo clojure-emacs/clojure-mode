@@ -500,7 +500,7 @@ Called by `imenu--generic-function'."
       ;; Foo Bar$Baz Qux_ World_OpenUDP Foo. Babylon15.
       ("\\(?:\\<\\|\\.\\|/\\|#?^\\)\\([A-Z][a-zA-Z0-9_]*[a-zA-Z0-9$_]+\\.?\\>\\)" 1 font-lock-type-face)
       ;; foo.bar.baz
-      ("\\<[a-z][a-z0-9_-]+\\.\\([a-z][a-z0-9_-]+\\.?\\)+" 0 font-lock-type-face)
+      ("\\<[a-z][a-z0-9_-]+\\.\\([a-z][a-z0-9_-]*\\.?\\)+" 0 font-lock-type-face)
       ;; foo/ Foo/
       ("\\<\\([a-zA-Z][a-z0-9_-]*\\)/" 1 font-lock-type-face)
       ;; fooBar
