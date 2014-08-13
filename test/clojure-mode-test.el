@@ -118,6 +118,13 @@ POS."
     (should (eq (clojure-test-face-at 1 5) 'font-lock-type-face))
     (should (eq (clojure-test-face-at 7 16) 'clojure-interop-method-face))))
 
+(ert-deftest clojure-mode-syntax-table/interop-method ()
+  :tags '(fontification syntax-table)
+  (should (eq (clojure-test-face-at 1 11 ".someMethod") 'clojure-interop-method-face))
+  (should (eq (clojure-test-face-at 1 10 "someMethod") 'clojure-interop-method-face))
+  (should (eq (clojure-test-face-at 1 11 "topHttpTest") 'clojure-interop-method-face))
+  (should (eq (clojure-test-face-at 1 4 "getX") 'clojure-interop-method-face)))
+
 (ert-deftest clojure-mode-syntax-table/constant ()
   :tags '(fontification syntax-table)
   (should (eq (clojure-test-face-at 1 5 "CONST") 'font-lock-constant-face))
