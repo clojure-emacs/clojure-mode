@@ -76,7 +76,7 @@
 (declare-function lisp-fill-paragraph  "lisp-mode" (&optional justify))
 
 (defgroup clojure nil
-  "A mode for Clojure"
+  "Major mode for editing Clojure code."
   :prefix "clojure-"
   :group 'languages
   :link '(url-link :tag "Github" "https://github.com/clojure-emacs/clojure-mode")
