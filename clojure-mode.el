@@ -9,7 +9,7 @@
 ;;       Bozhidar Batsov <bozhidar@batsov.com>
 ;; URL: http://github.com/clojure-emacs/clojure-mode
 ;; Version: 3.0.0-cvs
-;; Keywords: languages lisp
+;; Keywords: languages clojure clojurescript lisp
 
 ;; This file is not part of GNU Emacs.
 
