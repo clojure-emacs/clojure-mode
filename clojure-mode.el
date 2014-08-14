@@ -514,7 +514,6 @@ Called by `imenu--generic-function'."
 
 (defun clojure-font-lock-setup ()
   "Configures font-lock for editing Clojure code."
-  (interactive)
   (setq-local font-lock-multiline t)
   (add-to-list 'font-lock-extend-region-functions
                'clojure-font-lock-extend-region-def t)
