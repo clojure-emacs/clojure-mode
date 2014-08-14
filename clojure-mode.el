@@ -263,6 +263,16 @@ ENDP and DELIMITER."
                        t)
                       (= orig-point (match-end 0)))))))))
 
+(defun clojure-paredit-setup ()
+  "A bit code to make `paredit-mode' play nice with `clojure-mode'."
+  (when (>= paredit-version 21)
+    (define-key clojure-mode-map "{" 'paredit-open-curly)
+    (define-key clojure-mode-map "}" 'paredit-close-curly)
+    (add-to-list 'paredit-space-for-delimiter-predicates
+                 'clojure-space-for-delimiter-p)
+    (add-to-list 'paredit-space-for-delimiter-predicates
+                 'clojure-no-space-after-tag)))
+
 ;;;###autoload
 (define-derived-mode clojure-mode clojure-parent-mode "Clojure"
   "Major mode for editing Clojure code.
@@ -287,15 +297,7 @@ ENDP and DELIMITER."
   (setq-local parse-sexp-ignore-comments t)
   (clojure-mode-font-lock-setup)
   (setq-local open-paren-in-column-0-is-defun-start nil)
-  (add-hook 'paredit-mode-hook
-            (lambda ()
-              (when (>= paredit-version 21)
-                (define-key clojure-mode-map "{" 'paredit-open-curly)
-                (define-key clojure-mode-map "}" 'paredit-close-curly)
-                (add-to-list 'paredit-space-for-delimiter-predicates
-                             'clojure-space-for-delimiter-p)
-                (add-to-list 'paredit-space-for-delimiter-predicates
-                             'clojure-no-space-after-tag)))))
+  (add-hook 'paredit-mode-hook 'clojure-paredit-setup))
 
 (defsubst clojure-in-docstring-p ()
   "Check whether point is in a docstring."
