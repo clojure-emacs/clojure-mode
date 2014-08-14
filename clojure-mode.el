@@ -295,7 +295,7 @@ ENDP and DELIMITER."
   (setq-local lisp-doc-string-elt-property 'clojure-doc-string-elt)
   (setq-local inferior-lisp-program clojure-inf-lisp-command)
   (setq-local parse-sexp-ignore-comments t)
-  (clojure-mode-font-lock-setup)
+  (clojure-font-lock-setup)
   (setq-local open-paren-in-column-0-is-defun-start nil)
   (add-hook 'paredit-mode-hook 'clojure-paredit-setup))
 
@@ -512,7 +512,7 @@ Called by `imenu--generic-function'."
        (1 'font-lock-regexp-grouping-construct prepend))))
   "Default expressions to highlight in Clojure mode.")
 
-(defun clojure-mode-font-lock-setup ()
+(defun clojure-font-lock-setup ()
   "Configures font-lock for editing Clojure code."
   (interactive)
   (setq-local font-lock-multiline t)
