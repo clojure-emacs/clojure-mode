@@ -447,7 +447,7 @@ Called by `imenu--generic-function'."
          "(\\(?:clojure.core/\\)?"
          (regexp-opt
           '("let" "letfn" "do"
-            "case" "cond" "condp"
+            "case" "cond" "cond->" "cond->>" "condp"
             "for" "loop" "recur"
             "when" "when-not" "when-let" "when-first" "when-some"
             "if" "if-let" "if-not" "if-some"

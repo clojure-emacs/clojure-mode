@@ -55,7 +55,7 @@
     "chunk-next" "chunk-rest" "chunked-seq?" "class" "class?"
     "clear-agent-errors" "clojure-version" "coll?" "comment" "commute"
     "comp" "comparator" "compare" "compare-and-set!" "compile"
-    "complement" "concat" "cond->" "cond->>" "conj"
+    "complement" "concat" "conj"
     "conj!" "cons" "constantly" "construct-proxy" "contains?"
     "count" "counted?" "create-ns" "create-struct" "cycle"
     "dec" "decimal?" "delay" "delay?" "deliver" "deref"
