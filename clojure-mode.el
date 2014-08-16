@@ -1,4 +1,4 @@
-;;; clojure-mode.el --- Major mode for Clojure code
+;;; clojure-mode.el --- Major mode for Clojure code -*- lexical-binding: t; -*-
 
 ;; Copyright © 2007-2014 Jeffrey Chu, Lennart Staflin, Phil Hagelberg
 ;; Copyright © 2013-2014 Bozhidar Batsov
@@ -10,6 +10,7 @@
 ;; URL: http://github.com/clojure-emacs/clojure-mode
 ;; Version: 3.0.0-cvs
 ;; Keywords: languages clojure clojurescript lisp
+;; Package-Requires: ((emacs "24.1"))
 
 ;; This file is not part of GNU Emacs.
 
@@ -216,10 +217,6 @@ describing the last `clojure-load-file' or `clojure-compile-file' command.")
   (interactive)
   (message "clojure-mode (version %s)" clojure-mode-version))
 
-;; For compatibility with Emacs < 24, derive conditionally
-(defalias 'clojure-parent-mode
-  (if (fboundp 'prog-mode) 'prog-mode 'fundamental-mode))
-
 (defun clojure-space-for-delimiter-p (endp delim)
   "Prevent paredit from inserting useless spaces.
 See `paredit-space-for-delimiter-predicates' for the meaning of
@@ -274,7 +271,7 @@ ENDP and DELIMITER."
                  'clojure-no-space-after-tag)))
 
 ;;;###autoload
-(define-derived-mode clojure-mode clojure-parent-mode "Clojure"
+(define-derived-mode clojure-mode prog-mode "Clojure"
   "Major mode for editing Clojure code.
 
 \\{clojure-mode-map}"
@@ -290,8 +287,6 @@ ENDP and DELIMITER."
               "\\(\\(^\\|[^\\\\\n]\\)\\(\\\\\\\\\\)*\\)\\(;+\\|#|\\) *")
   (setq-local indent-line-function 'clojure-indent-line)
   (setq-local lisp-indent-function 'clojure-indent-function)
-  (when (< emacs-major-version 24)
-    (setq-local forward-sexp-function 'clojure-forward-sexp))
   (setq-local lisp-doc-string-elt-property 'clojure-doc-string-elt)
   (setq-local inferior-lisp-program clojure-inf-lisp-command)
   (setq-local parse-sexp-ignore-comments t)
@@ -612,27 +607,6 @@ point) to check."
 (put 'defprotocol 'clojure-doc-string-elt 2)
 
 
-
-(defun clojure-forward-sexp (n)
-  "Move forward across one balanced Clojure expression (sexp).
-
-It treats record literals like #user.Foo[1] and #user.Foo{:size 1}
-as a single sexp so that CIDER will send them properly.
-
-This behavior may not be intuitive when the user presses C-M-f, but
-since these are single objects this behavior is okay."
-  (let ((dir (if (> n 0) 1 -1))
-        (forward-sexp-function nil)) ; force the built-in version
-    (while (not (zerop n))
-      (forward-sexp dir)
-      (when (save-excursion ; move back to see if we're in a record literal
-              (and
-               (condition-case nil
-                   (progn (backward-sexp) 't)
-                 ('scan-error nil))
-               (looking-at "#\\w")))
-        (forward-sexp dir)) ; if so, jump over it
-      (setq n (- n dir)))))
 
 (defun clojure-indent-line ()
   "Indent current line as Clojure code."

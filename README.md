@@ -51,10 +51,6 @@ or if you'd rather keep it in your dotfiles:
   (package-install 'clojure-mode))
 ```
 
-On Emacs 23 you will need to get [package.el](http://bit.ly/pkg-el23)
-yourself or install manually by placing `clojure-mode.el` on your `load-path`
-and `require`ing it.
-
 ### Extra font-locking
 
 Prior to version 3.0 `clojure-mode` bundled **unreliable**
