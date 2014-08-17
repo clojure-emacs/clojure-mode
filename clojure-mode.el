@@ -922,7 +922,7 @@ returned."
       (backward-char))
     (cond
      ((equal 1 (point))
-      (message "beginning of file reached, this was probably a mistake."))
+      (error "Beginning of file reached, this was probably a mistake"))
      ((equal "\"" (buffer-substring-no-properties (point) (+ 1 (point))))
       (insert ":" (substring (clojure-delete-and-extract-sexp) 1 -1)))
      ((equal ":" (buffer-substring-no-properties (point) (+ 1 (point))))
