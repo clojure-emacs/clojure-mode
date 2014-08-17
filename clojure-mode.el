@@ -913,7 +913,7 @@ returned."
   (set-mark (clojure-string-end)))
 
 (defun clojure-toggle-keyword-string ()
-  "Convert the string or keyword at (point) from string->keyword or keyword->string."
+  "Convert the string or keyword at point to keyword or string."
   (interactive)
   (let ((original-point (point)))
     (while (and (> (point) 1)
