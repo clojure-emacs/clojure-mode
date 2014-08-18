@@ -1023,8 +1023,9 @@ Useful if a file has been renamed."
 (defun clojure-find-ns ()
   "Find the namespace of the current Clojure buffer."
   (let ((regexp clojure-namespace-name-regex))
-    (save-restriction
-      (save-excursion
+    (save-excursion
+      (save-restriction
+        (widen)
         (goto-char (point-min))
         (when (re-search-forward regexp nil t)
           (match-string-no-properties 4))))))
