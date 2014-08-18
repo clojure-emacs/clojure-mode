@@ -1003,6 +1003,7 @@ returned."
 (defun clojure-insert-ns-form ()
   "Insert a namespace form at the beginning of the buffer."
   (interactive)
+  (widen)
   (goto-char (point-min))
   (clojure-insert-ns-form-at-point))
 
