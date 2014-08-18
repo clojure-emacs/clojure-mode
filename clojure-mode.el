@@ -1013,12 +1013,11 @@ Useful if a file has been renamed."
   (interactive)
   (let ((nsname (clojure-expected-ns)))
     (when nsname
-      (save-restriction
-        (save-excursion
-          (save-match-data
-            (if (clojure-find-ns)
-                (replace-match nsname nil nil nil 4)
-              (error "Namespace not found"))))))))
+      (save-excursion
+        (save-match-data
+          (if (clojure-find-ns)
+              (replace-match nsname nil nil nil 4)
+            (error "Namespace not found")))))))
 
 (defun clojure-find-ns ()
   "Find the namespace of the current Clojure buffer."
