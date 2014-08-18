@@ -65,7 +65,6 @@
   (defvar paredit-mode))
 
 (require 'cl)
-(require 'tramp)
 (require 'inf-lisp)
 (require 'imenu)
 
