@@ -202,6 +202,16 @@ POS."
   (should (eq (clojure-test-face-at 1 5 "#+clj x") 'font-lock-preprocessor-face))
   (should (eq (clojure-test-face-at 1 6 "#+cljs x") 'font-lock-preprocessor-face)))
 
+(ert-deftest clojure-mode-syntax-table/refer-ns ()
+  :tags '(fontification syntax-table)
+  (should (eq (clojure-test-face-at 1 3 "foo/var") 'font-lock-type-face))
+  (should (eq (clojure-test-face-at 2 4 "@foo/var") 'font-lock-type-face)))
+
+(ert-deftest clojure-mode-syntax-table/dynamic-var ()
+  :tags '(fontification syntax-table)
+  (should (eq (clojure-test-face-at 1 10 "*some-var*") 'font-lock-variable-name-face))
+  (should (eq (clojure-test-face-at 2 11 "@*some-var*") 'font-lock-variable-name-face)))
+
 (provide 'clojure-mode-test)
 
 ;; Local Variables:

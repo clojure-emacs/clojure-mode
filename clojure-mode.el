@@ -467,8 +467,8 @@ Called by `imenu--generic-function'."
           t)
          "\\>")
        0 font-lock-builtin-face)
-      ;; Dynamic variables - *something*
-      ("\\<\\*[a-z-]*\\*\\>" 0 font-lock-variable-name-face)
+      ;; Dynamic variables - *something* or @*something*
+      ("\\<@?\\(\\*[a-z-]*\\*\\)\\>" 1 font-lock-variable-name-face)
       ;; Global constants - nil, true, false
       (,(concat
          "\\<"
@@ -492,8 +492,8 @@ Called by `imenu--generic-function'."
       ("\\(?:\\<\\|\\.\\|/\\|#?^\\)\\([A-Z][a-zA-Z0-9_]*[a-zA-Z0-9$_]+\\.?\\>\\)" 1 font-lock-type-face)
       ;; foo.bar.baz
       ("\\<^?\\([a-z][a-z0-9_-]+\\.\\([a-z][a-z0-9_-]*\\.?\\)+\\)" 1 font-lock-type-face)
-      ;; foo/ Foo/
-      ("\\<\\([a-zA-Z][a-z0-9_-]*\\)/" 1 font-lock-type-face)
+      ;; foo/ Foo/ @Foo/
+      ("\\<@?\\([a-zA-Z][a-z0-9_-]*\\)/" 1 font-lock-type-face)
       ;; fooBar
       ("\\(?:\\<\\|/\\)\\([a-z]+[A-Z]+[a-zA-Z0-9$]*\\>\\)" 1 'clojure-interop-method-face)
       ;; Highlight grouping constructs in regular expressions
