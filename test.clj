@@ -17,7 +17,7 @@
     minnow))
 
 ;; character literals
-[\a \newline \,, dfdfdf  \.]
+[\a \newline \u0032 \/ \+ \,, \;]
 
 ;; cljx
 (defn x-to-string
