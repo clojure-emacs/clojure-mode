@@ -206,6 +206,9 @@ describing the last `clojure-load-file' or `clojure-compile-file' command.")
 (defconst clojure-mode-version "3.0.0-snapshot"
   "The current version of `clojure-mode'.")
 
+(defconst clojure--prettify-symbols-alist
+  '(("fn"  . ?λ)))
+
 (defun clojure-mode-display-version ()
   "Display the current `clojure-mode-version' in the minibuffer."
   (interactive)
@@ -284,6 +287,7 @@ ENDP and DELIMITER."
   (setq-local lisp-doc-string-elt-property 'clojure-doc-string-elt)
   (setq-local inferior-lisp-program clojure-inf-lisp-command)
   (setq-local parse-sexp-ignore-comments t)
+  (setq-local prettify-symbols-alist clojure--prettify-symbols-alist)
   (clojure-font-lock-setup)
   (setq-local open-paren-in-column-0-is-defun-start nil)
   (add-hook 'paredit-mode-hook 'clojure-paredit-setup))
