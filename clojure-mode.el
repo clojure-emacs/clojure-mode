@@ -535,7 +535,7 @@ locking in def* forms that are not at top level."
           (progn
             ;; move forward as much as possible until failure (or success)
             (forward-char)
-            (dotimes (i 4)
+            (dotimes (_ 4)
               (forward-sexp)))
         (error nil))
       (cons beg-def (point)))))
