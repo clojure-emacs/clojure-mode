@@ -1059,6 +1059,7 @@ Returns a list pair, e.g. (\"defn\" \"abc\") or (\"deftest\" \"some-test\")."
 (provide 'clojure-mode)
 
 ;; Local Variables:
+;; coding: utf-8
 ;; byte-compile-warnings: (not cl-functions)
 ;; indent-tabs-mode: nil
 ;; End:
