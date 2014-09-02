@@ -505,6 +505,45 @@ Called by `imenu--generic-function'."
        (1 'font-lock-regexp-grouping-construct prepend))))
   "Default expressions to highlight in Clojure mode.")
 
+(defun clojure-font-lock-syntactic-face-function (state)
+  (if (nth 3 state)
+      ;; This might be a (doc)string or a |...| symbol.
+      (let ((startpos (nth 8 state)))
+        (if (eq (char-after startpos) ?|)
+            ;; This is not a string, but a |...| symbol.
+            nil
+          (let* ((listbeg (nth 1 state))
+                 (firstsym (and listbeg
+                                (save-excursion
+                                  (goto-char listbeg)
+                                  (and (looking-at "([ \t\n]*\\(\\(\\sw\\|\\s_\\)+\\)")
+                                       (match-string 1)))))
+                 (docelt (and firstsym
+                              (function-get (intern-soft firstsym)
+                                            lisp-doc-string-elt-property))))
+            (if (and docelt
+                     ;; It's a string in a form that can have a docstring.
+                     ;; Check whether it's in docstring position.
+                     (save-excursion
+                       (when (functionp docelt)
+                         (goto-char (match-end 1))
+                         (setq docelt (funcall docelt)))
+                       (goto-char listbeg)
+                       (forward-char 1)
+                       (condition-case nil
+                           (while (and (> docelt 0) (< (point) startpos)
+                                       (progn (forward-sexp 1) t))
+                             ;; ignore metadata and type hints
+                             (unless (looking-at "[ \n\t]*\\(\\^[A-Z:].+\\|\\^?{.+\\)")
+                               (setq docelt (1- docelt))))
+                         (error nil))
+                       (and (zerop docelt) (<= (point) startpos)
+                            (progn (forward-comment (point-max)) t)
+                            (= (point) (nth 8 state)))))
+                font-lock-doc-face
+              font-lock-string-face))))
+    font-lock-comment-face))
+
 (defun clojure-font-lock-setup ()
   "Configures font-lock for editing Clojure code."
   (setq-local font-lock-multiline t)
@@ -517,7 +556,7 @@ Called by `imenu--generic-function'."
           nil
           (font-lock-mark-block-function . mark-defun)
           (font-lock-syntactic-face-function
-           . lisp-font-lock-syntactic-face-function))))
+           . clojure-font-lock-syntactic-face-function))))
 
 (defun clojure-font-lock-def-at-point (point)
   "Range between the top-most def* and the fourth element after POINT.
