@@ -214,6 +214,11 @@ POS."
   (should (eq (clojure-test-face-at 1 10 "*some-var*") 'font-lock-variable-name-face))
   (should (eq (clojure-test-face-at 2 11 "@*some-var*") 'font-lock-variable-name-face)))
 
+(ert-deftest clojure-mode-syntax-table/ns-macro ()
+  :tags '(fontification syntax-table)
+  (should (eq (clojure-test-face-at 5 8 "(ns name)") 'font-lock-type-face))
+  (should (eq (clojure-test-face-at 5 13 "(ns name.name)") 'font-lock-type-face)))
+
 (provide 'clojure-mode-test)
 
 ;; Local Variables:

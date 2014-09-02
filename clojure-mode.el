@@ -432,11 +432,6 @@ Called by `imenu--generic-function'."
        (2 font-lock-function-name-face nil t))
       ;; lambda arguments - %, %1, %2, etc
       ("\\<%[1-9]?" (0 font-lock-variable-name-face))
-      ;; (ns namespace)
-      (,(concat "(\\(?:clojure.core/\\)?ns[ \t]+"
-                ;; namespace
-                "\\(\\sw+\\)" )
-       (1 font-lock-type-face nil t))
       ;; Special forms & control structures
       (,(concat
          "(\\(?:clojure.core/\\)?"
@@ -496,6 +491,13 @@ Called by `imenu--generic-function'."
       ("\\(?:\\<\\|\\.\\|/\\|#?^\\)\\([A-Z][a-zA-Z0-9_]*[a-zA-Z0-9$_]+\\.?\\>\\)" 1 font-lock-type-face)
       ;; foo.bar.baz
       ("\\<^?\\([a-z][a-z0-9_-]+\\.\\([a-z][a-z0-9_-]*\\.?\\)+\\)" 1 font-lock-type-face)
+      ;; (ns namespace) - special handling for single segment namespaces
+      (,(concat "\\<ns\\>[ \r\n\t]*"
+                ;; Possibly metadata
+                "\\(?:\\^?{[^}]+}[ \r\n\t]*\\)*"
+                ;; namespace
+                "\\([a-z0-9-]+\\)")
+       (1 font-lock-type-face nil t))
       ;; foo/ Foo/ @Foo/
       ("\\<@?\\([a-zA-Z][a-z0-9_-]*\\)/" 1 font-lock-type-face)
       ;; fooBar
