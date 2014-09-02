@@ -9,7 +9,7 @@
 ;;       Bozhidar Batsov <bozhidar@batsov.com>
 ;; URL: http://github.com/clojure-emacs/clojure-mode
 ;; Keywords: languages clojure clojurescript lisp
-;; Version: 3.0.0
+;; Version: 3.1.0-cvs
 ;; Package-Requires: ((emacs "24.1"))
 
 ;; This file is not part of GNU Emacs.
@@ -203,7 +203,7 @@ For example, \[ is allowed in :db/id[:db.part/user]."
 This holds a cons cell of the form `(DIRECTORY . FILE)'
 describing the last `clojure-load-file' or `clojure-compile-file' command.")
 
-(defconst clojure-mode-version "3.0.0"
+(defconst clojure-mode-version "3.1.0-snapshot"
   "The current version of `clojure-mode'.")
 
 (defconst clojure--prettify-symbols-alist
