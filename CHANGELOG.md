@@ -20,6 +20,7 @@ interop method invocations.
 * Emacs 24.1 is required.
 * Removed deprecated `clojure-font-lock-comment-sexp`.
 * Renamed `clojure-mode-font-lock-setup` to `clojure-font-lock-setup`.
+* Some font-locking was extracted to a separate package. ([clojure-mode-extra-font-locking](https://github.com/clojure-emacs/clojure-mode/blob/master/clojure-mode-extra-font-locking.el)).
 
 ### Bugs fixed
 
