@@ -14,6 +14,7 @@
 * Various docstring filling improvements.
 * Introduced additional faces for keyword literals, character literals and
 interop method invocations.
+* Added support for `prettify-symbols-mode`.
 
 ### Changes
 
