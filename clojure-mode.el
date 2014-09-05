@@ -19,11 +19,15 @@
 ;; Provides font-lock, indentation, and navigation for the Clojure
 ;; programming language (http://clojure.org).
 
-;; Using clojure-mode with paredit is highly recommended.  Use paredit
-;; as you would with any other minor mode; for instance:
-;;
+;; Using clojure-mode with paredit or smartparens is highly recommended.
+
+;; Here are some example configurations:
+
 ;;   ;; require or autoload paredit-mode
 ;;   (add-hook 'clojure-mode-hook 'paredit-mode)
+
+;;   ;; require or autoload smartparens
+;;   (add-hook 'clojure-mode-hook 'smartparens-strict-mode)
 
 ;; See CIDER (http://github.com/clojure-emacs/cider) for
 ;; better interaction with subprocesses via nREPL.
