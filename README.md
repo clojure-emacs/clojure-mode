@@ -191,6 +191,10 @@ The mode is **deprecated** (more details
 will not be improved/maintained anymore. All `clojure-test-mode` users
 should start using CIDER 0.7+, which features built-in support for `clojure.test`.
 
+## Changelog
+
+An extensive changelog is available [here](CHANGELOG.md).
+
 ## License
 
 Copyright © 2007-2014 Jeffrey Chu, Lennart Staflin, Phil Hagelberg, Bozhidar Batsov
