@@ -258,7 +258,7 @@ ENDP and DELIMITER."
                       (= orig-point (match-end 0)))))))))
 
 (defun clojure-paredit-setup ()
-  "A bit code to make `paredit-mode' play nice with `clojure-mode'."
+  "Make \"paredit-mode\" play nice with `clojure-mode'."
   (when (>= paredit-version 21)
     (define-key clojure-mode-map "{" 'paredit-open-curly)
     (define-key clojure-mode-map "}" 'paredit-close-curly)
@@ -310,7 +310,9 @@ This only takes care of filling docstring correctly."
     (clojure-docstring-fill-prefix)))
 
 (defun clojure-fill-paragraph (&optional justify)
-  "Like `fill-paragraph' but handle Clojure docstrings."
+  "Like `fill-paragraph', but can handle Clojure docstrings.
+
+If JUSTIFY is non-nil, justify as well as fill the paragraph."
   (if (clojure-in-docstring-p)
       (let ((paragraph-start
              (concat paragraph-start
@@ -362,7 +364,7 @@ This only takes care of filling docstring correctly."
 
 
 (defun clojure-match-next-def ()
-  "Scans the buffer backwards for the next top-level definition.
+  "Scans the buffer backwards for the next \"top-level\" definition.
 Called by `imenu--generic-function'."
   (when (re-search-backward "^(def\\sw*" nil t)
     (save-excursion
@@ -508,6 +510,12 @@ Called by `imenu--generic-function'."
   "Default expressions to highlight in Clojure mode.")
 
 (defun clojure-font-lock-syntactic-face-function (state)
+  "Find and highlight text with a Clojure-friendly syntax table.
+
+This function is passed to `font-lock-syntactic-face-function',
+which is called with a single parameter, STATE (which is, in
+turn, returned by `parse-partial-sexp' at the beginning of the
+highlighted region)."
   (if (nth 3 state)
       ;; This might be a (doc)string or a |...| symbol.
       (let ((startpos (nth 8 state)))
@@ -657,17 +665,15 @@ point) to check."
     (lisp-indent-line)))
 
 (defun clojure-indent-function (indent-point state)
-  "This function is the normal value of the variable `lisp-indent-function'.
-It is used when indenting a line within a function call, to see if the
-called function says anything special about how to indent the line.
+  "When indenting a line within a function call, indent properly.
 
 INDENT-POINT is the position where the user typed TAB, or equivalent.
 Point is located at the point to indent under (for default indentation);
 STATE is the `parse-partial-sexp' state for that position.
 
-If the current line is in a call to a Lisp function
-which has a non-nil property `lisp-indent-function',
-that specifies how to do the indentation.
+If the current line is in a call to a Clojure function with a
+non-nil property `clojure-indent-function', that specifies how to do
+the indentation.
 
 The property value can be
 
@@ -735,7 +741,8 @@ This function also returns nil meaning don't specify the indentation."
 (defun clojure-backtracking-indent (indent-point state normal-indent)
   "Experimental backtracking support.
 
-Will upwards in an sexp to check for contextual indenting."
+Given an INDENT-POINT, the STATE, and the NORMAL-INDENT, will
+move upwards in an sexp to check for contextual indenting."
   (let (indent (path) (depth 0))
     (goto-char (elt state 1))
     (while (and (not indent)
@@ -792,15 +799,20 @@ Will upwards in an sexp to check for contextual indenting."
 (put 'specify! 'clojure-backtracking-indent '(4 (2)))
 
 (defun put-clojure-indent (sym indent)
+  "Instruct `clojure-indent-function' to indent the body of SYM by INDENT."
   (put sym 'clojure-indent-function indent))
 
 (defmacro define-clojure-indent (&rest kvs)
+  "Call `put-clojure-indent' on a series, KVS."
   `(progn
      ,@(mapcar (lambda (x) `(put-clojure-indent
                              (quote ,(first x)) ,(second x)))
                kvs)))
 
 (defun add-custom-clojure-indents (name value)
+  "Allow `clojure-defun-indents' to indent user-specified macros.
+
+Requires the macro's NAME and a VALUE."
   (custom-set-default name value)
   (mapcar (lambda (x)
             (put-clojure-indent x 'defun))
