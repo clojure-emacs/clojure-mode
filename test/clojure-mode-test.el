@@ -219,6 +219,20 @@ POS."
   (should (eq (clojure-test-face-at 5 8 "(ns name)") 'font-lock-type-face))
   (should (eq (clojure-test-face-at 5 13 "(ns name.name)") 'font-lock-type-face)))
 
+(ert-deftest clojure-mode-syntax-table/comments ()
+  :tags '(fontification syntax-table)
+  ;; comment delimiter
+  (should (eq (clojure-test-face-at 1 1 "; comment") 'font-lock-comment-delimiter-face))
+  (should (eq (clojure-test-face-at 1 2 ";; comment") 'font-lock-comment-delimiter-face))
+  (should (eq (clojure-test-face-at 2 2 "(; comment\n)") 'font-lock-comment-delimiter-face))
+  (should (eq (clojure-test-face-at 7 8 "(let [;; comment\n one 1] one)") 'font-lock-comment-delimiter-face))
+
+  ;; comments
+  (should (eq (clojure-test-face-at 3 9 "; comment") 'font-lock-comment-face))
+  (should (eq (clojure-test-face-at 4 10 ";; comment") 'font-lock-comment-face))
+  (should (eq (clojure-test-face-at 4 11 "(; comment\n)") 'font-lock-comment-face))
+  (should (eq (clojure-test-face-at 10 17 "(let [;; comment\n one 1] one)") 'font-lock-comment-face)))
+
 (provide 'clojure-mode-test)
 
 ;; Local Variables:
