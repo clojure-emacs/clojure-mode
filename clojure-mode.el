@@ -222,7 +222,8 @@ describing the last `clojure-load-file' or `clojure-compile-file' command.")
   "Prevent paredit from inserting useless spaces.
 See `paredit-space-for-delimiter-predicates' for the meaning of
 ENDP and DELIM."
-  (if (derived-mode-p 'clojure-mode)
+  (if (or (derived-mode-p 'clojure-mode)
+          (derived-mode-p 'cider-repl-mode))
       (save-excursion
         (backward-char)
         (if (and (or (char-equal delim ?\()
