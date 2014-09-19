@@ -217,7 +217,8 @@ POS."
 (ert-deftest clojure-mode-syntax-table/ns-macro ()
   :tags '(fontification syntax-table)
   (should (eq (clojure-test-face-at 5 8 "(ns name)") 'font-lock-type-face))
-  (should (eq (clojure-test-face-at 5 13 "(ns name.name)") 'font-lock-type-face)))
+  (should (eq (clojure-test-face-at 5 13 "(ns name.name)") 'font-lock-type-face))
+  (should (eq (clojure-test-face-at 1 10 "[ns name]") nil)))
 
 (provide 'clojure-mode-test)
 

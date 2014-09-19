@@ -499,7 +499,7 @@ Called by `imenu--generic-function'."
       ;; foo.bar.baz
       ("\\<^?\\([a-z][a-z0-9_-]+\\.\\([a-z][a-z0-9_-]*\\.?\\)+\\)" 1 font-lock-type-face)
       ;; (ns namespace) - special handling for single segment namespaces
-      (,(concat "\\<ns\\>[ \r\n\t]*"
+      (,(concat "(\\<ns\\>[ \r\n\t]*"
                 ;; Possibly metadata
                 "\\(?:\\^?{[^}]+}[ \r\n\t]*\\)*"
                 ;; namespace
