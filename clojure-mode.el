@@ -439,24 +439,29 @@ Called by `imenu--generic-function'."
        (2 font-lock-function-name-face nil t))
       ;; lambda arguments - %, %1, %2, etc
       ("\\<%[1-9]?" (0 font-lock-variable-name-face))
-      ;; Special forms & control structures
+      ;; Special forms
+      (,(concat
+         "("
+         (regexp-opt
+          '("def" "do" "if" "let" "var" "fn" "loop"
+            "recur" "throw" "try" "catch" "finally"
+            "set!" "new" "."
+            "monitor-enter" "monitor-exit" "quote") t)
+         "\\>")
+       1 font-lock-keyword-face)
+      ;; Built-in binding and flow of control forms
       (,(concat
          "(\\(?:clojure.core/\\)?"
          (regexp-opt
-          '("let" "letfn" "do"
-            "case" "cond" "cond->" "cond->>" "condp"
-            "for" "loop" "recur"
-            "when" "when-not" "when-let" "when-first" "when-some"
-            "if" "if-let" "if-not" "if-some"
-            "." ".." "->" "->>" "doto"
-            "and" "or"
+          '("letfn" "case" "cond" "cond->" "cond->>" "condp"
+            "for" "when" "when-not" "when-let" "when-first" "when-some"
+            "if-let" "if-not" "if-some"
+            ".." "->" "->>" "doto" "and" "or"
             "dosync" "doseq" "dotimes" "dorun" "doall"
             "load" "import" "unimport" "ns" "in-ns" "refer"
-            "try" "catch" "finally" "throw"
             "with-open" "with-local-vars" "binding"
             "gen-class" "gen-and-load-class" "gen-and-save-class"
-            "handler-case" "handle" "var" "declare" "set!" "new"
-            "monitor-enter" "monitor-exit" "quote") t)
+            "handler-case" "handle" "declare") t)
          "\\>")
        1 font-lock-keyword-face)
       (,(concat
