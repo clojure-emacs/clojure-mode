@@ -455,7 +455,7 @@ Called by `imenu--generic-function'."
             "try" "catch" "finally" "throw"
             "with-open" "with-local-vars" "binding"
             "gen-class" "gen-and-load-class" "gen-and-save-class"
-            "handler-case" "handle" "var" "declare" "set!") t)
+            "handler-case" "handle" "var" "declare" "set!" "new") t)
          "\\>")
        1 font-lock-keyword-face)
       (,(concat
