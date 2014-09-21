@@ -117,7 +117,11 @@ POS."
   (clojure-test-with-temp-buffer "Class/methodName"
     (should (eq (clojure-test-face-at 6 6) nil))
     (should (eq (clojure-test-face-at 1 5) 'font-lock-type-face))
-    (should (eq (clojure-test-face-at 7 16) 'clojure-interop-method-face))))
+    (should (eq (clojure-test-face-at 7 16) 'clojure-interop-method-face)))
+  (clojure-test-with-temp-buffer "clojure.lang.Var/someMethod"
+    (should (eq (clojure-test-face-at 17 17) nil))
+    (should (eq (clojure-test-face-at 1 16) 'font-lock-type-face))
+    (should (eq (clojure-test-face-at 18 27) 'clojure-interop-method-face))))
 
 (ert-deftest clojure-mode-syntax-table/interop-method ()
   :tags '(fontification syntax-table)

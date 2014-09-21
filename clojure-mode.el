@@ -512,7 +512,7 @@ Called by `imenu--generic-function'."
                 "\\([a-z0-9-]+\\)")
        (1 font-lock-type-face nil t))
       ;; foo/ Foo/ @Foo/
-      ("\\<@?\\([a-zA-Z][a-z0-9_-]*\\)/" 1 font-lock-type-face)
+      ("\\(?:\\<\\|\\.\\)@?\\([a-zA-Z][a-z0-9_-]*\\)/" 1 font-lock-type-face)
       ;; fooBar
       ("\\(?:\\<\\|/\\)\\([a-z]+[A-Z]+[a-zA-Z0-9$]*\\>\\)" 1 'clojure-interop-method-face)
       ;; Highlight grouping constructs in regular expressions
