@@ -23,7 +23,7 @@ If you're not already using MELPA Stable, add this to your
 ```el
 (require 'package)
 (add-to-list 'package-archives
-             '("melpa-stable" . "http://melpa-stable.milkbox.net/packages/"))
+             '("melpa-stable" . "http://stable.melpa.org/packages/"))
 (package-initialize)
 ```
 
@@ -33,7 +33,7 @@ of code instead:
 ```el
 (require 'package)
 (add-to-list 'package-archives
-             '("melpa" . "http://melpa.milkbox.net/packages/") t)
+             '("melpa" . "http://melpa.org/packages/") t)
 (package-initialize)
 ```
 
@@ -210,8 +210,8 @@ Distributed under the GNU General Public License; type <kbd>C-h C-c</kbd> to vie
 [CIDER]: https://github.com/clojure-emacs/cider
 [Leiningen]: http://leiningen.org
 [contributors]: https://github.com/clojure-emacs/clojure-mode/contributors
-[melpa]: http://melpa.milkbox.net
-[melpa stable]: http://melpa-stable.milkbox.net
+[melpa]: http://melpa.org
+[melpa stable]: http://stable.melpa.org
 [clojure-mode-extra-font-locking]: https://github.com/clojure-emacs/clojure-mode/blob/master/clojure-mode-extra-font-locking.el
 [clj-refactor]: https://github.com/clojure-emacs/clj-refactor.el
 [paredit]: http://mumble.net/~campbell/emacs/paredit.html
