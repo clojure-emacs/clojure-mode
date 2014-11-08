@@ -1,4 +1,6 @@
 [![License GPL 3][badge-license]][copying]
+[![MELPA][melpa-badge]][melpa-package]
+[![MELPA Stable][melpa-stable-badge]][melpa-stable-package]
 [![travis][badge-travis]][travis]
 
 # Clojure Mode
@@ -203,6 +205,10 @@ and [contributors][].
 Distributed under the GNU General Public License; type <kbd>C-h C-c</kbd> to view it.
 
 [badge-license]: https://img.shields.io/badge/license-GPL_3-green.svg
+[melpa-badge]: http://melpa.org/packages/clojure-mode-badge.svg
+[melpa-stable-badge]: http://stable.melpa.org/packages/clojure-mode-badge.svg
+[melpa-package]: http://melpa.org/#/clojure-mode
+[melpa-stable-package]: http://stable.melpa.org/#/clojure-mode
 [COPYING]: http://www.gnu.org/copyleft/gpl.html
 [badge-travis]: https://travis-ci.org/clojure-emacs/clojure-mode.svg?branch=master
 [travis]: https://travis-ci.org/clojure-emacs/clojure-mode
