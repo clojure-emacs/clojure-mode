@@ -702,8 +702,8 @@ This function also returns nil meaning don't specify the indentation."
     (goto-char (1+ (elt state 1)))
     (parse-partial-sexp (point) calculate-lisp-indent-last-sexp 0 t)
     (if (and (elt state 2)
-             (not (looking-at "\\sw\\|\\s_")))
-        ;; car of form doesn't seem to be a symbol
+             (not (looking-at "\\sw\\|\\s_\\|\\[\\|{")))
+        ;; car of form doesn't seem to be a symbol, vector, map
         (progn
           (if (not (> (save-excursion (forward-line 1) (point))
                       calculate-lisp-indent-last-sexp))
@@ -746,6 +746,22 @@ This function also returns nil meaning don't specify the indentation."
               (clojure-use-backtracking-indent
                (clojure-backtracking-indent
                 indent-point state normal-indent)))))))
+
+;; special indent rule for cond form.
+(put 'cond
+     'clojure-indent-function
+     #'(lambda (indent-point state)
+         (let* ((cond-state (parse-partial-sexp (1+ (elt state 1)) indent-point 0))
+                (start-pos-first-sexp (elt cond-state 2)))
+           (if start-pos-first-sexp
+               ;; If it has the sexp in front of cursor:
+               (progn (goto-char start-pos-first-sexp)
+                      ;; Ignore reader-macro
+                      (while (looking-back "`\\|'\\|@\\|~\\|\\^\\|#" (line-beginning-position))
+                        (backward-char 1))
+                      (current-column))
+             (goto-char (1+ (elt state 1)))
+             (current-column)))))
 
 (defun clojure-backtracking-indent (indent-point state normal-indent)
   "Experimental backtracking support.
