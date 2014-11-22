@@ -198,6 +198,7 @@ For example, \[ is allowed in :db/id[:db.part/user]."
     (modify-syntax-entry ?\[ "(]" table)
     (modify-syntax-entry ?\] ")[" table)
     (modify-syntax-entry ?^ "'" table)
+    (modify-syntax-entry ?@ "'" table)
     ;; Make hash a usual word character
     (modify-syntax-entry ?# "_ p" table)
     table))
