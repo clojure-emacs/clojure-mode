@@ -750,11 +750,11 @@ This function also returns nil meaning don't specify the indentation."
 (put 'cond
      'clojure-indent-function
      #'(lambda (indent-point state)
-         (let* ((cond-state (parse-partial-sexp (1+ (elt state 1)) indent-point 1))
-                (start-pos-last-sexp (elt cond-state 1)))
-           (if start-pos-last-sexp
+         (let* ((cond-state (parse-partial-sexp (1+ (elt state 1)) indent-point 0))
+                (start-pos-first-sexp (elt cond-state 2)))
+           (if start-pos-first-sexp
                ;; If it has the sexp in front of cursor:
-               (progn (goto-char start-pos-last-sexp)
+               (progn (goto-char start-pos-first-sexp)
                       ;; Ignore reader-macro
                       (while (looking-back "`\\|'\\|@\\|~\\|\\^\\|#" (line-beginning-position))
                         (backward-char 1))
