@@ -577,6 +577,13 @@ word test in it and whether the file lives under the test/ directory."
   (rx "clojure.test"))
 
 ;;;###autoload
+(defcustom auto-enable-clojure-test-mode t
+  "When non-nil, enables clojure-test mode on any file requiring clojure.test."
+  :type 'boolean
+  :group 'clojure-test
+  :safe 'booleanp)
+
+;;;###autoload
 (defun clojure-find-clojure-test ()
   (let ((regexp clojure-test-regex))
     (save-restriction
@@ -590,7 +597,7 @@ word test in it and whether the file lives under the test/ directory."
 (progn
   (defun clojure-test-maybe-enable ()
     "Enable clojure-test-mode if the current buffer contains a \"clojure.test\" bit in it."
-    (when (clojure-find-clojure-test)
+    (when (and auto-enable-clojure-test-mode (clojure-find-clojure-test))
       (save-window-excursion
         (clojure-test-mode t))))
 
