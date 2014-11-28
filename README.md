@@ -168,12 +168,6 @@ a different REPL command.
 You can also use [Leiningen][] to start an
 enhanced REPL via [CIDER][].
 
-### Swank Clojure
-
-SLIME is available via
-[swank-clojure][] in `clojure-mode` 1.x.
-SLIME support was removed in version 2.x in favor of `CIDER`.
-
 ## Changelog
 
 An extensive changelog is available [here](CHANGELOG.md).
@@ -193,7 +187,6 @@ Distributed under the GNU General Public License; type <kbd>C-h C-c</kbd> to vie
 [COPYING]: http://www.gnu.org/copyleft/gpl.html
 [badge-travis]: https://travis-ci.org/clojure-emacs/clojure-mode.svg?branch=master
 [travis]: https://travis-ci.org/clojure-emacs/clojure-mode
-[swank-clojure]: http://github.com/technomancy/swank-clojure
 [CIDER]: https://github.com/clojure-emacs/cider
 [Leiningen]: http://leiningen.org
 [contributors]: https://github.com/clojure-emacs/clojure-mode/contributors
