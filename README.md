@@ -174,25 +174,6 @@ SLIME is available via
 [swank-clojure][] in `clojure-mode` 1.x.
 SLIME support was removed in version 2.x in favor of `CIDER`.
 
-## Clojure Test Mode
-
-**Deprecated**
-
-This source repository also includes `clojure-test-mode.el`, which
-provides support for running Clojure tests (using the `clojure.test`
-framework) via CIDER and seeing feedback in the test buffer about
-which tests failed or errored. The installation instructions above
-should work for clojure-test-mode as well.
-
-Once you have a repl session active, you can run the tests in the
-current buffer with <kbd>C-c C-,</kbd>. Failing tests and errors will be
-highlighted using overlays. To clear the overlays, use <kbd>C-c k</kbd>.
-
-The mode is **deprecated** (more details
-[here](https://github.com/clojure-emacs/clojure-mode/issues/214)) and
-will not be improved/maintained anymore. All `clojure-test-mode` users
-should start using CIDER 0.7+, which features built-in support for `clojure.test`.
-
 ## Changelog
 
 An extensive changelog is available [here](CHANGELOG.md).
