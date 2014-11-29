@@ -14,36 +14,14 @@ and [Clojure for the Brave and the True](http://www.braveclojure.com/basic-emacs
 
 ## Installation
 
-Available on both [MELPA Stable][] and
-[MELPA][] repos.
+Available on all major `package.el` community maintained repos -  [MELPA Stable][],
+[MELPA][] and [Marmalade][] repos.
 
-MELPA Stable is recommended as it has the latest stable version, but
+MELPA Stable and Marmalade are recommended as they have the latest stable version.
 MELPA has a development snapshot for users who don't mind breakage but
 don't want to run from a git checkout.
 
-If you're not already using MELPA Stable, add this to your
-`~/.emacs.d/init.el` and load it with <kbd>M-x eval-buffer</kbd>.
-
-```el
-(require 'package)
-(add-to-list 'package-archives
-             '("melpa-stable" . "http://stable.melpa.org/packages/"))
-(package-initialize)
-```
-
-If you're feeling adventurous and you'd like to use MELPA add this bit
-of code instead:
-
-```el
-(require 'package)
-(add-to-list 'package-archives
-             '("melpa" . "http://melpa.org/packages/") t)
-(package-initialize)
-```
-
-And then you can install:
-
-<kbd>M-x package-refresh-contents</kbd>
+You can install `clojure-mode` using the following command:
 
 <kbd>M-x package-install [RET] clojure-mode [RET]</kbd>
 
@@ -51,9 +29,12 @@ or if you'd rather keep it in your dotfiles:
 
 ```el
 (unless (package-installed-p 'clojure-mode)
-  (package-refresh-contents)
-  (package-install 'clojure-mode))
+  (package-refresh-contents))
 ```
+
+If the installation doesn't work try refreshing the package list:
+
+<kbd>M-x package-refresh-contents</kbd>
 
 ### Extra font-locking
 
@@ -186,6 +167,7 @@ Distributed under the GNU General Public License; type <kbd>C-h C-c</kbd> to vie
 [melpa-stable-badge]: http://stable.melpa.org/packages/clojure-mode-badge.svg
 [melpa-package]: http://melpa.org/#/clojure-mode
 [melpa-stable-package]: http://stable.melpa.org/#/clojure-mode
+[marmalade]: https://marmalade-repo.org
 [COPYING]: http://www.gnu.org/copyleft/gpl.html
 [badge-travis]: https://travis-ci.org/clojure-emacs/clojure-mode.svg?branch=master
 [travis]: https://travis-ci.org/clojure-emacs/clojure-mode
