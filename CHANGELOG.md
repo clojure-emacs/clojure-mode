@@ -2,6 +2,10 @@
 
 ## master (unreleased)
 
+### Changes
+
+* Removed `inferior-lisp` integration in favor of `inf-clojure`.
+
 ## 3.0.1 (24/11/2014)
 
 ### Bugs fixed

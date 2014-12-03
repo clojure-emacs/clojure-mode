@@ -138,13 +138,7 @@ and evaluating code interactively.
 
 ### Basic REPL
 
-Use <kbd>M-x run-lisp</kbd> to open a simple REPL subprocess using
-[Leiningen][]. Once that has
-opened, you can use <kbd>C-c C-r</kbd> to evaluate the region or
-<kbd>C-c C-l</kbd> to load the whole file.
-
-If you don't use Leiningen, you can set `inferior-lisp-program` to
-a different REPL command.
+Install [inf-clojure][] for basic interaction with a REPL process.
 
 ### CIDER
 
@@ -172,6 +166,7 @@ Distributed under the GNU General Public License; type <kbd>C-h C-c</kbd> to vie
 [badge-travis]: https://travis-ci.org/clojure-emacs/clojure-mode.svg?branch=master
 [travis]: https://travis-ci.org/clojure-emacs/clojure-mode
 [CIDER]: https://github.com/clojure-emacs/cider
+[inf-clojure]: https://github.com/clojure-emacs/inf-clojure
 [Leiningen]: http://leiningen.org
 [contributors]: https://github.com/clojure-emacs/clojure-mode/contributors
 [melpa]: http://melpa.org
