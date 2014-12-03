@@ -710,7 +710,15 @@ This function also returns nil meaning don't specify the indentation."
               (progn (goto-char calculate-lisp-indent-last-sexp)
                      (beginning-of-line)
                      (parse-partial-sexp (point)
-                                         calculate-lisp-indent-last-sexp 0 t)))
+                                         calculate-lisp-indent-last-sexp 0 t)
+                     (let* ((outermost-containing-sexp (first (elt state 9)))
+                            (last-sexp-state (save-excursion
+                                               (parse-partial-sexp outermost-containing-sexp (point))))
+                            (current-depth (first last-sexp-state))
+                            (indent-point-depth (first state)))
+                       (when (> current-depth indent-point-depth)
+                         (goto-char (first (last (elt last-sexp-state 9)
+                                                 (- current-depth indent-point-depth))))))))
           ;; Indent under the list or under the first sexp on the same
           ;; line as calculate-lisp-indent-last-sexp.  Note that first
           ;; thing on that line has to be complete sexp since we are
