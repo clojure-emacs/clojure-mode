@@ -273,11 +273,8 @@ ENDP and DELIMITER."
     (add-to-list 'paredit-space-for-delimiter-predicates
                  'clojure-no-space-after-tag)))
 
-;;;###autoload
-(define-derived-mode clojure-mode prog-mode "Clojure"
-  "Major mode for editing Clojure code.
-
-\\{clojure-mode-map}"
+(defun clojure-mode-variables ()
+  "Set up initial buffer-local variables for Clojure mode."
   (setq-local imenu-create-index-function
               (lambda ()
                 (imenu--generic-function '((nil clojure-match-next-def 0)))))
@@ -294,8 +291,15 @@ ENDP and DELIMITER."
   (setq-local inferior-lisp-program clojure-inf-lisp-command)
   (setq-local parse-sexp-ignore-comments t)
   (setq-local prettify-symbols-alist clojure--prettify-symbols-alist)
+  (setq-local open-paren-in-column-0-is-defun-start nil))
+
+;;;###autoload
+(define-derived-mode clojure-mode prog-mode "Clojure"
+  "Major mode for editing Clojure code.
+
+\\{clojure-mode-map}"
+  (clojure-mode-variables)
   (clojure-font-lock-setup)
-  (setq-local open-paren-in-column-0-is-defun-start nil)
   (add-hook 'paredit-mode-hook 'clojure-paredit-setup))
 
 (defsubst clojure-in-docstring-p ()
