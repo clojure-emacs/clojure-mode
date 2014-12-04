@@ -717,10 +717,9 @@ This function also returns nil meaning don't specify the indentation."
                             (current-depth (car last-sexp-state))
                             (indent-point-depth (car state)))
                        (when (> current-depth indent-point-depth)
-                         (let ((start-pos-correct-last-sexp
-                                (car (nthcdr (- (length (elt last-sexp-state 9))
-                                                (- current-depth indent-point-depth))
-                                             (elt last-sexp-state 9)))))
+                         (let ((start-pos-correct-last-sexp (nth (- (length (elt last-sexp-state 9))
+                                                                    (- current-depth indent-point-depth))
+                                                                 (elt last-sexp-state 9))))
                            (goto-char start-pos-correct-last-sexp))))))
           ;; Indent under the list or under the first sexp on the same
           ;; line as calculate-lisp-indent-last-sexp.  Note that first
