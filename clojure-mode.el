@@ -80,6 +80,9 @@
   :link '(url-link :tag "Github" "https://github.com/clojure-emacs/clojure-mode")
   :link '(emacs-commentary-link :tag "Commentary" "clojure-mode"))
 
+(defconst clojure-mode-version "4.0.0-snapshot"
+  "The current version of `clojure-mode'.")
+
 (defface clojure-keyword-face
   '((t (:inherit font-lock-constant-face)))
   "Face used to font-lock Clojure keywords (:something)."
@@ -171,9 +174,6 @@ For example, \[ is allowed in :db/id[:db.part/user]."
     ;; Make hash a usual word character
     (modify-syntax-entry ?# "_ p" table)
     table))
-
-(defconst clojure-mode-version "3.1.0-snapshot"
-  "The current version of `clojure-mode'.")
 
 (defconst clojure--prettify-symbols-alist
   '(("fn"  . ?λ)))
