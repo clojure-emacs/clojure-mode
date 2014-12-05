@@ -711,15 +711,18 @@ This function also returns nil meaning don't specify the indentation."
                      (beginning-of-line)
                      (parse-partial-sexp (point)
                                          calculate-lisp-indent-last-sexp 0 t)
-                     (let* ((start-pos-outermost-sexp (car (elt state 9)))
+                     (let* ((start-pos-containing-sexps (elt state 9))
+                            (start-pos-outermost-sexp (car start-pos-containing-sexps))
                             (last-sexp-state (save-excursion
-                                               (parse-partial-sexp start-pos-outermost-sexp (point))))
+                                               (parse-partial-sexp start-pos-outermost-sexp
+                                                                   (point))))
                             (current-depth (car last-sexp-state))
                             (indent-point-depth (car state)))
                        (when (> current-depth indent-point-depth)
-                         (let ((start-pos-correct-last-sexp (nth (- (length (elt last-sexp-state 9))
-                                                                    (- current-depth indent-point-depth))
-                                                                 (elt last-sexp-state 9))))
+                         (let* ((start-pos-containing-sexps (elt last-sexp-state 9))
+                                (start-pos-correct-last-sexp (nth (- (length start-pos-containing-sexps)
+                                                                     (- current-depth indent-point-depth))
+                                                                  start-pos-containing-sexps)))
                            (goto-char start-pos-correct-last-sexp))))))
           ;; Indent under the list or under the first sexp on the same
           ;; line as calculate-lisp-indent-last-sexp.  Note that first
