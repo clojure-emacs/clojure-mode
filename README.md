@@ -175,4 +175,4 @@ Distributed under the GNU General Public License; type <kbd>C-h C-c</kbd> to vie
 [clj-refactor]: https://github.com/clojure-emacs/clj-refactor.el
 [paredit]: http://mumble.net/~campbell/emacs/paredit.html
 [smartparens]: https://github.com/Fuco1/smartparens
-[RainbowDelimiters]: https://github.com/jlr/rainbow-delimiters
+[RainbowDelimiters]: https://github.com/Fanael/rainbow-delimiters
