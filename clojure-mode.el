@@ -798,6 +798,7 @@ it from Lisp code, use (put-clojure-indent 'some-symbol 'defun)."
   (if 1)
   (if-not 1)
   (case 1)
+  (cond 0)
   (condp 2)
   (when 1)
   (while 1)
