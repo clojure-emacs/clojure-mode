@@ -5,6 +5,7 @@
 ### Changes
 
 * Removed `inferior-lisp` integration in favor of `inf-clojure`.
+* Indent the body of `cond` with 2 spaces.
 
 ## 3.0.1 (24/11/2014)
 
