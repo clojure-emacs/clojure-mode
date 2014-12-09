@@ -839,11 +839,6 @@ it from Lisp code, use (put-clojure-indent 'some-symbol 'defun)."
   (when-some 1)
   (if-some 1)
 
-  ;; data structures
-  (defstruct 1)
-  (struct-map 1)
-  (assoc 1)
-
   (defmethod 'defun)
 
   ;; clojure.test

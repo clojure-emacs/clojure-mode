@@ -6,6 +6,7 @@
 
 * Removed `inferior-lisp` integration in favor of `inf-clojure`.
 * Indent the body of `cond` with 2 spaces.
+* Remove special indentation settings for `defstruct`, `struct-map` and `assoc`.
 
 ## 3.0.1 (24/11/2014)
 
