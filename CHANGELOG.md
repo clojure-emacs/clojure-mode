@@ -2,6 +2,10 @@
 
 ## master (unreleased)
 
+### Bugs fixed
+
+* Indent properly `as->`.
+
 ## 4.0.0 (12/12/2014)
 
 ### Changes

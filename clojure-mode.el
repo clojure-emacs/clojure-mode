@@ -814,6 +814,7 @@ it from Lisp code, use (put-clojure-indent 'some-symbol 'defun)."
   (proxy 2)
   (-> 1)
   (->> 1)
+  (as-> 2)
   (some-> 1)
   (some->> 1)
   (with-open 1)
