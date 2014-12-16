@@ -57,7 +57,7 @@ in summary; this is one attempt:
   identified by the symbol in function position, the bodies of which are
   indented two spaces, regardless of the position of their first argument (this
   is called "defun" indentation, for historical reasons):
-  1. Known special forms (e.g. `case`, `try`, etc)
+  1. Known special forms (e.g. `loop`, `try`, etc)
   2. Nearly all "core" macros that ship as part of Clojure itself
   3. Userland macros (and any other form?) that are locally registered via
   `put-clojure-indent`, `define-clojure-indent` (helpers for adding mappings to
