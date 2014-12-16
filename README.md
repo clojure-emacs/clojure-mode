@@ -49,7 +49,7 @@ To see a list of available configuration options do `M-x customize-group RET clo
 
 ### Indentation options
 
-Characterizing the default indentation rules of clojure-mode is difficult to do
+Characterizing the default indentation rules of `clojure-mode` is difficult to do
 in summary; this is one attempt:
 
 1. Bodies of parenthesized forms are indented such that arguments are aligned to
