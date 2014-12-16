@@ -49,8 +49,11 @@ To see a list of available configuration options do `M-x customize-group RET clo
 
 ### Indentation options
 
-Characterizing the default indentation rules of `clojure-mode` is difficult to do
-in summary; this is one attempt:
+The default indentation rules in `clojure-mode` are derived from the
+[community Clojure Style Guide](https://github.com/bbatsov/clojure-style-guide).
+
+Characterizing them is difficult to do in summary; this is one
+attempt:
 
 1. Bodies of parenthesized forms are indented such that arguments are aligned to
   the start column of the first argument, _except_ for a class of forms
