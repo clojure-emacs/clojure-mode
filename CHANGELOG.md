@@ -5,6 +5,7 @@
 ### Bugs fixed
 
 * Indent properly `as->`.
+* Revert the indentation settings for `->`, `->>`, `some->` and `some->>`.
 
 ## 4.0.0 (12/12/2014)
 
