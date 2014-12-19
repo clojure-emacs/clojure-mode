@@ -2,6 +2,8 @@
 
 ## master (unreleased)
 
+### 4.0.1 (19/12/2014)
+
 ### Bugs fixed
 
 * Indent properly `as->`.
