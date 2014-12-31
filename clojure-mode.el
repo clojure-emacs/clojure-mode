@@ -616,7 +616,6 @@ point) to check."
 (put 'definline 'clojure-doc-string-elt 2)
 (put 'defprotocol 'clojure-doc-string-elt 2)
 
-
 
 (defun clojure-indent-line ()
   "Indent current line as Clojure code."
