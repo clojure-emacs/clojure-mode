@@ -81,7 +81,7 @@ information about customizing this indentation behaviour.
 * [clojure-mode-extra-font-locking][] provides additional font-locking
 for built-in methods and macros.  The font-locking is pretty
 imprecise, because it doesn't take namespaces into account and it
-won't font-lock a functions at all possible positions in a sexp, but
+won't font-lock a function at all possible positions in a sexp, but
 if you don't mind its imperfections you can easily enable it:
 
 ```el
