@@ -91,6 +91,12 @@ if you don't mind its imperfections you can easily enable it:
 The code in `clojure-mode-font-locking` used to be bundled with
 `clojure-mode` before version 3.0.
 
+You can also use the code in this package as a basis for extending the
+font-locking further (e.g. functions/macros from more
+namespaces). Generally you should avoid adding special font-locking
+for things that don't have fairly unique names, as this will result in
+plenty of incorrect font-locking.
+
 * [clj-refactor][] provides simple refactoring support.
 
 * Enabling `CamelCase` support for editing commands(like
