@@ -100,7 +100,7 @@ names. The built-in Emacs minor mode `subword-mode` provides such
 functionality:
 
 ```el
-(add-hook 'clojure-mode-hook 'subword-mode)
+(add-hook 'clojure-mode-hook #'subword-mode)
 ```
 
 * The use of [paredit][] when editing Clojure (or any other Lisp) code
@@ -110,7 +110,7 @@ structure at a higher level than just characters and words. To enable
 it for Clojure buffers:
 
 ```el
-(add-hook 'clojure-mode-hook 'paredit-mode)
+(add-hook 'clojure-mode-hook #'paredit-mode)
 ```
 
 * [smartparens][] is an excellent
@@ -119,7 +119,7 @@ it for Clojure buffers:
   `smartparens` use the following code:
 
 ```el
-(add-hook 'clojure-mode-hook 'smartparens-strict-mode)
+(add-hook 'clojure-mode-hook #'smartparens-strict-mode)
 ```
 
 * [RainbowDelimiters][] is a
@@ -131,7 +131,7 @@ it for Clojure buffers:
   enable it like this:
 
 ```el
-(add-hook 'clojure-mode-hook 'rainbow-delimiters-mode)
+(add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
 ```
 
 ## REPL Interaction

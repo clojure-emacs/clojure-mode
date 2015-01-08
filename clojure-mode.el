@@ -247,13 +247,13 @@ ENDP and DELIMITER."
                 (imenu--generic-function '((nil clojure-match-next-def 0)))))
   (setq-local indent-tabs-mode nil)
   (lisp-mode-variables nil)
-  (setq fill-paragraph-function 'clojure-fill-paragraph)
-  (setq adaptive-fill-function 'clojure-adaptive-fill-function)
-  (setq-local normal-auto-fill-function 'clojure-auto-fill-function)
+  (setq fill-paragraph-function #'clojure-fill-paragraph)
+  (setq adaptive-fill-function #'clojure-adaptive-fill-function)
+  (setq-local normal-auto-fill-function #'clojure-auto-fill-function)
   (setq-local comment-start-skip
               "\\(\\(^\\|[^\\\\\n]\\)\\(\\\\\\\\\\)*\\)\\(;+\\|#|\\) *")
-  (setq-local indent-line-function 'clojure-indent-line)
-  (setq-local lisp-indent-function 'clojure-indent-function)
+  (setq-local indent-line-function #'clojure-indent-line)
+  (setq-local lisp-indent-function #'clojure-indent-function)
   (setq-local lisp-doc-string-elt-property 'clojure-doc-string-elt)
   (setq-local parse-sexp-ignore-comments t)
   (setq-local prettify-symbols-alist clojure--prettify-symbols-alist)
@@ -266,7 +266,7 @@ ENDP and DELIMITER."
 \\{clojure-mode-map}"
   (clojure-mode-variables)
   (clojure-font-lock-setup)
-  (add-hook 'paredit-mode-hook 'clojure-paredit-setup))
+  (add-hook 'paredit-mode-hook #'clojure-paredit-setup))
 
 (defsubst clojure-in-docstring-p ()
   "Check whether point is in a docstring."
