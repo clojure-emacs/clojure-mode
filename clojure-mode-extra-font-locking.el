@@ -1,6 +1,6 @@
 ;;; clojure-mode-extra-font-locking.el --- Extra font-locking for Clojure mode
 
-;; Copyright © 2014 Bozhidar Batsov
+;; Copyright © 2014-2015 Bozhidar Batsov
 ;;
 ;; Author: Bozhidar Batsov <bozhidar@batsov.com>
 ;; URL: http://github.com/clojure-emacs/clojure-mode
@@ -63,7 +63,7 @@
     "dissoc" "dissoc!" "distinct" "distinct?"
     "doc"
     "double" "double-array" "doubles" "drop"
-    "drop-last" "drop-while" "empty" "empty?" "ensure" 
+    "drop-last" "drop-while" "empty" "empty?" "ensure"
     "enumeration-seq" "error-handler" "error-mode" "eval" "even?" "every?"
     "every-pred" "extend" "extend-protocol" "extend-type" "extends?"
     "extenders" "ex-info" "ex-data"
@@ -128,7 +128,7 @@
     "to-array" "to-array-2d" "trampoline" "transient" "tree-seq"
     "true?" "type" "unchecked-add" "unchecked-add-int" "unchecked-byte"
     "unchecked-char" "unchecked-dec" "unchecked-dec-int" "unchecked-divide"
-    "unchecked-divide-int" "unchecked-double" "unchecked-float" 
+    "unchecked-divide-int" "unchecked-double" "unchecked-float"
     "unchecked-inc" "unchecked-inc-int" "unchecked-long" "unchecked-multiply"
     "unchecked-multiply-int" "unchecked-negate" "unchecked-negate-int"
     "unchecked-remainder" "unchecked-remainder-int" "unchecked-short"
