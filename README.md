@@ -69,8 +69,8 @@ personal config. Let's assume you want to indent `->>` and `->` like this:
 You can do so by putting the following in your config:
 
 ```el
-(put-clojure-indent -> 1)
-(put-clojure-indent ->> 1)
+(put-clojure-indent '-> 1)
+(put-clojure-indent '->> 1)
 ```
 
 This means that the body of the `->/->>` is after the first argument.
