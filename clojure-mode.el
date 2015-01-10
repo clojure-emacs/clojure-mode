@@ -813,9 +813,6 @@ it from Lisp code, use (put-clojure-indent 'some-symbol 'defun)."
   (locking 1)
   (proxy 2)
   (as-> 2)
-  (with-open 1)
-  (with-precision 1)
-  (with-local-vars 1)
 
   (reify 'defun)
   (deftype 2)
