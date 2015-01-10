@@ -412,6 +412,7 @@ Called by `imenu--generic-function'."
             "dosync" "doseq" "dotimes" "dorun" "doall"
             "load" "import" "unimport" "ns" "in-ns" "refer"
             "with-open" "with-local-vars" "binding"
+            "with-redefs" "with-redefs-fn"
             "gen-class" "gen-and-load-class" "gen-and-save-class"
             "handler-case" "handle" "declare") t)
          "\\>")

@@ -138,7 +138,7 @@
     "var?" "vary-meta" "vec" "vector" "vector?" "vector-of" "while"
     "with-bindings" "with-bindings*" "with-in-str" "with-loading-context"
     "with-meta" "with-out-str" "with-precision"
-    "with-redefs" "with-redefs-fn" "xml-seq" "zero?" "zipmap"
+    "xml-seq" "zero?" "zipmap"
     ;; clojure.inspector
     "atom?" "collection-tag" "get-child" "get-child-count" "inspect"
     "inspect-table" "inspect-tree" "is-leaf" "list-model" "list-provider"
