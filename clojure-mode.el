@@ -24,10 +24,10 @@
 ;; Here are some example configurations:
 
 ;;   ;; require or autoload paredit-mode
-;;   (add-hook 'clojure-mode-hook 'paredit-mode)
+;;   (add-hook 'clojure-mode-hook #'paredit-mode)
 
 ;;   ;; require or autoload smartparens
-;;   (add-hook 'clojure-mode-hook 'smartparens-strict-mode)
+;;   (add-hook 'clojure-mode-hook #'smartparens-strict-mode)
 
 ;; See inf-clojure (http://github.com/clojure-emacs/inf-clojure) for
 ;; basic interaction with Clojure subprocesses.
@@ -152,7 +152,7 @@ For example, \[ is allowed in :db/id[:db.part/user]."
 
 (defvar clojure-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "C-:") 'clojure-toggle-keyword-string)
+    (define-key map (kbd "C-:") #'clojure-toggle-keyword-string)
     (easy-menu-define clojure-mode-menu map "Clojure Mode Menu"
       '("Clojure"
         ["Toggle between string & keyword" clojure-toggle-keyword-string]
@@ -233,12 +233,12 @@ ENDP and DELIMITER."
 (defun clojure-paredit-setup ()
   "Make \"paredit-mode\" play nice with `clojure-mode'."
   (when (>= paredit-version 21)
-    (define-key clojure-mode-map "{" 'paredit-open-curly)
-    (define-key clojure-mode-map "}" 'paredit-close-curly)
+    (define-key clojure-mode-map "{" #'paredit-open-curly)
+    (define-key clojure-mode-map "}" #'paredit-close-curly)
     (add-to-list 'paredit-space-for-delimiter-predicates
-                 'clojure-space-for-delimiter-p)
+                 #'clojure-space-for-delimiter-p)
     (add-to-list 'paredit-space-for-delimiter-predicates
-                 'clojure-no-space-after-tag)))
+                 #'clojure-no-space-after-tag)))
 
 (defun clojure-mode-variables ()
   "Set up initial buffer-local variables for Clojure mode."
@@ -521,7 +521,7 @@ highlighted region)."
   "Configures font-lock for editing Clojure code."
   (setq-local font-lock-multiline t)
   (add-to-list 'font-lock-extend-region-functions
-               'clojure-font-lock-extend-region-def t)
+               #'clojure-font-lock-extend-region-def t)
   (setq font-lock-defaults
         '(clojure-font-lock-keywords    ; keywords
           nil nil
