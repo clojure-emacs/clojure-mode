@@ -280,8 +280,9 @@ ENDP and DELIMITER."
 
 (defsubst clojure-in-docstring-p ()
   "Check whether point is in a docstring."
-  (eq (get-text-property (1- (point-at-eol)) 'face)
-      'font-lock-doc-face))
+  (unless (bobp)
+    (eq (get-text-property (1- (point-at-eol)) 'face)
+        'font-lock-doc-face)))
 
 (defsubst clojure-docstring-fill-prefix ()
   "The prefix string used by `clojure-fill-paragraph'.
