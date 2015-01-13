@@ -2,6 +2,11 @@
 
 ## master (unreleased)
 
+### Bugs fixed
+
+* Prevent error when calling `indent-for-tab-command` at the start of
+  the buffer at end of line.
+
 ## 4.0.1 (19/12/2014)
 
 ### Bugs fixed
