@@ -205,7 +205,9 @@ POS."
   (should (eq (clojure-test-face-at 1 2 "\\1") 'clojure-character-face))
   (should (eq (clojure-test-face-at 1 6 "\\u0032") 'clojure-character-face))
   (should (eq (clojure-test-face-at 1 2 "\\+") 'clojure-character-face))
-  (should (eq (clojure-test-face-at 1 2 "\\.") 'clojure-character-face)))
+  (should (eq (clojure-test-face-at 1 2 "\\.") 'clojure-character-face))
+  (should (eq (clojure-test-face-at 1 2 "\\,") 'clojure-character-face))
+  (should (eq (clojure-test-face-at 1 2 "\\;") 'clojure-character-face)))
 
 (ert-deftest clojure-mode-syntax-table/cljx ()
   :tags '(fontification syntax-table)
