@@ -130,7 +130,7 @@ namespaces). Generally you should avoid adding special font-locking
 for things that don't have fairly unique names, as this will result in
 plenty of incorrect font-locking.
 
-* [clj-refactor][] provides simple refactoring support.
+* [clj-refactor][] provides refactoring support.
 
 * Enabling `CamelCase` support for editing commands(like
 `forward-word`, `backward-word`, etc) in `clojure-mode` is quite
