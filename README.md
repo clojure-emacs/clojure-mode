@@ -29,7 +29,7 @@ or if you'd rather keep it in your dotfiles:
 
 ```el
 (unless (package-installed-p 'clojure-mode)
-  (package-refresh-contents))
+  (package-install 'clojure-mode))
 ```
 
 If the installation doesn't work try refreshing the package list:
