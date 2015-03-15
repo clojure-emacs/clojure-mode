@@ -222,7 +222,8 @@ POS."
 (ert-deftest clojure-mode-syntax-table/dynamic-var ()
   :tags '(fontification syntax-table)
   (should (eq (clojure-test-face-at 1 10 "*some-var*") 'font-lock-variable-name-face))
-  (should (eq (clojure-test-face-at 2 11 "@*some-var*") 'font-lock-variable-name-face)))
+  (should (eq (clojure-test-face-at 2 11 "@*some-var*") 'font-lock-variable-name-face))
+  (should (eq (clojure-test-face-at 9 13 "some.ns/*var*") 'font-lock-variable-name-face)))
 
 (ert-deftest clojure-mode-syntax-table/ns-macro ()
   :tags '(fontification syntax-table)

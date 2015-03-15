@@ -7,6 +7,7 @@
 * Prevent error when calling `indent-for-tab-command` at the start of
 the buffer at end of line.
 * [#274](https://github.com/clojure-emacs/clojure-mode/issues/274): Correct font-locking of certain punctuation character literals.
+* Fix font-locking of namespace-prefixed dynamic vars (e.g. `some.ns/*var*`).
 
 ## 4.0.1 (19/12/2014)
 
