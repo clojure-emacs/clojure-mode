@@ -1074,7 +1074,7 @@ Returns a list pair, e.g. (\"defn\" \"abc\") or (\"deftest\" \"some-test\")."
 ;;;###autoload
 (progn
   (add-to-list 'auto-mode-alist
-               '("\\.\\(clj[sx]?\\|dtm\\|edn\\)\\'" . clojure-mode))
+               '("\\.\\(clj[csx]?\\|dtm\\|edn\\)\\'" . clojure-mode))
   ;; boot build scripts are Clojure source files
   (add-to-list 'auto-mode-alist '("\\`build.boot\\'" . clojure-mode)))
 
