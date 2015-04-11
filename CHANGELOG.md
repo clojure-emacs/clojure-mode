@@ -2,6 +2,10 @@
 
 ## master (unreleased)
 
+### Changes
+
+* Add .cljc to auto-mode-alist.
+
 ### Bugs fixed
 
 * Prevent error when calling `indent-for-tab-command` at the start of
