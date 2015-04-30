@@ -831,6 +831,8 @@ it from Lisp code, use (put-clojure-indent 'some-symbol 'defun)."
   (extend 1)
   (extend-protocol 1)
   (extend-type 1)
+  (specify 1)
+  (specify! 1)
 
   (try 0)
   (catch 2)
