@@ -856,7 +856,7 @@ it from Lisp code, use (put-clojure-indent 'some-symbol 'defun)."
   ;; clojure.test
   (testing 1)
   (deftest 'defun)
-  (are 1)
+  (are 2)
   (use-fixtures 'defun)
 
   ;; core.logic
