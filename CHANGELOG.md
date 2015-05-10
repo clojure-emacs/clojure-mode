@@ -4,7 +4,7 @@
 
 ### Changes
 
-* Add .cljc to auto-mode-alist.
+* Add `.cljc` to `auto-mode-alist`.
 
 ### Bugs fixed
 
