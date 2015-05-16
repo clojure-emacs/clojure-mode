@@ -169,7 +169,9 @@ For example, \[ is allowed in :db/id[:db.part/user]."
     (modify-syntax-entry ?@ "'" table)
     ;; Make hash a usual word character
     (modify-syntax-entry ?# "_ p" table)
-    table))
+    table)
+  "Syntax table for Clojure mode.
+Inherits from `emacs-lisp-mode-syntax-table'.")
 
 (defconst clojure--prettify-symbols-alist
   '(("fn"  . ?λ)))
