@@ -10,7 +10,7 @@
 ;; URL: http://github.com/clojure-emacs/clojure-mode
 ;; Keywords: languages clojure clojurescript lisp
 ;; Version: 4.0.1
-;; Package-Requires: ((emacs "24.1"))
+;; Package-Requires: ((emacs "24.3"))
 
 ;; This file is not part of GNU Emacs.
 
@@ -55,13 +55,6 @@
 ;;; Code:
 
 
-;;; Compatibility
-(eval-and-compile
-  ;; `setq-local' for Emacs 24.2 and below
-  (unless (fboundp 'setq-local)
-    (defmacro setq-local (var val)
-      "Set variable VAR to value VAL in current buffer."
-      `(set (make-local-variable ',var) ,val))))
 
 (eval-when-compile
   (defvar calculate-lisp-indent-last-sexp)
