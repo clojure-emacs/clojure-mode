@@ -64,7 +64,7 @@
   (defvar paredit-version)
   (defvar paredit-mode))
 
-(require 'cl)
+(require 'cl-lib)
 (require 'imenu)
 
 (declare-function lisp-fill-paragraph  "lisp-mode" (&optional justify))
@@ -341,7 +341,7 @@ Called by `imenu--generic-function'."
                               (backward-sexp))
                   (if (char-equal ?) (char-after (point)))
                 (backward-sexp)))
-          (destructuring-bind (def-beg . def-end) (bounds-of-thing-at-point 'sexp)
+          (cl-destructuring-bind (def-beg . def-end) (bounds-of-thing-at-point 'sexp)
             (if (char-equal ?^ (char-after def-beg))
                 (progn (forward-sexp) (backward-sexp))
               (setq found? t)
@@ -563,14 +563,14 @@ locking in def* forms that are not at top level."
   (let ((changed nil))
     (let ((def (clojure-font-lock-def-at-point font-lock-beg)))
       (when def
-        (destructuring-bind (def-beg . def-end) def
+        (cl-destructuring-bind (def-beg . def-end) def
           (when (and (< def-beg font-lock-beg)
                      (< font-lock-beg def-end))
             (setq font-lock-beg def-beg
                   changed t)))))
     (let ((def (clojure-font-lock-def-at-point font-lock-end)))
       (when def
-        (destructuring-bind (def-beg . def-end) def
+        (cl-destructuring-bind (def-beg . def-end) def
           (when (and (< def-beg font-lock-end)
                      (< font-lock-end def-end))
             (setq font-lock-end def-end
@@ -677,8 +677,8 @@ This function also returns nil meaning don't specify the indentation."
                                          (progn (forward-sexp 1) (point))))
              (open-paren (elt state 1))
              (method nil)
-             (function-tail (first
-                             (last
+             (function-tail (car
+                             (reverse
                               (split-string (substring-no-properties function) "/")))))
         (setq method (get (intern-soft function-tail) 'clojure-indent-function))
         (cond ((member (char-after open-paren) '(?\[ ?\{))
@@ -771,7 +771,7 @@ move upwards in an sexp to check for contextual indenting."
   "Call `put-clojure-indent' on a series, KVS."
   `(progn
      ,@(mapcar (lambda (x) `(put-clojure-indent
-                             (quote ,(first x)) ,(second x)))
+                             (quote ,(car x)) ,(cadr x)))
                kvs)))
 
 (defun add-custom-clojure-indents (name value)
@@ -1079,7 +1079,6 @@ Returns a list pair, e.g. (\"defn\" \"abc\") or (\"deftest\" \"some-test\")."
 
 ;; Local Variables:
 ;; coding: utf-8
-;; byte-compile-warnings: (not cl-functions)
 ;; indent-tabs-mode: nil
 ;; End:
 
