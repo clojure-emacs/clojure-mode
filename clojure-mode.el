@@ -156,7 +156,7 @@ For example, \[ is allowed in :db/id[:db.part/user]."
         "--"
         ["Version" clojure-mode-display-version]))
     map)
-  "Keymap for Clojure mode.  Inherits from `lisp-mode-shared-map'.")
+  "Keymap for Clojure mode.")
 
 (defvar clojure-mode-syntax-table
   (let ((table (copy-syntax-table emacs-lisp-mode-syntax-table)))
