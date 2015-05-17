@@ -329,7 +329,9 @@ If JUSTIFY is non-nil, justify as well as fill the paragraph."
 (defun clojure-match-next-def ()
   "Scans the buffer backwards for the next \"top-level\" definition.
 Called by `imenu--generic-function'."
-  (when (re-search-backward "^(def\\sw*" nil t)
+  ;; we have to take into account namespace-definition forms
+  ;; e.g. s/defn
+  (when (re-search-backward "^(\\([a-z0-9.-]+/\\)?def\\sw*" nil t)
     (save-excursion
       (let (found?
             (start (point)))
