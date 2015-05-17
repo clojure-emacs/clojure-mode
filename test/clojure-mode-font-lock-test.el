@@ -1,4 +1,4 @@
-;;; clojure-mode-test.el --- Clojure Mode: Unit test suite  -*- lexical-binding: t; -*-
+;;; clojure-mode-font-lock-test.el --- Clojure Mode: Font lock test suite  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2014-2015 Bozhidar Batsov <bozhidar@batsov.com>
 
@@ -231,10 +231,10 @@ POS."
   (should (eq (clojure-test-face-at 5 13 "(ns name.name)") 'font-lock-type-face))
   (should (eq (clojure-test-face-at 1 10 "[ns name]") nil)))
 
-(provide 'clojure-mode-test)
+(provide 'clojure-mode-font-lock-test)
 
 ;; Local Variables:
 ;; indent-tabs-mode: nil
 ;; End:
 
-;;; clojure-mode-test.el ends here
+;;; clojure-mode-font-lock-test.el ends here
