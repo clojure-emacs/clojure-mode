@@ -149,7 +149,7 @@ For example, \[ is allowed in :db/id[:db.part/user]."
     (easy-menu-define clojure-mode-menu map "Clojure Mode Menu"
       '("Clojure"
         ["Toggle between string & keyword" clojure-toggle-keyword-string]
-        ["Mark string" clojure-mark-string]
+        "--"
         ["Insert ns form at point" clojure-insert-ns-form-at-point]
         ["Insert ns form at beginning" clojure-insert-ns-form]
         ["Update ns form" clojure-update-ns]
@@ -903,35 +903,6 @@ nil."
   "Return the char before point or nil if at buffer beginning."
   (when (not (= (point) (point-min)))
     (buffer-substring-no-properties (point) (1- (point)))))
-
-;; TODO: Deal with the fact that when point is exactly at the
-;; beginning of a string, it thinks that is the end.
-(defun clojure-string-end ()
-  "Return the position of the \" that ends the string at point.
-
-Note that point must be inside the string - if point is
-positioned at the opening quote, incorrect results will be
-returned."
-  (save-excursion
-    (save-match-data
-      ;; If we're at the end of the string, just return point.
-      (if (and (string= (clojure-char-at-point) "\"")
-               (not (string= (clojure-char-before-point) "\\")))
-          (point)
-        ;; We don't want to get screwed by starting out at the
-        ;; backslash in an escaped quote.
-        (when (string= (clojure-char-at-point) "\\")
-          (backward-char))
-        ;; Look for a quote not preceeded by a backslash
-        (re-search-forward "[^\\]\\\(\\\"\\)")
-        (match-beginning 1)))))
-
-(defun clojure-mark-string ()
-  "Mark the string at point."
-  (interactive)
-  (goto-char (clojure-string-start))
-  (forward-char)
-  (set-mark (clojure-string-end)))
 
 (defun clojure-toggle-keyword-string ()
   "Convert the string or keyword at point to keyword or string."
