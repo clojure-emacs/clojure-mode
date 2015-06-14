@@ -622,13 +622,14 @@ point) to check."
 (put 'definline 'clojure-doc-string-elt 2)
 (put 'defprotocol 'clojure-doc-string-elt 2)
 
-
 (defun clojure-indent-line ()
   "Indent current line as Clojure code."
   (if (clojure-in-docstring-p)
       (save-excursion
         (beginning-of-line)
-        (when (looking-at "^\\s-*")
+        (when (and (looking-at "^\\s-*")
+                   (<= (string-width (match-string-no-properties 0))
+                       (string-width (clojure-docstring-fill-prefix))))
           (replace-match (clojure-docstring-fill-prefix))))
     (lisp-indent-line)))
 

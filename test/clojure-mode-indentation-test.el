@@ -107,6 +107,32 @@ values of customisable variables."
 (->>
  |expr)")
 
+(check-indentation doc-strings-without-indent-specified
+  "
+(defn some-fn
+|\"some doc string\""
+  "
+(defn some-fn
+  |\"some doc string\"")
+
+(check-indentation doc-strings-with-correct-indent-specified
+  "
+(defn some-fn
+  |\"some doc string\""
+  "
+(defn some-fn
+  |\"some doc string\"")
+
+(check-indentation doc-strings-with-additional-indent-specified
+  "
+(defn some-fn
+  |\"some doc string
+    - some note\""
+  "
+(defn some-fn
+  |\"some doc string
+    - some note\"")
+
 (provide 'clojure-mode-indentation-test)
 
 ;; Local Variables:
