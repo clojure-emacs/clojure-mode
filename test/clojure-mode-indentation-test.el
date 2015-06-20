@@ -133,6 +133,27 @@ values of customisable variables."
   |\"some doc string
     - some note\"")
 
+;; we can specify different indentation for symbol with some ns prefix
+(put-clojure-indent 'bala 0)
+(put-clojure-indent 'ala/bala 1)
+
+(check-indentation symbol-without-ns
+  "
+(bala
+|one)"
+  "
+(bala
+  |one)")
+
+(check-indentation symbol-with-ns
+  "
+(ala/bala top
+|one)"
+  "
+(ala/bala top
+  |one)")
+
+
 (provide 'clojure-mode-indentation-test)
 
 ;; Local Variables:

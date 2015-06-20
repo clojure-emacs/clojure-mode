@@ -7,7 +7,8 @@
 * Add `.cljc` to `auto-mode-alist`.
 * [#281](https://github.com/clojure-emacs/clojure-mode/pull/281): Add support for namespace-prefixed definition forms.
 * Remove `clojure-mark-string`.
-* Require Emacs 24.3+.
+* [#283](https://github.com/clojure-emacs/clojure-mode/pull/283): You can now specify different indentation settings for ns-prefixed symbols.
+* [#285](https://github.com/clojure-emacs/clojure-mode/issues/285): Require Emacs 24.3+.
 
 ### Bugs fixed
 

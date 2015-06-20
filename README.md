@@ -73,6 +73,14 @@ You can do so by putting the following in your config:
 (put-clojure-indent '->> 1)
 ```
 
+You can also specify different indentation settings for symbols
+prefixed with some ns (or ns alias):
+
+```el
+(put-clojure-indent 'do 0)
+(put-clojure-indent 'my-ns/do 1)
+```
+
 This means that the body of the `->/->>` is after the first argument.
 
 A more compact way to do the same thing is:
