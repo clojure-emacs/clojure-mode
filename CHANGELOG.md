@@ -7,6 +7,7 @@
 * Add `.cljc` to `auto-mode-alist`.
 * [#281](https://github.com/clojure-emacs/clojure-mode/pull/281): Add support for namespace-prefixed definition forms.
 * Remove `clojure-mark-string`.
+* Require Emacs 24.3+.
 
 ### Bugs fixed
 
