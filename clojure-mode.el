@@ -681,8 +681,8 @@ This function also returns nil meaning don't specify the indentation."
              (function-tail (car
                              (reverse
                               (split-string (substring-no-properties function) "/")))))
-        (setq method (or (get (intern-soft function) 'clojure-indent-function)                                                                                                                                      
-                         (get (intern-soft function-tail) 'clojure-indent-function)))                                                                                                                               
+        (setq method (or (get (intern-soft function) 'clojure-indent-function)
+                         (get (intern-soft function-tail) 'clojure-indent-function)))
         (cond ((member (char-after open-paren) '(?\[ ?\{))
                (goto-char open-paren)
                (1+ (current-column)))
