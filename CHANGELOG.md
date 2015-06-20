@@ -2,6 +2,8 @@
 
 ## master (unreleased)
 
+## 4.1.0 (20/06/2015)
+
 ### Changes
 
 * Add `.cljc` to `auto-mode-alist`.
