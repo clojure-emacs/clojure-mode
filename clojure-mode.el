@@ -1046,7 +1046,7 @@ Returns a list pair, e.g. (\"defn\" \"abc\") or (\"deftest\" \"some-test\")."
   (add-to-list 'auto-mode-alist
                '("\\.\\(clj[csx]?\\|dtm\\|edn\\)\\'" . clojure-mode))
   ;; boot build scripts are Clojure source files
-  (add-to-list 'auto-mode-alist '("\\`build.boot\\'" . clojure-mode)))
+  (add-to-list 'auto-mode-alist '("\\(?:build\\|profile\\)\\.boot\\'" . clojure-mode)))
 
 (provide 'clojure-mode)
 
