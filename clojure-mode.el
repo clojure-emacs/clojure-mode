@@ -141,7 +141,7 @@ For example, \[ is allowed in :db/id[:db.part/user]."
   :group 'clojure
   :safe (lambda (value)
           (and (listp value)
-               (every 'characterp value))))
+               (cl-every 'characterp value))))
 
 (defvar clojure-mode-map
   (let ((map (make-sparse-keymap)))
@@ -224,6 +224,9 @@ ENDP and DELIMITER."
                        (line-beginning-position)
                        t)
                       (= orig-point (match-end 0)))))))))
+
+(declare-function paredit-open-curly "ext:paredit")
+(declare-function paredit-close-curly "ext:paredit")
 
 (defun clojure-paredit-setup ()
   "Make \"paredit-mode\" play nice with `clojure-mode'."
@@ -705,7 +708,7 @@ This function also returns nil meaning don't specify the indentation."
                (clojure-backtracking-indent
                 indent-point state normal-indent)))))))
 
-(defun clojure-backtracking-indent (indent-point state normal-indent)
+(defun clojure-backtracking-indent (indent-point state _normal-indent)
   "Experimental backtracking support.
 
 Given an INDENT-POINT, the STATE, and the NORMAL-INDENT, will
