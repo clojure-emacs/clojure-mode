@@ -1044,6 +1044,45 @@ Returns a list pair, e.g. (\"defn\" \"abc\") or (\"deftest\" \"some-test\")."
         (list (match-string 1)
               (match-string 2))))))
 
+
+;;; Sexp navigation
+(defun clojure-forward-logical-sexp (&optional n)
+  "Move forward N logical sexps.
+This will skip over sexps that don't represent objects, so that ^hints and
+#reader.macros are considered part of the following sexp."
+  (interactive "p")
+  (if (< n 0)
+      (clojure-backward-logical-sexp (- n))
+    (while (> n 0)
+      ;; Non-logical sexps.
+      (while (progn (forward-sexp 1)
+                    (forward-sexp -1)
+                    (looking-at-p "\\^\\|#[[:alpha:]]"))
+        (forward-sexp 1))
+      ;; The actual sexp
+      (forward-sexp 1)
+      (setq n (1- n)))))
+
+(defun clojure-backward-logical-sexp (&optional n)
+  "Move backward N logical sexps.
+This will skip over sexps that don't represent objects, so that ^hints and
+#reader.macros are considered part of the following sexp."
+  (interactive "p")
+  (if (< n 0)
+      (clojure-forward-logical-sexp (- n))
+    (while (> n 0)
+      ;; The actual sexp
+      (backward-sexp 1)
+      ;; Non-logical sexps.
+      (while (and (not (bobp))
+                  (ignore-errors
+                    (save-excursion
+                      (backward-sexp 1)
+                      (looking-at-p "\\^\\|#[[:alpha:]]"))))
+        (backward-sexp 1))
+      (setq n (1- n)))))
+
+
 ;;;###autoload
 (progn
   (add-to-list 'auto-mode-alist
