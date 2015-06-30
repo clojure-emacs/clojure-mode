@@ -2,6 +2,8 @@
 
 ## master (unreleased)
 
+* [#302](https://github.com/clojure-emacs/clojure-mode/pull/302) Add new sexp navigation commands. `clojure-forward-logical-sexp` and `clojure-backward-logical-sexp` consider `^hints` and `#reader.macros` to be part of the sexp that follows them.
+
 ## 4.1.0 (20/06/2015)
 
 ### Changes
