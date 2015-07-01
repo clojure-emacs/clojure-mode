@@ -983,8 +983,10 @@ nil."
 (defun clojure-expected-ns ()
   "Return the namespace name that the file should have."
   (let* ((project-dir (file-truename
-                       (locate-dominating-file default-directory
-                                               "project.clj")))
+                       (or (locate-dominating-file default-directory
+                                                   "project.clj")
+                           (locate-dominating-file default-directory
+                                                   "build.boot"))))
          (relative (substring (file-truename (buffer-file-name))
                               (length project-dir)
                               (- (length (file-name-extension (buffer-file-name) t))))))
