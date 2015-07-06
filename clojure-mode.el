@@ -1090,7 +1090,7 @@ This will skip over sexps that don't represent objects, so that ^hints and
   (add-to-list 'auto-mode-alist
                '("\\.\\(clj[csx]?\\|dtm\\|edn\\)\\'" . clojure-mode))
   ;; boot build scripts are Clojure source files
-  (add-to-list 'auto-mode-alist '("\\`build.boot\\'" . clojure-mode)))
+  (add-to-list 'auto-mode-alist '("\\(?:build\\|profile\\)\\.boot\\'" . clojure-mode)))
 
 (provide 'clojure-mode)
 
