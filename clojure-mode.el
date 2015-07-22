@@ -456,8 +456,6 @@ Called by `imenu--generic-function'."
       ("\\\\\\([[:punct:]]\\|[a-z0-9]+\\>\\)" 0 'clojure-character-face)
       ;; Constant values (keywords), including as metadata e.g. ^:static
       ("\\<^?\\(:\\(\\sw\\|\\s_\\)+\\(\\>\\|\\_>\\)\\)" 1 'clojure-keyword-face)
-      ;; cljx annotations (#+clj and #+cljs)
-      ("#\\+cljs?\\>" 0 font-lock-preprocessor-face)
       ;; Java interop highlighting
       ;; CONST SOME_CONST (optionally prefixed by /)
       ("\\(?:\\<\\|/\\)\\([A-Z]+\\|\\([A-Z]+_[A-Z1-9_]+\\)\\)\\>" 1 font-lock-constant-face)
@@ -1098,11 +1096,16 @@ This will skip over sexps that don't represent objects, so that ^hints and
 
 \\{clojurec-mode-map}")
 
+(defconst clojurex-font-lock-keywords
+  ;; cljx annotations (#+clj and #+cljs)
+  '(("#\\+cljs?\\>" 0 font-lock-preprocessor-face)))
+
 ;;;###autoload
 (define-derived-mode clojurex-mode clojure-mode "ClojureX"
   "Major mode for editing ClojureX code.
 
-\\{clojurex-mode-map}")
+\\{clojurex-mode-map}"
+  (font-lock-add-keywords nil clojurex-font-lock-keywords))
 
 ;;;###autoload
 (progn
