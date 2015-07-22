@@ -1086,11 +1086,31 @@ This will skip over sexps that don't represent objects, so that ^hints and
         (backward-sexp 1))
       (setq n (1- n)))))
 
+;;;###autoload
+(define-derived-mode clojurescript-mode clojure-mode "ClojureScript"
+  "Major mode for editing ClojureScript code.
+
+\\{clojurescript-mode-map}")
+
+;;;###autoload
+(define-derived-mode clojurec-mode clojure-mode "ClojureC"
+  "Major mode for editing ClojureC code.
+
+\\{clojurec-mode-map}")
+
+;;;###autoload
+(define-derived-mode clojurex-mode clojure-mode "ClojureX"
+  "Major mode for editing ClojureX code.
+
+\\{clojurex-mode-map}")
 
 ;;;###autoload
 (progn
   (add-to-list 'auto-mode-alist
-               '("\\.\\(clj[csx]?\\|dtm\\|edn\\)\\'" . clojure-mode))
+               '("\\.\\(clj\\|dtm\\|edn\\)\\'" . clojure-mode))
+  (add-to-list 'auto-mode-alist '("\\.cljc\\'" . clojurec-mode))
+  (add-to-list 'auto-mode-alist '("\\.cljx\\'" . clojurex-mode))
+  (add-to-list 'auto-mode-alist '("\\.cljs\\'" . clojurescript-mode))
   ;; boot build scripts are Clojure source files
   (add-to-list 'auto-mode-alist '("\\(?:build\\|profile\\)\\.boot\\'" . clojure-mode)))
 
