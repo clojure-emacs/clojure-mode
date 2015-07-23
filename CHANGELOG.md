@@ -8,6 +8,10 @@
 * [#303](https://github.com/clojure-emacs/clojure-mode/issues/303): Handle `boot` projects in `clojure-expected-ns`.
 * Added dedicated modes for ClojureScript, ClojureC and ClojureX. All of them are derived from `clojure-mode`.
 
+### Bugs fixed
+
+* [#307](https://github.com/clojure-emacs/clojure-mode/issues/307): Don't highlight `handle` and `handler-case` as keywords.
+
 ## 4.1.0 (20/06/2015)
 
 ### Changes

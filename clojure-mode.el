@@ -423,7 +423,7 @@ Called by `imenu--generic-function'."
             "with-open" "with-local-vars" "binding"
             "with-redefs" "with-redefs-fn"
             "gen-class" "gen-and-load-class" "gen-and-save-class"
-            "handler-case" "handle" "declare") t)
+            "declare") t)
          "\\>")
        1 font-lock-keyword-face)
       (,(concat
