@@ -419,7 +419,7 @@ Called by `imenu--generic-function'."
             "if-let" "if-not" "if-some"
             ".." "->" "->>" "as->" "doto" "and" "or"
             "dosync" "doseq" "dotimes" "dorun" "doall"
-            "load" "import" "unimport" "ns" "in-ns" "refer"
+            "load" "import" "ns" "in-ns" "refer"
             "with-open" "with-local-vars" "binding"
             "with-redefs" "with-redefs-fn"
             "declare") t)
