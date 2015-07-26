@@ -1083,11 +1083,21 @@ This will skip over sexps that don't represent objects, so that ^hints and
         (backward-sexp 1))
       (setq n (1- n)))))
 
+(defconst clojurescript-font-lock-keywords
+  (eval-when-compile
+    `(;; ClojureScript built-ins
+      (,(concat "(\\(?:\.*/\\)?"
+                (regexp-opt '("js-obj" "js-delete" "clj->js" "js->clj"))
+                "\\>")
+       0 font-lock-builtin-face)))
+  "Additional font-locking for `clojurescrip-mode'.")
+
 ;;;###autoload
 (define-derived-mode clojurescript-mode clojure-mode "ClojureScript"
   "Major mode for editing ClojureScript code.
 
-\\{clojurescript-mode-map}")
+\\{clojurescript-mode-map}"
+  (font-lock-add-keywords nil clojurescript-font-lock-keywords))
 
 ;;;###autoload
 (define-derived-mode clojurec-mode clojure-mode "ClojureC"
