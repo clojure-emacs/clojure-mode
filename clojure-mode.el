@@ -1107,7 +1107,8 @@ This will skip over sexps that don't represent objects, so that ^hints and
 
 (defconst clojurex-font-lock-keywords
   ;; cljx annotations (#+clj and #+cljs)
-  '(("#\\+cljs?\\>" 0 font-lock-preprocessor-face)))
+  '(("#\\+cljs?\\>" 0 font-lock-preprocessor-face))
+  "Additional font-locking for `clojurex-mode'.")
 
 ;;;###autoload
 (define-derived-mode clojurex-mode clojure-mode "ClojureX"
