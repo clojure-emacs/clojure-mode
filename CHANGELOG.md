@@ -10,6 +10,7 @@
 
 ### Bugs fixed
 
+* [#310](https://github.com/clojure-emacs/clojure-mode/issues/310) and [#311](https://github.com/clojure-emacs/clojure-mode/issues/311) Fix `clojure-expected-ns` in multi-source projects.
 * [#307](https://github.com/clojure-emacs/clojure-mode/issues/307): Don't highlight `handle` and `handler-case` as keywords.
 
 ## 4.1.0 (20/06/2015)
