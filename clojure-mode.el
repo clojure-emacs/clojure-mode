@@ -979,18 +979,31 @@ nil."
 
 
 
-(defun clojure-expected-ns ()
-  "Return the namespace name that the file should have."
-  (let* ((project-dir (file-truename
-                       (or (locate-dominating-file default-directory
-                                                   "project.clj")
-                           (locate-dominating-file default-directory
-                                                   "build.boot"))))
-         (relative (substring (file-truename (buffer-file-name))
-                              (length project-dir)
-                              (- (length (file-name-extension (buffer-file-name) t))))))
-    (replace-regexp-in-string
-     "_" "-" (mapconcat 'identity (cdr (split-string relative "/")) "."))))
+(defun clojure-project-dir ()
+  "Return the absolute path to the project's root directory."
+  (file-truename
+   (or (locate-dominating-file default-directory
+                               "project.clj")
+       (locate-dominating-file default-directory
+                               "build.boot"))))
+
+(defun clojure-project-relative-path (path)
+  "Denormalize PATH by making it relative to the project root."
+  (file-relative-name path (clojure-project-dir)))
+
+(defun clojure-expected-ns (&optional path)
+  "Return the namespace matching PATH.
+
+PATH is expected to be an absolute file path.
+
+If PATH is nil, use the path to the file backing the current buffer."
+  (let* ((relative (clojure-project-relative-path
+                    (or path (file-truename (buffer-file-name)))))
+         (sans-file-type (substring relative 0 (- (length (file-name-extension path t)))))
+         (sans-file-sep (mapconcat 'identity (cdr (split-string sans-file-type "/")) "."))
+         (sans-underscores (replace-regexp-in-string "_" "-" sans-file-sep)))
+    ;; Drop prefix from ns for projects with structure src/{clj,cljs,cljc}
+    (replace-regexp-in-string "\\`clj[scx]?\\." "" sans-underscores)))
 
 (defun clojure-insert-ns-form-at-point ()
   "Insert a namespace form at point."
