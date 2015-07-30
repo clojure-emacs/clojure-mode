@@ -42,7 +42,16 @@
     (cl-letf (((symbol-function 'clojure-project-relative-path)
                (lambda (&optional current-buffer-file-name)
                  project-relative-clj-file-path)))
-      (should (string= (clojure-expected-ns clj-file-path) clj-file-ns)))))
+      (should (string= (clojure-expected-ns clj-file-path) clj-file-ns))))
+
+  (ert-deftest expected-ns-without-argument ()
+    :tags '(utils)
+    (cl-letf (((symbol-function 'clojure-project-relative-path)
+               (lambda (&optional current-buffer-file-name)
+                 project-relative-clj-file-path)))
+      (should (string= (let ((buffer-file-name clj-file-path))
+                         (clojure-expected-ns))
+                       clj-file-ns)))))
 
 (provide 'clojure-mode-util-test)
 
