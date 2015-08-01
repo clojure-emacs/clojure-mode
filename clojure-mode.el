@@ -979,13 +979,19 @@ nil."
 
 
 
-(defun clojure-project-dir ()
-  "Return the absolute path to the project's root directory."
-  (file-truename
-   (or (locate-dominating-file default-directory
-                               "project.clj")
-       (locate-dominating-file default-directory
-                               "build.boot"))))
+(defun clojure-project-dir (&optional dir-name)
+  "Return the absolute path to the project's root directory.
+
+Use `default-directory' if DIR-NAME is nil."
+  (let ((dir-name (or dir-name default-directory)))
+    (let ((lein-project-dir (locate-dominating-file dir-name "project.clj"))
+          (boot-project-dir (locate-dominating-file dir-name "build.boot")))
+      (file-truename
+       (cond ((not lein-project-dir) boot-project-dir)
+             ((not boot-project-dir) lein-project-dir)
+             (t (if (file-in-directory-p lein-project-dir boot-project-dir)
+                    lein-project-dir
+                  boot-project-dir)))))))
 
 (defun clojure-project-relative-path (path)
   "Denormalize PATH by making it relative to the project root."
