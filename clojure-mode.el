@@ -1003,8 +1003,8 @@ Use `default-directory' if DIR-NAME is nil."
 PATH is expected to be an absolute file path.
 
 If PATH is nil, use the path to the file backing the current buffer."
-  (let* ((relative (clojure-project-relative-path
-                    (or path (file-truename (buffer-file-name)))))
+  (let* ((path (or path (file-truename (buffer-file-name))))
+         (relative (clojure-project-relative-path path))
          (sans-file-type (substring relative 0 (- (length (file-name-extension path t)))))
          (sans-file-sep (mapconcat 'identity (cdr (split-string sans-file-type "/")) "."))
          (sans-underscores (replace-regexp-in-string "_" "-" sans-file-sep)))
