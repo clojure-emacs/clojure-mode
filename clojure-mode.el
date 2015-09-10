@@ -638,6 +638,14 @@ point) to check."
           (replace-match (clojure-docstring-fill-prefix))))
     (lisp-indent-line)))
 
+(defun clojure--symbol-get (function-name property)
+  "Return the symbol PROPERTY for the symbol named FUNCTION-NAME.
+FUNCTION-NAME is a string.  If it contains a `/', also try only the part after the `/'."
+  (or (get (intern-soft function-name) property)
+      (and (string-match "/\\([^/]+\\)\\'" function-name)
+           (get (intern-soft (match-string 1 function-name))
+                property))))
+
 (defun clojure-indent-function (indent-point state)
   "When indenting a line within a function call, indent properly.
 
@@ -687,13 +695,8 @@ This function also returns nil meaning don't specify the indentation."
       (let* ((function (buffer-substring (point)
                                          (progn (forward-sexp 1) (point))))
              (open-paren (elt state 1))
-             (method nil)
              (forward-sexp-function #'clojure-forward-logical-sexp)
-             (function-tail (car
-                             (reverse
-                              (split-string (substring-no-properties function) "/")))))
-        (setq method (or (get (intern-soft function) 'clojure-indent-function)
-                         (get (intern-soft function-tail) 'clojure-indent-function)))
+             (method (clojure--symbol-get function 'clojure-indent-function)))
         ;; Maps, sets, vectors and reader conditionals.
         (cond ((or (member (char-after open-paren) '(?\[ ?\{))
                    (ignore-errors
@@ -734,7 +737,7 @@ move upwards in an sexp to check for contextual indenting."
         (when (looking-at "\\sw\\|\\s_")
           (let* ((start (point))
                  (fn (buffer-substring start (progn (forward-sexp 1) (point))))
-                 (meth (get (intern-soft fn) 'clojure-backtracking-indent)))
+                 (meth (clojure--symbol-get fn 'clojure-backtracking-indent)))
             (let ((n 0))
               (when (< (point) indent-point)
                 (condition-case ()
@@ -742,7 +745,7 @@ move upwards in an sexp to check for contextual indenting."
                       (forward-sexp 1)
                       (while (< (point) indent-point)
                         (parse-partial-sexp (point) indent-point 1 t)
-                        (incf n)
+                        (cl-incf n)
                         (forward-sexp 1)))
                   (error nil)))
               (push n path))
@@ -762,7 +765,7 @@ move upwards in an sexp to check for contextual indenting."
         (condition-case ()
             (progn
               (backward-up-list 1)
-              (incf depth))
+              (cl-incf depth))
           (error (setq depth clojure-max-backtracking)))))
     indent))
 

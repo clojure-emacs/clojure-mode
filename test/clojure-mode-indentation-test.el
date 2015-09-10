@@ -179,6 +179,15 @@ values of customisable variables."
 #?(:clj :foo
    |:cljs :bar)")
 
+(check-indentation backtracking-with-aliases
+  "
+(clojure.core/letfn [(twice [x]
+|(* x 2))]
+  :a)"
+  "
+(clojure.core/letfn [(twice [x]
+                       |(* x 2))]
+  :a)")
 
 (provide 'clojure-mode-indentation-test)
 
