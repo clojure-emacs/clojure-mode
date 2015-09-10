@@ -1084,6 +1084,13 @@ Returns a list pair, e.g. (\"defn\" \"abc\") or (\"deftest\" \"some-test\")."
 
 
 ;;; Sexp navigation
+(defun clojure--looking-at-logical-sexp ()
+  "Return non-nil if sexp after point represents code.
+Sexps that don't represent code are ^metadata or #reader.macros."
+  (forward-sexp 1)
+  (forward-sexp -1)
+  (not (looking-at-p "\\^\\|#[[:alpha:]]")))
+
 (defun clojure-forward-logical-sexp (&optional n)
   "Move forward N logical sexps.
 This will skip over sexps that don't represent objects, so that ^hints and
@@ -1093,10 +1100,7 @@ This will skip over sexps that don't represent objects, so that ^hints and
     (if (< n 0)
         (clojure-backward-logical-sexp (- n))
       (while (> n 0)
-        ;; Non-logical sexps.
-        (while (progn (forward-sexp 1)
-                      (forward-sexp -1)
-                      (looking-at-p "\\^\\|#[[:alpha:]]"))
+        (while (not (clojure--looking-at-logical-sexp))
           (forward-sexp 1))
         ;; The actual sexp
         (forward-sexp 1)
