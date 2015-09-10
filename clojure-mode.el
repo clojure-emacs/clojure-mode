@@ -638,13 +638,17 @@ point) to check."
           (replace-match (clojure-docstring-fill-prefix))))
     (lisp-indent-line)))
 
-(defun clojure--symbol-get (function-name property)
+(defun clojure--symbol-get (function-name)
   "Return the symbol PROPERTY for the symbol named FUNCTION-NAME.
-FUNCTION-NAME is a string.  If it contains a `/', also try only the part after the `/'."
-  (or (get (intern-soft function-name) property)
-      (and (string-match "/\\([^/]+\\)\\'" function-name)
-           (get (intern-soft (match-string 1 function-name))
-                property))))
+FUNCTION-NAME is a string.  If it contains a `/', also try only
+the part after the `/'."
+  (or (get (intern-soft function-name) 'clojure-indent-function)
+      (get (intern-soft function-name) 'clojure-backtracking-indent)
+      (when (string-match "/\\([^/]+\\)\\'" function-name)
+        (or (get (intern-soft (match-string 1 function-name))
+                 'clojure-indent-function)
+            (get (intern-soft (match-string 1 function-name))
+                 'clojure-backtracking-indent)))))
 
 (defun clojure-indent-function (indent-point state)
   "When indenting a line within a function call, indent properly.
@@ -666,6 +670,7 @@ The property value can be
 - a function to call just as this function was called.
   If that function returns nil, that means it doesn't specify
   the indentation.
+- a list, which is used by `clojure-backtracking-indent'.
 
 This function also returns nil meaning don't specify the indentation."
   (let ((normal-indent (current-column)))
@@ -696,7 +701,7 @@ This function also returns nil meaning don't specify the indentation."
                                          (progn (forward-sexp 1) (point))))
              (open-paren (elt state 1))
              (forward-sexp-function #'clojure-forward-logical-sexp)
-             (method (clojure--symbol-get function 'clojure-indent-function)))
+             (method (clojure--symbol-get function)))
         ;; Maps, sets, vectors and reader conditionals.
         (cond ((or (member (char-after open-paren) '(?\[ ?\{))
                    (ignore-errors
@@ -717,7 +722,7 @@ This function also returns nil meaning don't specify the indentation."
               ((integerp method)
                (lisp-indent-specform method state
                                      indent-point normal-indent))
-              (method
+              ((functionp method)
                (funcall method indent-point state))
               (clojure-use-backtracking-indent
                (clojure-backtracking-indent
@@ -737,7 +742,7 @@ move upwards in an sexp to check for contextual indenting."
         (when (looking-at "\\sw\\|\\s_")
           (let* ((start (point))
                  (fn (buffer-substring start (progn (forward-sexp 1) (point))))
-                 (meth (clojure--symbol-get fn 'clojure-backtracking-indent)))
+                 (meth (clojure--symbol-get fn)))
             (let ((n 0))
               (when (< (point) indent-point)
                 (condition-case ()
@@ -749,7 +754,8 @@ move upwards in an sexp to check for contextual indenting."
                         (forward-sexp 1)))
                   (error nil)))
               (push n path))
-            (when meth
+            (when (and (listp meth)
+                       (not (functionp meth)))
               (let ((def meth))
                 (dolist (p path)
                   (if (and (listp def)
@@ -771,17 +777,17 @@ move upwards in an sexp to check for contextual indenting."
 
 ;; clojure backtracking indent is experimental and the format for these
 ;; entries are subject to change
-(put 'implement 'clojure-backtracking-indent '(4 (2)))
-(put 'letfn 'clojure-backtracking-indent '((2) 2))
-(put 'proxy 'clojure-backtracking-indent '(4 4 (2)))
-(put 'reify 'clojure-backtracking-indent '((2)))
-(put 'deftype 'clojure-backtracking-indent '(4 4 (2)))
-(put 'defrecord 'clojure-backtracking-indent '(4 4 (2)))
-(put 'defprotocol 'clojure-backtracking-indent '(4 (2)))
-(put 'extend-type 'clojure-backtracking-indent '(4 (2)))
-(put 'extend-protocol 'clojure-backtracking-indent '(4 (2)))
-(put 'specify 'clojure-backtracking-indent '(4 (2)))
-(put 'specify! 'clojure-backtracking-indent '(4 (2)))
+(put 'implement 'clojure-indent-function '(4 (2)))
+(put 'letfn 'clojure-indent-function '((2) 2))
+(put 'proxy 'clojure-indent-function '(4 4 (2)))
+(put 'reify 'clojure-indent-function '((2)))
+(put 'deftype 'clojure-indent-function '(4 4 (2)))
+(put 'defrecord 'clojure-indent-function '(4 4 (2)))
+(put 'defprotocol 'clojure-indent-function '(4 (2)))
+(put 'extend-type 'clojure-indent-function '(4 (2)))
+(put 'extend-protocol 'clojure-indent-function '(4 (2)))
+(put 'specify 'clojure-indent-function '(4 (2)))
+(put 'specify! 'clojure-indent-function '(4 (2)))
 
 (defun put-clojure-indent (sym indent)
   "Instruct `clojure-indent-function' to indent the body of SYM by INDENT."
