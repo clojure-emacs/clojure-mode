@@ -161,6 +161,16 @@ values of customisable variables."
 (ns ^:doc app.core
   |(:gen-class))")
 
+(check-indentation multiline-sexps
+  "
+[[
+  2] a
+|x]"
+"
+[[
+  2] a
+ |x]")
+
 
 (provide 'clojure-mode-indentation-test)
 

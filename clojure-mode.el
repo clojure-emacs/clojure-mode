@@ -670,7 +670,12 @@ This function also returns nil meaning don't specify the indentation."
           (if (not (> (save-excursion (forward-line 1) (point))
                       calculate-lisp-indent-last-sexp))
               (progn (goto-char calculate-lisp-indent-last-sexp)
-                     (beginning-of-line)
+                     (skip-chars-backward "[:blank:]")
+                     ;; We're done if we find the start of line,
+                     (while (and (not (looking-at-p "^"))
+                                 ;; or start of sexp.
+                                 (ignore-errors (forward-sexp -1) t))
+                       (skip-chars-backward "[:blank:]"))
                      (parse-partial-sexp (point)
                                          calculate-lisp-indent-last-sexp 0 t)))
           ;; Indent under the list or under the first sexp on the same
