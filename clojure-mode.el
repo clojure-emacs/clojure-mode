@@ -683,6 +683,7 @@ This function also returns nil meaning don't specify the indentation."
                                          (progn (forward-sexp 1) (point))))
              (open-paren (elt state 1))
              (method nil)
+             (forward-sexp-function #'clojure-forward-logical-sexp)
              (function-tail (car
                              (reverse
                               (split-string (substring-no-properties function) "/")))))
@@ -1076,17 +1077,18 @@ Returns a list pair, e.g. (\"defn\" \"abc\") or (\"deftest\" \"some-test\")."
 This will skip over sexps that don't represent objects, so that ^hints and
 #reader.macros are considered part of the following sexp."
   (interactive "p")
-  (if (< n 0)
-      (clojure-backward-logical-sexp (- n))
-    (while (> n 0)
-      ;; Non-logical sexps.
-      (while (progn (forward-sexp 1)
-                    (forward-sexp -1)
-                    (looking-at-p "\\^\\|#[[:alpha:]]"))
-        (forward-sexp 1))
-      ;; The actual sexp
-      (forward-sexp 1)
-      (setq n (1- n)))))
+  (let ((forward-sexp-function nil))
+    (if (< n 0)
+        (clojure-backward-logical-sexp (- n))
+      (while (> n 0)
+        ;; Non-logical sexps.
+        (while (progn (forward-sexp 1)
+                      (forward-sexp -1)
+                      (looking-at-p "\\^\\|#[[:alpha:]]"))
+          (forward-sexp 1))
+        ;; The actual sexp
+        (forward-sexp 1)
+        (setq n (1- n))))))
 
 (defun clojure-backward-logical-sexp (&optional n)
   "Move backward N logical sexps.

@@ -153,6 +153,14 @@ values of customisable variables."
 (ala/bala top
   |one)")
 
+(check-indentation form-with-metadata
+  "
+(ns ^:doc app.core
+|(:gen-class))"
+"
+(ns ^:doc app.core
+  |(:gen-class))")
+
 
 (provide 'clojure-mode-indentation-test)
 
