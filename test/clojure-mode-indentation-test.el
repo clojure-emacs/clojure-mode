@@ -171,6 +171,14 @@ values of customisable variables."
   2] a
  |x]")
 
+(check-indentation reader-conditionals
+  "
+#?(:clj :foo
+|:cljs :bar)"
+  "
+#?(:clj :foo
+   |:cljs :bar)")
+
 
 (provide 'clojure-mode-indentation-test)
 

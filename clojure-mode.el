@@ -694,7 +694,11 @@ This function also returns nil meaning don't specify the indentation."
                               (split-string (substring-no-properties function) "/")))))
         (setq method (or (get (intern-soft function) 'clojure-indent-function)
                          (get (intern-soft function-tail) 'clojure-indent-function)))
-        (cond ((member (char-after open-paren) '(?\[ ?\{))
+        ;; Maps, sets, vectors and reader conditionals.
+        (cond ((or (member (char-after open-paren) '(?\[ ?\{))
+                   (ignore-errors
+                     (and (eq (char-before open-paren) ?\?)
+                          (eq (char-before (1- open-paren)) ?\#))))
                (goto-char open-paren)
                (1+ (current-column)))
               ((or (eq method 'defun)
