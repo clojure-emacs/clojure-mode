@@ -638,6 +638,14 @@ point) to check."
           (replace-match (clojure-docstring-fill-prefix))))
     (lisp-indent-line)))
 
+(defun clojure--symbol-get (function-name property)
+  "Return the symbol PROPERTY for the symbol named FUNCTION-NAME.
+FUNCTION-NAME is a string.  If it contains a `/', also try only the part after the `/'."
+  (or (get (intern-soft function-name) property)
+      (and (string-match "/\\([^/]+\\)\\'" function-name)
+           (get (intern-soft (match-string 1 function-name))
+                property))))
+
 (defun clojure-indent-function (indent-point state)
   "When indenting a line within a function call, indent properly.
 
@@ -670,7 +678,12 @@ This function also returns nil meaning don't specify the indentation."
           (if (not (> (save-excursion (forward-line 1) (point))
                       calculate-lisp-indent-last-sexp))
               (progn (goto-char calculate-lisp-indent-last-sexp)
-                     (beginning-of-line)
+                     (skip-chars-backward "[:blank:]")
+                     ;; We're done if we find the start of line,
+                     (while (and (not (looking-at-p "^"))
+                                 ;; or start of sexp.
+                                 (ignore-errors (forward-sexp -1) t))
+                       (skip-chars-backward "[:blank:]"))
                      (parse-partial-sexp (point)
                                          calculate-lisp-indent-last-sexp 0 t)))
           ;; Indent under the list or under the first sexp on the same
@@ -682,13 +695,13 @@ This function also returns nil meaning don't specify the indentation."
       (let* ((function (buffer-substring (point)
                                          (progn (forward-sexp 1) (point))))
              (open-paren (elt state 1))
-             (method nil)
-             (function-tail (car
-                             (reverse
-                              (split-string (substring-no-properties function) "/")))))
-        (setq method (or (get (intern-soft function) 'clojure-indent-function)
-                         (get (intern-soft function-tail) 'clojure-indent-function)))
-        (cond ((member (char-after open-paren) '(?\[ ?\{))
+             (forward-sexp-function #'clojure-forward-logical-sexp)
+             (method (clojure--symbol-get function 'clojure-indent-function)))
+        ;; Maps, sets, vectors and reader conditionals.
+        (cond ((or (member (char-after open-paren) '(?\[ ?\{))
+                   (ignore-errors
+                     (and (eq (char-before open-paren) ?\?)
+                          (eq (char-before (1- open-paren)) ?\#))))
                (goto-char open-paren)
                (1+ (current-column)))
               ((or (eq method 'defun)
@@ -724,7 +737,7 @@ move upwards in an sexp to check for contextual indenting."
         (when (looking-at "\\sw\\|\\s_")
           (let* ((start (point))
                  (fn (buffer-substring start (progn (forward-sexp 1) (point))))
-                 (meth (get (intern-soft fn) 'clojure-backtracking-indent)))
+                 (meth (clojure--symbol-get fn 'clojure-backtracking-indent)))
             (let ((n 0))
               (when (< (point) indent-point)
                 (condition-case ()
@@ -732,7 +745,7 @@ move upwards in an sexp to check for contextual indenting."
                       (forward-sexp 1)
                       (while (< (point) indent-point)
                         (parse-partial-sexp (point) indent-point 1 t)
-                        (incf n)
+                        (cl-incf n)
                         (forward-sexp 1)))
                   (error nil)))
               (push n path))
@@ -752,7 +765,7 @@ move upwards in an sexp to check for contextual indenting."
         (condition-case ()
             (progn
               (backward-up-list 1)
-              (incf depth))
+              (cl-incf depth))
           (error (setq depth clojure-max-backtracking)))))
     indent))
 
@@ -1071,22 +1084,27 @@ Returns a list pair, e.g. (\"defn\" \"abc\") or (\"deftest\" \"some-test\")."
 
 
 ;;; Sexp navigation
+(defun clojure--looking-at-logical-sexp ()
+  "Return non-nil if sexp after point represents code.
+Sexps that don't represent code are ^metadata or #reader.macros."
+  (forward-sexp 1)
+  (forward-sexp -1)
+  (not (looking-at-p "\\^\\|#[[:alpha:]]")))
+
 (defun clojure-forward-logical-sexp (&optional n)
   "Move forward N logical sexps.
 This will skip over sexps that don't represent objects, so that ^hints and
 #reader.macros are considered part of the following sexp."
   (interactive "p")
-  (if (< n 0)
-      (clojure-backward-logical-sexp (- n))
-    (while (> n 0)
-      ;; Non-logical sexps.
-      (while (progn (forward-sexp 1)
-                    (forward-sexp -1)
-                    (looking-at-p "\\^\\|#[[:alpha:]]"))
-        (forward-sexp 1))
-      ;; The actual sexp
-      (forward-sexp 1)
-      (setq n (1- n)))))
+  (let ((forward-sexp-function nil))
+    (if (< n 0)
+        (clojure-backward-logical-sexp (- n))
+      (while (> n 0)
+        (while (not (clojure--looking-at-logical-sexp))
+          (forward-sexp 1))
+        ;; The actual sexp
+        (forward-sexp 1)
+        (setq n (1- n))))))
 
 (defun clojure-backward-logical-sexp (&optional n)
   "Move backward N logical sexps.

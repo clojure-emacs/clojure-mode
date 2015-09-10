@@ -153,6 +153,41 @@ values of customisable variables."
 (ala/bala top
   |one)")
 
+(check-indentation form-with-metadata
+  "
+(ns ^:doc app.core
+|(:gen-class))"
+"
+(ns ^:doc app.core
+  |(:gen-class))")
+
+(check-indentation multiline-sexps
+  "
+[[
+  2] a
+|x]"
+"
+[[
+  2] a
+ |x]")
+
+(check-indentation reader-conditionals
+  "
+#?(:clj :foo
+|:cljs :bar)"
+  "
+#?(:clj :foo
+   |:cljs :bar)")
+
+(check-indentation backtracking-with-aliases
+  "
+(clojure.core/letfn [(twice [x]
+|(* x 2))]
+  :a)"
+  "
+(clojure.core/letfn [(twice [x]
+                       |(* x 2))]
+  :a)")
 
 (provide 'clojure-mode-indentation-test)
 
