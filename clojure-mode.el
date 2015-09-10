@@ -638,6 +638,17 @@ point) to check."
           (replace-match (clojure-docstring-fill-prefix))))
     (lisp-indent-line)))
 
+(defvar clojure-get-indent-function nil
+  "Function to get the indent spec of a symbol.
+This function should take one argument, the name of the symbol as
+a string.  This name will be exactly as it appears in the buffer,
+so it might start with a namespace alias.
+
+This function is analogous to the `clojure-indent-function'
+symbol property, and its return value should match one of the
+allowed values of this property.  See `clojure-indent-function'
+for more information.")
+
 (defun clojure--symbol-get (function-name)
   "Return the symbol PROPERTY for the symbol named FUNCTION-NAME.
 FUNCTION-NAME is a string.  If it contains a `/', also try only
@@ -648,7 +659,9 @@ the part after the `/'."
         (or (get (intern-soft (match-string 1 function-name))
                  'clojure-indent-function)
             (get (intern-soft (match-string 1 function-name))
-                 'clojure-backtracking-indent)))))
+                 'clojure-backtracking-indent)))
+      (when (functionp clojure-get-indent-function)
+        (funcall clojure-get-indent-function function-name))))
 
 (defun clojure-indent-function (indent-point state)
   "When indenting a line within a function call, indent properly.
