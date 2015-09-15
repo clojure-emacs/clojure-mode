@@ -66,6 +66,7 @@
 
 (require 'cl-lib)
 (require 'imenu)
+(require 'newcomment)
 
 (declare-function lisp-fill-paragraph  "lisp-mode" (&optional justify))
 
@@ -682,9 +683,11 @@ Implementation function for `clojure--find-indent-spec'."
       (let* ((function (thing-at-point 'symbol))
              (method (or (when function ;; Is there a spec here?
                            (clojure--get-indent-method function))
-                         (progn (up-list) ;; Otherwise look higher up.
-                                (clojure-backward-logical-sexp 1)
-                                (clojure--find-indent-spec-backtracking)))))
+                         ;; `up-list' errors on unbalanced sexps.
+                         (ignore-errors
+                           (up-list) ;; Otherwise look higher up.
+                           (clojure-backward-logical-sexp 1)
+                           (clojure--find-indent-spec-backtracking)))))
         (when (numberp method)
           (setq method (list method)))
         (pcase method
@@ -1103,23 +1106,23 @@ Returns a list pair, e.g. (\"defn\" \"abc\") or (\"deftest\" \"some-test\")."
 
 
 ;;; Sexp navigation
-(defun clojure--looking-at-logical-sexp ()
+(defun clojure--looking-at-non-logical-sexp ()
   "Return non-nil if sexp after point represents code.
 Sexps that don't represent code are ^metadata or #reader.macros."
-  (forward-sexp 1)
-  (forward-sexp -1)
-  (not (looking-at-p "\\^\\|#[?[:alpha:]]")))
+  (comment-normalize-vars)
+  (comment-forward (point-max))
+  (looking-at-p "\\^\\|#[?[:alpha:]]"))
 
 (defun clojure-forward-logical-sexp (&optional n)
   "Move forward N logical sexps.
 This will skip over sexps that don't represent objects, so that ^hints and
 #reader.macros are considered part of the following sexp."
   (interactive "p")
-  (let ((forward-sexp-function nil))
-    (if (< n 0)
-        (clojure-backward-logical-sexp (- n))
+  (if (< n 0)
+      (clojure-backward-logical-sexp (- n))
+    (let ((forward-sexp-function nil))
       (while (> n 0)
-        (while (not (clojure--looking-at-logical-sexp))
+        (while (clojure--looking-at-non-logical-sexp)
           (forward-sexp 1))
         ;; The actual sexp
         (forward-sexp 1)
@@ -1132,17 +1135,18 @@ This will skip over sexps that don't represent objects, so that ^hints and
   (interactive "p")
   (if (< n 0)
       (clojure-forward-logical-sexp (- n))
-    (while (> n 0)
-      ;; The actual sexp
-      (backward-sexp 1)
-      ;; Non-logical sexps.
-      (while (and (not (bobp))
-                  (ignore-errors
-                    (save-excursion
-                      (backward-sexp 1)
-                      (not (clojure--looking-at-logical-sexp)))))
-        (backward-sexp 1))
-      (setq n (1- n)))))
+    (let ((forward-sexp-function nil))
+      (while (> n 0)
+        ;; The actual sexp
+        (backward-sexp 1)
+        ;; Non-logical sexps.
+        (while (and (not (bobp))
+                    (ignore-errors
+                      (save-excursion
+                        (backward-sexp 1)
+                        (clojure--looking-at-non-logical-sexp))))
+          (backward-sexp 1))
+        (setq n (1- n))))))
 
 (defconst clojurescript-font-lock-keywords
   (eval-when-compile
