@@ -277,8 +277,26 @@ ENDP and DELIMITER."
   (add-hook 'paredit-mode-hook #'clojure-paredit-setup))
 
 (defsubst clojure-in-docstring-p ()
-  "Check whether point is in a docstring."
-  (eq (get-text-property (point) 'face) 'font-lock-doc-face))
+  "Return true if point is in a docstring."
+  (eq (get-text-property (point) 'face) font-lock-doc-face))
+
+(defsubst clojure-in-string-p (&optional beg)
+  "Return true if point is in a string.
+
+BEG is how far back we should look to determine the context
+around point.  The default is the value returned by
+`beginning-of-defun'."
+  (let ((beg (or beg (save-excursion (beginning-of-defun) (point)))))
+    (nth 3 (parse-partial-sexp beg (point)))))
+
+(defsubst clojure-in-comment-p (&optional beg)
+  "Return true if point is in a comment.
+
+If BEG is how far back we should look to determine the context
+around point.  The default is the value returned by
+`beginning-of-defun'."
+  (let((beg (or beg (save-excursion (beginning-of-defun) (point)))))
+    (nth 4 (parse-partial-sexp beg (point)))))
 
 (defsubst clojure-docstring-fill-prefix ()
   "The prefix string used by `clojure-fill-paragraph'.
