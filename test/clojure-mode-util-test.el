@@ -26,6 +26,17 @@
 (require 'cl-lib)
 (require 'ert)
 
+(defmacro clojure-test-with-temp-buffer (content &rest body)
+  "Evaluate BODY in a temporary buffer with CONTENTS."
+  (declare (debug t)
+           (indent 1))
+  `(with-temp-buffer
+     (insert ,content)
+     (clojure-mode)
+     (font-lock-fontify-buffer)
+     (goto-char (point-min))
+     ,@body))
+
 (let ((project-dir "/home/user/projects/my-project/")
       (clj-file-path "/home/user/projects/my-project/src/clj/my_project/my_ns/my_file.clj")
       (project-relative-clj-file-path "src/clj/my_project/my_ns/my_file.clj")
@@ -52,6 +63,27 @@
       (should (string= (let ((buffer-file-name clj-file-path))
                          (clojure-expected-ns))
                        clj-file-ns)))))
+
+(ert-deftest clojure-in-comment-p-test ()
+  :tags '(utils)
+  (clojure-test-with-temp-buffer "(+ 1 1) ; I'm an end of line comment!"
+    (forward-char 13)
+    (should (clojure-in-comment-p)))
+  (clojure-test-with-temp-buffer ";; I'm a block comment!"
+    (forward-char 3)
+    (should (clojure-in-comment-p)))
+  (clojure-test-with-temp-buffer ";;; I'm a section comment"
+    (forward-char 3)
+    (should (clojure-in-comment-p)))
+  (clojure-test-with-temp-buffer ";;;; I'm a header comment"
+    (forward-char 3)
+    (should (clojure-in-comment-p))))
+
+(ert-deftest clojure-in-string-p-test ()
+  :tags '(utils)
+  (clojure-test-with-temp-buffer "\"I'm a string!\""
+    (forward-char 1)
+    (should (clojure-in-string-p))))
 
 (provide 'clojure-mode-util-test)
 
