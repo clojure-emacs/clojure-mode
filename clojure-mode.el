@@ -638,13 +638,100 @@ point) to check."
           (replace-match (clojure-docstring-fill-prefix))))
     (lisp-indent-line)))
 
-(defun clojure--symbol-get (function-name property)
-  "Return the symbol PROPERTY for the symbol named FUNCTION-NAME.
-FUNCTION-NAME is a string.  If it contains a `/', also try only the part after the `/'."
-  (or (get (intern-soft function-name) property)
-      (and (string-match "/\\([^/]+\\)\\'" function-name)
-           (get (intern-soft (match-string 1 function-name))
-                property))))
+(defvar clojure-get-indent-function nil
+  "Function to get the indent spec of a symbol.
+This function should take one argument, the name of the symbol as
+a string.  This name will be exactly as it appears in the buffer,
+so it might start with a namespace alias.
+
+This function is analogous to the `clojure-indent-function'
+symbol property, and its return value should match one of the
+allowed values of this property.  See `clojure-indent-function'
+for more information.")
+
+(defun clojure--get-indent-method (function-name)
+  "Return the indent spec for the symbol named FUNCTION-NAME.
+FUNCTION-NAME is a string.  If it contains a `/', also try only
+the part after the `/'.
+
+Look for a spec using `clojure-get-indent-function', then try the
+`clojure-indent-function' and `clojure-backtracking-indent'
+symbol properties."
+  (or (when (functionp clojure-get-indent-function)
+        (funcall clojure-get-indent-function function-name))
+      (get (intern-soft function-name) 'clojure-indent-function)
+      (get (intern-soft function-name) 'clojure-backtracking-indent)
+      (when (string-match "/\\([^/]+\\)\\'" function-name)
+        (or (get (intern-soft (match-string 1 function-name))
+                 'clojure-indent-function)
+            (get (intern-soft (match-string 1 function-name))
+                 'clojure-backtracking-indent)))))
+
+(defvar clojure--current-backtracking-depth 0)
+
+(defun clojure--find-indent-spec-backtracking ()
+  "Return the indent sexp that applies to the sexp at point.
+Implementation function for `clojure--find-indent-spec'."
+  (when (and (>= clojure-max-backtracking clojure--current-backtracking-depth)
+             (not (looking-at "^")))
+    (let ((clojure--current-backtracking-depth (1+ clojure--current-backtracking-depth))
+          (pos 0))
+      ;; Count how far we are from the start of the sexp.
+      (while (ignore-errors (clojure-backward-logical-sexp 1) t)
+        (cl-incf pos))
+      (let* ((function (thing-at-point 'symbol))
+             (method (or (when function ;; Is there a spec here?
+                           (clojure--get-indent-method function))
+                         (progn (up-list) ;; Otherwise look higher up.
+                                (clojure-backward-logical-sexp 1)
+                                (clojure--find-indent-spec-backtracking)))))
+        (when (numberp method)
+          (setq method (list method)))
+        (pcase method
+          ((pred sequencep)
+           (pcase (length method)
+             (`0 nil)
+             (`1 (let ((head (elt method 0)))
+                   (when (or (= pos 0) (sequencep head))
+                     head)))
+             (l (if (>= pos l)
+                    (elt method (1- l))
+                  (elt method pos)))))
+          ((or `defun `:defn)
+           (when (= pos 0)
+             :defn))
+          (_
+           (message "Invalid indent spec for `%s': %s" function method)
+           nil))))))
+
+(defun clojure--find-indent-spec ()
+  "Return the indent spec that applies to current sexp.
+If `clojure-use-backtracking-indent' is non-nil, also do
+backtracking up to a higher-level sexp in order to find the
+spec."
+  (if clojure-use-backtracking-indent
+      (save-excursion
+        (clojure--find-indent-spec-backtracking))
+    (let ((function (thing-at-point 'symbol)))
+      (clojure--get-indent-method function))))
+
+(defun clojure--normal-indent (last-sexp)
+  "Return the normal indentation column for a sexp.
+LAST-SEXP is the start of the previous sexp."
+  (goto-char last-sexp)
+  (let ((last-sexp-start nil))
+    (unless (ignore-errors
+              (while (progn (skip-chars-backward "#?'`~@[:blank:]")
+                            (not (looking-at "^")))
+                (setq last-sexp-start (prog1 (point)
+                                        (forward-sexp -1))))
+              t)
+      ;; If the last sexp was on the same line.
+      (when (and last-sexp-start
+                 (> (line-end-position) last-sexp-start))
+        (goto-char last-sexp-start)))
+    (skip-chars-forward "[:blank:]")
+    (current-column)))
 
 (defun clojure-indent-function (indent-point state)
   "When indenting a line within a function call, indent properly.
@@ -666,123 +753,55 @@ The property value can be
 - a function to call just as this function was called.
   If that function returns nil, that means it doesn't specify
   the indentation.
+- a list, which is used by `clojure-backtracking-indent'.
 
 This function also returns nil meaning don't specify the indentation."
-  (let ((normal-indent (current-column)))
-    (goto-char (1+ (elt state 1)))
-    (parse-partial-sexp (point) calculate-lisp-indent-last-sexp 0 t)
-    (if (and (elt state 2)
-             (not (looking-at "\\sw\\|\\s_")))
-        ;; car of form doesn't seem to be a symbol
-        (progn
-          (if (not (> (save-excursion (forward-line 1) (point))
-                      calculate-lisp-indent-last-sexp))
-              (progn (goto-char calculate-lisp-indent-last-sexp)
-                     (skip-chars-backward "[:blank:]")
-                     ;; We're done if we find the start of line,
-                     (while (and (not (looking-at-p "^"))
-                                 ;; or start of sexp.
-                                 (ignore-errors (forward-sexp -1) t))
-                       (skip-chars-backward "[:blank:]"))
-                     (parse-partial-sexp (point)
-                                         calculate-lisp-indent-last-sexp 0 t)))
-          ;; Indent under the list or under the first sexp on the same
-          ;; line as calculate-lisp-indent-last-sexp.  Note that first
-          ;; thing on that line has to be complete sexp since we are
-          ;; inside the innermost containing sexp.
-          (backward-prefix-chars)
-          (current-column))
-      (let* ((function (buffer-substring (point)
-                                         (progn (forward-sexp 1) (point))))
-             (open-paren (elt state 1))
-             (forward-sexp-function #'clojure-forward-logical-sexp)
-             (method (clojure--symbol-get function 'clojure-indent-function)))
-        ;; Maps, sets, vectors and reader conditionals.
-        (cond ((or (member (char-after open-paren) '(?\[ ?\{))
-                   (ignore-errors
-                     (and (eq (char-before open-paren) ?\?)
-                          (eq (char-before (1- open-paren)) ?\#))))
-               (goto-char open-paren)
-               (1+ (current-column)))
-              ((or (eq method 'defun)
-                   (and clojure-defun-style-default-indent
-                        ;; largely to preserve useful alignment of :require, etc in ns
-                        (not (string-match "^:" function))
-                        (not method))
-                   (and (null method)
-                        (> (length function) 3)
-                        (string-match "\\`\\(?:\\S +/\\)?\\(def\\|with-\\)"
-                                      function)))
-               (lisp-indent-defform state indent-point))
-              ((integerp method)
-               (lisp-indent-specform method state
-                                     indent-point normal-indent))
-              (method
-               (funcall method indent-point state))
-              (clojure-use-backtracking-indent
-               (clojure-backtracking-indent
-                indent-point state normal-indent)))))))
-
-(defun clojure-backtracking-indent (indent-point state _normal-indent)
-  "Experimental backtracking support.
-
-Given an INDENT-POINT, the STATE, and the NORMAL-INDENT, will
-move upwards in an sexp to check for contextual indenting."
-  (let (indent (path) (depth 0))
+  (let* ((forward-sexp-function #'clojure-forward-logical-sexp))
+    ;; Goto to the open-paren.
     (goto-char (elt state 1))
-    (while (and (not indent)
-                (< depth clojure-max-backtracking))
-      (let ((containing-sexp (point)))
-        (parse-partial-sexp (1+ containing-sexp) indent-point 1 t)
-        (when (looking-at "\\sw\\|\\s_")
-          (let* ((start (point))
-                 (fn (buffer-substring start (progn (forward-sexp 1) (point))))
-                 (meth (clojure--symbol-get fn 'clojure-backtracking-indent)))
-            (let ((n 0))
-              (when (< (point) indent-point)
-                (condition-case ()
-                    (progn
-                      (forward-sexp 1)
-                      (while (< (point) indent-point)
-                        (parse-partial-sexp (point) indent-point 1 t)
-                        (cl-incf n)
-                        (forward-sexp 1)))
-                  (error nil)))
-              (push n path))
-            (when meth
-              (let ((def meth))
-                (dolist (p path)
-                  (if (and (listp def)
-                           (< p (length def)))
-                      (setq def (nth p def))
-                    (if (listp def)
-                        (setq def (car (last def)))
-                      (setq def nil))))
-                (goto-char (elt state 1))
-                (when def
-                  (setq indent (+ (current-column) def)))))))
-        (goto-char containing-sexp)
-        (condition-case ()
-            (progn
-              (backward-up-list 1)
-              (cl-incf depth))
-          (error (setq depth clojure-max-backtracking)))))
-    indent))
+    ;; Maps, sets, vectors and reader conditionals.
+    (if (or (member (char-after) '(?\[ ?\{))
+            (and (eq (char-before) ?\?)
+                 (eq (char-before (1- (point))) ?\#))
+            ;; Car of form is not a symbol.
+            (and (elt state 2)
+                 (not (looking-at ".\\sw\\|.\\s_"))))
+        (1+ (current-column))
+      ;; Function or macro call.
+      (forward-char 1)
+      (let ((method (clojure--find-indent-spec))
+            (containing-form-column (1- (current-column))))
+        (pcase method
+          ((or (pred integerp) `(,method))
+           (let ((pos -1))
+             ;; `forward-sexp' will error if indent-point is after
+             ;; the last sexp in the current sexp.
+             (ignore-errors
+               (while (<= (point) indent-point)
+                 (clojure-forward-logical-sexp 1)
+                 (cl-incf pos)))
+             (cond
+              ((= pos (1+ method))
+               (+ lisp-body-indent containing-form-column))
+              ((> pos (1+ method))
+               (clojure--normal-indent calculate-lisp-indent-last-sexp))
+              (t
+               (+ (* 2 lisp-body-indent) containing-form-column)))))
+          (`:defn
+           (+ lisp-body-indent containing-form-column))
+          ((pred functionp)
+           (funcall method indent-point state))
+          ((and `nil
+                (guard (let ((function (thing-at-point 'sexp)))
+                         (or (and clojure-defun-style-default-indent
+                                  ;; largely to preserve useful alignment of :require, etc in ns
+                                  (not (string-match "^:" function)))
+                             (string-match "\\`\\(?:\\S +/\\)?\\(def\\|with-\\)"
+                                           function)))))
+           (+ lisp-body-indent containing-form-column))
+          (_ (clojure--normal-indent calculate-lisp-indent-last-sexp)))))))
 
-;; clojure backtracking indent is experimental and the format for these
-;; entries are subject to change
-(put 'implement 'clojure-backtracking-indent '(4 (2)))
-(put 'letfn 'clojure-backtracking-indent '((2) 2))
-(put 'proxy 'clojure-backtracking-indent '(4 4 (2)))
-(put 'reify 'clojure-backtracking-indent '((2)))
-(put 'deftype 'clojure-backtracking-indent '(4 4 (2)))
-(put 'defrecord 'clojure-backtracking-indent '(4 4 (2)))
-(put 'defprotocol 'clojure-backtracking-indent '(4 (2)))
-(put 'extend-type 'clojure-backtracking-indent '(4 (2)))
-(put 'extend-protocol 'clojure-backtracking-indent '(4 (2)))
-(put 'specify 'clojure-backtracking-indent '(4 (2)))
-(put 'specify! 'clojure-backtracking-indent '(4 (2)))
-
+;;; Setting indentation
 (defun put-clojure-indent (sym indent)
   "Instruct `clojure-indent-function' to indent the body of SYM by INDENT."
   (put sym 'clojure-indent-function indent))
@@ -808,7 +827,7 @@ Requires the macro's NAME and a VALUE."
 
 You can use this to let Emacs indent your own macros the same way
 that it indents built-in macros like with-open.  To manually set
-it from Lisp code, use (put-clojure-indent 'some-symbol 'defun)."
+it from Lisp code, use (put-clojure-indent 'some-symbol :defn)."
   :type '(repeat symbol)
   :group 'clojure
   :set 'add-custom-clojure-indents)
@@ -816,10 +835,10 @@ it from Lisp code, use (put-clojure-indent 'some-symbol 'defun)."
 (define-clojure-indent
   ;; built-ins
   (ns 1)
-  (fn 'defun)
-  (def 'defun)
-  (defn 'defun)
-  (bound-fn 'defun)
+  (fn :defn)
+  (def :defn)
+  (defn :defn)
+  (bound-fn :defn)
   (if 1)
   (if-not 1)
   (case 1)
@@ -836,26 +855,26 @@ it from Lisp code, use (put-clojure-indent 'some-symbol 'defun)."
   (comment 0)
   (doto 1)
   (locking 1)
-  (proxy 2)
+  (proxy '(2 nil nil (1)))
   (as-> 2)
 
-  (reify 'defun)
-  (deftype 2)
-  (defrecord 2)
-  (defprotocol 1)
+  (reify '(1 nil (1)))
+  (deftype '(2 nil nil (1)))
+  (defrecord '(2 nil nil (1)))
+  (defprotocol '(1))
   (extend 1)
-  (extend-protocol 1)
-  (extend-type 1)
-  (specify 1)
-  (specify! 1)
-
+  (extend-protocol '(1 (1)))
+  (extend-type '(1 (1)))
+  (specify '(1 (1)))
+  (specify! '(1 (1)))
+  (implement '(1 (1)))
   (try 0)
   (catch 2)
   (finally 0)
 
   ;; binding forms
   (let 1)
-  (letfn 1)
+  (letfn '(1 ((1)) nil))
   (binding 1)
   (loop 1)
   (for 1)
@@ -866,18 +885,18 @@ it from Lisp code, use (put-clojure-indent 'some-symbol 'defun)."
   (when-some 1)
   (if-some 1)
 
-  (defmethod 'defun)
+  (defmethod :defn)
 
   ;; clojure.test
   (testing 1)
-  (deftest 'defun)
+  (deftest :defn)
   (are 2)
-  (use-fixtures 'defun)
+  (use-fixtures :defn)
 
   ;; core.logic
-  (run 'defun)
-  (run* 'defun)
-  (fresh 'defun)
+  (run :defn)
+  (run* :defn)
+  (fresh :defn)
 
   ;; core.async
   (alt! 0)
@@ -1089,7 +1108,7 @@ Returns a list pair, e.g. (\"defn\" \"abc\") or (\"deftest\" \"some-test\")."
 Sexps that don't represent code are ^metadata or #reader.macros."
   (forward-sexp 1)
   (forward-sexp -1)
-  (not (looking-at-p "\\^\\|#[[:alpha:]]")))
+  (not (looking-at-p "\\^\\|#[?[:alpha:]]")))
 
 (defun clojure-forward-logical-sexp (&optional n)
   "Move forward N logical sexps.
@@ -1121,7 +1140,7 @@ This will skip over sexps that don't represent objects, so that ^hints and
                   (ignore-errors
                     (save-excursion
                       (backward-sexp 1)
-                      (looking-at-p "\\^\\|#[[:alpha:]]"))))
+                      (not (clojure--looking-at-logical-sexp)))))
         (backward-sexp 1))
       (setq n (1- n)))))
 

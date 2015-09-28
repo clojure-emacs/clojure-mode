@@ -110,28 +110,28 @@ values of customisable variables."
 (check-indentation doc-strings-without-indent-specified
   "
 (defn some-fn
-|\"some doc string\""
+|\"some doc string\")"
   "
 (defn some-fn
-  |\"some doc string\"")
+  |\"some doc string\")")
 
 (check-indentation doc-strings-with-correct-indent-specified
   "
 (defn some-fn
-  |\"some doc string\""
+  |\"some doc string\")"
   "
 (defn some-fn
-  |\"some doc string\"")
+  |\"some doc string\")")
 
 (check-indentation doc-strings-with-additional-indent-specified
   "
 (defn some-fn
   |\"some doc string
-    - some note\""
+    - some note\")"
   "
 (defn some-fn
   |\"some doc string
-    - some note\"")
+    - some note\")")
 
 ;; we can specify different indentation for symbol with some ns prefix
 (put-clojure-indent 'bala 0)
@@ -188,6 +188,79 @@ values of customisable variables."
 (clojure.core/letfn [(twice [x]
                        |(* x 2))]
   :a)")
+
+(check-indentation fixed-normal-indent
+  "(cond
+  (or 1
+      2) 3
+|:else 4)"
+  "(cond
+  (or 1
+      2) 3
+  |:else 4)")
+
+(check-indentation fixed-normal-indent-2
+  "(fact {:spec-type
+       :charnock-column-id} #{\"charnock\"}
+|{:spec-type
+       :charnock-column-id} #{\"current_charnock\"})"
+  "(fact {:spec-type
+       :charnock-column-id} #{\"charnock\"}
+      |{:spec-type
+       :charnock-column-id} #{\"current_charnock\"})")
+
+
+;;; Backtracking indent
+(defmacro def-full-indent-test (name form)
+  "Verify that FORM corresponds to a properly indented sexp."
+  (declare (indent 1))
+  `(ert-deftest ,(intern (format "test-backtracking-%s" name)) ()
+     (with-temp-buffer
+       (clojure-mode)
+       (insert "\n" ,(replace-regexp-in-string "\n +" "\n " form))
+       (indent-region (point-min) (point-max))
+       (should (equal (buffer-string)
+                      ,(concat "\n" form))))))
+
+(def-full-indent-test closing-paren
+  "(ns ca
+  (:gen-class)
+  )")
+
+(def-full-indent-test non-symbol-at-start
+  "{\"1\" 2
+ *3 4}")
+
+(def-full-indent-test non-symbol-at-start-2
+  "(\"1\" 2
+ *3 4)")
+
+(def-full-indent-test defrecord
+  "(defrecord TheNameOfTheRecord
+    [a pretty long argument list]
+  SomeType
+  (assoc [_ x]
+    (.assoc pretty x 10)))")
+
+(def-full-indent-test defrecord-2
+  "(defrecord TheNameOfTheRecord [a pretty long argument list]
+  SomeType (assoc [_ x]
+             (.assoc pretty x 10)))")
+
+(def-full-indent-test letfn
+  "(letfn [(f [x]
+          (* x 2))
+        (f [x]
+          (* x 2))]
+  (a b
+     c) (d)
+  e)")
+
+(def-full-indent-test reify
+  "(reify
+    Object
+  (x [_]
+    1))")
 
 (provide 'clojure-mode-indentation-test)
 
