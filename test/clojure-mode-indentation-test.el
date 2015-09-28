@@ -262,6 +262,45 @@ values of customisable variables."
   (x [_]
     1))")
 
+(def-full-indent-test reader-conditionals
+  "#?@ (:clj []
+     :cljs [])")
+
+
+;;; Misc
+
+(defun non-func (form-a form-b)
+  (with-temp-buffer
+    (clojure-mode)
+    (insert form-a)
+    (save-excursion (insert form-b))
+    (clojure--not-function-form-p)))
+
+(ert-deftest non-function-form ()
+  (dolist (form '(("#?@ " "(c d)")
+                  ("#?@" "(c d)")
+                  ("#? " "(c d)")
+                  ("#?" "(c d)")
+                  ("" "[asda]")
+                  ("" "{a b}")
+                  ("#" "{a b}")
+                  ("" "(~)")))
+    (should (apply #'non-func form)))
+  (dolist (form '("(c d)"
+                  "(.c d)"
+                  "(:c d)"
+                  "(c/a d)"
+                  "(.c/a d)"
+                  "(:c/a d)"
+                  "(c/a)"
+                  "(:c/a)"
+                  "(.c/a)"))
+    (should-not (non-func "" form))
+    (should-not (non-func "^hint" form))
+    (should-not (non-func "#macro" form))
+    (should-not (non-func "^hint " form))
+    (should-not (non-func "#macro " form))))
+
 (provide 'clojure-mode-indentation-test)
 
 ;; Local Variables:

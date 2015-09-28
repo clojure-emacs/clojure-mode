@@ -736,6 +736,18 @@ LAST-SEXP is the start of the previous sexp."
     (skip-chars-forward "[:blank:]")
     (current-column)))
 
+(defun clojure--not-function-form-p ()
+  "Non-nil if form at point doesn't represent a function call."
+  (or (member (char-after) '(?\[ ?\{))
+      (save-excursion ;; Catch #?@ (:cljs ...)
+        (skip-chars-backward "\r\n[:blank:]")
+        (when (eq (char-before) ?@)
+          (forward-char -1))
+        (and (eq (char-before) ?\?)
+             (eq (char-before (1- (point))) ?\#)))
+      ;; Car of form is not a symbol.
+      (not (looking-at ".\\(?:\\sw\\|\\s_\\)"))))
+
 (defun clojure-indent-function (indent-point state)
   "When indenting a line within a function call, indent properly.
 
@@ -763,12 +775,7 @@ This function also returns nil meaning don't specify the indentation."
     ;; Goto to the open-paren.
     (goto-char (elt state 1))
     ;; Maps, sets, vectors and reader conditionals.
-    (if (or (member (char-after) '(?\[ ?\{))
-            (and (eq (char-before) ?\?)
-                 (eq (char-before (1- (point))) ?\#))
-            ;; Car of form is not a symbol.
-            (and (elt state 2)
-                 (not (looking-at ".\\sw\\|.\\s_"))))
+    (if (clojure--not-function-form-p)
         (1+ (current-column))
       ;; Function or macro call.
       (forward-char 1)
