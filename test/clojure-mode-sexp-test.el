@@ -40,6 +40,31 @@
     (clojure-backward-logical-sexp 1)
     (should (looking-at-p "\\^String biverse"))))
 
+(ert-deftest test-buffer-corners ()
+  (with-temp-buffer
+    (insert "^String reverse")
+    (clojure-mode)
+    ;; Return nil and don't error
+    (should-not (clojure-backward-logical-sexp 100))
+    (should (looking-at-p "\\^String reverse"))
+    (should-not (clojure-forward-logical-sexp 100))
+    (should (looking-at-p "$")))
+  (with-temp-buffer
+    (clojure-mode)
+    (insert "(+ 10")
+    (should-error (clojure-backward-logical-sexp 100))
+    (goto-char (point-min))
+    (should-error (clojure-forward-logical-sexp 100))
+    ;; Just don't hang.
+    (goto-char (point-max))
+    (should-not (clojure-forward-logical-sexp 1))
+    (erase-buffer)
+    (insert "(+ 10")
+    (newline)
+    (erase-buffer)
+    (insert "(+ 10")
+    (newline-and-indent)))
+
 (provide 'clojure-mode-sexp-test)
 
 ;;; clojure-mode-sexp-test.el ends here
