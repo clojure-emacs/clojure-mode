@@ -453,8 +453,10 @@ Called by `imenu--generic-function'."
        0 font-lock-constant-face)
       ;; Character literals - \1, \a, \newline, \u0000
       ("\\\\\\([[:punct:]]\\|[a-z0-9]+\\>\\)" 0 'clojure-character-face)
+      ;; foo/ Foo/ @Foo/ /FooBar
+      ("\\(?:\\<:?\\|\\.\\)@?\\([a-zA-Z][.a-zA-Z0-9$_-]*\\)/" 1 font-lock-type-face)
       ;; Constant values (keywords), including as metadata e.g. ^:static
-      ("\\<^?\\(:\\(\\sw\\|\\s_\\)+\\(\\>\\|\\_>\\)\\)" 1 'clojure-keyword-face)
+      ("\\<^?\\(:\\(\\sw\\|\\s_\\)+\\(\\>\\|\\_>\\)\\)" 1 'clojure-keyword-face append)
       ;; Java interop highlighting
       ;; CONST SOME_CONST (optionally prefixed by /)
       ("\\(?:\\<\\|/\\)\\([A-Z]+\\|\\([A-Z]+_[A-Z1-9_]+\\)\\)\\>" 1 font-lock-constant-face)
@@ -471,8 +473,6 @@ Called by `imenu--generic-function'."
                 ;; namespace
                 "\\([a-z0-9-]+\\)")
        (1 font-lock-type-face nil t))
-      ;; foo/ Foo/ @Foo/ /FooBar
-      ("\\(?:\\<\\|\\.\\)@?\\([a-zA-Z][a-zA-Z0-9$_-]*\\)/" 1 font-lock-type-face)
       ;; fooBar
       ("\\(?:\\<\\|/\\)\\([a-z]+[A-Z]+[a-zA-Z0-9$]*\\>\\)" 1 'clojure-interop-method-face)
       ;; Highlight `code` marks, just like `elisp'.
