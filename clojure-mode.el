@@ -784,12 +784,15 @@ This function also returns nil meaning don't specify the indentation."
         (pcase method
           ((or (pred integerp) `(,method))
            (let ((pos -1))
-             ;; `forward-sexp' will error if indent-point is after
-             ;; the last sexp in the current sexp.
-             (ignore-errors
-               (while (<= (point) indent-point)
-                 (clojure-forward-logical-sexp 1)
-                 (cl-incf pos)))
+             (condition-case nil
+                 (while (<= (point) indent-point)
+                   (clojure-forward-logical-sexp 1)
+                   (cl-incf pos))
+               ;; If indent-point is _after_ the last sexp in the
+               ;; current sexp, we detect that by catching the
+               ;; `scan-error'. In that case, we should return the
+               ;; indentation as if there were an extra sexp at point.
+               (scan-error (cl-incf pos)))
              (cond
               ((= pos (1+ method))
                (+ lisp-body-indent containing-form-column))

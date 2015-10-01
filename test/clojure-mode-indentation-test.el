@@ -211,16 +211,18 @@ values of customisable variables."
 
 
 ;;; Backtracking indent
-(defmacro def-full-indent-test (name form)
-  "Verify that FORM corresponds to a properly indented sexp."
+(defmacro def-full-indent-test (name &rest forms)
+  "Verify that all FORMs correspond to a properly indented sexps."
   (declare (indent 1))
   `(ert-deftest ,(intern (format "test-backtracking-%s" name)) ()
-     (with-temp-buffer
-       (clojure-mode)
-       (insert "\n" ,(replace-regexp-in-string "\n +" "\n " form))
-       (indent-region (point-min) (point-max))
-       (should (equal (buffer-string)
-                      ,(concat "\n" form))))))
+     (progn
+       ,@(dolist (form forms)
+           `(with-temp-buffer
+              (clojure-mode)
+              (insert "\n" ,(replace-regexp-in-string "\n +" "\n " form))
+              (indent-region (point-min) (point-max))
+              (should (equal (buffer-string)
+                             ,(concat "\n" form))))))))
 
 (def-full-indent-test closing-paren
   "(ns ca
@@ -265,6 +267,17 @@ values of customisable variables."
 (def-full-indent-test reader-conditionals
   "#?@ (:clj []
      :cljs [])")
+
+(def-full-indent-test empty-close-paren
+  "(let [x]
+  )"
+
+  "(ns ok
+  )"
+
+  "(ns ^{:zen :dikar}
+    ok
+  )")
 
 
 ;;; Misc
