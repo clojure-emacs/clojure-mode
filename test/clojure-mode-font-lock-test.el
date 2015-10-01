@@ -101,7 +101,16 @@ POS."
 
 (ert-deftest clojure-mode-syntax-table/fontify-clojure-keyword ()
   :tags '(fontification syntax-table)
-  (should (eq (clojure-test-face-at 2 11 "{:something 20}") 'clojure-keyword-face)))
+  (should (equal (clojure-test-face-at 2 11 "{:something 20}") '(clojure-keyword-face))))
+
+(ert-deftest clojure-mode-syntax-table/fontify-namespaced-keyword ()
+  :tags '(fontification syntax-table)
+  (should (equal (clojure-test-face-at 2 2 "{:alias/some 20}")  '(clojure-keyword-face)))
+  (should (equal (clojure-test-face-at 3 7 "{:alias/some 20}")  '(font-lock-type-face clojure-keyword-face)))
+  (should (equal (clojure-test-face-at 8 12 "{:alias/some 20}") '(clojure-keyword-face)))
+  (should (equal (clojure-test-face-at 2 2 "{:a.ias/some 20}")  '(clojure-keyword-face)))
+  (should (equal (clojure-test-face-at 3 7 "{:a.ias/some 20}")  '(font-lock-type-face clojure-keyword-face)))
+  (should (equal (clojure-test-face-at 8 12 "{:a.ias/some 20}") '(clojure-keyword-face))))
 
 (ert-deftest clojure-mode-syntax-table/type ()
   :tags '(fontification syntax-table)
@@ -229,7 +238,7 @@ POS."
   :tags '(fontification syntax-table)
   (clojure-test-with-temp-buffer "^:meta-data"
     (should (eq (clojure-test-face-at 1 1) nil))
-    (should (eq (clojure-test-face-at 2 11) 'clojure-keyword-face))))
+    (should (equal (clojure-test-face-at 2 11) '(clojure-keyword-face)))))
 
 (ert-deftest clojure-mode-syntax-table/characters ()
   :tags '(fontification syntax-table)
