@@ -678,7 +678,9 @@ Implementation function for `clojure--find-indent-spec'."
     (let ((clojure--current-backtracking-depth (1+ clojure--current-backtracking-depth))
           (pos 0))
       ;; Count how far we are from the start of the sexp.
-      (while (ignore-errors (clojure-backward-logical-sexp 1) t)
+      (while (ignore-errors (clojure-backward-logical-sexp 1)
+                            (not (or (bobp)
+                                     (eq (char-before) ?\n))))
         (cl-incf pos))
       (let* ((function (thing-at-point 'symbol))
              (method (or (when function ;; Is there a spec here?
@@ -722,10 +724,13 @@ spec."
   "Return the normal indentation column for a sexp.
 LAST-SEXP is the start of the previous sexp."
   (goto-char last-sexp)
+  (forward-sexp 1)
+  (clojure-backward-logical-sexp 1)
   (let ((last-sexp-start nil))
     (unless (ignore-errors
-              (while (progn (skip-chars-backward "#?'`~@[:blank:]")
-                            (not (looking-at "^")))
+              (while (string-match
+                      "[^[:blank:]]"
+                      (buffer-substring (line-beginning-position) (point)))
                 (setq last-sexp-start (prog1 (point)
                                         (forward-sexp -1))))
               t)
@@ -733,7 +738,6 @@ LAST-SEXP is the start of the previous sexp."
       (when (and last-sexp-start
                  (> (line-end-position) last-sexp-start))
         (goto-char last-sexp-start)))
-    (skip-chars-forward "[:blank:]")
     (current-column)))
 
 (defun clojure--not-function-form-p ()

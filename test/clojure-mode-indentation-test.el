@@ -279,6 +279,15 @@ values of customisable variables."
     ok
   )")
 
+(def-full-indent-test symbols-ending-in-crap
+  "(msg? ExceptionInfo
+      10)"
+  "(thrown-with-msg? ExceptionInfo
+                  #\"Storage must be initialized before use\"
+                  (f))"
+  "(msg' 1
+      10)")
+
 
 ;;; Misc
 
