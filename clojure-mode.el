@@ -678,7 +678,9 @@ Implementation function for `clojure--find-indent-spec'."
     (let ((clojure--current-backtracking-depth (1+ clojure--current-backtracking-depth))
           (pos 0))
       ;; Count how far we are from the start of the sexp.
-      (while (ignore-errors (clojure-backward-logical-sexp 1) t)
+      (while (ignore-errors (clojure-backward-logical-sexp 1)
+                            (not (or (bobp)
+                                     (eq (char-before) ?\n))))
         (cl-incf pos))
       (let* ((function (thing-at-point 'symbol))
              (method (or (when function ;; Is there a spec here?
@@ -722,10 +724,13 @@ spec."
   "Return the normal indentation column for a sexp.
 LAST-SEXP is the start of the previous sexp."
   (goto-char last-sexp)
+  (forward-sexp 1)
+  (clojure-backward-logical-sexp 1)
   (let ((last-sexp-start nil))
     (unless (ignore-errors
-              (while (progn (skip-chars-backward "#?'`~@[:blank:]")
-                            (not (looking-at "^")))
+              (while (string-match
+                      "[^[:blank:]]"
+                      (buffer-substring (line-beginning-position) (point)))
                 (setq last-sexp-start (prog1 (point)
                                         (forward-sexp -1))))
               t)
@@ -733,7 +738,6 @@ LAST-SEXP is the start of the previous sexp."
       (when (and last-sexp-start
                  (> (line-end-position) last-sexp-start))
         (goto-char last-sexp-start)))
-    (skip-chars-forward "[:blank:]")
     (current-column)))
 
 (defun clojure--not-function-form-p ()
@@ -771,45 +775,47 @@ The property value can be
 - a list, which is used by `clojure-backtracking-indent'.
 
 This function also returns nil meaning don't specify the indentation."
-  (let* ((forward-sexp-function #'clojure-forward-logical-sexp))
-    ;; Goto to the open-paren.
-    (goto-char (elt state 1))
-    ;; Maps, sets, vectors and reader conditionals.
-    (if (clojure--not-function-form-p)
-        (1+ (current-column))
-      ;; Function or macro call.
-      (forward-char 1)
-      (let ((method (clojure--find-indent-spec))
-            (containing-form-column (1- (current-column))))
-        (pcase method
-          ((or (pred integerp) `(,method))
-           (let ((pos -1))
-             ;; `forward-sexp' will error if indent-point is after
-             ;; the last sexp in the current sexp.
-             (ignore-errors
+  ;; Goto to the open-paren.
+  (goto-char (elt state 1))
+  ;; Maps, sets, vectors and reader conditionals.
+  (if (clojure--not-function-form-p)
+      (1+ (current-column))
+    ;; Function or macro call.
+    (forward-char 1)
+    (let ((method (clojure--find-indent-spec))
+          (containing-form-column (1- (current-column))))
+      (pcase method
+        ((or (pred integerp) `(,method))
+         (let ((pos -1))
+           (condition-case nil
                (while (<= (point) indent-point)
                  (clojure-forward-logical-sexp 1)
-                 (cl-incf pos)))
-             (cond
-              ((= pos (1+ method))
-               (+ lisp-body-indent containing-form-column))
-              ((> pos (1+ method))
-               (clojure--normal-indent calculate-lisp-indent-last-sexp))
-              (t
-               (+ (* 2 lisp-body-indent) containing-form-column)))))
-          (`:defn
-           (+ lisp-body-indent containing-form-column))
-          ((pred functionp)
-           (funcall method indent-point state))
-          ((and `nil
-                (guard (let ((function (thing-at-point 'sexp)))
-                         (or (and clojure-defun-style-default-indent
-                                  ;; largely to preserve useful alignment of :require, etc in ns
-                                  (not (string-match "^:" function)))
-                             (string-match "\\`\\(?:\\S +/\\)?\\(def\\|with-\\)"
-                                           function)))))
-           (+ lisp-body-indent containing-form-column))
-          (_ (clojure--normal-indent calculate-lisp-indent-last-sexp)))))))
+                 (cl-incf pos))
+             ;; If indent-point is _after_ the last sexp in the
+             ;; current sexp, we detect that by catching the
+             ;; `scan-error'. In that case, we should return the
+             ;; indentation as if there were an extra sexp at point.
+             (scan-error (cl-incf pos)))
+           (cond
+            ((= pos (1+ method))
+             (+ lisp-body-indent containing-form-column))
+            ((> pos (1+ method))
+             (clojure--normal-indent calculate-lisp-indent-last-sexp))
+            (t
+             (+ (* 2 lisp-body-indent) containing-form-column)))))
+        (`:defn
+         (+ lisp-body-indent containing-form-column))
+        ((pred functionp)
+         (funcall method indent-point state))
+        ((and `nil
+              (guard (let ((function (thing-at-point 'sexp)))
+                       (or (and clojure-defun-style-default-indent
+                                ;; largely to preserve useful alignment of :require, etc in ns
+                                (not (string-match "^:" function)))
+                           (string-match "\\`\\(?:\\S +/\\)?\\(def\\|with-\\)"
+                                         function)))))
+         (+ lisp-body-indent containing-form-column))
+        (_ (clojure--normal-indent calculate-lisp-indent-last-sexp))))))
 
 ;;; Setting indentation
 (defun put-clojure-indent (sym indent)
