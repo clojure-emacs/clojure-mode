@@ -1115,8 +1115,8 @@ Returns a list pair, e.g. (\"defn\" \"abc\") or (\"deftest\" \"some-test\")."
       (unless (looking-at re)
         (beginning-of-defun))
       (when (search-forward-regexp re nil t)
-        (list (match-string 1)
-              (match-string 2))))))
+        (list (match-string-no-properties 1)
+              (match-string-no-properties 2))))))
 
 
 ;;; Sexp navigation
