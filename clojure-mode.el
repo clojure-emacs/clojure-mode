@@ -788,7 +788,8 @@ This function also returns nil meaning don't specify the indentation."
         ((or (pred integerp) `(,method))
          (let ((pos -1))
            (condition-case nil
-               (while (<= (point) indent-point)
+               (while (and (<= (point) indent-point)
+                           (not (eobp)))
                  (clojure-forward-logical-sexp 1)
                  (cl-incf pos))
              ;; If indent-point is _after_ the last sexp in the
