@@ -1103,7 +1103,7 @@ Useful if a file has been renamed."
 Returns a list pair, e.g. (\"defn\" \"abc\") or (\"deftest\" \"some-test\")."
   (let ((re (concat "(\\(?:\\(?:\\sw\\|\\s_\\)+/\\)?"
                     ;; Declaration
-                    "\\(def\\sw*\\)\\>"
+                    "\\(def\\(?:\\sw\\|\\s_\\)*\\)\\>"
                     ;; Any whitespace
                     "[ \r\n\t]*"
                     ;; Possibly type or metadata
