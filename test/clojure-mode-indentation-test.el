@@ -28,6 +28,16 @@
 (require 'ert)
 (require 's)
 
+(ert-deftest dont-hang-on-eob ()
+  (with-temp-buffer
+    (insert "(let [a b]")
+    (clojure-mode)
+    (goto-char (point-max))
+    (should
+     (with-timeout (2)
+       (newline-and-indent)
+       t))))
+
 (defmacro check-indentation (description before after &optional var-bindings)
   "Declare an ert test for indentation behaviour.
 The test will check that the swift indentation command changes the buffer
