@@ -705,6 +705,9 @@ Implementation function for `clojure--find-indent-spec'."
           ((or `defun `:defn)
            (when (= pos 0)
              :defn))
+          ((pred functionp)
+           (when (= pos 0)
+             method))
           (_
            (message "Invalid indent spec for `%s': %s" function method)
            nil))))))
