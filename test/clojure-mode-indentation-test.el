@@ -226,13 +226,14 @@ values of customisable variables."
   (declare (indent 1))
   `(ert-deftest ,(intern (format "test-backtracking-%s" name)) ()
      (progn
-       ,@(dolist (form forms)
-           `(with-temp-buffer
-              (clojure-mode)
-              (insert "\n" ,(replace-regexp-in-string "\n +" "\n " form))
-              (indent-region (point-min) (point-max))
-              (should (equal (buffer-string)
-                             ,(concat "\n" form))))))))
+       ,@(mapcar (lambda (form)
+                   `(with-temp-buffer
+                      (clojure-mode)
+                      (insert "\n" ,(replace-regexp-in-string "\n +" "\n " form))
+                      (indent-region (point-min) (point-max))
+                      (should (equal (buffer-string)
+                                     ,(concat "\n" form)))))
+                 forms))))
 
 (def-full-indent-test closing-paren
   "(ns ca
