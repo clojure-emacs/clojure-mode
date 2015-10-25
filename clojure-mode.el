@@ -477,7 +477,8 @@ Called by `imenu--generic-function'."
       ;; fooBar
       ("\\(?:\\<\\|/\\)\\([a-z]+[A-Z]+[a-zA-Z0-9$]*\\>\\)" 1 'clojure-interop-method-face)
       ;; Highlight `code` marks, just like `elisp'.
-      (,(rx "`" (group-n 1 (+ (or (syntax symbol) (syntax word)))) "`")
+      (,(rx "`" (group-n 1 (optional "#'")
+                         (+ (or (syntax symbol) (syntax word)))) "`")
        (1 'font-lock-constant-face prepend))
       ;; Highlight grouping constructs in regular expressions
       (clojure-font-lock-regexp-groups
