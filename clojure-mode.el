@@ -895,7 +895,7 @@ it from Lisp code, use (put-clojure-indent 'some-symbol :defn)."
 
   ;; binding forms
   (let 1)
-  (letfn '(1 ((1)) nil))
+  (letfn '(1 ((:defn)) nil))
   (binding 1)
   (loop 1)
   (for 1)

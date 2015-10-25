@@ -73,14 +73,6 @@ You can do so by putting the following in your config:
 (put-clojure-indent '->> 1)
 ```
 
-You can also specify different indentation settings for symbols
-prefixed with some ns (or ns alias):
-
-```el
-(put-clojure-indent 'do 0)
-(put-clojure-indent 'my-ns/do 1)
-```
-
 This means that the body of the `->/->>` is after the first argument.
 
 A more compact way to do the same thing is:
@@ -91,31 +83,76 @@ A more compact way to do the same thing is:
   (->> 1))
 ```
 
-The bodies of certain more complicated macros and special forms
-(e.g. `letfn`, `deftype`, `extend-protocol`, etc) are indented using
-a contextual backtracking indentation method, controlled by
-`clojure-backtracking-indent`. Here's some example config code:
+You can also specify different indentation settings for symbols
+prefixed with some ns (or ns alias):
 
 ```el
-(put 'implement 'clojure-backtracking-indent '(4 (2)))
-(put 'letfn 'clojure-backtracking-indent '((2) 2))
-(put 'proxy 'clojure-backtracking-indent '(4 4 (2)))
-(put 'reify 'clojure-backtracking-indent '((2)))
-(put 'deftype 'clojure-backtracking-indent '(4 4 (2)))
-(put 'defrecord 'clojure-backtracking-indent '(4 4 (2)))
-(put 'defprotocol 'clojure-backtracking-indent '(4 (2)))
-(put 'extend-type 'clojure-backtracking-indent '(4 (2)))
-(put 'extend-protocol 'clojure-backtracking-indent '(4 (2)))
-(put 'specify 'clojure-backtracking-indent '(4 (2)))
-(put 'specify! 'clojure-backtracking-indent '(4 (2)))
+(put-clojure-indent 'do 0)
+(put-clojure-indent 'my-ns/do 1)
+```
+
+The bodies of certain more complicated macros and special forms
+(e.g. `letfn`, `deftype`, `extend-protocol`, etc) are indented using
+a contextual backtracking indentation method, require more sophisticated
+indent specifications. These are described below.
+
+### Indent Specification
+
+An indent spec can be used to specify intricate indentation rules for
+the more complex macros (or functions).
+It can take one of 3 forms:
+
+- Absent, meaning _“indent like a regular function call”_.
+- An integer or a keyword `x`, which is shorthand for the list `(x)`.
+- A list, meaning that this function/macro takes a number of special arguments, and then all other arguments are non-special.
+  - **The first element** describes how the arguments are indented relative to the sexp. It can be:
+    - An integer `n`, which indicates this function/macro takes `n` special arguments.
+    - The keyword `:function`, meaning _“indent like a regular function call”_.
+    - The keyword `:defn`, which means _“every arg not on the first line is non-special”_.
+  - **Each following element** is an indent spec on its own, and it details the internal structure of the argument on the same position as this element. So, when that argument is a form, this element specifies how to indent that form internally (if it's not a form the spec is irrelevant).
+  - If the function/macro has more aguments than the list has elements, the last element of the list applies to all remaining arguments.
+
+#### Examples
+
+So, for instance, if I specify the `defrecord` spec as `(2 nil nil (1))`, this is saying:
+
+- `defrecord` has 2 special arguments
+- The first two arguments don't get special internal indentation
+- All remaining arguments have an internal indent spec of `(1)` (which means only the arglist is indented specially and the rest is the body).
+
+For something more complicated: `letfn` is `(1 ((:defn)) nil)`. This means
+
+- `letfn` has one special argument (the bindings list).
+- The first arg has an indent spec of `((:defn))`, which means all forms _inside_ the first arg have an indent spec of `(1)`.
+- The second argument, and all other arguments, are regular forms.
+
+```
+(letfn [(twice [x]
+          (* x 2))
+        (six-times [y]
+          (* (twice y) 3))]
+  (println "Twice 15 =" (twice 15))
+  (println "Six times 15 ="
+           (six-times 15)))
+```
+
+A few more examples:
+
+```el
+(define-clojure-indent
+  (implement '(1 (1)))
+  (letfn     '(1 ((:defn)) nil))
+  (proxy     '(2 nil nil (1)))
+  (reify     '(:defn (1)))
+  (deftype   '(2 nil nil (1)))
+  (defrecord '(2 nil nil (1)))
+  (specify   '(1 (1)))
+  (specify   '(1 (1))))
 ```
 
 Don't use special indentation settings for forms with names that are not unique,
 as `clojure-mode`'s indentation engine is not namespace-aware and you might
 end up getting strange indentation in unexpected places.
-
-Please, see the docstrings of the Emacs Lisp functions/vars noted above for
-information about customizing this indentation behavior.
 
 ## Related packages
 
