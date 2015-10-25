@@ -686,11 +686,12 @@ Implementation function for `clojure--find-indent-spec'."
       (let* ((function (thing-at-point 'symbol))
              (method (or (when function ;; Is there a spec here?
                            (clojure--get-indent-method function))
-                         ;; `up-list' errors on unbalanced sexps.
                          (ignore-errors
-                           (up-list) ;; Otherwise look higher up.
-                           (clojure-backward-logical-sexp 1)
-                           (clojure--find-indent-spec-backtracking)))))
+                           ;; Otherwise look higher up.
+                           (pcase (syntax-ppss)
+                             (`(,(pred (< 0)) ,start . ,_)
+                              (goto-char start)
+                              (clojure--find-indent-spec-backtracking)))))))
         (when (numberp method)
           (setq method (list method)))
         (pcase method

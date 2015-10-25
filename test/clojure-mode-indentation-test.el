@@ -298,6 +298,10 @@ values of customisable variables."
     ok
   )")
 
+(def-full-indent-test unfinished-sexps
+  "(letfn [(tw [x]
+          dd")
+
 (def-full-indent-test symbols-ending-in-crap
   "(msg? ExceptionInfo
       10)"
