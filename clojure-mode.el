@@ -186,21 +186,21 @@ Inherits from `emacs-lisp-mode-syntax-table'.")
   "Prevent paredit from inserting useless spaces.
 See `paredit-space-for-delimiter-predicates' for the meaning of
 ENDP and DELIM."
-  (if (or (derived-mode-p 'clojure-mode)
-          (derived-mode-p 'cider-repl-mode))
+  (or endp
+      (not (memq delim '(?\" ?{ ?\( )))
+      (not (or (derived-mode-p 'clojure-mode)
+               (derived-mode-p 'cider-repl-mode)))
       (save-excursion
         (backward-char)
-        (if (and (or (char-equal delim ?\()
-                     (char-equal delim ?\")
-                     (char-equal delim ?{))
-                 (not endp))
-            (if (char-equal (char-after) ?#)
-                (and (not (bobp))
-                     (or (char-equal ?w (char-syntax (char-before)))
-                         (char-equal ?_ (char-syntax (char-before)))))
-              t)
-          t))
-    t))
+        (cond ((eq (char-after) ?#)
+               (and (not (bobp))
+                    (or (char-equal ?w (char-syntax (char-before)))
+                        (char-equal ?_ (char-syntax (char-before))))))
+              ((and (eq delim ?\()
+                    (eq (char-after) ??)
+                    (eq (char-before) ?#))
+               nil)
+              (t)))))
 
 (defun clojure-no-space-after-tag (endp delimiter)
   "Prevent inserting a space after a reader-literal tag?
