@@ -325,7 +325,8 @@ values of customisable variables."
       ;; `scan-error'. In that case, we should return the
       ;; indentation as if there were an extra sexp at point.
       (scan-error (cl-incf pos)))
-    (+ base-col (if (evenp pos) 0 2))))
+    (+ base-col (if (= (% pos 2) 0)
+                    0 2))))
 (put-clojure-indent 'test-cond #'indent-cond)
 
 (defun indent-cond-0 (_indent-point _state) 0)
