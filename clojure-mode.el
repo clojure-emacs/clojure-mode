@@ -878,7 +878,7 @@ it from Lisp code, use (put-clojure-indent 'some-symbol :defn)."
   (proxy '(2 nil nil (1)))
   (as-> 2)
 
-  (reify '(1 nil (1)))
+  (reify '(:defn (1)))
   (deftype '(2 nil nil (1)))
   (defrecord '(2 nil nil (1)))
   (defprotocol '(1))
