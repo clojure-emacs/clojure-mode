@@ -270,10 +270,18 @@ values of customisable variables."
   e)")
 
 (def-full-indent-test reify
-  "(reify
-    Object
+  "(reify Object
   (x [_]
-    1))")
+    1))"
+  "(reify
+  om/IRender
+  (render [this]
+    (let [indent-test :fail]
+      ...))
+  om/IRender
+  (render [this]
+    (let [indent-test :fail]
+      ...)))")
 
 (def-full-indent-test reader-conditionals
   "#?@ (:clj []
