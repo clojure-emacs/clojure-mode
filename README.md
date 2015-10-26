@@ -123,17 +123,15 @@ So, for instance, if I specify the `defrecord` spec as `(2 nil nil (1))`, this i
 For something more complicated: `letfn` is `(1 ((:defn)) nil)`. This means
 
 - `letfn` has one special argument (the bindings list).
-- The first arg has an indent spec of `((:defn))`, which means all forms _inside_ the first arg have an indent spec of `(1)`.
+- The first arg has an indent spec of `((:defn))`, which means all forms _inside_ the first arg have an indent spec of `(:defn)`.
 - The second argument, and all other arguments, are regular forms.
 
-```
+```clj
 (letfn [(twice [x]
           (* x 2))
         (six-times [y]
           (* (twice y) 3))]
-  (println "Twice 15 =" (twice 15))
-  (println "Six times 15 ="
-           (six-times 15)))
+  (six-times 15))
 ```
 
 A few more examples:
