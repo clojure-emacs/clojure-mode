@@ -1047,7 +1047,7 @@ Return nil if not inside a project."
                                   (locate-dominating-file dir-name fname))
                                 '("project.clj" "build.boot" "build.gradle")))))
     (when (< 0 (length choices))
-      (car (sort choices (lambda (a b) (file-in-directory-p a b)))))))
+      (car (sort choices 'file-in-directory-p)))))
 
 (defun clojure-project-relative-path (path)
   "Denormalize PATH by making it relative to the project root."
