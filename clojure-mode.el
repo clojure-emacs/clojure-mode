@@ -144,6 +144,16 @@ For example, \[ is allowed in :db/id[:db.part/user]."
           (and (listp value)
                (cl-every 'characterp value))))
 
+(defcustom clojure-build-tool-files '("project.clj" "build.boot" "build.gradle")
+  "A list of files, which are looked for in order to identify the
+project's root. Out-of-the box clojure-mode understands lein,
+boot and gradle."
+  :type '(repeat string)
+  :group 'clojure
+  :safe (lambda (value)
+          (and (listp value)
+               (cl-every 'stringp value))))
+
 (defvar clojure-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "C-:") #'clojure-toggle-keyword-string)
@@ -1041,16 +1051,13 @@ nil."
 
 Use `default-directory' if DIR-NAME is nil.
 Return nil if not inside a project."
-  (let ((dir-name (or dir-name default-directory)))
-    (let ((lein-project-dir (locate-dominating-file dir-name "project.clj"))
-          (boot-project-dir (locate-dominating-file dir-name "build.boot")))
-      (when (or lein-project-dir boot-project-dir)
-        (file-truename
-         (cond ((not lein-project-dir) boot-project-dir)
-               ((not boot-project-dir) lein-project-dir)
-               (t (if (file-in-directory-p lein-project-dir boot-project-dir)
-                      lein-project-dir
-                    boot-project-dir))))))))
+  (let* ((dir-name (or dir-name default-directory))
+         (choices (delq nil
+                        (mapcar (lambda (fname)
+                                  (locate-dominating-file dir-name fname))
+                                '("project.clj" "build.boot" "build.gradle")))))
+    (when (> (length choices) 0)
+      (car (sort choices #'file-in-directory-p)))))
 
 (defun clojure-project-relative-path (path)
   "Denormalize PATH by making it relative to the project root."
