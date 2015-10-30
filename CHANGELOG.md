@@ -2,20 +2,24 @@
 
 ## master (unreleased)
 
+## 5.0.0 (30/10/2015)
+
 ### New features
 
 * [#302](https://github.com/clojure-emacs/clojure-mode/pull/302): Add new sexp navigation commands. `clojure-forward-logical-sexp` and `clojure-backward-logical-sexp` consider `^hints` and `#reader.macros` to be part of the sexp that follows them.
 * [#303](https://github.com/clojure-emacs/clojure-mode/issues/303): Handle `boot` projects in `clojure-expected-ns`.
 * Added dedicated modes for ClojureScript, ClojureC and ClojureX. All of them are derived from `clojure-mode`.
+* Added support for Gradle projects.
+* Vastly improved indentation engine.
+* Added support for reader conditionals.
+* Improved font-locking of namespaced symbols.
 
 ### Bugs fixed
 
 * [#310](https://github.com/clojure-emacs/clojure-mode/issues/310) and [#311](https://github.com/clojure-emacs/clojure-mode/issues/311) Fix `clojure-expected-ns` in multi-source projects.
 * [#307](https://github.com/clojure-emacs/clojure-mode/issues/307): Don't highlight `handle` and `handler-case` as keywords.
-
-### Bugs fixed
-
 * Fix font-locking for def with special chars such as: `defn*`, `defspecial!`.
+* Numerous indentation issues.
 
 ## 4.1.0 (20/06/2015)
 
