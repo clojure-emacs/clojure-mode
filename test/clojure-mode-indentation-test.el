@@ -240,6 +240,11 @@ values of customisable variables."
   (:gen-class)
   )")
 
+(def-full-indent-test default-is-not-a-define
+  "(default a
+         b
+         b)")
+
 (def-full-indent-test non-symbol-at-start
   "{\"1\" 2
  *3 4}")

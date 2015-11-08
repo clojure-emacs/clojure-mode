@@ -828,8 +828,9 @@ This function also returns nil meaning don't specify the indentation."
                        (or (and clojure-defun-style-default-indent
                                 ;; largely to preserve useful alignment of :require, etc in ns
                                 (not (string-match "^:" function)))
-                           (string-match "\\`\\(?:\\S +/\\)?\\(def\\|with-\\)"
-                                         function)))))
+                           (and (string-match "\\`\\(?:\\S +/\\)?\\(def\\|with-\\)"
+                                              function)
+                                (not (string-match "\\`default" function)))))))
          (+ lisp-body-indent containing-form-column))
         (_ (clojure--normal-indent calculate-lisp-indent-last-sexp))))))
 
