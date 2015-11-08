@@ -245,6 +245,22 @@ values of customisable variables."
          b
          b)")
 
+(def-full-indent-test extend-type-allow-multiarity
+  "(extend-type Banana
+  Fruit
+  (subtotal
+    ([item]
+     (* 158 (:qty item)))
+    ([item a]
+     (* a (:qty item)))))"
+  "(extend-protocol Banana
+  Fruit
+  (subtotal
+    ([item]
+     (* 158 (:qty item)))
+    ([item a]
+     (* a (:qty item)))))")
+
 (def-full-indent-test non-symbol-at-start
   "{\"1\" 2
  *3 4}")
