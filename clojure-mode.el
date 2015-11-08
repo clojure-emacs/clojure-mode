@@ -145,9 +145,8 @@ For example, \[ is allowed in :db/id[:db.part/user]."
                (cl-every 'characterp value))))
 
 (defcustom clojure-build-tool-files '("project.clj" "build.boot" "build.gradle")
-  "A list of files, which are looked for in order to identify the
-project's root. Out-of-the box clojure-mode understands lein,
-boot and gradle."
+  "A list of files, which identify a Clojure project's root.
+Out-of-the box clojure-mode understands lein, boot and gradle."
   :type '(repeat string)
   :group 'clojure
   :safe (lambda (value)
