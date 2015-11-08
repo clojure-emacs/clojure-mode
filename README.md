@@ -94,7 +94,7 @@ prefixed with some ns (or ns alias):
 The bodies of certain more complicated macros and special forms
 (e.g. `letfn`, `deftype`, `extend-protocol`, etc) are indented using
 a contextual backtracking indentation method, require more sophisticated
-indent specifications. Here are a few examples.
+indent specifications. Here are a few examples:
 
 ```el
 (define-clojure-indent
@@ -108,7 +108,7 @@ indent specifications. Here are a few examples.
   (specify   '(1 (1))))
 ```
 
-These follow the same rules as the `:style/indent` metadata specified by cider-nrepl.
+These follow the same rules as the `:style/indent` metadata specified by [cider-nrepl][].
 For instructions on how to write these specifications, see
 [this document](https://github.com/clojure-emacs/cider/blob/master/doc/Indent-Spec.md#indent-specification).
 The only difference is that you're allowed to use lists instead of vectors.
@@ -212,6 +212,7 @@ Distributed under the GNU General Public License; type <kbd>C-h C-c</kbd> to vie
 [badge-travis]: https://travis-ci.org/clojure-emacs/clojure-mode.svg?branch=master
 [travis]: https://travis-ci.org/clojure-emacs/clojure-mode
 [CIDER]: https://github.com/clojure-emacs/cider
+[cider-nrepl]: https://github.com/clojure-emacs/cider-nrepl
 [inf-clojure]: https://github.com/clojure-emacs/inf-clojure
 [Leiningen]: http://leiningen.org
 [contributors]: https://github.com/clojure-emacs/clojure-mode/contributors
