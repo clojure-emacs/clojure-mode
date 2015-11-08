@@ -149,6 +149,7 @@ For example, \[ is allowed in :db/id[:db.part/user]."
 Out-of-the box clojure-mode understands lein, boot and gradle."
   :type '(repeat string)
   :group 'clojure
+  :package-version '(clojure-mode . "5.0.0")
   :safe (lambda (value)
           (and (listp value)
                (cl-every 'stringp value))))
