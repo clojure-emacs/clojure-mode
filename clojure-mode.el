@@ -1104,13 +1104,15 @@ Useful if a file has been renamed."
 
 (defun clojure-find-ns ()
   "Find the namespace of the current Clojure buffer."
-  (let ((regexp clojure-namespace-name-regex))
-    (save-excursion
-      (save-restriction
-        (widen)
-        (goto-char (point-min))
-        (when (re-search-forward regexp nil t)
-          (match-string-no-properties 4))))))
+  (save-excursion
+    (save-restriction
+      (widen)
+      ;; The closest ns form above point.
+      (when (or (re-search-backward clojure-namespace-name-regex nil t)
+                ;; Or any form at all.
+                (and (goto-char (point-min))
+                     (re-search-forward clojure-namespace-name-regex nil t)))
+        (match-string-no-properties 4)))))
 
 (defun clojure-find-def ()
   "Find the var declaration macro and symbol name of the current form.
