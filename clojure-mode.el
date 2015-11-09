@@ -83,44 +83,37 @@
 (defface clojure-keyword-face
   '((t (:inherit font-lock-constant-face)))
   "Face used to font-lock Clojure keywords (:something)."
-  :group 'clojure
   :package-version '(clojure-mode . "3.0.0"))
 
 (defface clojure-character-face
   '((t (:inherit font-lock-string-face)))
   "Face used to font-lock Clojure character literals."
-  :group 'clojure
   :package-version '(clojure-mode . "3.0.0"))
 
 (defface clojure-interop-method-face
   '((t (:inherit font-lock-preprocessor-face)))
   "Face used to font-lock interop method names (camelCase)."
-  :group 'clojure
   :package-version '(clojure-mode . "3.0.0"))
 
 (defcustom clojure-defun-style-default-indent nil
   "When non-nil, use default indenting for functions and macros.
 Otherwise check `define-clojure-indent' and `put-clojure-indent'."
   :type 'boolean
-  :group 'clojure
   :safe 'booleanp)
 
 (defcustom clojure-use-backtracking-indent t
   "When non-nil, enable context sensitive indentation."
   :type 'boolean
-  :group 'clojure
   :safe 'booleanp)
 
 (defcustom clojure-max-backtracking 3
   "Maximum amount to backtrack up a list to check for context."
   :type 'integer
-  :group 'clojure
   :safe 'integerp)
 
 (defcustom clojure-docstring-fill-column fill-column
   "Value of `fill-column' to use when filling a docstring."
   :type 'integer
-  :group 'clojure
   :safe 'integerp)
 
 (defcustom clojure-docstring-fill-prefix-width 2
@@ -129,7 +122,6 @@ The default value conforms with the de facto convention for
 Clojure docstrings, aligning the second line with the opening
 double quotes on the third column."
   :type 'integer
-  :group 'clojure
   :safe 'integerp)
 
 (defcustom clojure-omit-space-between-tag-and-delimiters '(?\[ ?\{)
@@ -139,7 +131,6 @@ For example, \[ is allowed in :db/id[:db.part/user]."
               (const :tag "{" ?\{)
               (const :tag "(" ?\()
               (const :tag "\"" ?\"))
-  :group 'clojure
   :safe (lambda (value)
           (and (listp value)
                (cl-every 'characterp value))))
@@ -148,7 +139,6 @@ For example, \[ is allowed in :db/id[:db.part/user]."
   "A list of files, which identify a Clojure project's root.
 Out-of-the box clojure-mode understands lein, boot and gradle."
   :type '(repeat string)
-  :group 'clojure
   :package-version '(clojure-mode . "5.0.0")
   :safe (lambda (value)
           (and (listp value)
@@ -862,7 +852,6 @@ You can use this to let Emacs indent your own macros the same way
 that it indents built-in macros like with-open.  To manually set
 it from Lisp code, use (put-clojure-indent 'some-symbol :defn)."
   :type '(repeat symbol)
-  :group 'clojure
   :set 'add-custom-clojure-indents)
 
 (define-clojure-indent
