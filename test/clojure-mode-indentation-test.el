@@ -243,7 +243,10 @@ values of customisable variables."
 (def-full-indent-test default-is-not-a-define
   "(default a
          b
-         b)")
+         b)"
+  "(some.namespace/default a
+                        b
+                        b)")
 
 (def-full-indent-test extend-type-allow-multiarity
   "(extend-type Banana
