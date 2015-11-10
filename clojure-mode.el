@@ -1092,7 +1092,9 @@ Useful if a file has been renamed."
             (error "Namespace not found")))))))
 
 (defun clojure-find-ns ()
-  "Find the namespace of the current Clojure buffer."
+  "Return the namespace of the current Clojure buffer.
+Return the namespace closest to point and above it.  If there are
+no namespaces above point, return the first one in the buffer."
   (save-excursion
     (save-restriction
       (widen)
