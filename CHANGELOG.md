@@ -2,6 +2,14 @@
 
 ## master (unreleased)
 
+## 5.0.1 (15/11/2015)
+
+### Bugs fixed
+
+* Don't treat the symbol `default-(something)` as def* macro.
+* `cider-find-ns` now returns the closest `ns` instead of the first one.
+* [#344](https://github.com/clojure-emacs/clojure-mode/issues/344): Fixed the indentation of `extend-type`.
+
 ## 5.0.0 (30/10/2015)
 
 ### New features
