@@ -373,6 +373,78 @@ x
 2
 3))")
 
+;;; Alignment
+(defmacro def-full-align-test (name value &rest forms)
+  "Verify that all FORMs correspond to a properly indented sexps."
+  (declare (indent 2))
+  `(ert-deftest ,(intern (format "test-align-%s-%s" name value)) ()
+     (let ((clojure-align-forms ,value))
+       ,@(mapcar (lambda (form)
+                   `(with-temp-buffer
+                      (clojure-mode)
+                      (insert "\n" ,(replace-regexp-in-string " +" " " form))
+                      (indent-region (point-min) (point-max))
+                      (should (equal (buffer-substring-no-properties (point-min) (point-max))
+                                     ,(concat "\n" form)))))
+                 forms))))
+
+(def-full-align-test basic t
+  "{:this-is-a-form b
+ c               d}"
+  "{:this-is b
+ c        d}"
+  "{:this b
+ c     d}"
+  "{:a b
+ c  d}"
+
+  "(let [this-is-a-form b
+      c              d])"
+  "(let [this-is b
+      c       d])"
+  "(let [this b
+      c    d])"
+  "(let [a b
+      c d])")
+
+(def-full-align-test basic 10
+  "{:this-is-a-form b
+ c d}"
+  "{:this-is b
+ c        d}"
+  "{:this b
+ c     d}"
+  "{:a b
+ c  d}"
+
+  "(let [this-is-a-form b
+      c d])"
+  "(let [this-is b
+      c       d])"
+  "(let [this b
+      c    d])"
+  "(let [a b
+      c d])")
+
+(def-full-align-test basic nil
+  "{:this-is-a-form b
+ c d}"
+  "{:this-is b
+ c d}"
+  "{:this b
+ c d}"
+  "{:a b
+ c d}"
+
+  "(let [this-is-a-form b
+      c d])"
+  "(let [this-is b
+      c d])"
+  "(let [this b
+      c d])"
+  "(let [a b
+      c d])")
+
 
 ;;; Misc
 

@@ -629,6 +629,81 @@ point) to check."
 (put 'definline 'clojure-doc-string-elt 2)
 (put 'defprotocol 'clojure-doc-string-elt 2)
 
+;;; Vertical alignment
+(defcustom clojure-binding-forms-regexp (regexp-opt (mapcar #'symbol-name
+                                                     '(let when-let if-let binding loop with-open))
+                                             'symbols)
+  "Regular expression matching forms that have binding forms."
+  :type 'regexp)
+
+(defcustom clojure-align-forms nil
+  "If non-nil, vertically align some forms internally.
+This applies to binding forms (as identified by
+‘clojure-binding-forms-regexp’) and to map literals.  If nil,
+don’t align forms at all.
+
+This can also be a number, which is the maximum
+number of spaces to use for aligning some forms.  If vertical
+alignment would require more than this many consecutive spaces,
+only one space is used instead."
+  :type '(choice integer boolean))
+
+(defun clojure--should-align-p ()
+  "Non-nil if the forms after point should be aligned."
+  (or (and (eq (char-before) ?{)
+           (not (eq (char-before (1- (point))) ?\#)))
+      (save-excursion
+        (forward-char -1)
+        (while (and (not (bobp))
+                    (progn (backward-sexp 1)
+                           (clojure--looking-at-non-logical-sexp))))
+        (let ((sym (thing-at-point 'symbol)))
+          (and sym (string-match clojure-binding-forms-regexp sym))))))
+
+(defun clojure--align-to-column (column)
+  "Align next form to COLUMN"
+  (let ((distance (skip-syntax-forward " ")))
+    ;; Don’t align comment or end-of-line.
+    (unless (or (eolp) (equal (syntax-after (point)) '(11)))
+      (when (> distance 0)
+        (delete-char (- 1 distance)))
+      (insert (make-string (max 0 (- column (current-column))) ?\s)))))
+
+(defun clojure-maybe-align-line ()
+  "If suitable, align forms in current line."
+  (when clojure-align-forms
+    (save-excursion
+      (back-to-indentation)
+      (let ((end (point)))
+        (ignore-errors (backward-up-list))
+        (forward-char 1)
+        (when (clojure--should-align-p)
+          (let ((target-column nil)
+                (last-line-end -1))
+            (while (and (< (point) end)
+                        (not (eobp)))
+              ;; We’re at the binding, move over it.
+              (clojure-forward-logical-sexp)
+              (unless (> (point) end)
+                ;; Move to the start of the value.
+                (comment-forward (point-max))
+                ;; Value form at the start of a line. Can’t align this!
+                (if (>= (point) end)
+                    (setq target-column nil)
+                  ;; Can’t align multiple bindings in same line.
+                  (when (> (point) last-line-end)
+                    (setq target-column (current-column))
+                    (setq last-line-end (line-end-position))))
+                (clojure-forward-logical-sexp)))
+            ;; We’re there
+            (when target-column
+              (if (and (numberp clojure-align-forms)
+                       (> (- target-column (current-column))
+                          clojure-align-forms))
+                  (clojure--align-to-column (1+ (current-column)))
+                (clojure--align-to-column target-column)))))))))
+
+;;; Indentation
 (defun clojure-indent-line ()
   "Indent current line as Clojure code."
   (if (clojure-in-docstring-p)
@@ -638,7 +713,8 @@ point) to check."
                    (<= (string-width (match-string-no-properties 0))
                        (string-width (clojure-docstring-fill-prefix))))
           (replace-match (clojure-docstring-fill-prefix))))
-    (lisp-indent-line)))
+    (prog1 (lisp-indent-line)
+      (clojure-maybe-align-line))))
 
 (defvar clojure-get-indent-function nil
   "Function to get the indent spec of a symbol.
@@ -1138,6 +1214,7 @@ Sexps that don't represent code are ^metadata or #reader.macros."
 This will skip over sexps that don't represent objects, so that ^hints and
 #reader.macros are considered part of the following sexp."
   (interactive "p")
+  (unless n (setq n 1))
   (if (< n 0)
       (clojure-backward-logical-sexp (- n))
     (let ((forward-sexp-function nil))
@@ -1153,6 +1230,7 @@ This will skip over sexps that don't represent objects, so that ^hints and
 This will skip over sexps that don't represent objects, so that ^hints and
 #reader.macros are considered part of the following sexp."
   (interactive "p")
+  (unless n (setq n 1))
   (if (< n 0)
       (clojure-forward-logical-sexp (- n))
     (let ((forward-sexp-function nil))
