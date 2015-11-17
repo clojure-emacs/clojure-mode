@@ -1138,6 +1138,7 @@ Sexps that don't represent code are ^metadata or #reader.macros."
 This will skip over sexps that don't represent objects, so that ^hints and
 #reader.macros are considered part of the following sexp."
   (interactive "p")
+  (unless n (setq n 1))
   (if (< n 0)
       (clojure-backward-logical-sexp (- n))
     (let ((forward-sexp-function nil))
@@ -1153,6 +1154,7 @@ This will skip over sexps that don't represent objects, so that ^hints and
 This will skip over sexps that don't represent objects, so that ^hints and
 #reader.macros are considered part of the following sexp."
   (interactive "p")
+  (unless n (setq n 1))
   (if (< n 0)
       (clojure-forward-logical-sexp (- n))
     (let ((forward-sexp-function nil))
