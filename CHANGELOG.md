@@ -4,6 +4,7 @@
 
 ### New features
 
+* Vertically align sexps with `C-c SPC`. This can also be done automatically (as part of indentation) by turning on `clojure-align-forms-automatically`.
 * Indent and font-lock forms that start with `let-`, `while-` or `when-` like their counterparts.
 * Apply the `font-lock-comment-face` to code commented out with `#_`.
 

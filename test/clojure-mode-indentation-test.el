@@ -385,6 +385,92 @@ x
 2
 3))")
 
+;;; Alignment
+(defmacro def-full-align-test (name &rest forms)
+  "Verify that all FORMs correspond to a properly indented sexps."
+  (declare (indent defun))
+  `(ert-deftest ,(intern (format "test-align-%s" name)) ()
+     (let ((clojure-align-forms-automatically t))
+       ,@(mapcar (lambda (form)
+                   `(with-temp-buffer
+                      (clojure-mode)
+                      (insert "\n" ,(replace-regexp-in-string " +" " " form))
+                      (indent-region (point-min) (point-max))
+                      (should (equal (buffer-substring-no-properties (point-min) (point-max))
+                                     ,(concat "\n" form)))))
+                 forms))
+     (let ((clojure-align-forms-automatically nil))
+       ,@(mapcar (lambda (form)
+                   `(with-temp-buffer
+                      (clojure-mode)
+                      (insert "\n" ,(replace-regexp-in-string " +" " " form))
+                      (indent-region (point-min) (point-max))
+                      (should (equal (buffer-substring-no-properties
+                                      (point-min) (point-max))
+                                     ,(concat "\n" (replace-regexp-in-string
+                                                    "\\([a-z]\\) +" "\\1 " form))))))
+                 forms))))
+
+(def-full-align-test basic
+  "{:this-is-a-form b
+ c               d}"
+  "{:this-is b
+ c        d}"
+  "{:this b
+ c     d}"
+  "{:a b
+ c  d}"
+
+  "(let [this-is-a-form b
+      c              d])"
+  "(let [this-is b
+      c       d])"
+  "(let [this b
+      c    d])"
+  "(let [a b
+      c d])")
+
+(def-full-align-test basic-reversed
+  "{c               d
+ :this-is-a-form b}"
+  "{c        d
+ :this-is b}"
+  "{c     d
+ :this b}"
+  "{c  d
+ :a b}"
+
+  "(let [c              d
+      this-is-a-form b])"
+  "(let [c       d
+      this-is b])"
+  "(let [c    d
+      this b])"
+  "(let [c d
+      a b])")
+
+(def-full-align-test incomplete-sexp
+  "(cond aa b
+      casodkas )"
+  "(cond aa b
+      casodkas)"
+  "(cond aa b
+      casodkas "
+  "(cond aa b
+      casodkas"
+  "(cond aa       b
+      casodkas a)"
+  "(cond casodkas a
+      aa       b)"
+  "(cond casodkas
+      aa b)")
+
+(def-full-align-test multiple-words
+  "(cond this     is    just
+      a        test  of
+      how      well
+      multiple words will work)")
+
 
 ;;; Misc
 
