@@ -818,7 +818,7 @@ This function also returns nil meaning don't specify the indentation."
                        (or (and clojure-defun-style-default-indent
                                 ;; largely to preserve useful alignment of :require, etc in ns
                                 (not (string-match "^:" function)))
-                           (and (string-match "\\`\\(?:\\S +/\\)?\\(def[a-z]*\\|with-\\)"
+                           (and (string-match "\\`\\(?:\\S +/\\)?\\(def[a-z]*\\|with-\\|let\\|when\\|while\\)"
                                               function)
                                 (not (string-match "\\`default" (match-string 1 function))))))))
          (+ lisp-body-indent containing-form-column))
