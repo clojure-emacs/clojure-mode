@@ -2,7 +2,13 @@
 
 ## master (unreleased)
 
+### New features
+
 * Indent and font-lock forms that start with `let-`, `while-` or `when-` like their counterparts.
+
+### Bugs fixed
+
+* Namespaces can now use the full palette of legal symbol characters.
 
 ## 5.0.1 (15/11/2015)
 
