@@ -127,8 +127,8 @@ POS."
 (ert-deftest clojure-mode-syntax-table/fontify-let-when-while-type-forms ()
   :tags '(fontification syntax-table)
   (should (equal (clojure-test-face-at 2 11 "(when-alist [x 1]\n  ())") 'font-lock-keyword-face))
-  (should (equal (clojure-test-face-at 2 11 "(while-alist [x 1]\n  ())") 'font-lock-keyword-face))
-  (should (equal (clojure-test-face-at 2 11 "(let-alist [x 1]\n  ())") 'various-faces)))
+  (should (equal (clojure-test-face-at 2 12 "(while-alist [x 1]\n  ())") 'font-lock-keyword-face))
+  (should (equal (clojure-test-face-at 2 10 "(let-alist [x 1]\n  ())") 'font-lock-keyword-face)))
 
 (ert-deftest clojure-mode-syntax-table/type ()
   :tags '(fontification syntax-table)

@@ -2,6 +2,8 @@
 
 ## master (unreleased)
 
+* Indent and font-lock forms that start with `let-`, `while-` or `when-` like their counterparts.
+
 ## 5.0.1 (15/11/2015)
 
 ### Bugs fixed
