@@ -426,6 +426,12 @@ Called by `imenu--generic-function'."
             "declare") t)
          "\\>")
        1 font-lock-keyword-face)
+      ;; Macros similar to let, when, and while
+      (,(rx symbol-start
+            (or "let" "when" "while") "-"
+            (1+ (or (syntax word) (syntax symbol)))
+            symbol-end)
+       0 font-lock-keyword-face)
       (,(concat
          "\\<"
          (regexp-opt
@@ -667,7 +673,10 @@ symbol properties."
         (or (get (intern-soft (match-string 1 function-name))
                  'clojure-indent-function)
             (get (intern-soft (match-string 1 function-name))
-                 'clojure-backtracking-indent)))))
+                 'clojure-backtracking-indent)))
+      (when (string-match (rx (or "let" "when" "while") (syntax symbol))
+                          function-name)
+        (clojure--get-indent-method (substring (match-string 0 function-name) 0 -1)))))
 
 (defvar clojure--current-backtracking-depth 0)
 

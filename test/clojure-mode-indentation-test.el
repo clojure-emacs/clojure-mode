@@ -335,6 +335,10 @@ values of customisable variables."
   "(msg' 1
       10)")
 
+(def-full-indent-test let-when-while-forms
+  "(let-alist [x 1]\n  ())"
+  "(while-alist [x 1]\n  ())"
+  "(when-alist [x 1]\n  ())")
 
 (defun indent-cond (indent-point state)
   (goto-char (elt state 1))

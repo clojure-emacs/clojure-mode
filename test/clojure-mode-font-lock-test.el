@@ -124,6 +124,12 @@ POS."
   (should (equal (clojure-test-face-at 8 8 "{:a.ias/some 20}")  '(default clojure-keyword-face)))
   (should (equal (clojure-test-face-at 9 12 "{:a.ias/some 20}") '(clojure-keyword-face))))
 
+(ert-deftest clojure-mode-syntax-table/fontify-let-when-while-type-forms ()
+  :tags '(fontification syntax-table)
+  (should (equal (clojure-test-face-at 2 11 "(when-alist [x 1]\n  ())") 'font-lock-keyword-face))
+  (should (equal (clojure-test-face-at 2 11 "(while-alist [x 1]\n  ())") 'font-lock-keyword-face))
+  (should (equal (clojure-test-face-at 2 11 "(let-alist [x 1]\n  ())") 'various-faces)))
+
 (ert-deftest clojure-mode-syntax-table/type ()
   :tags '(fontification syntax-table)
   (should (eq (clojure-test-face-at 1 9 "SomeClass") 'font-lock-type-face)))
