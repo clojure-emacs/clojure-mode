@@ -381,7 +381,8 @@ Called by `imenu--generic-function'."
        (2 font-lock-type-face nil t))
       ;; Function definition (anything that starts with def and is not
       ;; listed above)
-      (,(concat "(\\(?:[a-z\.-]+/\\)?\\(def[^ \r\n\t]*\\)"
+      (,(concat "(\\(?:[_a-z\*\.-\\+]\\{1\\}[_a-z0-9#\*\.-\\+]+/\\)?"
+                "\\(def[^ \r\n\t]*\\)"
                 ;; Function declarations
                 "\\>"
                 ;; Any whitespace
