@@ -5,6 +5,7 @@
 ### New features
 
 * Indent and font-lock forms that start with `let-`, `while-` or `when-` like their counterparts.
+* Namespace font-locking according to clojure.lang.LispReader
 
 ### Bugs fixed
 

@@ -196,6 +196,11 @@ POS."
 
 (ert-deftest clojure-mode-syntax-table/namespaced-def ()
   :tags '(fontification syntax-table)
+  (clojure-test-with-temp-buffer "(_c4/defconstrainedfn bar [] nil)"
+    (should (eq (clojure-test-face-at 2 4) 'font-lock-type-face))
+    (should (eq (clojure-test-face-at 5 5) 'default))
+    (should (eq (clojure-test-face-at 6 18) 'font-lock-keyword-face))
+    (should (eq (clojure-test-face-at 23 25) 'font-lock-function-name-face)))
   (clojure-test-with-temp-buffer "(clo/defbar foo nil)"
     (should (eq (clojure-test-face-at 2 4) 'font-lock-type-face))
     (should (eq (clojure-test-face-at 5 5) 'default))
