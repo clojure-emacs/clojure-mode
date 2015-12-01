@@ -56,6 +56,10 @@
 
 
 
+;; '[', ']' must be treated in a special way. See
+;; http://www.gnu.org/software/emacs/manual/html_node/elisp/Regexp-Special.html
+(string-match "[^][0-9\";\'@\\^`~\(\)\{\}\\]" "teststr")
+
 (eval-when-compile
   (defvar calculate-lisp-indent-last-sexp)
   (defvar font-lock-beg)
@@ -381,7 +385,8 @@ Called by `imenu--generic-function'."
        (2 font-lock-type-face nil t))
       ;; Function definition (anything that starts with def and is not
       ;; listed above)
-      (,(concat "(\\(?:[a-z\.-]+/\\)?\\(def[^ \r\n\t]*\\)"
+      (,(concat "(\\(?:[_a-z\*\.-\\+]\\{1\\}[_a-z0-9#\*\.-\\+]+/\\)?"
+                "\\(def[^ \r\n\t]*\\)"
                 ;; Function declarations
                 "\\>"
                 ;; Any whitespace
