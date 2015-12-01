@@ -101,7 +101,8 @@ POS."
 
 (ert-deftest clojure-mode-syntax-table/fontify-clojure-keyword ()
   :tags '(fontification syntax-table)
-  (should (equal (clojure-test-face-at 2 11 "{:something 20}") '(clojure-keyword-face))))
+  (should (equal (clojure-test-face-at 3 11 "{:something 20}") '(clojure-keyword-face)))
+  (should (equal (clojure-test-face-at 2 3 "{:something 20}") 'various-faces)))
 
 (ert-deftest clojure-mode-syntax-table/stuff-in-backticks ()
   :tags '(fontification syntax-table)
@@ -115,11 +116,11 @@ POS."
 
 (ert-deftest clojure-mode-syntax-table/fontify-namespaced-keyword ()
   :tags '(fontification syntax-table)
-  (should (equal (clojure-test-face-at 2 2 "{:alias/some 20}")  '(clojure-keyword-face)))
+  (should (equal (clojure-test-face-at 2 3 "{:alias/some 20}")  'various-faces))
   (should (equal (clojure-test-face-at 3 7 "{:alias/some 20}")  '(font-lock-type-face clojure-keyword-face)))
   (should (equal (clojure-test-face-at 8 8 "{:alias/some 20}")  '(default clojure-keyword-face)))
   (should (equal (clojure-test-face-at 9 12 "{:alias/some 20}") '(clojure-keyword-face)))
-  (should (equal (clojure-test-face-at 2 2 "{:a.ias/some 20}")  '(clojure-keyword-face)))
+  (should (equal (clojure-test-face-at 2 3 "{:a.ias/some 20}")  'various-faces))
   (should (equal (clojure-test-face-at 3 7 "{:a.ias/some 20}")  '(font-lock-type-face clojure-keyword-face)))
   (should (equal (clojure-test-face-at 8 8 "{:a.ias/some 20}")  '(default clojure-keyword-face)))
   (should (equal (clojure-test-face-at 9 12 "{:a.ias/some 20}") '(clojure-keyword-face))))
@@ -261,8 +262,8 @@ POS."
 (ert-deftest clojure-mode-syntax-table/keyword-meta ()
   :tags '(fontification syntax-table)
   (clojure-test-with-temp-buffer "^:meta-data"
-    (should (eq (clojure-test-face-at 1 1) nil))
-    (should (equal (clojure-test-face-at 2 11) '(clojure-keyword-face)))))
+    (should (equal (clojure-test-face-at 1 2) nil))
+    (should (equal (clojure-test-face-at 3 11) '(clojure-keyword-face)))))
 
 (ert-deftest clojure-mode-syntax-table/characters ()
   :tags '(fontification syntax-table)

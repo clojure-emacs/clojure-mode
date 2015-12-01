@@ -463,7 +463,7 @@ Called by `imenu--generic-function'."
       ;; foo/ Foo/ @Foo/ /FooBar
       ("\\(?:\\<:?\\|\\.\\)@?\\([a-zA-Z][.a-zA-Z0-9$_-]*\\)\\(/\\)" (1 font-lock-type-face) (2 'default))
       ;; Constant values (keywords), including as metadata e.g. ^:static
-      ("\\<^?\\(:\\(\\sw\\|\\s_\\)+\\(\\>\\|\\_>\\)\\)" 1 'clojure-keyword-face append)
+      ("\\<^?::?\\(\\(\\sw\\|\\s_\\)+\\(\\>\\|\\_>\\)\\)" 1 'clojure-keyword-face append)
       ;; Java interop highlighting
       ;; CONST SOME_CONST (optionally prefixed by /)
       ("\\(?:\\<\\|/\\)\\([A-Z]+\\|\\([A-Z]+_[A-Z1-9_]+\\)\\)\\>" 1 font-lock-constant-face)
