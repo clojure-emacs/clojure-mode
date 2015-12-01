@@ -56,6 +56,10 @@
 
 
 
+;; '[', ']' must be treated in a special way. See
+;; http://www.gnu.org/software/emacs/manual/html_node/elisp/Regexp-Special.html
+(string-match "[^][0-9\";\'@\\^`~\(\)\{\}\\]" "teststr")
+
 (eval-when-compile
   (defvar calculate-lisp-indent-last-sexp)
   (defvar font-lock-beg)
