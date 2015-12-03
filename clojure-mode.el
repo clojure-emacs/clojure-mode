@@ -352,12 +352,19 @@ Called by `imenu--generic-function'."
               (set-match-data (list def-beg def-end)))))
         (goto-char start)))))
 
-(eval-when-compile
-  ;; See clojure.lang.LispReader definition and getMacro invocation(s)
-  (defconst clojure-sym-rest-chars "^][\";\'@\\^`~\(\)\{\}\\")
-  (defconst clojure-sym-1st-chars (concat clojure-sym-rest-chars "0-9"))
+(eval-and-compile
+  (defconst clojure-sym-rest-chars "^][\";\'@\\^`~\(\)\{\}\\"
+    "A black list of chars a clojure symbol must not contain. See
+definiton of 'macros': URL `http://git.io/vRGLD'.")
+  (defconst clojure-sym-1st-chars (concat clojure-sym-rest-chars "0-9")
+    "A black list of chars a clojure symbol must not start with. See
+the for-loop: URL `http://git.io/vRGTj' lines:
+URL `http://git.io/vRGIh', URL `http://git.io/vRGLE'
+and value definition of 'macros': URL `http://git.io/vRGLD'.")
   (defconst clojure-sym
-    (concat "[" clojure-sym-1st-chars "][" clojure-sym-rest-chars "]+")))
+    (concat "[" clojure-sym-1st-chars "][" clojure-sym-rest-chars "]+")
+    "A concatenation of black lists:
+`clojure-sym-1st-chars', `clojure-sym-rest-chars'."))
 
 (defconst clojure-font-lock-keywords
   (eval-when-compile
