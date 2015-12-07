@@ -130,6 +130,11 @@ POS."
   (should (equal (clojure-test-face-at 2 12 "(while-alist [x 1]\n  ())") 'font-lock-keyword-face))
   (should (equal (clojure-test-face-at 2 10 "(let-alist [x 1]\n  ())") 'font-lock-keyword-face)))
 
+(ert-deftest clojure-mode-syntax-table/comment-macros ()
+  :tags '(fontification syntax-table)
+  (should (not (clojure-test-face-at 1 2 "#_ \n;; some crap\n (lala 0101\n lao\n\n 0 0i)")))
+  (should (equal (clojure-test-face-at 5 41 "#_ \n;; some crap\n (lala 0101\n lao\n\n 0 0i)") 'font-lock-comment-face)))
+
 (ert-deftest clojure-mode-syntax-table/type ()
   :tags '(fontification syntax-table)
   (should (eq (clojure-test-face-at 1 9 "SomeClass") 'font-lock-type-face)))

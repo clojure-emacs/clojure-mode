@@ -327,7 +327,49 @@ If JUSTIFY is non-nil, justify as well as fill the paragraph."
         (do-auto-fill)))))
 
 
+;;; #_ comments font-locking
+;; Code heavily borrowed from Slime.
+;; https://github.com/slime/slime/blob/master/contrib/slime-fontifying-fu.el#L186
+(defvar clojure--comment-macro-regexp
+  (rx "#_" (* " ") (group-n 1 (not (any " "))))
+  "Regexp matching the start of a comment sexp.
+The beginning of match-group 1 should be before the sexp to be
+marked as a comment. The end of sexp is found with
+`clojure-forward-logical-sexp'. 
 
+By default, this only applies to code after the `#_' reader
+macro.  In order to also font-lock the `(comment ...)' macro as a
+comment, you can set the value to:
+    \"#_ *\\\\(?1:[^ ]\\\\)\\\\|\\\\(?1:(comment\\\\_>\\\\)\"")
+
+(defun clojure--search-comment-macro-internal (limit)
+  (when (search-forward-regexp clojure--comment-macro-regexp limit t)
+    (let* ((md (match-data))
+           (start (match-beginning 1))
+           (state (syntax-ppss start)))
+      ;; inside string or comment?
+      (if (or (nth 3 state)
+              (nth 4 state))
+          (clojure--search-comment-macro-internal limit)
+        (goto-char start)
+        (clojure-forward-logical-sexp 1)
+        ;; Data for (match-end 1).
+        (setf (elt md 3) (point))
+        (set-match-data md)
+        t))))
+
+(defun clojure--search-comment-macro (limit)
+  "Find comment macros and set the match data."
+  (let ((result 'retry))
+    (while (and (eq result 'retry) (<= (point) limit))
+      (condition-case nil
+          (setq result (clojure--search-comment-macro-internal limit))
+        (end-of-file (setq result nil))
+        (scan-error  (setq result 'retry))))
+    result))
+
+
+;;; General font-locking
 (defun clojure-match-next-def ()
   "Scans the buffer backwards for the next \"top-level\" definition.
 Called by `imenu--generic-function'."
@@ -499,6 +541,8 @@ any number of matches of `clojure--sym-forbidden-rest-chars'."))
        (1 font-lock-type-face nil t))
       ;; fooBar
       ("\\(?:\\<\\|/\\)\\([a-z]+[A-Z]+[a-zA-Z0-9$]*\\>\\)" 1 'clojure-interop-method-face)
+      ;; #_ and (comment ...) macros.
+      (clojure--search-comment-macro 1 font-lock-comment-face t)
       ;; Highlight `code` marks, just like `elisp'.
       (,(rx "`" (group-n 1 (optional "#'")
                          (+ (or (syntax symbol) (syntax word)))) "`")
