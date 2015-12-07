@@ -352,6 +352,20 @@ Called by `imenu--generic-function'."
               (set-match-data (list def-beg def-end)))))
         (goto-char start)))))
 
+(eval-and-compile
+  (defconst clojure-sym-rest-chars "^][\";\'@\\^`~\(\)\{\}\\"
+    "A black list of chars a clojure symbol must not contain. See
+definiton of 'macros': URL `http://git.io/vRGLD'.")
+  (defconst clojure-sym-1st-chars (concat clojure-sym-rest-chars "0-9")
+    "A black list of chars a clojure symbol must not start with. See
+the for-loop: URL `http://git.io/vRGTj' lines:
+URL `http://git.io/vRGIh', URL `http://git.io/vRGLE'
+and value definition of 'macros': URL `http://git.io/vRGLD'.")
+  (defconst clojure-sym
+    (concat "[" clojure-sym-1st-chars "][" clojure-sym-rest-chars "]+")
+    "A concatenation of black lists:
+`clojure-sym-1st-chars', `clojure-sym-rest-chars'."))
+
 (defconst clojure-font-lock-keywords
   (eval-when-compile
     `(;; Top-level variable definition
@@ -381,7 +395,8 @@ Called by `imenu--generic-function'."
        (2 font-lock-type-face nil t))
       ;; Function definition (anything that starts with def and is not
       ;; listed above)
-      (,(concat "(\\(?:[a-z\.-]+/\\)?\\(def[^ \r\n\t]*\\)"
+      (,(concat "(\\(?:" clojure-sym "/\\)?"
+                "\\(def[^ \r\n\t]*\\)"
                 ;; Function declarations
                 "\\>"
                 ;; Any whitespace
@@ -461,7 +476,8 @@ Called by `imenu--generic-function'."
       ;; Character literals - \1, \a, \newline, \u0000
       ("\\\\\\([[:punct:]]\\|[a-z0-9]+\\>\\)" 0 'clojure-character-face)
       ;; foo/ Foo/ @Foo/ /FooBar
-      ("\\(?:\\<:?\\|\\.\\)@?\\([a-zA-Z][.a-zA-Z0-9$_-]*\\)\\(/\\)" (1 font-lock-type-face) (2 'default))
+      (,(concat "\\(?:\\<:?\\|\\.\\)@?\\(" clojure-sym "\\)\\(/\\)")
+       (1 font-lock-type-face) (2 'default))
       ;; Constant values (keywords), including as metadata e.g. ^:static
       ("\\<^?\\(:\\(\\sw\\|\\s_\\)+\\(\\>\\|\\_>\\)\\)" 1 'clojure-keyword-face append)
       ;; Java interop highlighting

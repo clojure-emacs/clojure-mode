@@ -9,6 +9,7 @@
 ### Bugs fixed
 
 * Namespaces can now use the full palette of legal symbol characters.
+* Namespace font-locking according to clojure.lang.LispReader.
 
 ## 5.0.1 (15/11/2015)
 
