@@ -353,19 +353,19 @@ Called by `imenu--generic-function'."
         (goto-char start)))))
 
 (eval-and-compile
-  (defconst clojure-sym-rest-chars "^][\";\'@\\^`~\(\)\{\}\\"
+  (defconst clojure--sym-forbidden-rest-chars "][\";\'@\\^`~\(\)\{\}\\"
     "A list of chars that a Clojure symbol cannot contain.
 See definiton of 'macros': URL `http://git.io/vRGLD'.")
-  (defconst clojure-sym-1st-chars (concat clojure-sym-rest-chars "0-9")
+  (defconst clojure--sym-forbidden-1st-chars (concat clojure--sym-forbidden-rest-chars "0-9")
     "A list of chars that a Clojure symbol cannot start with.
 See the for-loop: URL `http://git.io/vRGTj' lines: URL
 `http://git.io/vRGIh', URL `http://git.io/vRGLE' and value
 definition of 'macros': URL `http://git.io/vRGLD'.")
-  (defconst clojure-sym
-    (concat "[" clojure-sym-1st-chars "][" clojure-sym-rest-chars "]+")
+  (defconst clojure--sym-regexp
+    (concat "[^" clojure--sym-forbidden-1st-chars "][^" clojure--sym-forbidden-rest-chars "]+")
     "A regexp matching a Clojure symbol or namespace alias.
-Matches the rule `clojure-sym-1st-chars' followed by any number
-of matches of `clojure-sym-rest-chars'."))
+Matches the rule `clojure--sym-forbidden-1st-chars' followed by
+any number of matches of `clojure--sym-forbidden-rest-chars'."))
 
 (defconst clojure-font-lock-keywords
   (eval-when-compile
@@ -396,7 +396,7 @@ of matches of `clojure-sym-rest-chars'."))
        (2 font-lock-type-face nil t))
       ;; Function definition (anything that starts with def and is not
       ;; listed above)
-      (,(concat "(\\(?:" clojure-sym "/\\)?"
+      (,(concat "(\\(?:" clojure--sym-regexp "/\\)?"
                 "\\(def[^ \r\n\t]*\\)"
                 ;; Function declarations
                 "\\>"
@@ -477,7 +477,7 @@ of matches of `clojure-sym-rest-chars'."))
       ;; Character literals - \1, \a, \newline, \u0000
       ("\\\\\\([[:punct:]]\\|[a-z0-9]+\\>\\)" 0 'clojure-character-face)
       ;; foo/ Foo/ @Foo/ /FooBar
-      (,(concat "\\(?:\\<:?\\|\\.\\)@?\\(" clojure-sym "\\)\\(/\\)")
+      (,(concat "\\(?:\\<:?\\|\\.\\)@?\\(" clojure--sym-regexp "\\)\\(/\\)")
        (1 font-lock-type-face) (2 'default))
       ;; Constant values (keywords), including as metadata e.g. ^:static
       ("\\<^?\\(:\\(\\sw\\|\\s_\\)+\\(\\>\\|\\_>\\)\\)" 1 'clojure-keyword-face append)
