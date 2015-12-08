@@ -354,17 +354,18 @@ Called by `imenu--generic-function'."
 
 (eval-and-compile
   (defconst clojure-sym-rest-chars "^][\";\'@\\^`~\(\)\{\}\\"
-    "A list of chars that a Clojure symbol cannot contain.  See
-definiton of 'macros': URL `http://git.io/vRGLD'.")
+    "A list of chars that a Clojure symbol cannot contain.
+See definiton of 'macros': URL `http://git.io/vRGLD'.")
   (defconst clojure-sym-1st-chars (concat clojure-sym-rest-chars "0-9")
-    "A list of chars that a Clojure symbol cannot start with.  See
-the for-loop: URL `http://git.io/vRGTj' lines:
-URL `http://git.io/vRGIh', URL `http://git.io/vRGLE'
-and value definition of 'macros': URL `http://git.io/vRGLD'.")
+    "A list of chars that a Clojure symbol cannot start with.
+See the for-loop: URL `http://git.io/vRGTj' lines: URL
+`http://git.io/vRGIh', URL `http://git.io/vRGLE' and value
+definition of 'macros': URL `http://git.io/vRGLD'.")
   (defconst clojure-sym
     (concat "[" clojure-sym-1st-chars "][" clojure-sym-rest-chars "]+")
-    "A concatenation of the blacklists
-`clojure-sym-1st-chars' and `clojure-sym-rest-chars'."))
+    "A regexp matching a Clojure symbol or namespace alias.
+Matches the rule `clojure-sym-1st-chars' followed by any number
+of matches of `clojure-sym-rest-chars'."))
 
 (defconst clojure-font-lock-keywords
   (eval-when-compile
