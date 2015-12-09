@@ -359,7 +359,10 @@ comment, you can set the value to:
         t))))
 
 (defun clojure--search-comment-macro (limit)
-  "Find comment macros and set the match data."
+  "Find comment macros and set the match data.
+Search from point up to LIMIT.  The region that should be
+considered a comment is between `(match-beginning 1)'
+and `(match-end 1)'."
   (let ((result 'retry))
     (while (and (eq result 'retry) (<= (point) limit))
       (condition-case nil
