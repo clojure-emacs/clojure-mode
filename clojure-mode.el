@@ -334,8 +334,8 @@ If JUSTIFY is non-nil, justify as well as fill the paragraph."
   (rx "#_" (* " ") (group-n 1 (not (any " "))))
   "Regexp matching the start of a comment sexp.
 The beginning of match-group 1 should be before the sexp to be
-marked as a comment. The end of sexp is found with
-`clojure-forward-logical-sexp'. 
+marked as a comment.  The end of sexp is found with
+`clojure-forward-logical-sexp'.
 
 By default, this only applies to code after the `#_' reader
 macro.  In order to also font-lock the `(comment ...)' macro as a
