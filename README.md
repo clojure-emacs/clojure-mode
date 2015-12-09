@@ -188,8 +188,10 @@ Install [inf-clojure][] for basic interaction with a REPL process.
 
 ### CIDER
 
-You can also use [Leiningen][] to start an
-enhanced REPL via [CIDER][].
+[CIDER][] is a powerful Clojure interactive development environment,
+similar to SLIME for Common Lisp.
+
+If you're into Clojure and Emacs you should definitely check it out.
 
 ## Changelog
 
@@ -213,7 +215,6 @@ Distributed under the GNU General Public License; type <kbd>C-h C-c</kbd> to vie
 [CIDER]: https://github.com/clojure-emacs/cider
 [cider-nrepl]: https://github.com/clojure-emacs/cider-nrepl
 [inf-clojure]: https://github.com/clojure-emacs/inf-clojure
-[Leiningen]: http://leiningen.org
 [contributors]: https://github.com/clojure-emacs/clojure-mode/contributors
 [melpa]: http://melpa.org
 [melpa stable]: http://stable.melpa.org
