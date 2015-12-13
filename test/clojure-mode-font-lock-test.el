@@ -163,7 +163,15 @@ POS."
   (clojure-test-with-temp-buffer "clo.core/something"
     (should (eq (clojure-test-face-at 9 9) 'default))
     (should (eq (clojure-test-face-at 1 8) 'font-lock-type-face))
-    (should (eq (clojure-test-face-at 10 18) nil))))
+    (should (eq (clojure-test-face-at 10 18) nil)))
+  (clojure-test-with-temp-buffer "a/something"
+    (should (eq (clojure-test-face-at 1 1) 'font-lock-type-face))
+    (should (eq (clojure-test-face-at 3 12) 'nil))
+    (should (eq (clojure-test-face-at 2 2) 'default)))
+  (clojure-test-with-temp-buffer "abc/something"
+    (should (eq (clojure-test-face-at 1 3) 'font-lock-type-face))
+    (should (eq (clojure-test-face-at 5 14) 'nil))
+    (should (eq (clojure-test-face-at 4 4) 'default))))
 
 (ert-deftest clojure-mode-syntax-table/static-method ()
   :tags '(fontification syntax-table)
