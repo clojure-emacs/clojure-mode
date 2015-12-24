@@ -229,11 +229,15 @@ ENDP and DELIMITER."
 (declare-function paredit-open-curly "ext:paredit")
 (declare-function paredit-close-curly "ext:paredit")
 
-(defun clojure-paredit-setup ()
-  "Make \"paredit-mode\" play nice with `clojure-mode'."
+(defun clojure-paredit-setup (&optional keymap)
+  "Make \"paredit-mode\" play nice with `clojure-mode'.
+
+If an optional KEYMAP is passed the changes are applied to it,
+instead of to `clojure-mode-map'."
   (when (>= paredit-version 21)
-    (define-key clojure-mode-map "{" #'paredit-open-curly)
-    (define-key clojure-mode-map "}" #'paredit-close-curly)
+    (let ((keymap (or keymap clojure-mode-map)))
+      (define-key keymap "{" #'paredit-open-curly)
+      (define-key keymap "}" #'paredit-close-curly))
     (add-to-list 'paredit-space-for-delimiter-predicates
                  #'clojure-space-for-delimiter-p)
     (add-to-list 'paredit-space-for-delimiter-predicates
