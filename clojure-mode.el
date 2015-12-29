@@ -960,7 +960,7 @@ it from Lisp code, use (put-clojure-indent 'some-symbol :defn)."
   (reify '(:defn (1)))
   (deftype '(2 nil nil (1)))
   (defrecord '(2 nil nil (1)))
-  (defprotocol '(1))
+  (defprotocol '(1 (:defn)))
   (extend 1)
   (extend-protocol '(1 :defn))
   (extend-type '(1 :defn))

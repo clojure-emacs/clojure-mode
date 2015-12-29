@@ -264,6 +264,14 @@ values of customisable variables."
     ([item a]
      (* a (:qty item)))))")
 
+(def-full-indent-test defprotocol
+  "(defprotocol IFoo
+  (foo [this]
+    \"Why is this over here?\")
+  (foo-2
+    [this]
+    \"Why is this over here?\"))")
+
 (def-full-indent-test non-symbol-at-start
   "{\"1\" 2
  *3 4}")
