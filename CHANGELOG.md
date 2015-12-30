@@ -4,6 +4,7 @@
 
 ### New features
 
+* Don't font-lock the `:` in keywords.
 * Indent and font-lock forms that start with `let-`, `while-` or `when-` like their counterparts.
 * Apply the `font-lock-comment-face` to code commented out with `#_`.
 
