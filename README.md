@@ -113,6 +113,29 @@ For instructions on how to write these specifications, see
 [this document](https://github.com/clojure-emacs/cider/blob/master/doc/Indent-Spec.md#indent-specification).
 The only difference is that you're allowed to use lists instead of vectors.
 
+### Vertical aligment
+
+You can vertically align sexps with `C-c SPC`. For instance, typing
+this combo on the following form:
+
+```clj
+(def my-map
+  {:a-key 1
+   :other-key 2})
+```
+
+Leads to the following:
+
+```clj
+(def my-map
+  {:a-key     1
+   :other-key 2})
+```
+
+This can also be done automatically (as part of indentation) by
+turning on `clojure-align-forms-automatically`. This way it will
+happen whenever you select some code and hit `TAB`.
+
 ## Related packages
 
 * [clojure-mode-extra-font-locking][] provides additional font-locking
