@@ -1,6 +1,6 @@
 ;;; clojure-mode-font-lock-test.el --- Clojure Mode: Font lock test suite  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2014-2015 Bozhidar Batsov <bozhidar@batsov.com>
+;; Copyright (C) 2014-2016 Bozhidar Batsov <bozhidar@batsov.com>
 
 ;; This file is not part of GNU Emacs.
 
