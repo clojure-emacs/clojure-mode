@@ -1108,6 +1108,7 @@ it from Lisp code, use (put-clojure-indent 'some-symbol :defn)."
   (extend 1)
   (extend-protocol '(1 :defn))
   (extend-type '(1 :defn))
+  ;; specify and specify! are from ClojureScript
   (specify '(1 :defn))
   (specify! '(1 :defn))
   (try 0)
