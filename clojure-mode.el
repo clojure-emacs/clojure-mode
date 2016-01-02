@@ -1110,7 +1110,6 @@ it from Lisp code, use (put-clojure-indent 'some-symbol :defn)."
   (extend-type '(1 :defn))
   (specify '(1 :defn))
   (specify! '(1 :defn))
-  (implement '(1 (1)))
   (try 0)
   (catch 2)
   (finally 0)
