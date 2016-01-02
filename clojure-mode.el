@@ -1127,6 +1127,7 @@ it from Lisp code, use (put-clojure-indent 'some-symbol :defn)."
   (if-let 1)
   (when-some 1)
   (if-some 1)
+  (this-as 1) ; ClojureScript
 
   (defmethod :defn)
 
