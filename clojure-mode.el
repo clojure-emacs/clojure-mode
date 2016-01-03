@@ -718,7 +718,9 @@ like this:
   :package-version '(clojure-mode . "5.1")
   :type 'boolean)
 
-(defcustom clojure-align-binding-forms '("let" "when-let" "if-let" "binding" "loop" "with-open")
+(defcustom clojure-align-binding-forms
+  '("let" "when-let" "when-some" "if-let" "if-some" "binding" "loop"
+    "doseq" "for" "with-open" "with-local-vars" "with-redefs")
   "List of strings matching forms that have binding forms."
   :package-version '(clojure-mode . "5.1")
   :type '(repeat string))
