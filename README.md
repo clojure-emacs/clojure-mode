@@ -197,8 +197,17 @@ it for Clojure buffers:
 
 ## REPL Interaction
 
-A number of options exist for connecting to a running Clojure process
-and evaluating code interactively.
+One of the fundamental aspects of Lisps in general and Clojure in
+particular is the notion of interactive programming - building your
+programs by continuously changing the state of the running Lisp
+program (as opposed to doing something more traditional like making a
+change and re-running the program afterwards to see the changes in
+action). To get the most of clojure-mode you'll have to combine it
+with some tool which will allow you to interact with your Clojure programm
+(a.k.a. process/REPL).
+
+A number of options exist for connecting to a
+running Clojure process and evaluating code interactively.
 
 ### Basic REPL
 
