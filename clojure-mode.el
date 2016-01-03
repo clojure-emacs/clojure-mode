@@ -55,7 +55,6 @@
 ;;; Code:
 
 
-
 (eval-when-compile
   (defvar calculate-lisp-indent-last-sexp)
   (defvar font-lock-beg)
