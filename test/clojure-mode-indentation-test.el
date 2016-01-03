@@ -272,6 +272,24 @@ values of customisable variables."
     [this]
     \"Why is this over here?\"))")
 
+(def-full-indent-test specify
+  "(specify obj
+  ISwap
+  (-swap!
+    ([this f] (reset! this (f @this)))
+    ([this f a] (reset! this (f @this a)))
+    ([this f a b] (reset! this (f @this a b)))
+    ([this f a b xs] (reset! this (apply f @this a b xs)))))")
+
+(def-full-indent-test specify!
+  "(specify! obj
+  ISwap
+  (-swap!
+    ([this f] (reset! this (f @this)))
+    ([this f a] (reset! this (f @this a)))
+    ([this f a b] (reset! this (f @this a b)))
+    ([this f a b xs] (reset! this (apply f @this a b xs)))))")
+
 (def-full-indent-test non-symbol-at-start
   "{\"1\" 2
  *3 4}")
