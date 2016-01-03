@@ -36,13 +36,6 @@ If the installation doesn't work try refreshing the package list:
 
 <kbd>M-x package-refresh-contents</kbd>
 
-### Extra font-locking
-
-Prior to version 3.0 `clojure-mode` bundled **unreliable**
-font-locking for some built-in vars.  In 3.0 this was extracted from
-`clojure-mode` and moved to a separate package -
-[clojure-mode-extra-font-locking][].
-
 ## Configuration
 
 To see a list of available configuration options do `M-x customize-group RET clojure`.
@@ -155,7 +148,9 @@ You can also use the code in this package as a basis for extending the
 font-locking further (e.g. functions/macros from more
 namespaces). Generally you should avoid adding special font-locking
 for things that don't have fairly unique names, as this will result in
-plenty of incorrect font-locking.
+plenty of incorrect font-locking. CIDER users should avoid this package,
+as CIDER does its own dynamic font-locking, which is namespace-aware
+and doesn't produce almost any false positives.
 
 * [clj-refactor][] provides refactoring support.
 
