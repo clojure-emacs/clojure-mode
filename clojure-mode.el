@@ -406,7 +406,7 @@ Called by `imenu--generic-function'."
 (eval-and-compile
   (defconst clojure--sym-forbidden-rest-chars "][\";\'@\\^`~\(\)\{\}\\,\s\t\n\r"
     "A list of chars that a Clojure symbol cannot contain.
-See definiton of 'macros': URL `http://git.io/vRGLD'.")
+See definition of 'macros': URL `http://git.io/vRGLD'.")
   (defconst clojure--sym-forbidden-1st-chars (concat clojure--sym-forbidden-rest-chars "0-9")
     "A list of chars that a Clojure symbol cannot start with.
 See the for-loop: URL `http://git.io/vRGTj' lines: URL
