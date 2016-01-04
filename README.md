@@ -106,7 +106,7 @@ For instructions on how to write these specifications, see
 [this document](https://github.com/clojure-emacs/cider/blob/master/doc/Indent-Spec.md#indent-specification).
 The only difference is that you're allowed to use lists instead of vectors.
 
-### Vertical aligment
+### Vertical alignment
 
 You can vertically align sexps with `C-c SPC`. For instance, typing
 this combo on the following form:
@@ -203,7 +203,7 @@ programs by continuously changing the state of the running Lisp
 program (as opposed to doing something more traditional like making a
 change and re-running the program afterwards to see the changes in
 action). To get the most of clojure-mode you'll have to combine it
-with some tool which will allow you to interact with your Clojure programm
+with some tool which will allow you to interact with your Clojure program
 (a.k.a. process/REPL).
 
 A number of options exist for connecting to a
