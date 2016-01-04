@@ -2,6 +2,8 @@
 
 ## master (unreleased)
 
+## 5.1.0 (04/01/2015)
+
 ### New features
 
 * Vertically align sexps with `C-c SPC`. This can also be done automatically (as part of indentation) by turning on `clojure-align-forms-automatically`.
