@@ -2,6 +2,10 @@
 
 ## master (unreleased)
 
+### Bugs fixed
+
+* [#360](https://github.com/clojure-emacs/clojure-mode/issues/360): `clojure-align` now reindents after aligning, which also fixes an issue with nested alignings.
+
 ## 5.1.0 (04/01/2015)
 
 ### New features
