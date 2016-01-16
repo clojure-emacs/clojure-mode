@@ -422,11 +422,12 @@ x
                    `(with-temp-buffer
                       (clojure-mode)
                       (insert "\n" ,(replace-regexp-in-string " +" " " form))
+                      ;; This is to check that we did NOT align anything. Run
+                      ;; `indent-region' and then check that no extra spaces
+                      ;; where inserted besides the start of the line.
                       (indent-region (point-min) (point-max))
-                      (should (equal (buffer-substring-no-properties
-                                      (point-min) (point-max))
-                                     ,(concat "\n" (replace-regexp-in-string
-                                                    "\\([a-z]\\) +" "\\1 " form))))))
+                      (goto-char (point-min))
+                      (should-not (search-forward-regexp "\\([^\s\n]\\)  +" nil 'noerror))))
                  forms))))
 
 (def-full-align-test basic
