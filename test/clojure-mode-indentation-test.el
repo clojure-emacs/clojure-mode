@@ -490,8 +490,8 @@ x
       multiple words will work)")
 
 (def-full-align-test nested-maps
-  "{:a {:a :a
-     :bbbb :b}
+  "{:a    {:a    :a
+        :bbbb :b}
  :bbbb :b}")
 
 
