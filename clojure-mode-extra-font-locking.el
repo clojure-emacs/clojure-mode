@@ -198,8 +198,4 @@
 
 (provide 'clojure-mode-extra-font-locking)
 
-;; Local Variables:
-;; indent-tabs-mode: nil
-;; End:
-
 ;;; clojure-mode-extra-font-locking.el ends here

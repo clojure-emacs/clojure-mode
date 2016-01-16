@@ -317,8 +317,4 @@ POS."
 
 (provide 'clojure-mode-font-lock-test)
 
-;; Local Variables:
-;; indent-tabs-mode: nil
-;; End:
-
 ;;; clojure-mode-font-lock-test.el ends here

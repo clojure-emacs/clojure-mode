@@ -97,8 +97,4 @@ foo)"))
 
 (provide 'clojure-mode-util-test)
 
-;; Local Variables:
-;; indent-tabs-mode: nil
-;; End:
-
 ;;; clojure-mode-util-test.el ends here

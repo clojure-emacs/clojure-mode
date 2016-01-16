@@ -1418,7 +1418,6 @@ This will skip over sexps that don't represent objects, so that ^hints and
 
 ;; Local Variables:
 ;; coding: utf-8
-;; indent-tabs-mode: nil
 ;; End:
 
 ;;; clojure-mode.el ends here

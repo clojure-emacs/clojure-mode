@@ -32,8 +32,4 @@
   ;; Load the file under test
   (load (expand-file-name "clojure-mode" source-directory)))
 
-;; Local Variables:
-;; indent-tabs-mode: nil
-;; End:
-
 ;;; test-helper.el ends here

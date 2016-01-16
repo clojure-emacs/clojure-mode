@@ -531,8 +531,4 @@ x
 
 (provide 'clojure-mode-indentation-test)
 
-;; Local Variables:
-;; indent-tabs-mode: nil
-;; End:
-
 ;;; clojure-mode-indentation-test.el ends here
