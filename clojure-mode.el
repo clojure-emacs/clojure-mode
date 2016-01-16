@@ -825,16 +825,18 @@ When called from lisp code align everything between BEG and END."
   (save-excursion
     (goto-char beg)
     (while (clojure--find-sexp-to-align end)
-      (align-region (point)
-                    (save-excursion
-                      (backward-up-list)
-                      (forward-sexp 1)
-                      (point))
-                    nil
-                    '((clojure-align (regexp . clojure--search-whitespace-after-next-sexp)
-                                     (group . 1)
-                                     (repeat . t)))
-                    nil))))
+      (let ((sexp-end (save-excursion
+                        (backward-up-list)
+                        (forward-sexp 1)
+                        (point-marker)))
+            (clojure-align-forms-automatically nil))
+        (align-region (point) sexp-end nil
+                      '((clojure-align (regexp . clojure--search-whitespace-after-next-sexp)
+                                       (group . 1)
+                                       (repeat . t)))
+                      nil)
+        ;; Reindent after aligning because of #360.
+        (indent-region (point) sexp-end)))))
 
 ;;; Indentation
 (defun clojure-indent-region (beg end)
