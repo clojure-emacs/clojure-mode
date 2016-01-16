@@ -822,6 +822,7 @@ When called from lisp code align everything between BEG and END."
                                      (point))))
                      (clojure-backward-logical-sexp)
                      (list (point) end)))))
+  (setq end (copy-marker end))
   (save-excursion
     (goto-char beg)
     (while (clojure--find-sexp-to-align end)

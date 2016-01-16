@@ -495,6 +495,12 @@ x
         :bbbb :b}
  :bbbb :b}")
 
+(def-full-align-test end-is-a-marker
+  "{:a {:a                                :a
+     :aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa :a}
+ :b {:a  :a
+     :aa :a}}")
+
 
 ;;; Misc
 
