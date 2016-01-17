@@ -1304,24 +1304,26 @@ no namespaces above point, return the first one in the buffer."
                      (re-search-forward clojure-namespace-name-regex nil t)))
         (match-string-no-properties 4)))))
 
+(defconst clojure-def-type-and-name-regex
+  (concat "(\\(?:\\(?:\\sw\\|\\s_\\)+/\\)?"
+          ;; Declaration
+          "\\(def\\(?:\\sw\\|\\s_\\)*\\)\\>"
+          ;; Any whitespace
+          "[ \r\n\t]*"
+          ;; Possibly type or metadata
+          "\\(?:#?^\\(?:{[^}]*}\\|\\(?:\\sw\\|\\s_\\)+\\)[ \r\n\t]*\\)*"
+          ;; Symbol name
+          "\\(\\(?:\\sw\\|\\s_\\)+\\)"))
+
 (defun clojure-find-def ()
   "Find the var declaration macro and symbol name of the current form.
 Returns a list pair, e.g. (\"defn\" \"abc\") or (\"deftest\" \"some-test\")."
-  (let ((re (concat "(\\(?:\\(?:\\sw\\|\\s_\\)+/\\)?"
-                    ;; Declaration
-                    "\\(def\\(?:\\sw\\|\\s_\\)*\\)\\>"
-                    ;; Any whitespace
-                    "[ \r\n\t]*"
-                    ;; Possibly type or metadata
-                    "\\(?:#?^\\(?:{[^}]*}\\|\\(?:\\sw\\|\\s_\\)+\\)[ \r\n\t]*\\)*"
-                    ;; Symbol name
-                    "\\(\\(?:\\sw\\|\\s_\\)+\\)")))
-    (save-excursion
-      (unless (looking-at re)
-        (beginning-of-defun))
-      (when (search-forward-regexp re nil t)
-        (list (match-string-no-properties 1)
-              (match-string-no-properties 2))))))
+  (save-excursion
+    (unless (looking-at clojure-def-type-and-name-regex)
+      (beginning-of-defun))
+    (when (search-forward-regexp clojure-def-type-and-name-regex nil t)
+      (list (match-string-no-properties 1)
+            (match-string-no-properties 2)))))
 
 
 ;;; Sexp navigation
