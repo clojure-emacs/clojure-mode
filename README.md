@@ -36,6 +36,26 @@ If the installation doesn't work try refreshing the package list:
 
 <kbd>M-x package-refresh-contents</kbd>
 
+## Bundled major modes
+
+The `clojure-mode` package actually bundles together several major modes:
+
+* `clojure-mode` is a major mode for editing Clojure code
+* `clojurescript-mode` is a major mode for editing ClojureScript code
+* `clojurec-mode` is a major mode for editing `.cljc` source files
+* `clojurex-mode` is a major mode for editing `.cljx` source files
+
+All the major modes derive from `clojure-mode` and provide more or less the same
+functionality.  Differences can be found mostly in the font-locking -
+e.g. ClojureScript has some built-in constructs that are not present in Clojure.
+
+The proper major mode is selected automatically based on the extension of the
+file you're editing.
+
+Having separate major modes gives you the flexibility to attach different hooks
+to them and to alter their behavior individually (e.g. add extra font-locking
+just to `clojurescript-mode`) .
+
 ## Configuration
 
 To see a list of available configuration options do `M-x customize-group RET clojure`.
