@@ -56,6 +56,10 @@ Having separate major modes gives you the flexibility to attach different hooks
 to them and to alter their behavior individually (e.g. add extra font-locking
 just to `clojurescript-mode`) .
 
+Note that all modes derive from `clojure-mode`, so things you add to
+`clojure-mode-hook` and `clojure-mode-map` will affect all the derived modes as
+well.
+
 ## Configuration
 
 To see a list of available configuration options do `M-x customize-group RET clojure`.
