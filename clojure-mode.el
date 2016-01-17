@@ -708,11 +708,11 @@ point) to check."
 ;;; Vertical alignment
 (defcustom clojure-align-forms-automatically nil
   "If non-nil, vertically align some forms automatically.
-Automatically means it is done as part of indenting code. This
+Automatically means it is done as part of indenting code.  This
 applies to binding forms (`clojure-align-binding-forms'), to cond
-forms (`clojure-align-cond-forms') and to map literals. For
-instance, selecting a map a hitting \\<clojure-mode-map>`\\[indent-for-tab-command]' will align the values
-like this:
+forms (`clojure-align-cond-forms') and to map literals.  For
+instance, selecting a map a hitting \\<clojure-mode-map>`\\[indent-for-tab-command]'
+will align the values like this:
     {:some-key 10
      :key2     20}"
   :package-version '(clojure-mode . "5.1")
@@ -736,8 +736,8 @@ This function expects to be called immediately after an
 open-brace or after the function symbol in a function call.
 
 First check if the sexp around point is a map literal, or is a
-call to one of the vars listed in `clojure-align-cond-forms'. If
-it isn't, return nil. If it is, return non-nil and place point
+call to one of the vars listed in `clojure-align-cond-forms'.  If
+it isn't, return nil.  If it is, return non-nil and place point
 immediately before the forms that should be aligned.
 
 For instance, in a map literal point is left immediately before
