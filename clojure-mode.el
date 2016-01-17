@@ -1217,26 +1217,6 @@ nil."
 
 
 
-(defconst clojure-namespace-name-regex
-  (rx line-start
-      "("
-      (zero-or-one (group (regexp "clojure.core/")))
-      (zero-or-one (submatch "in-"))
-      "ns"
-      (zero-or-one "+")
-      (one-or-more (any whitespace "\n"))
-      (zero-or-more (or (submatch (zero-or-one "#")
-                                  "^{"
-                                  (zero-or-more (not (any "}")))
-                                  "}")
-                        (zero-or-more "^:"
-                                      (one-or-more (not (any whitespace)))))
-                    (one-or-more (any whitespace "\n")))
-      (zero-or-one (any ":'")) ;; (in-ns 'foo) or (ns+ :user)
-      (group (one-or-more (not (any "()\"" whitespace))) symbol-end)))
-
-
-
 (defun clojure-project-dir (&optional dir-name)
   "Return the absolute path to the project's root directory.
 
@@ -1291,6 +1271,24 @@ Useful if a file has been renamed."
           (if (clojure-find-ns)
               (replace-match nsname nil nil nil 4)
             (error "Namespace not found")))))))
+
+(defconst clojure-namespace-name-regex
+  (rx line-start
+      "("
+      (zero-or-one (group (regexp "clojure.core/")))
+      (zero-or-one (submatch "in-"))
+      "ns"
+      (zero-or-one "+")
+      (one-or-more (any whitespace "\n"))
+      (zero-or-more (or (submatch (zero-or-one "#")
+                                  "^{"
+                                  (zero-or-more (not (any "}")))
+                                  "}")
+                        (zero-or-more "^:"
+                                      (one-or-more (not (any whitespace)))))
+                    (one-or-more (any whitespace "\n")))
+      (zero-or-one (any ":'")) ;; (in-ns 'foo) or (ns+ :user)
+      (group (one-or-more (not (any "()\"" whitespace))) symbol-end)))
 
 (defun clojure-find-ns ()
   "Return the namespace of the current Clojure buffer.
