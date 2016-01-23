@@ -1038,16 +1038,21 @@ This function also returns nil meaning don't specify the indentation."
          (+ lisp-body-indent containing-form-column))
         ((pred functionp)
          (funcall method indent-point state))
-        ((and `nil
-              (guard (let ((function (thing-at-point 'sexp)))
-                       (or (and clojure-defun-style-default-indent
-                                ;; largely to preserve useful alignment of :require, etc in ns
-                                (not (string-match "^:" function)))
-                           (and (string-match "\\`\\(?:\\S +/\\)?\\(def[a-z]*\\|with-\\)"
-                                              function)
-                                (not (string-match "\\`default" (match-string 1 function))))))))
-         (+ lisp-body-indent containing-form-column))
-        (_ (clojure--normal-indent calculate-lisp-indent-last-sexp))))))
+        ;; No indent spec, do the default.
+        (`nil
+         (let ((function (thing-at-point 'symbol)))
+           (cond
+            ;; largely to preserve useful alignment of :require, etc in ns
+            ((and function (string-match "^:" function))
+             (let ((clojure-defun-style-default-indent nil))
+               (clojure--normal-indent calculate-lisp-indent-last-sexp)))
+            ((or clojure-defun-style-default-indent
+                 (and function
+                      (string-match "\\`\\(?:\\S +/\\)?\\(def[a-z]*\\|with-\\)"
+                                    function)
+                      (not (string-match "\\`default" (match-string 1 function)))))
+             (+ lisp-body-indent containing-form-column))
+            (t (clojure--normal-indent calculate-lisp-indent-last-sexp)))))))))
 
 ;;; Setting indentation
 (defun put-clojure-indent (sym indent)
