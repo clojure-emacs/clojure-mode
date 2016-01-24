@@ -950,25 +950,47 @@ spec."
     (let ((function (thing-at-point 'symbol)))
       (clojure--get-indent-method function))))
 
-(defun clojure--normal-indent (last-sexp)
+(defun clojure--normal-indent (last-sexp indent-mode)
   "Return the normal indentation column for a sexp.
-LAST-SEXP is the start of the previous sexp."
+Point should be after the open paren of the _enclosing_ sexp, and
+LAST-SEXP is the start of the previous sexp (immediately before
+the sexp being indented). INDENT-MODE is any of the values
+accepted by `clojure-indent-style'."
   (goto-char last-sexp)
   (forward-sexp 1)
   (clojure-backward-logical-sexp 1)
   (let ((last-sexp-start nil))
-    (unless (ignore-errors
-              (while (string-match
-                      "[^[:blank:]]"
-                      (buffer-substring (line-beginning-position) (point)))
-                (setq last-sexp-start (prog1 (point)
-                                        (forward-sexp -1))))
-              t)
-      ;; If the last sexp was on the same line.
-      (when (and last-sexp-start
-                 (> (line-end-position) last-sexp-start))
-        (goto-char last-sexp-start)))
-    (current-column)))
+    (if (ignore-errors
+          ;; `backward-sexp' until we reach the start of a sexp that is the
+          ;; first of its line (the start of the enclosing sexp).
+          (while (string-match
+                  "[^[:blank:]]"
+                  (buffer-substring (line-beginning-position) (point)))
+            (setq last-sexp-start (prog1 (point)
+                                    (forward-sexp -1))))
+          t)
+        ;; Here we have found an arg before the arg we're indenting which is at
+        ;; the start of a line. Every mode simply aligns on this case.
+        (current-column)
+      ;; Here we have reached the start of the enclosing sexp (point is now at
+      ;; the function name), so the behaviour depends on INDENT-MODE and on
+      ;; whether there's also an argument on this line (case A or B).
+      (let ((case-a ; The meaning of case-a is explained in `clojure-indent-style'.
+             (and last-sexp-start
+                  (< last-sexp-start (line-end-position)))))
+        (cond
+         ;; For compatibility with the old `clojure-defun-style-default-indent', any
+         ;; value other than these 3 is equivalent to `always-body'.
+         ((not (memq indent-mode '(:lisp :body-unless-same-line nil)))
+          (+ (current-column) lisp-body-indent -1))
+         ;; There's an arg after the function name, so align with it.
+         (case-a (goto-char last-sexp-start)
+                 (current-column))
+         ;; Not same line.
+         ((eq indent-mode :body-unless-same-line)
+          (+ (current-column) lisp-body-indent -1))
+         ;; Finally, just align with the function name.
+         (t (current-column)))))))
 
 (defun clojure--not-function-form-p ()
   "Non-nil if form at point doesn't represent a function call."
@@ -982,6 +1004,9 @@ LAST-SEXP is the start of the previous sexp."
       ;; Car of form is not a symbol.
       (not (looking-at ".\\(?:\\sw\\|\\s_\\)"))))
 
+;; Check the general context, and provide indentation for data structures and
+;; special macros. If current form is a function (or non-special macro),
+;; delegate indentation to `clojure--normal-indent'.
 (defun clojure-indent-function (indent-point state)
   "When indenting a line within a function call, indent properly.
 
@@ -1013,6 +1038,7 @@ This function also returns nil meaning don't specify the indentation."
     ;; Function or macro call.
     (forward-char 1)
     (let ((method (clojure--find-indent-spec))
+          (last-sexp calculate-lisp-indent-last-sexp)
           (containing-form-column (1- (current-column))))
       (pcase method
         ((or (pred integerp) `(,method))
@@ -1028,10 +1054,13 @@ This function also returns nil meaning don't specify the indentation."
              ;; indentation as if there were an extra sexp at point.
              (scan-error (cl-incf pos)))
            (cond
+            ;; The first non-special arg. Rigidly reduce indentation.
             ((= pos (1+ method))
              (+ lisp-body-indent containing-form-column))
+            ;; Further non-special args, align with the arg above.
             ((> pos (1+ method))
-             (clojure--normal-indent calculate-lisp-indent-last-sexp))
+             (clojure--normal-indent last-sexp :lisp))
+            ;; Special arg. Rigidly indent with a large indentation.
             (t
              (+ (* 2 lisp-body-indent) containing-form-column)))))
         (`:defn
@@ -1044,15 +1073,18 @@ This function also returns nil meaning don't specify the indentation."
            (cond
             ;; largely to preserve useful alignment of :require, etc in ns
             ((and function (string-match "^:" function))
-             (let ((clojure-defun-style-default-indent nil))
-               (clojure--normal-indent calculate-lisp-indent-last-sexp)))
-            ((or clojure-defun-style-default-indent
-                 (and function
-                      (string-match "\\`\\(?:\\S +/\\)?\\(def[a-z]*\\|with-\\)"
-                                    function)
-                      (not (string-match "\\`default" (match-string 1 function)))))
+             (clojure--normal-indent last-sexp :body-unless-same-line))
+            ;; This is should be identical to the :defn above.
+            ((and function
+                  (string-match "\\`\\(?:\\S +/\\)?\\(def[a-z]*\\|with-\\)"
+                                function)
+                  (not (string-match "\\`default" (match-string 1 function))))
              (+ lisp-body-indent containing-form-column))
-            (t (clojure--normal-indent calculate-lisp-indent-last-sexp)))))))))
+            ;; Finally, nothing special here, just respect the user's
+            ;; preference.
+            (t (clojure--normal-indent last-sexp (if clojure-defun-style-default-indent
+                                                     :always-body
+                                                   :lisp))))))))))
 
 ;;; Setting indentation
 (defun put-clojure-indent (sym indent)
