@@ -70,6 +70,49 @@ The default indentation rules in `clojure-mode` are derived from the
 [community Clojure Style Guide](https://github.com/bbatsov/clojure-style-guide).
 Please, refer to the guide for the general Clojure indentation rules.
 
+#### Indentation of function forms
+
+The indentation of function forms is configured by the variable
+`clojure-indent-style`. It takes three possible values:
+
+- `:always-align` (the default)
+
+```clj
+(some-function
+ 10
+ 1
+ 2)
+(some-function 10
+               1
+               2)
+```
+
+- `:always-indent`
+
+```clj
+(some-function
+  10
+  1
+  2)
+(some-function 10
+  1
+  2)
+```
+
+- `:align-arguments`
+
+```clj
+(some-function
+  10
+  1
+  2)
+(some-function 10
+               1
+               2)
+```
+
+#### Indentation of macro forms
+
 The indentation of special forms and macros with bodies is controlled via
 `put-clojure-indent`, `define-clojure-indent` and `clojure-backtracking-indent`.
 Nearly all special forms and built-in macros with bodies have special indentation

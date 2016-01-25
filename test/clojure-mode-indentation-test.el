@@ -58,6 +58,7 @@ values of customisable variables."
   (let ((fname (intern (format "indentation/%s" description))))
     `(ert-deftest ,fname ()
        (let* ((after ,after)
+              (clojure-indent-style :always-align)
               (expected-cursor-pos (1+ (s-index-of "|" after)))
               (expected-state (delete ?| after))
               ,@var-bindings)
@@ -221,16 +222,20 @@ values of customisable variables."
 
 
 ;;; Backtracking indent
-(defmacro def-full-indent-test (name &rest forms)
+(defmacro def-full-indent-test (name &optional style &rest forms)
   "Verify that all FORMs correspond to a properly indented sexps."
   (declare (indent 1))
+  (when (stringp style)
+    (setq forms (cons style forms))
+    (setq style :always-align))
   `(ert-deftest ,(intern (format "test-backtracking-%s" name)) ()
      (progn
        ,@(mapcar (lambda (form)
                    `(with-temp-buffer
                       (clojure-mode)
                       (insert "\n" ,(replace-regexp-in-string "\n +" "\n " form))
-                      (indent-region (point-min) (point-max))
+                      (let ((clojure-indent-style ,style))
+                        (indent-region (point-min) (point-max)))
                       (should (equal (buffer-string)
                                      ,(concat "\n" form)))))
                  forms))))
@@ -402,6 +407,26 @@ x
 1
 2
 3))")
+
+(def-full-indent-test align-arguments
+  :align-arguments
+  "(some-function
+  10
+  1
+  2)"
+  "(some-function 10
+               1
+               2)")
+
+(def-full-indent-test always-indent
+  :always-indent
+  "(some-function
+  10
+  1
+  2)"
+  "(some-function 10
+  1
+  2)")
 
 ;;; Alignment
 (defmacro def-full-align-test (name &rest forms)
