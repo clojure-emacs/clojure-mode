@@ -4,6 +4,7 @@
 
 ### Bugs fixed
 
+* [#361](https://github.com/clojure-emacs/clojure-mode/issues/361): Fixed a typo preventing the highlighting of fn names that don't start with `t`.
 * [#360](https://github.com/clojure-emacs/clojure-mode/issues/360): `clojure-align` now reindents after aligning, which also fixes an issue with nested alignings.
 
 ### New features

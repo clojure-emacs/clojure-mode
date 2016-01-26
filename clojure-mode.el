@@ -508,7 +508,7 @@ any number of matches of `clojure--sym-forbidden-rest-chars'."))
                 ;; Possibly type
                 "\\(?:#?^\\sw+[ \t]*\\)?"
                 ;; Possibly name
-                "\\(t\\sw+\\)?" )
+                "\\(\\sw+\\)?" )
        (1 font-lock-keyword-face)
        (2 font-lock-function-name-face nil t))
       ;; lambda arguments - %, %1, %2, etc
