@@ -1118,7 +1118,7 @@ This function also returns nil meaning don't specify the indentation."
            (cond
             ;; Preserve useful alignment of :require (and friends) in `ns' forms.
             ((and function (string-match "^:" function))
-             (clojure--normal-indent last-sexp :align-arguments))
+             (clojure--normal-indent last-sexp :always-align))
             ;; This is should be identical to the :defn above.
             ((and function
                   (string-match "\\`\\(?:\\S +/\\)?\\(def[a-z]*\\|with-\\)"
