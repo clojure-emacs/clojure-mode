@@ -256,6 +256,12 @@ POS."
     (should (eq (clojure-test-face-at 2 14) 'font-lock-keyword-face))
     (should (eq (clojure-test-face-at 16 18) 'font-lock-function-name-face))))
 
+(ert-deftest clojure-mode-syntax-table/fn ()
+  :tags '(fontification syntax-table)
+  (clojure-test-with-temp-buffer "(fn foo [x] x)"
+    (should (eq (clojure-test-face-at 2 3) 'font-lock-keyword-face))
+    (should (eq (clojure-test-face-at 5 7) 'font-lock-function-name-face))))
+
 (ert-deftest clojure-mode-syntax-table/lambda-params ()
   :tags '(fontification syntax-table)
   (clojure-test-with-temp-buffer "#(+ % %2 %3)"
