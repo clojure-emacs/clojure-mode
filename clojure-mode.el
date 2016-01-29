@@ -770,7 +770,7 @@ will align the values like this:
   :package-version '(clojure-mode . "5.1")
   :type '(repeat string))
 
-(defcustom clojure-align-cond-forms '("condp" "cond" "cond->" "cond->>" "case")
+(defcustom clojure-align-cond-forms '("condp" "cond" "cond->" "cond->>" "case" "are")
   "List of strings identifying cond-like forms."
   :package-version '(clojure-mode . "5.1")
   :type '(repeat string))
