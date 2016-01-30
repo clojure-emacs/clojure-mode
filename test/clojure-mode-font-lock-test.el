@@ -264,10 +264,11 @@ POS."
 
 (ert-deftest clojure-mode-syntax-table/lambda-params ()
   :tags '(fontification syntax-table)
-  (clojure-test-with-temp-buffer "#(+ % %2 %3)"
+  (clojure-test-with-temp-buffer "#(+ % %2 %3 %&)"
     (should (eq (clojure-test-face-at 5 5) 'font-lock-variable-name-face))
     (should (eq (clojure-test-face-at 7 8) 'font-lock-variable-name-face))
-    (should (eq (clojure-test-face-at 10 11) 'font-lock-variable-name-face))))
+    (should (eq (clojure-test-face-at 10 11) 'font-lock-variable-name-face))
+    (should (eq (clojure-test-face-at 13 14) 'font-lock-variable-name-face))))
 
 (ert-deftest clojure-mode-syntax-table/nil ()
   :tags '(fontification syntax-table)
