@@ -8,9 +8,11 @@
 Provides Emacs font-lock, indentation, and navigation for the
 [Clojure(Script) programming language](http://clojure.org).
 
-More thorough walkthroughs are available at
-[clojure-doc.org](http://clojure-doc.org/articles/tutorials/emacs.html)
-and [Clojure for the Brave and the True](http://www.braveclojure.com/basic-emacs/).
+This document assumes you're familiar with Emacs.  More thorough walkthroughs,
+targeting Emacs beginners, are available at
+[clojure-doc.org](http://clojure-doc.org/articles/tutorials/emacs.html) and
+[Clojure for the Brave and the True](http://www.braveclojure.com/basic-emacs/).
+Keep in mind, however, that they might be out-of-date.
 
 ## Installation
 
