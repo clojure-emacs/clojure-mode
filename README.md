@@ -20,6 +20,22 @@ older releases (including the current stable release). Please, consult
 the relevant git tag (e.g. 5.1.0) if you need documentation for a
 specific `clojure-mode` release.**
 
+***
+
+- [Installation](#installation)
+- [Bundled major modes](#bundled-major-modes)
+- [Configuration](#configuration)
+  - [Indentation options](#indentation-options)
+    - [Indentation of function forms](#indentation-of-function-forms)
+    - [Indentation of macro forms](#indentation-of-macro-forms)
+  - [Vertical alignment](#vertical-alignment)
+- [Related packages](#related-packages)
+- [REPL Interaction](#repl-interaction)
+  - [Basic REPL](#basic-repl)
+  - [CIDER](#cider)
+- [Changelog](#changelog)
+- [License](#license)
+
 ## Installation
 
 Available on the major `package.el` community maintained repos -
