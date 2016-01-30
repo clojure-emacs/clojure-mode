@@ -511,8 +511,8 @@ any number of matches of `clojure--sym-forbidden-rest-chars'."))
                 "\\(\\sw+\\)?" )
        (1 font-lock-keyword-face)
        (2 font-lock-function-name-face nil t))
-      ;; lambda arguments - %, %1, %2, etc
-      ("\\<%[1-9]?" (0 font-lock-variable-name-face))
+      ;; lambda arguments - %, %&, %1, %2, etc
+      ("\\<%[&1-9]?" (0 font-lock-variable-name-face))
       ;; Special forms
       (,(concat
          "("
