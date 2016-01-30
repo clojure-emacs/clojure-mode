@@ -14,6 +14,12 @@ targeting Emacs beginners, are available at
 [Clojure for the Brave and the True](http://www.braveclojure.com/basic-emacs/).
 Keep in mind, however, that they might be out-of-date.
 
+**This documentation tracks the `master` branch of `clojure-mode`. Some of
+the features and settings discussed here might not be available in
+older releases (including the current stable release). Please, consult
+the relevant git tag (e.g. 5.1.0) if you need documentation for a
+specific `clojure-mode` release.**
+
 ## Installation
 
 Available on the major `package.el` community maintained repos -
