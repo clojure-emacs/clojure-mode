@@ -2,6 +2,8 @@
 
 ## master (unreleased)
 
+## 5.2.0 (04/02/2016)
+
 ### Bugs fixed
 
 * [#361](https://github.com/clojure-emacs/clojure-mode/issues/361): Fixed a typo preventing the highlighting of fn names that don't start with `t`.
