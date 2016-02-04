@@ -857,8 +857,8 @@ return point."
 
 (defun clojure-align (beg end)
   "Vertically align the contents of the sexp around point.
-If region is active, align it. Otherwise, align everything in the
-current top-level sexp.
+If region is active, align it.  Otherwise, align everything in the
+current \"top-level\" sexp.
 When called from lisp code align everything between BEG and END."
   (interactive (if (use-region-p)
                    (list (region-beginning) (region-end))
