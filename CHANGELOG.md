@@ -13,7 +13,7 @@
 
 * [#362](https://github.com/clojure-emacs/clojure-mode/issues/362): New custom option `clojure-indent-style` offers 3 different ways to indent code.
 
-## 5.1.0 (04/01/2015)
+## 5.1.0 (04/01/2016)
 
 ### New features
 
