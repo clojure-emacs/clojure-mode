@@ -137,10 +137,10 @@ to indent function forms.
         (reduce
           merge
           some-coll)"
-  :type '(choice (const :tag "Same as `lisp-mode'" lisp)
-                 (const :tag "Indent like a macro body" always-body)
+  :type '(choice (const :tag "Same as `lisp-mode'" :always-align)
+                 (const :tag "Indent like a macro body" :always-indent)
                  (const :tag "Indent like a macro body unless first arg is on the same line"
-                        body-unless-same-line))
+                        :align-arguments))
   :package-version '(clojure-mode . "5.2.0"))
 
 (define-obsolete-variable-alias 'clojure-defun-style-default-indent
