@@ -892,7 +892,7 @@ Forms between BEG and END are aligned according to
   (prog1 (let ((indent-region-function nil))
            (indent-region beg end))
     (when clojure-align-forms-automatically
-      (condition-case er
+      (condition-case nil
           (clojure-align beg end)
         (scan-error nil)))))
 
