@@ -465,7 +465,7 @@ any number of matches of `clojure--sym-forbidden-rest-chars'."))
 
 (defconst clojure-font-lock-keywords
   (eval-when-compile
-    `(;; Top-level variable definition
+    `( ;; Top-level variable definition
       (,(concat "(\\(?:clojure.core/\\)?\\("
                 (regexp-opt '("def" "defonce"))
                 ;; variable declarations
@@ -517,7 +517,7 @@ any number of matches of `clojure--sym-forbidden-rest-chars'."))
       (,(concat
          "("
          (regexp-opt
-          '("def" "do" "if" "let" "var" "fn" "loop"
+          '("def" "do" "if" "let" "let*" "var" "fn" "fn*" "loop" "loop*"
             "recur" "throw" "try" "catch" "finally"
             "set!" "new" "."
             "monitor-enter" "monitor-exit" "quote") t)
