@@ -134,7 +134,7 @@
     "unchecked-remainder" "unchecked-remainder-int" "unchecked-short"
     "unchecked-subtract-int" "unchecked-subtract"
     "underive" "unsigned-bit-shift-right" "unquote" "unquote-splicing"
-    "update-in" "update-proxy" "use" "val" "vals" "var-get" "var-set"
+    "update" "update-in" "update-proxy" "use" "val" "vals" "var-get" "var-set"
     "var?" "vary-meta" "vec" "vector" "vector?" "vector-of" "while"
     "with-bindings" "with-bindings*" "with-in-str" "with-loading-context"
     "with-meta" "with-out-str" "with-precision"
