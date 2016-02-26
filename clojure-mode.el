@@ -1183,7 +1183,7 @@ it from Lisp code, use (put-clojure-indent 'some-symbol :defn)."
   (comment 0)
   (doto 1)
   (locking 1)
-  (proxy '(2 nil nil (1)))
+  (proxy '(2 nil nil (:defn)))
   (as-> 2)
 
   (reify '(:defn (1)))
