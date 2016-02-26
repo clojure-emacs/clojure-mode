@@ -137,6 +137,7 @@ to indent function forms.
         (reduce
           merge
           some-coll)"
+  :safe #'keywordp
   :type '(choice (const :tag "Same as `lisp-mode'" :always-align)
                  (const :tag "Indent like a macro body" :always-indent)
                  (const :tag "Indent like a macro body unless first arg is on the same line"
