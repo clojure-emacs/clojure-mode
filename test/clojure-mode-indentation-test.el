@@ -338,6 +338,20 @@ values of customisable variables."
     (let [indent-test :fail]
       ...)))")
 
+(def-full-indent-test proxy
+  "(proxy [Writer] []
+  (close [] (.flush ^Writer this))
+  (write
+    ([x]
+     (with-out-binding [out messages]
+       (.write out x)))
+    ([x ^Integer off ^Integer len]
+     (with-out-binding [out messages]
+       (.write out x off len))))
+  (flush []
+    (with-out-binding [out messages]
+      (.flush out))))")
+
 (def-full-indent-test reader-conditionals
   "#?@ (:clj []
      :cljs [])")
