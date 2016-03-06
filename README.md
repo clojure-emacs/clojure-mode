@@ -286,6 +286,15 @@ it for Clojure buffers:
 (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
 ```
 
+* [aggressive-indent-mode][] automatically adjust the indentation of your code,
+while you're writing it. Using it together with `clojure-mode` is highly
+recommended. Provided you've already installed `aggressive-indent-mode` you can
+enable it like this:
+
+```el
+(add-hook 'clojure-mode-hook #'aggressive-indent-mode)
+```
+
 ## REPL Interaction
 
 One of the fundamental aspects of Lisps in general and Clojure in
@@ -341,3 +350,4 @@ Distributed under the GNU General Public License; type <kbd>C-h C-c</kbd> to vie
 [paredit]: http://mumble.net/~campbell/emacs/paredit.html
 [smartparens]: https://github.com/Fuco1/smartparens
 [RainbowDelimiters]: https://github.com/Fanael/rainbow-delimiters
+[aggressive-indent-mode]: https://github.com/Malabarba/aggressive-indent-mode
