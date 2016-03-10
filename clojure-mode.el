@@ -329,6 +329,42 @@ instead of to `clojure-mode-map'."
   (clojure-font-lock-setup)
   (add-hook 'paredit-mode-hook #'clojure-paredit-setup))
 
+(defcustom clojure-verify-major-mode t
+  "If non-nil, warn when activating the wrong major-mode."
+  :type 'boolean
+  :package-version '(clojure-mode "5.3.0"))
+
+(defun clojure--check-wrong-major-mode ()
+  "Check if the current major-mode matches the file extension.
+If it doesn't, issue a warning if `clojure-verify-major-mode' is
+non-nil."
+  (when (and clojure-verify-major-mode
+             (stringp (buffer-file-name)))
+    (let* ((case-fold-search t)
+           (problem (cond ((and (string-match "\\.clj\\'" (buffer-file-name))
+                                (not (eq major-mode 'clojure-mode)))
+                           'clojure-mode)
+                          ((and (string-match "\\.cljs\\'" (buffer-file-name))
+                                (not (eq major-mode 'clojurescript-mode)))
+                           'clojurescript-mode)
+                          ((and (string-match "\\.cljc\\'" (buffer-file-name))
+                                (not (eq major-mode 'clojurec-mode)))
+                           'clojurec-mode)
+                          ((and (string-match "\\.cljx\\'" (buffer-file-name))
+                                (not (eq major-mode 'clojurex-mode)))
+                           'clojurex-mode))))
+      (when problem
+        (message "[WARNING] %s activated `%s' instead of `%s' in this buffer.
+This could cause problems.
+\(See `clojure-verify-major-mode' to disable this message.)"
+                 (if (eq major-mode real-this-command)
+                     "You have"
+                   "Something in your configuration")
+                 major-mode
+                 problem)))))
+
+(add-hook 'clojure-mode-hook #'clojure--check-wrong-major-mode)
+
 (defsubst clojure-in-docstring-p ()
   "Check whether point is in a docstring."
   (eq (get-text-property (point) 'face) 'font-lock-doc-face))

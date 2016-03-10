@@ -2,6 +2,10 @@
 
 ## master (unreleased)
 
+### New features
+
+* [#370](https://github.com/clojure-emacs/clojure-mode/issues/370): Warn the user if they seem to have activated the wrong major-mode.
+
 ## 5.2.0 (04/02/2016)
 
 ### Bugs fixed
