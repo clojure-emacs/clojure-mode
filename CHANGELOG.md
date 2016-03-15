@@ -2,6 +2,10 @@
 
 ## master (unreleased)
 
+### Bugs fixed
+
+* [#371](https://github.com/clojure-emacs/clojure-mode/issues/371): Don't font-lock `:foo/def` like a `def` form.
+
 ### New features
 
 * [#370](https://github.com/clojure-emacs/clojure-mode/issues/370): Warn the user if they seem to have activated the wrong major-mode.
