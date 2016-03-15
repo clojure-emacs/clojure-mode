@@ -115,6 +115,7 @@ POS."
 
 (ert-deftest clojure-mode-syntax-table/fontify-namespaced-keyword ()
   :tags '(fontification syntax-table)
+  (should (equal (clojure-test-face-at 9 11 "(:alias/def x 10)") '(clojure-keyword-face)))
   (should (equal (clojure-test-face-at 2 2 "{:alias/some 20}")  '(clojure-keyword-face)))
   (should (equal (clojure-test-face-at 3 7 "{:alias/some 20}")  '(font-lock-type-face clojure-keyword-face)))
   (should (equal (clojure-test-face-at 8 8 "{:alias/some 20}")  '(default clojure-keyword-face)))
