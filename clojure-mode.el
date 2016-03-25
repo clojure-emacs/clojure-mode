@@ -202,6 +202,8 @@ Out-of-the box clojure-mode understands lein, boot and gradle."
         ["Insert ns form at beginning" clojure-insert-ns-form]
         ["Update ns form" clojure-update-ns]
         "--"
+        ["Align expression" clojure-align]
+        "--"
         ["Version" clojure-mode-display-version]))
     map)
   "Keymap for Clojure mode.")
