@@ -326,8 +326,8 @@ An extensive changelog is available [here](CHANGELOG.md).
 
 ## License
 
-Copyright © 2007-2016 Jeffrey Chu, Lennart Staflin, Phil Hagelberg, Bozhidar Batsov
-and [contributors][].
+Copyright © 2007-2016 Jeffrey Chu, Lennart Staflin, Phil Hagelberg, Bozhidar
+Batsov, Artur Malabarba and [contributors][].
 
 Distributed under the GNU General Public License; type <kbd>C-h C-c</kbd> to view it.
 
