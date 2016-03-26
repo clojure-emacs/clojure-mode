@@ -226,6 +226,12 @@ Inherits from `emacs-lisp-mode-syntax-table'.")
 (defconst clojure--prettify-symbols-alist
   '(("fn"  . ?λ)))
 
+(defvar-local clojure-expected-ns-function nil
+  "The function used to determine the expected namespace of a file.
+`clojure-mode' ships a basic function named `clojure-expected-ns'
+that does basic heuristics to figure this out.
+CIDER provides a more complex version which does classpath analysis.")
+
 (defun clojure-mode-display-version ()
   "Display the current `clojure-mode-version' in the minibuffer."
   (interactive)
@@ -318,6 +324,7 @@ instead of to `clojure-mode-map'."
   (setq-local indent-region-function #'clojure-indent-region)
   (setq-local lisp-indent-function #'clojure-indent-function)
   (setq-local lisp-doc-string-elt-property 'clojure-doc-string-elt)
+  (setq-local clojure-expected-ns-function #'clojure-expected-ns)
   (setq-local parse-sexp-ignore-comments t)
   (setq-local prettify-symbols-alist clojure--prettify-symbols-alist)
   (setq-local open-paren-in-column-0-is-defun-start nil))
@@ -1370,7 +1377,7 @@ If PATH is nil, use the path to the file backing the current buffer."
 (defun clojure-insert-ns-form-at-point ()
   "Insert a namespace form at point."
   (interactive)
-  (insert (format "(ns %s)" (clojure-expected-ns))))
+  (insert (format "(ns %s)" (funcall clojure-expected-ns-function))))
 
 (defun clojure-insert-ns-form ()
   "Insert a namespace form at the beginning of the buffer."
@@ -1383,7 +1390,7 @@ If PATH is nil, use the path to the file backing the current buffer."
   "Update the namespace of the current buffer.
 Useful if a file has been renamed."
   (interactive)
-  (let ((nsname (clojure-expected-ns)))
+  (let ((nsname (funcall clojure-expected-ns-function)))
     (when nsname
       (save-excursion
         (save-match-data

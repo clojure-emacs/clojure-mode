@@ -9,6 +9,7 @@
 ### New features
 
 * [#370](https://github.com/clojure-emacs/clojure-mode/issues/370): Warn the user if they seem to have activated the wrong major-mode.
+* Make the expected ns function configurable via `clojure-expected-ns-function`.
 
 ## 5.2.0 (04/02/2016)
 
