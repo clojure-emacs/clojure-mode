@@ -1333,8 +1333,7 @@ nil."
     (goto-char original-point)))
 
 (defun clojure-delete-and-extract-sexp ()
-  "Delete the sexp and return it."
-  (interactive)
+  "Delete the surrounding sexp and return it."
   (let ((begin (point)))
     (forward-sexp)
     (let ((result (buffer-substring-no-properties begin (point))))
