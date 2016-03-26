@@ -1451,7 +1451,7 @@ Returns a list pair, e.g. (\"defn\" \"abc\") or (\"deftest\" \"some-test\")."
 Sexps that don't represent code are ^metadata or #reader.macros."
   (comment-normalize-vars)
   (comment-forward (point-max))
-  (looking-at-p "\\^\\|#[?[:alpha:]]"))
+  (looking-at-p "\\^\\|#[?[:alpha:]]\\|,"))
 
 (defun clojure-forward-logical-sexp (&optional n)
   "Move forward N logical sexps.
