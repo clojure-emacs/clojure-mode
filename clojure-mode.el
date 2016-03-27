@@ -1465,6 +1465,7 @@ This will skip over sexps that don't represent objects, so that ^hints and
       (while (> n 0)
         (while (clojure--looking-at-non-logical-sexp)
           (forward-sexp 1))
+        (skip-chars-forward ",")
         ;; The actual sexp
         (forward-sexp 1)
         (setq n (1- n))))))
