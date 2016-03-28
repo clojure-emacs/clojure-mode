@@ -22,6 +22,16 @@
 (require 'clojure-mode)
 (require 'ert)
 
+(ert-deftest test-sexp-with-commas ()
+  (with-temp-buffer
+    (insert "[], {}, :a, 2")
+    (clojure-mode)
+    (goto-char (point-min))
+    (clojure-forward-logical-sexp 1)
+    (should (looking-back " {}, :a, 2"))
+    (clojure-forward-logical-sexp 1)
+    (should (looking-at-p " :a, 2"))))
+
 (ert-deftest test-sexp ()
   (with-temp-buffer
     (insert "^String #macro ^dynamic reverse")

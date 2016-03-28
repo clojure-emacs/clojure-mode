@@ -5,6 +5,7 @@
 ### Bugs fixed
 
 * [#371](https://github.com/clojure-emacs/clojure-mode/issues/371): Don't font-lock `:foo/def` like a `def` form.
+* [#367](https://github.com/clojure-emacs/clojure-mode/issues/367): `clojure-align` no longer gets confused with commas. In fact, now it even removes extra commas.
 
 ### New features
 

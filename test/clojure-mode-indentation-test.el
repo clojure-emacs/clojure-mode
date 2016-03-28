@@ -546,6 +546,12 @@ x
  :b {:a  :a,
      :aa :a}}")
 
+(ert-deftest clojure-align-remove-extra-commas ()
+  (with-temp-buffer
+    (clojure-mode)
+    (insert "{:a 2, ,:c 4}")
+    (call-interactively #'clojure-align)
+    (should (string= (buffer-string) "{:a 2, :c 4}"))))
 
 ;;; Misc
 
