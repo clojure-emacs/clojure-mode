@@ -28,7 +28,7 @@
     (clojure-mode)
     (goto-char (point-min))
     (clojure-forward-logical-sexp 1)
-    (should (looking-back " {}, :a, 2"))
+    (should (looking-at-p " {}, :a, 2"))
     (clojure-forward-logical-sexp 1)
     (should (looking-at-p " :a, 2"))))
 
