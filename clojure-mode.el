@@ -1458,7 +1458,7 @@ Returns a list pair, e.g. (\"defn\" \"abc\") or (\"deftest\" \"some-test\")."
 Sexps that don't represent code are ^metadata or #reader.macros."
   (comment-normalize-vars)
   (comment-forward (point-max))
-  (looking-at-p "\\^\\|#[?[:alpha:]]"))
+  (looking-at-p "\\^\\|#[?[:alpha:]]\\|,"))
 
 (defun clojure-forward-logical-sexp (&optional n)
   "Move forward N logical sexps.
@@ -1472,6 +1472,7 @@ This will skip over sexps that don't represent objects, so that ^hints and
       (while (> n 0)
         (while (clojure--looking-at-non-logical-sexp)
           (forward-sexp 1))
+        (skip-chars-forward ",")
         ;; The actual sexp
         (forward-sexp 1)
         (setq n (1- n))))))

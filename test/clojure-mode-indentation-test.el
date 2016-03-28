@@ -540,6 +540,12 @@ x
  :b {:a  :a
      :aa :a}}")
 
+(def-full-align-test trailing-commas
+  "{:a {:a  :a,
+     :aa :a},
+ :b {:a  :a,
+     :aa :a}}")
+
 
 ;;; Misc
 
