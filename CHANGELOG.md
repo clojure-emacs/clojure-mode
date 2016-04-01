@@ -12,7 +12,7 @@
 * [#370](https://github.com/clojure-emacs/clojure-mode/issues/370): Warn the user if they seem to have activated the wrong major-mode.
 * Make the expected ns function configurable via `clojure-expected-ns-function`.
 
-## 5.2.0 (04/02/2016)
+## 5.2.0 (2016-02-04)
 
 ### Bugs fixed
 
@@ -23,7 +23,7 @@
 
 * [#362](https://github.com/clojure-emacs/clojure-mode/issues/362): New custom option `clojure-indent-style` offers 3 different ways to indent code.
 
-## 5.1.0 (04/01/2016)
+## 5.1.0 (2016-01-04)
 
 ### New features
 
@@ -39,7 +39,7 @@
 * Fixed the indentation for `specify` and `specify!`.
 * Fixed the docstring indentation for `defprotocol`.
 
-## 5.0.1 (15/11/2015)
+## 5.0.1 (2015-11-15)
 
 ### Bugs fixed
 
@@ -47,7 +47,7 @@
 * `cider-find-ns` now returns the closest `ns` instead of the first one.
 * [#344](https://github.com/clojure-emacs/clojure-mode/issues/344): Fixed the indentation of `extend-type`.
 
-## 5.0.0 (30/10/2015)
+## 5.0.0 (2015-10-30)
 
 ### New features
 
@@ -66,7 +66,7 @@
 * Fix font-locking for def with special chars such as: `defn*`, `defspecial!`.
 * Numerous indentation issues.
 
-## 4.1.0 (20/06/2015)
+## 4.1.0 (2015-06-20)
 
 ### Changes
 
@@ -84,14 +84,14 @@ the buffer at end of line.
 * Fix font-locking of namespace-prefixed dynamic vars (e.g. `some.ns/*var*`).
 * [#284](https://github.com/clojure-emacs/clojure-mode/issues/284): Fix the indentation of the `are` macro.
 
-## 4.0.1 (19/12/2014)
+## 4.0.1 (2014-12-19)
 
 ### Bugs fixed
 
 * Indent properly `as->`.
 * Revert the indentation settings for `->`, `->>`, `some->` and `some->>`.
 
-## 4.0.0 (12/12/2014)
+## 4.0.0 (2014-12-12)
 
 ### Changes
 
@@ -100,7 +100,7 @@ the buffer at end of line.
 * Removed special indentation settings for `defstruct`, `struct-map` and `assoc`.
 * Added special indentation settings for `->`, `->>`, `cond->`, `cond->>`, `some->` and `some->>`.
 
-## 3.0.1 (24/11/2014)
+## 3.0.1 (2014-11-24)
 
 ### Bugs fixed
 
@@ -108,7 +108,7 @@ the buffer at end of line.
 * [#260](https://github.com/clojure-emacs/clojure-mode/pull/260): Don't treat `@` as a word character.
 * [#239](https://github.com/clojure-emacs/clojure-mode/issues/239): Indent properly multi-arity definitions.
 
-## 3.0.0 (2/9/2014)
+## 3.0.0 (2014-09-02)
 
 ### New features
 
