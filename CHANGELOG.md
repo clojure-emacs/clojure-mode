@@ -2,6 +2,8 @@
 
 ## master (unreleased)
 
+## 5.3.0 (2016-04-04)
+
 ### Bugs fixed
 
 * [#371](https://github.com/clojure-emacs/clojure-mode/issues/371): Don't font-lock `:foo/def` like a `def` form.
