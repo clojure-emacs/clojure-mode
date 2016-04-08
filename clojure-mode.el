@@ -342,6 +342,7 @@ instead of to `clojure-mode-map'."
 (defcustom clojure-verify-major-mode t
   "If non-nil, warn when activating the wrong major-mode."
   :type 'boolean
+  :safe #'booleanp
   :package-version '(clojure-mode "5.3.0"))
 
 (defun clojure--check-wrong-major-mode ()
@@ -808,6 +809,7 @@ will align the values like this:
     {:some-key 10
      :key2     20}"
   :package-version '(clojure-mode . "5.1")
+  :safe #'booleanp
   :type 'boolean)
 
 (defcustom clojure-align-binding-forms
@@ -815,11 +817,13 @@ will align the values like this:
     "doseq" "for" "with-open" "with-local-vars" "with-redefs")
   "List of strings matching forms that have binding forms."
   :package-version '(clojure-mode . "5.1")
+  :safe #'listp
   :type '(repeat string))
 
 (defcustom clojure-align-cond-forms '("condp" "cond" "cond->" "cond->>" "case" "are")
   "List of strings identifying cond-like forms."
   :package-version '(clojure-mode . "5.1")
+  :safe #'listp
   :type '(repeat string))
 
 (defun clojure--position-for-alignment ()
@@ -1204,6 +1208,7 @@ You can use this to let Emacs indent your own macros the same way
 that it indents built-in macros like with-open.  To manually set
 it from Lisp code, use (put-clojure-indent 'some-symbol :defn)."
   :type '(repeat symbol)
+  :safe #'listp
   :set 'add-custom-clojure-indents)
 
 (define-clojure-indent
