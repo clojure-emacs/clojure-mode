@@ -849,6 +849,7 @@ construct."
              ;; The number of special arguments in the cond form is
              ;; the number of sexps we skip before aligning.
              (skip   (cond ((numberp method) method)
+                           ((null method) 0)
                            ((sequencep method) (elt method 0)))))
         (when (numberp skip)
           (clojure-forward-logical-sexp skip)
