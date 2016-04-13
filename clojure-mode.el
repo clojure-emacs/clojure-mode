@@ -851,7 +851,7 @@ construct."
              (skip   (cond ((numberp method) method)
                            ((null method) 0)
                            ((sequencep method) (elt method 0)))))
-        (when (numberp skip)
+        (when (and fun (numberp skip))
           (clojure-forward-logical-sexp skip)
           (comment-forward (point-max))
           fun)) ; Return non-nil (the var name).
