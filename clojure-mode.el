@@ -928,7 +928,7 @@ When called from lisp code align everything between BEG and END."
                         (forward-sexp 1)
                         (point-marker)))
             (clojure-align-forms-automatically nil))
-        (align-region (point) sexp-end nil
+        (align-region (point) sexp-end "^ *$"
                       '((clojure-align (regexp . clojure--search-whitespace-after-next-sexp)
                                        (group . 1)
                                        (repeat . t)))

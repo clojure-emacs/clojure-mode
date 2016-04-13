@@ -2,6 +2,10 @@
 
 ## master (unreleased)
 
+### New features
+
+* When aligning forms with `clojure-align` (or with the automatic align feature), blank lines will divide alignment regions.
+
 ## 5.3.0 (2016-04-04)
 
 ### Bugs fixed
