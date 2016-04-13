@@ -927,12 +927,20 @@ When called from lisp code align everything between BEG and END."
                         (backward-up-list)
                         (forward-sexp 1)
                         (point-marker)))
-            (clojure-align-forms-automatically nil))
-        (align-region (point) sexp-end "^ *$"
-                      '((clojure-align (regexp . clojure--search-whitespace-after-next-sexp)
-                                       (group . 1)
-                                       (repeat . t)))
-                      nil)
+            (clojure-align-forms-automatically nil)
+            (count 1))
+        ;; For some bizarre reason, we need to `align-region' once for each
+        ;; group.
+        (save-excursion
+          (while (search-forward-regexp "^ *\n" sexp-end 'noerror)
+            (incf count)))
+        (dotimes (_ count)
+          (align-region (point) sexp-end nil
+                        '((clojure-align (regexp . clojure--search-whitespace-after-next-sexp)
+                                  (group . 1)
+                                  (separate . "^ *$")
+                                  (repeat . t)))
+                        nil))
         ;; Reindent after aligning because of #360.
         (indent-region (point) sexp-end)))))
 

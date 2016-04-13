@@ -488,6 +488,18 @@ x
   "(let [a b
       c d])")
 
+(def-full-align-test blank-line
+  "(let [this-is-a-form b
+      c              d
+
+      another form
+      k       g])"
+  "{:this-is-a-form b
+ c               d
+
+ :another form
+ k        g}")
+
 (def-full-align-test basic-reversed
   "{c               d
  :this-is-a-form b}"
