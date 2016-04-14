@@ -933,7 +933,7 @@ When called from lisp code align everything between BEG and END."
         ;; group.
         (save-excursion
           (while (search-forward-regexp "^ *\n" sexp-end 'noerror)
-            (incf count)))
+            (cl-incf count)))
         (dotimes (_ count)
           (align-region (point) sexp-end nil
                         '((clojure-align (regexp . clojure--search-whitespace-after-next-sexp)
