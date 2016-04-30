@@ -1338,8 +1338,8 @@ nil."
         (let ((beg (match-beginning 2)))
           (when beg
             (if regex
-                (and (char-before beg) (char-equal ?# (char-before beg)) (1- beg))
-              (when (not (char-equal ?# (char-before beg)))
+                (and (char-before beg) (eq ?# (char-before beg)) (1- beg))
+              (when (not (eq ?# (char-before beg)))
                 beg))))))))
 
 (defun clojure-char-at-point ()

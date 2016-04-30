@@ -113,6 +113,14 @@ POS."
   (should (equal (clojure-test-face-at 3 10 ";`#'s/trim`") '(font-lock-constant-face font-lock-comment-face)))
   (should (equal (clojure-test-face-at 11 11 ";`#'s/trim`") font-lock-comment-face)))
 
+(ert-deftest clojure-mode-syntax-table/stuff-in-backticks ()
+  :tags '(fontification syntax-table)
+  (should (equal (clojure-test-face-at 1 2 "\"a\\bc\\n\"") font-lock-string-face))
+  (should (equal (clojure-test-face-at 3 4 "\"a\\bc\\n\"") '(bold font-lock-string-face)))
+  (should (equal (clojure-test-face-at 5 5 "\"a\\bc\\n\"") font-lock-string-face))
+  (should (equal (clojure-test-face-at 6 7 "\"a\\bc\\n\"") '(bold font-lock-string-face)))
+  (should (equal (clojure-test-face-at 4 5 "#\"a\\bc\\n\"") '(bold font-lock-string-face))))
+
 (ert-deftest clojure-mode-syntax-table/fontify-namespaced-keyword ()
   :tags '(fontification syntax-table)
   (should (equal (clojure-test-face-at 9 11 "(:alias/def x 10)") '(clojure-keyword-face)))
