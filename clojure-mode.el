@@ -649,6 +649,8 @@ any number of matches of `clojure--sym-forbidden-rest-chars'."))
       (,(rx "`" (group-n 1 (optional "#'")
                          (+ (or (syntax symbol) (syntax word)))) "`")
        (1 'font-lock-constant-face prepend))
+      ;; Highlight escaped characters in strings.
+      (clojure-font-lock-escaped-chars 0 'bold prepend)
       ;; Highlight grouping constructs in regular expressions
       (clojure-font-lock-regexp-groups
        (1 'font-lock-regexp-grouping-construct prepend))))
@@ -753,40 +755,60 @@ locking in def* forms that are not at top level."
                   changed t)))))
     changed))
 
+(defun clojure--font-locked-as-string-p (&optional regexp)
+  "Non-nil if the char before point is font-locked as a string.
+If REGEXP is non-nil, also check whether current string is
+preceeded by a #."
+  (let ((face (get-text-property (1- (point)) 'face)))
+    (and (or (and (listp face)
+                  (memq 'font-lock-string-face face))
+             (eq 'font-lock-string-face face))
+         (or (clojure-string-start t)
+             (unless regexp
+               (clojure-string-start nil))))))
+
+(defun clojure-font-lock-escaped-chars (bound)
+  "Highlight \escaped chars in strings.
+BOUND denotes a buffer position to limit the search."
+  (let ((found nil))
+    (while (and (not found)
+                (re-search-forward "\\\\." bound t))
+
+      (setq found (clojure--font-locked-as-string-p)))
+    found))
+
 (defun clojure-font-lock-regexp-groups (bound)
   "Highlight grouping constructs in regular expression.
 
 BOUND denotes the maximum number of characters (relative to the
 point) to check."
-  (catch 'found
-    (while (re-search-forward (concat
-                               ;; A group may start using several alternatives:
-                               "\\(\\(?:"
-                               ;; 1. (? special groups
-                               "(\\?\\(?:"
-                               ;; a) non-capturing group (?:X)
-                               ;; b) independent non-capturing group (?>X)
-                               ;; c) zero-width positive lookahead (?=X)
-                               ;; d) zero-width negative lookahead (?!X)
-                               "[:=!>]\\|"
-                               ;; e) zero-width positive lookbehind (?<=X)
-                               ;; f) zero-width negative lookbehind (?<!X)
-                               "<[=!]\\|"
-                               ;; g) named capturing group (?<name>X)
-                               "<[[:alnum:]]+>"
-                               "\\)\\|" ;; end of special groups
-                               ;; 2. normal capturing groups (
-                               ;; 3. we also highlight alternative
-                               ;; separarators |, and closing parens )
-                               "[|()]"
-                               "\\)\\)")
-                              bound t)
-      (let ((face (get-text-property (1- (point)) 'face)))
-        (when (and (or (and (listp face)
-                            (memq 'font-lock-string-face face))
-                       (eq 'font-lock-string-face face))
-                   (clojure-string-start t))
-          (throw 'found t))))))
+  (let ((found nil))
+    (while (and (not found)
+                (re-search-forward (eval-when-compile
+                                     (concat
+                                      ;; A group may start using several alternatives:
+                                      "\\(\\(?:"
+                                      ;; 1. (? special groups
+                                      "(\\?\\(?:"
+                                      ;; a) non-capturing group (?:X)
+                                      ;; b) independent non-capturing group (?>X)
+                                      ;; c) zero-width positive lookahead (?=X)
+                                      ;; d) zero-width negative lookahead (?!X)
+                                      "[:=!>]\\|"
+                                      ;; e) zero-width positive lookbehind (?<=X)
+                                      ;; f) zero-width negative lookbehind (?<!X)
+                                      "<[=!]\\|"
+                                      ;; g) named capturing group (?<name>X)
+                                      "<[[:alnum:]]+>"
+                                      "\\)\\|" ;; end of special groups
+                                      ;; 2. normal capturing groups (
+                                      ;; 3. we also highlight alternative
+                                      ;; separarators |, and closing parens )
+                                      "[|()]"
+                                      "\\)\\)"))
+                                   bound t))
+      (setq found (clojure--font-locked-as-string-p 'regexp)))
+    found))
 
 ;; Docstring positions
 (put 'ns 'clojure-doc-string-elt 2)

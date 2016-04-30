@@ -5,6 +5,7 @@
 ### New features
 
 * When aligning forms with `clojure-align` (or with the automatic align feature), blank lines will divide alignment regions.
+* [#378](https://github.com/clojure-emacs/clojure-mode/issues/378): Font-lock escape characters in strings.
 
 ## 5.3.0 (2016-04-04)
 
