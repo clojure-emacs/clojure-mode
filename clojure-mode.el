@@ -1619,8 +1619,8 @@ Point must be between the opening paren and the -> symbol."
       (forward-sexp)
       (down-list -1)
       (backward-sexp 2) ;; the last sexp, the threading macro
-      (when (looking-back "(\\s-*")
-          (backward-up-list)) ;; and the paren
+      (when (looking-back "(\\s-*" (line-beginning-position))
+        (backward-up-list)) ;; and the paren
       (= beg (point)))))
 
 ;;;###autoload
@@ -1668,7 +1668,7 @@ Return nil if there are no more levels to unwind."
   (forward-sexp 2)
   (down-list -1)
   (backward-sexp)
-  (unless (looking-back "(")
+  (unless (eq (char-before) ?\()
     (let ((contents (clojure-delete-and-extract-sexp)))
       (just-one-space 0)
       (backward-up-list)
@@ -1678,7 +1678,7 @@ Return nil if there are no more levels to unwind."
       ;; cljr #255 Fix dangling parens
       (backward-up-list)
       (forward-sexp)
-      (when (looking-back "^\\s-*)+\\s-*")
+      (when (looking-back "^\\s-*)+\\s-*" (line-beginning-position))
         (join-line))
       t)))
 
