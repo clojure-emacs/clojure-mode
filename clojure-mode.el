@@ -195,6 +195,11 @@ Out-of-the box clojure-mode understands lein, boot and gradle."
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "C-:") #'clojure-toggle-keyword-string)
     (define-key map (kbd "C-c SPC") #'clojure-align)
+    (define-key map (kbd "C-c C-r t") #'clojure-thread)
+    (define-key map (kbd "C-c C-r u") #'clojure-unwind)
+    (define-key map (kbd "C-c C-r f") #'clojure-thread-first-all)
+    (define-key map (kbd "C-c C-r l") #'clojure-thread-last-all)
+    (define-key map (kbd "C-c C-r a") #'clojure-unwind-all)
     (easy-menu-define clojure-mode-menu map "Clojure Mode Menu"
       '("Clojure"
         ["Toggle between string & keyword" clojure-toggle-keyword-string]
@@ -204,6 +209,13 @@ Out-of-the box clojure-mode understands lein, boot and gradle."
         ["Update ns form" clojure-update-ns]
         "--"
         ["Align expression" clojure-align]
+        "--"
+        ("Refactor -> and ->>"
+         ["Fully thread a form with ->" clojure-thread-first-all]
+         ["Fully thread a form with ->>" clojure-thread-last-all]
+         ["Fully unwind a threading macro" clojure-unwind-all]
+         ["Thread once more" clojure-thread]
+         ["Unwind once" clojure-unwind])
         "--"
         ["Version" clojure-mode-display-version]))
     map)
@@ -1533,6 +1545,178 @@ This will skip over sexps that don't represent objects, so that ^hints and
                         (clojure--looking-at-non-logical-sexp))))
           (backward-sexp 1))
         (setq n (1- n))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; Refactoring support
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defcustom clojure-thread-all-but-last nil
+  "When true `cljr-thread-first-all' and `cljr-thread-last-all' don't thread the last expression."
+  :package-version '(clojure-mode . "5.4.0")
+  :safe #'booleanp
+  :type 'boolean)
+
+(defun clojure--unwind-last ()
+  (forward-sexp)
+  (save-excursion
+    (let ((contents (clojure-delete-and-extract-sexp)))
+      (when (looking-at " *\n")
+        (join-line -1))
+      (clojure--ensure-parens-around-function-names)
+      (let* ((sexp-beg-line (line-number-at-pos))
+             (sexp-end-line (progn (forward-sexp)
+                                   (line-number-at-pos)))
+             (multiline-sexp-p (not (= sexp-beg-line sexp-end-line))))
+        (down-list -1)
+        (when multiline-sexp-p
+          (newline))
+        (insert contents)
+        (when multiline-sexp-p
+          (clojure-indent-line)))))
+  (forward-char))
+
+(defun clojure--ensure-parens-around-function-names ()
+  (clojure--looking-at-non-logical-sexp)
+  (unless (looking-at "(")
+    (insert-parentheses 1)
+    (backward-up-list)))
+
+(defun clojure--unwind-first ()
+  "Unwind a thread first macro once.
+Point must be between the opening paren and the -> symbol."
+  (forward-sexp)
+  (save-excursion
+    (let ((contents (clojure-delete-and-extract-sexp)))
+      (when (looking-at " *\n")
+        (join-line -1))
+      (clojure--ensure-parens-around-function-names)
+      (down-list)
+      (forward-sexp)
+      (insert contents)))
+  (forward-char))
+
+(defun clojure--pop-out-of-threading ()
+  (save-excursion
+    (down-list 2)
+    (backward-up-list)
+    (raise-sexp)
+    (let ((beg (point))
+          (end (progn
+                 (forward-sexp)
+                 (point))))
+      (clojure-indent-region beg end))))
+
+(defun clojure--nothing-more-to-unwind ()
+  (save-excursion
+    (let ((beg (point)))
+      (forward-sexp)
+      (down-list -1)
+      (backward-sexp 2) ;; the last sexp, the threading macro
+      (when (looking-back "(\\s-*")
+          (backward-up-list)) ;; and the paren
+      (= beg (point)))))
+
+;;;###autoload
+(defun clojure-unwind ()
+  "Unwind thread at point or above point by one level.
+Return nil if there are no more levels to unwind."
+  (interactive)
+  (ignore-errors
+    (when (looking-at "(")
+      (forward-char 1)
+      (forward-sexp 1)))
+  (search-backward-regexp "([^-]*->")
+  (if (clojure--nothing-more-to-unwind)
+      (progn (clojure--pop-out-of-threading)
+             nil)
+    (down-list)
+    (cond
+     ((looking-at "[^-]*->\\_>")  (clojure--unwind-first))
+     ((looking-at "[^-]*->>\\_>") (clojure--unwind-last)))
+    t))
+
+;;;###autoload
+(defun clojure-unwind-all ()
+  "Fully unwind thread at point or above point."
+  (interactive)
+  (while (clojure-unwind)))
+
+(defun clojure--remove-superfluous-parens ()
+  (when (looking-at "([^ )]+)")
+    (delete-pair)))
+
+(defun clojure--thread-first ()
+  (down-list)
+  (forward-symbol 1)
+  (unless (looking-at ")")
+    (let ((contents (clojure-delete-and-extract-sexp)))
+      (backward-up-list)
+      (just-one-space 0)
+      (insert contents)
+      (newline-and-indent)
+      (clojure--remove-superfluous-parens)
+      t)))
+
+(defun clojure--thread-last ()
+  (forward-sexp 2)
+  (down-list -1)
+  (backward-sexp)
+  (unless (looking-back "(")
+    (let ((contents (clojure-delete-and-extract-sexp)))
+      (just-one-space 0)
+      (backward-up-list)
+      (insert contents)
+      (newline-and-indent)
+      (clojure--remove-superfluous-parens)
+      ;; cljr #255 Fix dangling parens
+      (backward-up-list)
+      (forward-sexp)
+      (when (looking-back "^\\s-*)+\\s-*")
+        (join-line))
+      t)))
+
+(defun clojure--threadable-p ()
+  (save-excursion
+    (forward-symbol 1)
+    (looking-at "[\n\r\t ]*(")))
+
+;;;###autoload
+(defun clojure-thread ()
+  "Thread by one more level an existing threading macro."
+  (interactive)
+  (ignore-errors
+    (when (looking-at "(")
+      (forward-char 1)
+      (forward-sexp 1)))
+  (search-backward-regexp "([^-]*->")
+  (down-list)
+  (when (clojure--threadable-p)
+    (cond
+     ((looking-at "[^-]*->\\_>")  (clojure--thread-first))
+     ((looking-at "[^-]*->>\\_>") (clojure--thread-last)))))
+
+(defun clojure--thread-all (first-or-last-thread but-last)
+  (save-excursion
+    (insert-parentheses 1)
+    (insert first-or-last-thread))
+  (while (save-excursion (clojure-thread)))
+  (when (or but-last clojure-thread-all-but-last)
+    (clojure-unwind)))
+
+;;;###autoload
+(defun clojure-thread-first-all (but-last)
+  "Fully thread the form at point using ->.
+When BUT-LAST is passed the last expression is not threaded."
+  (interactive "P")
+  (clojure--thread-all "-> " but-last))
+
+;;;###autoload
+(defun clojure-thread-last-all (but-last)
+  "Fully thread the form at point using ->>.
+When BUT-LAST is passed the last expression is not threaded."
+  (interactive "P")
+  (clojure--thread-all "->> " but-last))
 
 (defconst clojurescript-font-lock-keywords
   (eval-when-compile

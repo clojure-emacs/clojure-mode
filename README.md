@@ -29,6 +29,8 @@ specific `clojure-mode` release.**
     - [Indentation of function forms](#indentation-of-function-forms)
     - [Indentation of macro forms](#indentation-of-macro-forms)
   - [Vertical alignment](#vertical-alignment)
+- [Refactoring support](#refactoring-support)
+  - [Threading macros](#threading-macros-related-features)
 - [Related packages](#related-packages)
 - [REPL Interaction](#repl-interaction)
   - [Basic REPL](#basic-repl)
@@ -219,6 +221,32 @@ Leads to the following:
 This can also be done automatically (as part of indentation) by
 turning on `clojure-align-forms-automatically`. This way it will
 happen whenever you select some code and hit `TAB`.
+
+## Refactoring support
+
+The available refactorings were originally created and maintained by the clj-refactor.el team. The ones implemented in Elisp only are gradually migrated to Clojure mode.
+
+### Threading macros related features
+
+* Thread an other expression.
+
+Thread another form into the surrounding thread. Both `->>` and `->` variants are supported. See demonstration on the [clj-refactor.el Wiki](https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-thread).
+
+* Unwind a threaded expression.
+
+Supports both `->>` and `->`. See demonstration on the [clj-refactor.el Wiki](https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-unwind-thread).
+
+* Wrap in thread first (`->`) and fully thread.
+
+Introduce the thread first macro and rewrite the entire form. With a prefix argument do not thread the last form. See demonstration on the [clj-refactor.el Wiki](https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-thread-first-all).
+
+* Wrap in thread last (`->>`) and fully thread.
+
+Introduce the thread last macro and rewrite the entire form. With a prefix argument do not thread the last form. See demonstration on the [clj-refactor.el Wiki](https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-thread-last-all).
+
+* Fully unwind a threaded expression.
+
+Unwind and remove the threading macro. See demonstration on the [clj-refactor.el Wiki](https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-unwind-all).
 
 ## Related packages
 
