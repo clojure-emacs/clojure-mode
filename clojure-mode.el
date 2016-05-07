@@ -211,11 +211,12 @@ Out-of-the box clojure-mode understands lein, boot and gradle."
         ["Align expression" clojure-align]
         "--"
         ("Refactor -> and ->>"
+         ["Thread once more" clojure-thread]
          ["Fully thread a form with ->" clojure-thread-first-all]
          ["Fully thread a form with ->>" clojure-thread-last-all]
-         ["Fully unwind a threading macro" clojure-unwind-all]
-         ["Thread once more" clojure-thread]
-         ["Unwind once" clojure-unwind])
+         "--"
+         ["Unwind once" clojure-unwind]
+         ["Fully unwind a threading macro" clojure-unwind-all])
         "--"
         ["Version" clojure-mode-display-version]))
     map)
