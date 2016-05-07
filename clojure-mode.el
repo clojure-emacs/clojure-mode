@@ -196,10 +196,15 @@ Out-of-the box clojure-mode understands lein, boot and gradle."
     (define-key map (kbd "C-:") #'clojure-toggle-keyword-string)
     (define-key map (kbd "C-c SPC") #'clojure-align)
     (define-key map (kbd "C-c C-r t") #'clojure-thread)
+    (define-key map (kbd "C-c C-r C-t") #'clojure-thread)
     (define-key map (kbd "C-c C-r u") #'clojure-unwind)
+    (define-key map (kbd "C-c C-r C-u") #'clojure-unwind)
     (define-key map (kbd "C-c C-r f") #'clojure-thread-first-all)
+    (define-key map (kbd "C-c C-r C-f") #'clojure-thread-first-all)
     (define-key map (kbd "C-c C-r l") #'clojure-thread-last-all)
+    (define-key map (kbd "C-c C-r C-l") #'clojure-thread-last-all)
     (define-key map (kbd "C-c C-r a") #'clojure-unwind-all)
+    (define-key map (kbd "C-c C-r C-a") #'clojure-unwind-all)
     (easy-menu-define clojure-mode-menu map "Clojure Mode Menu"
       '("Clojure"
         ["Toggle between string & keyword" clojure-toggle-keyword-string]
