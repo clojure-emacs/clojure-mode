@@ -224,29 +224,39 @@ happen whenever you select some code and hit `TAB`.
 
 ## Refactoring support
 
-The available refactorings were originally created and maintained by the clj-refactor.el team. The ones implemented in Elisp only are gradually migrated to Clojure mode.
+The available refactorings were originally created and maintained by the
+`clj-refactor.el` team. The ones implemented in Elisp only are gradually migrated
+to `clojure-mode`.
 
 ### Threading macros related features
 
-* Thread an other expression.
+* Thread another expression.
 
-Thread another form into the surrounding thread. Both `->>` and `->` variants are supported. See demonstration on the [clj-refactor.el Wiki](https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-thread).
+Thread another form into the surrounding thread. Both `->>` and `->` variants
+are supported. See demonstration on the
+[clj-refactor.el wiki](https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-thread).
 
 * Unwind a threaded expression.
 
-Supports both `->>` and `->`. See demonstration on the [clj-refactor.el Wiki](https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-unwind-thread).
+Supports both `->>` and `->`. See demonstration on the
+[clj-refactor.el wiki](https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-unwind-thread).
 
 * Wrap in thread first (`->`) and fully thread.
 
-Introduce the thread first macro and rewrite the entire form. With a prefix argument do not thread the last form. See demonstration on the [clj-refactor.el Wiki](https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-thread-first-all).
+Introduce the thread first macro and rewrite the entire form. With a prefix
+argument do not thread the last form. See demonstration on the
+[clj-refactor.el wiki](https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-thread-first-all).
 
 * Wrap in thread last (`->>`) and fully thread.
 
-Introduce the thread last macro and rewrite the entire form. With a prefix argument do not thread the last form. See demonstration on the [clj-refactor.el Wiki](https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-thread-last-all).
+Introduce the thread last macro and rewrite the entire form. With a prefix
+argument do not thread the last form. See demonstration on the
+[clj-refactor.el wiki](https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-thread-last-all).
 
 * Fully unwind a threaded expression.
 
-Unwind and remove the threading macro. See demonstration on the [clj-refactor.el Wiki](https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-unwind-all).
+Unwind and remove the threading macro. See demonstration on the
+[clj-refactor.el wiki](https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-unwind-all).
 
 ## Related packages
 
