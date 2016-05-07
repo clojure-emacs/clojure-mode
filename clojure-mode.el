@@ -17,8 +17,8 @@
 
 ;;; Commentary:
 
-;; Provides font-lock, indentation, and navigation for the Clojure
-;; programming language (http://clojure.org).
+;; Provides font-lock, indentation, navigation and basic refactoring for the
+;; Clojure programming language (http://clojure.org).
 
 ;; Using clojure-mode with paredit or smartparens is highly recommended.
 

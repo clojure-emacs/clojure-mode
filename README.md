@@ -5,7 +5,7 @@
 
 # Clojure Mode
 
-Provides Emacs font-lock, indentation, and navigation for the
+Provides Emacs font-lock, indentation, navigation and refactoring for the
 [Clojure(Script) programming language](http://clojure.org).
 
 This document assumes you're familiar with Emacs.  More thorough walkthroughs,
