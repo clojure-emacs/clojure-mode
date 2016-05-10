@@ -208,13 +208,11 @@ Out-of-the box clojure-mode understands lein, boot and gradle."
     (easy-menu-define clojure-mode-menu map "Clojure Mode Menu"
       '("Clojure"
         ["Toggle between string & keyword" clojure-toggle-keyword-string]
-        "--"
-        ["Insert ns form at point" clojure-insert-ns-form-at-point]
-        ["Insert ns form at beginning" clojure-insert-ns-form]
-        ["Update ns form" clojure-update-ns]
-        "--"
         ["Align expression" clojure-align]
-        "--"
+        ("ns forms"
+         ["Insert ns form at point" clojure-insert-ns-form-at-point]
+         ["Insert ns form at beginning" clojure-insert-ns-form]
+         ["Update ns form" clojure-update-ns])
         ("Refactor -> and ->>"
          ["Thread once more" clojure-thread]
          ["Fully thread a form with ->" clojure-thread-first-all]
@@ -223,7 +221,7 @@ Out-of-the box clojure-mode understands lein, boot and gradle."
          ["Unwind once" clojure-unwind]
          ["Fully unwind a threading macro" clojure-unwind-all])
         "--"
-        ["Version" clojure-mode-display-version]))
+        ["Clojure-mode version" clojure-mode-display-version]))
     map)
   "Keymap for Clojure mode.")
 
