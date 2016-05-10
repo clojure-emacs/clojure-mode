@@ -1626,19 +1626,23 @@ Point must be between the opening paren and the -> symbol."
   "Unwind thread at point or above point by one level.
 Return nil if there are no more levels to unwind."
   (interactive)
-  (ignore-errors
-    (when (looking-at "(")
-      (forward-char 1)
-      (forward-sexp 1)))
-  (search-backward-regexp "([^-]*->")
-  (if (clojure--nothing-more-to-unwind)
-      (progn (clojure--pop-out-of-threading)
-             nil)
-    (down-list)
-    (cond
-     ((looking-at "[^-]*->\\_>")  (clojure--unwind-first))
-     ((looking-at "[^-]*->>\\_>") (clojure--unwind-last)))
-    t))
+  (save-excursion
+    (let ((limit (save-excursion
+                   (beginning-of-defun)
+                   (point))))
+      (ignore-errors
+        (when (looking-at "(")
+          (forward-char 1)
+          (forward-sexp 1)))
+      (search-backward-regexp "([^-]*->" limit)
+      (if (clojure--nothing-more-to-unwind)
+          (progn (clojure--pop-out-of-threading)
+                 nil)
+        (down-list)
+        (cond
+         ((looking-at "[^-]*->\\_>")  (clojure--unwind-first))
+         ((looking-at "[^-]*->>\\_>") (clojure--unwind-last)))
+        t))))
 
 ;;;###autoload
 (defun clojure-unwind-all ()
