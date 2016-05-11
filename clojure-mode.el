@@ -1569,7 +1569,7 @@ current sexp."
   (save-excursion
     (let ((contents (clojure-delete-and-extract-sexp)))
       (when (looking-at " *\n")
-        (join-line -1))
+        (join-line 'following))
       (clojure--ensure-parens-around-function-names)
       (let* ((sexp-beg-line (line-number-at-pos))
              (sexp-end-line (progn (forward-sexp)
@@ -1596,7 +1596,7 @@ Point must be between the opening paren and the -> symbol."
   (save-excursion
     (let ((contents (clojure-delete-and-extract-sexp)))
       (when (looking-at " *\n")
-        (join-line -1))
+        (join-line 'following))
       (clojure--ensure-parens-around-function-names)
       (down-list)
       (forward-sexp)
