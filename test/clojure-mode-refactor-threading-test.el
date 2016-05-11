@@ -30,15 +30,18 @@
 
 (defmacro def-threading-test (name before after &rest body)
   (declare (indent 3))
-  `(ert-deftest ,(intern (format "test-thread-%s" name)) ()
-     (let ((clojure-thread-all-but-last nil))
-       (with-temp-buffer
-         (insert ,before)
-         (clojure-mode)
-         ,@body
-         (should (equal ,(concat "\n" after)
-                        (concat "\n" (buffer-substring-no-properties
-                                      (point-min) (point-max)))))))))
+  (let ((sym (intern (format "test-thread-%s" name))))
+    `(progn
+       (put ',sym 'definition-name ',name)
+       (ert-deftest ,sym ()
+         (let ((clojure-thread-all-but-last nil))
+           (with-temp-buffer
+             (insert ,before)
+             (clojure-mode)
+             ,@body
+             (should (equal ,(concat "\n" after)
+                            (concat "\n" (buffer-substring-no-properties
+                                          (point-min) (point-max)))))))))))
 
 ;; thread first
 
