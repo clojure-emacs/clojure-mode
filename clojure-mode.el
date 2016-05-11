@@ -1389,7 +1389,7 @@ nil."
   "Delete the surrounding sexp and return it."
   (let ((begin (point)))
     (forward-sexp)
-    (let ((result (buffer-substring-no-properties begin (point))))
+    (let ((result (buffer-substring begin (point))))
       (delete-region begin (point))
       result)))
 
@@ -1609,7 +1609,9 @@ Point must be between the opening paren and the -> symbol."
       (clojure--ensure-parens-around-function-names)
       (down-list)
       (forward-sexp)
-      (insert contents)))
+      (insert contents)
+      (forward-sexp -1)
+      (clojure--maybe-unjoin-line)))
   (forward-char))
 
 (defun clojure--pop-out-of-threading ()
@@ -1677,9 +1679,14 @@ Return nil if there are no more levels to unwind."
     (let ((contents (clojure-delete-and-extract-sexp)))
       (backward-up-list)
       (just-one-space 0)
-      (insert contents)
-      (newline-and-indent)
-      (clojure--remove-superfluous-parens)
+      (save-excursion
+        (insert contents "\n")
+        (clojure--remove-superfluous-parens))
+      (when (looking-at "\\s-*\n")
+        (join-line 'following)
+        (forward-char 1)
+        (put-text-property (point) (1+ (point))
+                           'clojure-thread-line-joined t))
       t)))
 
 (defun clojure--thread-last ()
@@ -1690,8 +1697,7 @@ Return nil if there are no more levels to unwind."
     (let ((contents (clojure-delete-and-extract-sexp)))
       (just-one-space 0)
       (backward-up-list)
-      (insert contents)
-      (newline-and-indent)
+      (insert contents "\n")
       (clojure--remove-superfluous-parens)
       ;; cljr #255 Fix dangling parens
       (forward-sexp)

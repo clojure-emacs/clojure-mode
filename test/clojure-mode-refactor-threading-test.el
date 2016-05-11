@@ -331,7 +331,7 @@
       [a b])"
   (clojure-unwind-all))
 
-(def-threading-test maybe-unjoin-lines
+(def-threading-test last-maybe-unjoin-lines
     "(deftask dev []
   (comp (serve)
         (cljs (lala)
@@ -342,6 +342,27 @@
               10)))"
   (goto-char (point-min))
   (clojure-thread-last-all nil)
+  (clojure-unwind-all))
+
+(def-threading-test empty-first-line
+    "(map
+ inc
+ [1 2])"
+    "(-> inc
+    (map
+     [1 2]))"
+  (goto-char (point-min))
+  (clojure-thread-first-all nil))
+
+(def-threading-test first-maybe-unjoin-lines
+    "(map
+ inc
+ [1 2])"
+    "(map
+ inc
+ [1 2])"
+  (goto-char (point-min))
+  (clojure-thread-first-all nil)
   (clojure-unwind-all))
 
 (provide 'clojure-mode-refactor-threading-test)
