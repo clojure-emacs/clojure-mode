@@ -1564,10 +1564,17 @@ current sexp."
   :safe #'booleanp
   :type 'boolean)
 
+(defun clojure--maybe-unjoin-line ()
+  "Undo a `join-line' done by a threading command."
+  (when (get-text-property (point) 'clojure-thread-line-joined)
+    (remove-text-properties (point) (1+ (point)) '(clojure-thread-line-joined t))
+    (newline-and-indent)))
+
 (defun clojure--unwind-last ()
   (forward-sexp)
   (save-excursion
-    (let ((contents (clojure-delete-and-extract-sexp)))
+    (let ((beg (point))
+          (contents (clojure-delete-and-extract-sexp)))
       (when (looking-at " *\n")
         (join-line 'following))
       (clojure--ensure-parens-around-function-names)
@@ -1576,11 +1583,14 @@ current sexp."
                                    (line-number-at-pos)))
              (multiline-sexp-p (not (= sexp-beg-line sexp-end-line))))
         (down-list -1)
-        (when multiline-sexp-p
-          (newline))
+        (if multiline-sexp-p
+            (newline)
+          ;; `clojure--maybe-unjoin-line' only works when unwinding sexps that were
+          ;; threaded in the same Emacs session, but it also catches cases that
+          ;; `multiline-sexp-p' doesn't.
+          (clojure--maybe-unjoin-line))
         (insert contents)
-        (when multiline-sexp-p
-          (clojure-indent-line)))))
+        (clojure-indent-region beg (point)))))
   (forward-char))
 
 (defun clojure--ensure-parens-around-function-names ()
@@ -1682,7 +1692,9 @@ Return nil if there are no more levels to unwind."
       (clojure--remove-superfluous-parens)
       ;; cljr #255 Fix dangling parens
       (forward-sexp)
-      (when (looking-back "^\\s-*)+\\s-*" (line-beginning-position))
+      (when (looking-back "^\\s-*\\()+\\)\\s-*" (line-beginning-position))
+        (let ((pos (match-beginning 1)))
+          (put-text-property pos (1+ pos) 'clojure-thread-line-joined t))
         (join-line))
       t)))
 

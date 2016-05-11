@@ -331,6 +331,19 @@
       [a b])"
   (clojure-unwind-all))
 
+(def-threading-test maybe-unjoin-lines
+    "(deftask dev []
+  (comp (serve)
+        (cljs (lala)
+              10)))"
+    "(deftask dev []
+  (comp (serve)
+        (cljs (lala)
+              10)))"
+  (goto-char (point-min))
+  (clojure-thread-last-all nil)
+  (clojure-unwind-all))
+
 (provide 'clojure-mode-refactor-threading-test)
 
 ;;; clojure-mode-refactor-threading-test.el ends here
