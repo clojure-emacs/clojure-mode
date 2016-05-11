@@ -28,449 +28,295 @@
 (require 'clojure-mode)
 (require 'ert)
 
+(defmacro def-threading-test (name before after &rest body)
+  (declare (indent 3))
+  `(ert-deftest ,(intern (format "test-thread-%s" name)) ()
+     (let ((clojure-thread-all-but-last nil))
+       (with-temp-buffer
+         (insert ,before)
+         (clojure-mode)
+         ,@body
+         (should (equal ,(concat "\n" after)
+                        (concat "\n" (buffer-substring-no-properties
+                                      (point-min) (point-max)))))))))
+
 ;; thread first
 
-(ert-deftest test-thread-first-one-step ()
-  (with-temp-buffer
-    (insert "(-> (dissoc (assoc {} :key \"value\") :lock))")
-    (clojure-mode)
-    (clojure-thread)
-    (should
-     (equal
-      "(-> (assoc {} :key \"value\")
+(def-threading-test first-one-step
+    "(-> (dissoc (assoc {} :key \"value\") :lock))"
+    "(-> (assoc {} :key \"value\")
     (dissoc :lock))"
-      (buffer-string)))))
+  (clojure-thread))
 
-(ert-deftest test-thread-first-two-steps ()
-  (with-temp-buffer
-    (insert "(-> (dissoc (assoc {} :key \"value\") :lock))")
-    (clojure-mode)
-    (clojure-thread)
-    (clojure-thread)
-    (should
-     (equal
-      "(-> {}
+(def-threading-test first-two-steps
+    "(-> (dissoc (assoc {} :key \"value\") :lock))"
+    "(-> {}
     (assoc :key \"value\")
     (dissoc :lock))"
-      (buffer-string)))))
+  (clojure-thread)
+  (clojure-thread))
 
-(ert-deftest test-thread-first-dont-thread-maps ()
-  (with-temp-buffer
-    (insert "(-> (dissoc (assoc {} :key \"value\") :lock))")
-    (clojure-mode)
-    (clojure-thread)
-    (clojure-thread)
-    (clojure-thread)
-    (should
-     (equal
-      "(-> {}
+(def-threading-test first-dont-thread-maps
+    "(-> (dissoc (assoc {} :key \"value\") :lock))"
+    "(-> {}
     (assoc :key \"value\")
     (dissoc :lock))"
-      (buffer-string)))))
+  (clojure-thread)
+  (clojure-thread)
+  (clojure-thread))
 
-(ert-deftest test-thread-first-dont-thread-last-one ()
-  (with-temp-buffer
-    (insert "(-> (dissoc (assoc (get-a-map) :key \"value\") :lock))")
-    (clojure-mode)
-    (clojure-thread)
-    (clojure-thread)
-    (clojure-thread)
-    (should
-     (equal
-      "(-> (get-a-map)
+(def-threading-test first-dont-thread-last-one
+    "(-> (dissoc (assoc (get-a-map) :key \"value\") :lock))"
+    "(-> (get-a-map)
     (assoc :key \"value\")
     (dissoc :lock))"
-      (buffer-string)))))
+  (clojure-thread)
+  (clojure-thread)
+  (clojure-thread))
 
-(ert-deftest test-thread-first-easy-on-whitespace ()
-  (with-temp-buffer
-    (insert "(->
- (dissoc (assoc {} :key \"value\") :lock))")
-    (clojure-mode)
-    (clojure-thread)
-    (should
-     (equal
-      "(->
+(def-threading-test first-easy-on-whitespace
+    "(->
+ (dissoc (assoc {} :key \"value\") :lock))"
+    "(->
  (assoc {} :key \"value\")
  (dissoc :lock))"
-      (buffer-string)))))
+  (clojure-thread))
 
-(ert-deftest test-thread-first-remove-superfluous-parens ()
-  (with-temp-buffer
-    (insert "(-> (square (sum [1 2 3 4 5])))")
-    (clojure-mode)
-    (clojure-thread)
-    (clojure-thread)
-    (should
-     (equal
-      "(-> [1 2 3 4 5]
+(def-threading-test first-remove-superfluous-parens
+    "(-> (square (sum [1 2 3 4 5])))"
+    "(-> [1 2 3 4 5]
     sum
     square)"
-      (buffer-string)))))
+  (clojure-thread)
+  (clojure-thread))
 
-(ert-deftest test-thread-first-cursor-before-threading ()
-  (with-temp-buffer
-    (insert "(-> (not (s-acc/mobile? session)))")
-    (clojure-mode)
-    (beginning-of-buffer)
-    (clojure-thread)
-    (should
-     (equal
-      "(-> (s-acc/mobile? session)
+(def-threading-test first-cursor-before-threading
+    "(-> (not (s-acc/mobile? session)))"
+    "(-> (s-acc/mobile? session)
     not)"
-      (buffer-string)))))
+  (beginning-of-buffer)
+  (clojure-thread))
 
 ;; unwind thread first
-(ert-deftest test-unwind-first-one-step ()
-  (with-temp-buffer
-    (insert "(-> {}
+(def-threading-test first-one-step
+    "(-> {}
     (assoc :key \"value\")
-    (dissoc :lock))")
-    (clojure-mode)
-    (clojure-unwind)
-    (should
-     (equal
-      "(-> (assoc {} :key \"value\")
     (dissoc :lock))"
-      (buffer-string)))))
+    "(-> (assoc {} :key \"value\")
+    (dissoc :lock))"
+  (clojure-unwind))
 
-(ert-deftest test-unwind-first-two-steps ()
-  (with-temp-buffer
-    (insert "(-> {}
+(def-threading-test first-two-steps
+    "(-> {}
     (assoc :key \"value\")
-    (dissoc :lock))")
-    (clojure-mode)
-    (clojure-unwind)
-    (clojure-unwind)
-    (should
-     (equal
-      "(-> (dissoc (assoc {} :key \"value\") :lock))"
-      (buffer-string)))))
+    (dissoc :lock))"
+    "(-> (dissoc (assoc {} :key \"value\") :lock))"
+  (clojure-unwind)
+  (clojure-unwind))
 
-(ert-deftest test-unwind-first-jump-out-of-threading ()
-  (with-temp-buffer
-    (insert "(-> {}
+(def-threading-test first-jump-out-of-threading
+    "(-> {}
     (assoc :key \"value\")
-    (dissoc :lock))")
-    (clojure-mode)
-    (clojure-unwind)
-    (clojure-unwind)
-    (clojure-unwind)
-    (should
-     (equal
-      "(dissoc (assoc {} :key \"value\") :lock)"
-      (buffer-string)))))
+    (dissoc :lock))"
+    "(dissoc (assoc {} :key \"value\") :lock)"
+  (clojure-unwind)
+  (clojure-unwind)
+  (clojure-unwind))
 
 ;; thread last
-(ert-deftest test-thread-last-one-step ()
-  (with-temp-buffer
-    (insert "(->> (map square (filter even? [1 2 3 4 5])))")
-    (clojure-mode)
-    (clojure-thread)
-    (should
-     (equal
-      "(->> (filter even? [1 2 3 4 5])
+(def-threading-test last-one-step
+    "(->> (map square (filter even? [1 2 3 4 5])))"
+    "(->> (filter even? [1 2 3 4 5])
      (map square))"
-      (buffer-string)))))
+  (clojure-thread))
 
-(ert-deftest test-thread-last-two-steps ()
-  (with-temp-buffer
-    (insert "(->> (map square (filter even? [1 2 3 4 5])))")
-    (clojure-mode)
-    (clojure-thread)
-    (clojure-thread)
-    (should
-     (equal
-      "(->> [1 2 3 4 5]
+(def-threading-test last-two-steps
+    "(->> (map square (filter even? [1 2 3 4 5])))"
+    "(->> [1 2 3 4 5]
      (filter even?)
      (map square))"
-      (buffer-string)))))
+  (clojure-thread)
+  (clojure-thread))
 
-(ert-deftest test-thread-last-dont-thread-vectors ()
-  (with-temp-buffer
-    (insert "(->> (map square (filter even? [1 2 3 4 5])))")
-    (clojure-mode)
-    (clojure-thread)
-    (clojure-thread)
-    (clojure-thread)
-    (should
-     (equal
-      "(->> [1 2 3 4 5]
+(def-threading-test last-dont-thread-vectors
+    "(->> (map square (filter even? [1 2 3 4 5])))"
+    "(->> [1 2 3 4 5]
      (filter even?)
      (map square))"
-      (buffer-string)))))
+  (clojure-thread)
+  (clojure-thread)
+  (clojure-thread))
 
-(ert-deftest test-thread-last-dont-thread-last-one ()
-  (with-temp-buffer
-    (insert "(->> (map square (filter even? (get-a-list))))")
-    (clojure-mode)
-    (clojure-thread)
-    (clojure-thread)
-    (clojure-thread)
-    (should
-     (equal
-      "(->> (get-a-list)
+(def-threading-test last-dont-thread-last-one
+    "(->> (map square (filter even? (get-a-list))))"
+    "(->> (get-a-list)
      (filter even?)
      (map square))"
-      (buffer-string)))))
+  (clojure-thread)
+  (clojure-thread)
+  (clojure-thread))
 
 ;; unwind thread last
-(ert-deftest test-unwind-last-one-step ()
-  (with-temp-buffer
-    (insert "(->> [1 2 3 4 5]
+(def-threading-test last-one-step
+    "(->> [1 2 3 4 5]
      (filter even?)
-     (map square))")
-    (clojure-mode)
-    (clojure-unwind)
-    (should
-     (equal
-      "(->> (filter even? [1 2 3 4 5])
      (map square))"
-      (buffer-string)))))
+    "(->> (filter even? [1 2 3 4 5])
+     (map square))"
+  (clojure-unwind))
 
-(ert-deftest test-unwind-last-two-steps ()
-  (with-temp-buffer
-    (insert "(->> [1 2 3 4 5]
+(def-threading-test last-two-steps
+    "(->> [1 2 3 4 5]
      (filter even?)
-     (map square))")
-    (clojure-mode)
-    (clojure-unwind)
-    (clojure-unwind)
-    (should
-     (equal
-      "(->> (map square (filter even? [1 2 3 4 5])))"
-      (buffer-string)))))
+     (map square))"
+    "(->> (map square (filter even? [1 2 3 4 5])))"
+  (clojure-unwind)
+  (clojure-unwind))
 
-(ert-deftest test-unwind-last-jump-out-of-threading ()
-  (with-temp-buffer
-    (insert "(->> [1 2 3 4 5]
+(def-threading-test last-jump-out-of-threading
+    "(->> [1 2 3 4 5]
      (filter even?)
-     (map square))")
-    (clojure-mode)
-    (clojure-unwind)
-    (clojure-unwind)
-    (clojure-unwind)
-    (should
-     (equal
-      "(map square (filter even? [1 2 3 4 5]))"
-      (buffer-string)))))
+     (map square))"
+    "(map square (filter even? [1 2 3 4 5]))"
+  (clojure-unwind)
+  (clojure-unwind)
+  (clojure-unwind))
 
-(ert-deftest test-unwind-function-name ()
-  (with-temp-buffer
-    (insert "(->> [1 2 3 4 5]
+(def-threading-test function-name
+    "(->> [1 2 3 4 5]
      sum
-     square)")
-    (clojure-mode)
-    (clojure-unwind)
-    (should
-     (equal
-      "(->> (sum [1 2 3 4 5])
      square)"
-      (buffer-string)))))
+    "(->> (sum [1 2 3 4 5])
+     square)"
+  (clojure-unwind))
 
-(ert-deftest test-unwind-function-name-twice ()
-  (with-temp-buffer
-    (insert "(-> [1 2 3 4 5]
+(def-threading-test function-name-twice
+    "(-> [1 2 3 4 5]
      sum
-     square)")
-    (clojure-mode)
-    (clojure-unwind)
-    (clojure-unwind)
-    (should
-     (equal
-      "(-> (square (sum [1 2 3 4 5])))"
-      (buffer-string)))))
+     square)"
+    "(-> (square (sum [1 2 3 4 5])))"
+  (clojure-unwind)
+  (clojure-unwind))
 
-(ert-deftest test-unwind-issue-6-1 ()
-  (with-temp-buffer
-    (insert "(defn plus [a b]
-  (-> a (+ b)))")
-    (clojure-mode)
-    (clojure-unwind)
-    (should
-     (equal
-      "(defn plus [a b]
+(def-threading-test issue-6-1
+    "(defn plus [a b]
+  (-> a (+ b)))"
+    "(defn plus [a b]
   (-> (+ a b)))"
-      (buffer-string)))))
+  (clojure-unwind))
 
-(ert-deftest test-unwind-issue-6-2 ()
-  (with-temp-buffer
-    (insert "(defn plus [a b]
-  (->> a (+ b)))")
-    (clojure-mode)
-    (clojure-unwind)
-    (should
-     (equal
-      "(defn plus [a b]
+(def-threading-test issue-6-2
+    "(defn plus [a b]
+  (->> a (+ b)))"
+    "(defn plus [a b]
   (->> (+ b a)))"
-      (buffer-string)))))
+  (clojure-unwind))
 
-(ert-deftest test-thread-first-some ()
-  (with-temp-buffer
-    (insert "(some-> (+ (val (find {:a 1} :b)) 5))")
-    (clojure-mode)
-    (clojure-thread)
-    (clojure-thread)
-    (clojure-thread)
-    (should
-     (equal
-      "(some-> {:a 1}
+(def-threading-test first-some
+    "(some-> (+ (val (find {:a 1} :b)) 5))"
+    "(some-> {:a 1}
         (find :b)
         val
         (+ 5))"
-      (buffer-string)))))
+  (clojure-thread)
+  (clojure-thread)
+  (clojure-thread))
 
-(ert-deftest test-thread-last-some ()
-  (with-temp-buffer
-    (insert "(some->> (+ 5 (val (find {:a 1} :b))))")
-    (clojure-mode)
-    (clojure-thread)
-    (clojure-thread)
-    (clojure-thread)
-    (should
-     (equal
-      "(some->> :b
+(def-threading-test last-some
+    "(some->> (+ 5 (val (find {:a 1} :b))))"
+    "(some->> :b
          (find {:a 1})
          val
          (+ 5))"
-      (buffer-string)))))
+  (clojure-thread)
+  (clojure-thread)
+  (clojure-thread))
 
-(ert-deftest test-unwind-last-first-some ()
-  (with-temp-buffer
-    (insert "(some-> {:a 1}
+(def-threading-test last-first-some
+    "(some-> {:a 1}
         (find :b)
         val
-        (+ 5))")
-    (clojure-mode)
-    (clojure-unwind)
-    (clojure-unwind)
-    (clojure-unwind)
-    (should
-     (equal
-      "(some-> (+ (val (find {:a 1} :b)) 5))"
-      (buffer-string)))))
+        (+ 5))"
+    "(some-> (+ (val (find {:a 1} :b)) 5))"
+  (clojure-unwind)
+  (clojure-unwind)
+  (clojure-unwind))
 
-(ert-deftest test-unwind-thread-last-some ()
-  (with-temp-buffer
-    (insert "(some->> :b
+(def-threading-test thread-last-some
+    "(some->> :b
          (find {:a 1})
          val
-         (+ 5))")
-    (clojure-mode)
-    (clojure-unwind)
-    (clojure-unwind)
-    (clojure-unwind)
-    (should
-     (equal
-      "(some->> (+ 5 (val (find {:a 1} :b))))"
-      (buffer-string)))))
+         (+ 5))"
+    "(some->> (+ 5 (val (find {:a 1} :b))))"
+  (clojure-unwind)
+  (clojure-unwind)
+  (clojure-unwind))
 
-(ert-deftest test-thread-first-all ()
-  (with-temp-buffer
-    (insert "(->map (assoc {} :key \"value\") :lock)")
-    (clojure-mode)
-    (beginning-of-buffer)
-    (clojure-thread-first-all nil)
-    (should
-     (equal
-      "(-> {}
+(def-threading-test first-all
+    "(->map (assoc {} :key \"value\") :lock)"
+    "(-> {}
     (assoc :key \"value\")
     (->map :lock))"
-      (buffer-string)))))
+  (beginning-of-buffer)
+  (clojure-thread-first-all nil))
 
-(ert-deftest test-thread-first-all-but-last ()
-  (with-temp-buffer
-    (insert "(->map (assoc {} :key \"value\") :lock)")
-    (clojure-mode)
-    (beginning-of-buffer)
-    (clojure-thread-first-all t)
-    (should
-     (equal
-      "(-> (assoc {} :key \"value\")
+(def-threading-test first-all-but-last
+    "(->map (assoc {} :key \"value\") :lock)"
+    "(-> (assoc {} :key \"value\")
     (->map :lock))"
-      (buffer-string)))))
+  (beginning-of-buffer)
+  (clojure-thread-first-all t))
 
-(ert-deftest test-thread-last-all ()
-  (with-temp-buffer
-    (insert "(map square (filter even? (make-things)))")
-    (clojure-mode)
-    (beginning-of-buffer)
-    (clojure-thread-last-all nil)
-    (should
-     (equal
-      "(->> (make-things)
+(def-threading-test last-all
+    "(map square (filter even? (make-things)))"
+    "(->> (make-things)
      (filter even?)
      (map square))"
-      (buffer-string)))))
+  (beginning-of-buffer)
+  (clojure-thread-last-all nil))
 
-(ert-deftest test-thread-last-all-but-last ()
-  (with-temp-buffer
-    (insert "(map square (filter even? (make-things)))")
-    (clojure-mode)
-    (beginning-of-buffer)
-    (clojure-thread-last-all t)
-    (should
-     (equal
-      "(->> (filter even? (make-things))
+(def-threading-test last-all-but-last
+    "(map square (filter even? (make-things)))"
+    "(->> (filter even? (make-things))
      (map square))"
-      (buffer-string)))))
+  (beginning-of-buffer)
+  (clojure-thread-last-all t))
 
-(ert-deftest test-unwind-all-thread-first ()
-  (with-temp-buffer
-    (insert "(-> {}
+(def-threading-test all-thread-first
+    "(-> {}
     (assoc :key \"value\")
-    (dissoc :lock))")
-    (clojure-mode)
-    (beginning-of-buffer)
-    (clojure-unwind-all)
-    (should
-     (equal
-      "(dissoc (assoc {} :key \"value\") :lock)"
-      (buffer-string)))))
+    (dissoc :lock))"
+    "(dissoc (assoc {} :key \"value\") :lock)"
+  (beginning-of-buffer)
+  (clojure-unwind-all))
 
-(ert-deftest test-unwind-all-thread-last ()
-  (with-temp-buffer
-    (insert "(->> (make-things)
+(def-threading-test all-thread-last
+    "(->> (make-things)
      (filter even?)
-     (map square))")
-    (clojure-mode)
-    (beginning-of-buffer)
-    (clojure-unwind-all)
-    (should
-     (equal
-      "(map square (filter even? (make-things)))"
-      (buffer-string)))))
+     (map square))"
+    "(map square (filter even? (make-things)))"
+  (beginning-of-buffer)
+  (clojure-unwind-all))
 
-(ert-deftest test-thread-last-dangling-parens ()
-  (with-temp-buffer
-    (insert "(map inc
-     (range))")
-    (clojure-mode)
-    (beginning-of-buffer)
-    (clojure-thread-last-all nil)
-    (should
-     (equal
-      "(->> (range)
+(def-threading-test last-dangling-parens
+    "(map inc
+     (range))"
+    "(->> (range)
      (map inc))"
-      (buffer-string)))))
+  (beginning-of-buffer)
+  (clojure-thread-last-all nil))
 
 ;; fix for clojure-emacs/clj-refactor.el#259
-(ert-deftest test-unwind-last-leaves-multiline-sexp-alone ()
-  (with-temp-buffer
-    (insert
-     "(->> [a b]
+(def-threading-test last-leaves-multiline-sexp-alone
+    "(->> [a b]
      (some (fn [x]
              (when x
-               10))))")
-    (clojure-mode)
-    (clojure-unwind-all)
-    (should
-     (equal
-      "(some (fn [x]
+               10))))"
+    "(some (fn [x]
         (when x
           10))
       [a b])"
-      (buffer-string)))))
+  (clojure-unwind-all))
 
 (provide 'clojure-mode-refactor-threading-test)
 
