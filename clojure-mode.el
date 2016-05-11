@@ -1556,7 +1556,10 @@ This will skip over sexps that don't represent objects, so that ^hints and
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defcustom clojure-thread-all-but-last nil
-  "When true `cljr-thread-first-all' and `cljr-thread-last-all' don't thread the last expression."
+  "Non-nil means do not thread the last expression.
+This means that `clojure-thread-first-all' and
+`clojure-thread-last-all' not thread the deepest sexp inside the
+current sexp."
   :package-version '(clojure-mode . "5.4.0")
   :safe #'booleanp
   :type 'boolean)
