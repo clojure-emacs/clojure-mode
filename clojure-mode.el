@@ -1568,7 +1568,7 @@ current sexp."
   "Undo a `join-line' done by a threading command."
   (when (get-text-property (point) 'clojure-thread-line-joined)
     (remove-text-properties (point) (1+ (point)) '(clojure-thread-line-joined t))
-    (newline-and-indent)))
+    (insert "\n")))
 
 (defun clojure--unwind-last ()
   (forward-sexp)
@@ -1584,13 +1584,12 @@ current sexp."
              (multiline-sexp-p (not (= sexp-beg-line sexp-end-line))))
         (down-list -1)
         (if multiline-sexp-p
-            (newline)
+            (insert "\n")
           ;; `clojure--maybe-unjoin-line' only works when unwinding sexps that were
           ;; threaded in the same Emacs session, but it also catches cases that
           ;; `multiline-sexp-p' doesn't.
           (clojure--maybe-unjoin-line))
-        (insert contents)
-        (clojure-indent-region beg (point)))))
+        (insert contents))))
   (forward-char))
 
 (defun clojure--ensure-parens-around-function-names ()
@@ -1617,12 +1616,7 @@ Point must be between the opening paren and the -> symbol."
   (save-excursion
     (down-list 2)
     (backward-up-list)
-    (raise-sexp)
-    (let ((beg (point))
-          (end (progn
-                 (forward-sexp)
-                 (point))))
-      (clojure-indent-region beg end))))
+    (raise-sexp)))
 
 (defun clojure--nothing-more-to-unwind ()
   (save-excursion
@@ -1633,6 +1627,13 @@ Point must be between the opening paren and the -> symbol."
       (when (looking-back "(\\s-*" (line-beginning-position))
         (backward-up-list)) ;; and the paren
       (= beg (point)))))
+
+(defun clojure--fix-sexp-whitespace (&optional move-out)
+  (save-excursion
+    (when move-out (backward-up-list))
+    (let ((sexp (bounds-of-thing-at-point 'sexp)))
+      (clojure-indent-region (car sexp) (cdr sexp))
+      (delete-trailing-whitespace (car sexp) (cdr sexp)))))
 
 ;;;###autoload
 (defun clojure-unwind ()
@@ -1650,11 +1651,13 @@ Return nil if there are no more levels to unwind."
       (search-backward-regexp "([^-]*->" limit)
       (if (clojure--nothing-more-to-unwind)
           (progn (clojure--pop-out-of-threading)
+                 (clojure--fix-sexp-whitespace)
                  nil)
         (down-list)
-        (cond
-         ((looking-at "[^-]*->\\_>")  (clojure--unwind-first))
-         ((looking-at "[^-]*->>\\_>") (clojure--unwind-last)))
+        (prog1 (cond
+                ((looking-at "[^-]*->\\_>")  (clojure--unwind-first))
+                ((looking-at "[^-]*->>\\_>") (clojure--unwind-last)))
+          (clojure--fix-sexp-whitespace 'move-out))
         t))))
 
 ;;;###autoload
@@ -1714,9 +1717,10 @@ Return nil if there are no more levels to unwind."
   (search-backward-regexp "([^-]*->")
   (down-list)
   (when (clojure--threadable-p)
-    (cond
-     ((looking-at "[^-]*->\\_>")  (clojure--thread-first))
-     ((looking-at "[^-]*->>\\_>") (clojure--thread-last)))))
+    (prog1 (cond
+            ((looking-at "[^-]*->\\_>")  (clojure--thread-first))
+            ((looking-at "[^-]*->>\\_>") (clojure--thread-last)))
+      (clojure--fix-sexp-whitespace 'move-out))))
 
 (defun clojure--thread-all (first-or-last-thread but-last)
   (save-excursion
