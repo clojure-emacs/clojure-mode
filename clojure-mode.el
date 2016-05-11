@@ -1678,7 +1678,6 @@ Return nil if there are no more levels to unwind."
       (newline-and-indent)
       (clojure--remove-superfluous-parens)
       ;; cljr #255 Fix dangling parens
-      (backward-up-list)
       (forward-sexp)
       (when (looking-back "^\\s-*)+\\s-*" (line-beginning-position))
         (join-line))

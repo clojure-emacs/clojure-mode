@@ -306,6 +306,16 @@
   (beginning-of-buffer)
   (clojure-thread-last-all nil))
 
+(def-threading-test last-dangling-parens-2
+    "(deftask dev []
+  (comp (serve)
+        (cljs)))"
+    "(->> (cljs)
+     (comp (serve))
+     (deftask dev []))"
+  (beginning-of-buffer)
+  (clojure-thread-last-all nil))
+
 ;; fix for clojure-emacs/clj-refactor.el#259
 (def-threading-test last-leaves-multiline-sexp-alone
     "(->> [a b]
