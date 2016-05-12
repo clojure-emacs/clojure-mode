@@ -1412,6 +1412,8 @@ Return nil if not inside a project."
   "Denormalize PATH by making it relative to the project root."
   (file-relative-name path (clojure-project-dir)))
 
+
+;;; ns manipulation
 (defun clojure-expected-ns (&optional path)
   "Return the namespace matching PATH.
 
@@ -1750,6 +1752,8 @@ When BUT-LAST is passed the last expression is not threaded."
   (interactive "P")
   (clojure--thread-all "->> " but-last))
 
+
+;;; ClojureScript
 (defconst clojurescript-font-lock-keywords
   (eval-when-compile
     `(;; ClojureScript built-ins
