@@ -8,6 +8,7 @@
 * [#378](https://github.com/clojure-emacs/clojure-mode/issues/378): Font-lock escape characters in strings.
 * Port threading macros related features from clj-refactor.el. Available refactorings: thread, unwind, thread first all, thread last all, unwind all.
 * New command: `clojure-sort-ns`.
+* All ns manipulation commands have a keybind under `C-c C-r n`.
 
 ## 5.3.0 (2016-04-04)
 
