@@ -1449,7 +1449,8 @@ Useful if a file has been renamed."
       (save-excursion
         (save-match-data
           (if (clojure-find-ns)
-              (replace-match nsname nil nil nil 4)
+              (progn (replace-match nsname nil nil nil 4)
+                     (message "ns form updated"))
             (error "Namespace not found")))))))
 
 (defun clojure--sort-following-sexps ()
