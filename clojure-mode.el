@@ -205,14 +205,19 @@ Out-of-the box clojure-mode understands lein, boot and gradle."
     (define-key map (kbd "C-c C-r l") #'clojure-thread-last-all)
     (define-key map (kbd "C-c C-r C-a") #'clojure-unwind-all)
     (define-key map (kbd "C-c C-r a") #'clojure-unwind-all)
+    (define-key map (kbd "C-c C-r n i") #'clojure-insert-ns-form)
+    (define-key map (kbd "C-c C-r n h") #'clojure-insert-ns-form-at-point)
+    (define-key map (kbd "C-c C-r n u") #'clojure-update-ns)
+    (define-key map (kbd "C-c C-r n s") #'clojure-sort-ns)
     (easy-menu-define clojure-mode-menu map "Clojure Mode Menu"
       '("Clojure"
         ["Toggle between string & keyword" clojure-toggle-keyword-string]
         ["Align expression" clojure-align]
         ("ns forms"
-         ["Insert ns form at point" clojure-insert-ns-form-at-point]
-         ["Insert ns form at beginning" clojure-insert-ns-form]
-         ["Update ns form" clojure-update-ns])
+         ["Insert ns form at the top" clojure-insert-ns-form]
+         ["Insert ns form here" clojure-insert-ns-form-at-point]
+         ["Update ns form" clojure-update-ns]
+         ["Sort ns form" clojure-sort-ns])
         ("Refactor -> and ->>"
          ["Thread once more" clojure-thread]
          ["Fully thread a form with ->" clojure-thread-first-all]
