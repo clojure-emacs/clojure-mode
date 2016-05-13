@@ -95,6 +95,40 @@ foo)"))
     (should (string-match clojure-namespace-name-regex ns))
     (should (equal "foo+" (match-string 4 ns)))))
 
+(ert-deftest test-sort-ns ()
+  (with-temp-buffer
+    (insert "\n(ns my-app.core
+  (:require [my-app.views [front-page :as front-page]]
+            [my-app.state :refer [state]] ; Comments too.
+            ;; Some comments.
+            [rum.core :as rum]
+            [my-app.views [user-page :as user-page]]
+            my-app.util.api)
+  (:import java.io.Writer
+           [clojure.lang AFunction Atom MultiFn Namespace]))")
+    (clojure-mode)
+    (clojure-sort-ns)
+    (should (equal (buffer-string)
+                   "\n(ns my-app.core
+  (:require [my-app.state :refer [state]] ; Comments too.
+            my-app.util.api
+            [my-app.views [front-page :as front-page]]
+            [my-app.views [user-page :as user-page]]
+            ;; Some comments.
+            [rum.core :as rum])
+  (:import [clojure.lang AFunction Atom MultiFn Namespace]
+           java.io.Writer))")))
+  (with-temp-buffer
+    (insert "(ns my-app.core
+  (:require [rum.core :as rum] ;comment
+            [my-app.views [user-page :as user-page]]))")
+    (clojure-mode)
+    (clojure-sort-ns)
+    (should (equal (buffer-string)
+                   "(ns my-app.core
+  (:require [my-app.views [user-page :as user-page]]
+            [rum.core :as rum] ;comment\n))"))))
+
 (provide 'clojure-mode-util-test)
 
 ;;; clojure-mode-util-test.el ends here
