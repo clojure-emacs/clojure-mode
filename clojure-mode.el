@@ -1484,13 +1484,17 @@ content) are considered part of the preceding sexp."
                ;; Move to start of ns name.
                (lambda ()
                  (comment-forward)
-                 (skip-chars-forward "[(")
+                 (skip-chars-forward "[:blank:]\n\r[(")
                  (clojure-forward-logical-sexp)
                  (forward-sexp -1)
                  nil)
                ;; Move to end of ns name.
                (lambda ()
-                 (clojure-forward-logical-sexp)))))
+                 (clojure-forward-logical-sexp)))
+    (goto-char (point-max))
+    ;; Does the last line now end in a comment?
+    (when (nth 4 (parse-partial-sexp (point-min) (point)))
+      (insert "\n"))))
 
 (defun clojure-sort-ns ()
   "Internally sort each sexp inside the ns form."
