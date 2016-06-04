@@ -2,6 +2,11 @@
 
 ## master (unreleased)
 
+### New features
+
+* Port cycle privacy, cycle collection type and cycle if/if-not from clj-refactor.el.
+* Rework cycle collection type into convert collection to list, quoted list, map, vector, set.
+
 ## 5.4.0 (2016-05-21)
 
 ### New features
