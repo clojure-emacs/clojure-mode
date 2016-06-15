@@ -164,6 +164,17 @@ values of customisable variables."
 (ala/bala top
   |one)")
 
+;; we can pass a lambda to explicitely set the column
+(put-clojure-indent 'arsymbol (lambda (indent-point state) 0))
+
+(check-indentation symbol-with-lambda
+  "
+(arsymbol
+ |one)"
+  "
+(arsymbol
+|one)")
+
 (check-indentation form-with-metadata
   "
 (ns ^:doc app.core
