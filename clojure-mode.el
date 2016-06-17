@@ -342,6 +342,13 @@ instead of to `clojure-mode-map'."
     (add-to-list 'paredit-space-for-delimiter-predicates
                  #'clojure-no-space-after-tag)))
 
+(defun clojure-smartparens-setup ()
+  "Make \"smartparens-mode\" play nicely with `clojure-mode'."
+  (when (and (fboundp 'sp-with-modes) (fboundp 'sp-local-pair))
+    (sp-with-modes '(clojure-mode)
+      (sp-local-pair "#{" "}")
+      (sp-local-pair "#(" ")"))))
+
 (defun clojure-mode-variables ()
   "Set up initial buffer-local variables for Clojure mode."
   (setq-local imenu-create-index-function
@@ -380,7 +387,8 @@ instead of to `clojure-mode-map'."
 \\{clojure-mode-map}"
   (clojure-mode-variables)
   (clojure-font-lock-setup)
-  (add-hook 'paredit-mode-hook #'clojure-paredit-setup))
+  (add-hook 'paredit-mode-hook #'clojure-paredit-setup)
+  (add-hook 'smartparens-mode-hook #'clojure-smartparens-setup))
 
 (defcustom clojure-verify-major-mode t
   "If non-nil, warn when activating the wrong major-mode."
