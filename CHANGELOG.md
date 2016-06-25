@@ -2,6 +2,8 @@
 
 ## master (unreleased)
 
+## 5.5.0 (2016-06-25)
+
 ### New features
 
 * Port cycle privacy, cycle collection type and cycle if/if-not from clj-refactor.el.
