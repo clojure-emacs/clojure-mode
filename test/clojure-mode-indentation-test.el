@@ -280,6 +280,15 @@ values of customisable variables."
     ([item a]
      (* a (:qty item)))))")
 
+(def-full-indent-test deftype-allow-multiarity
+  "(deftype Banana []
+  Fruit
+  (subtotal
+    ([item]
+     (* 158 (:qty item)))
+    ([item a]
+     (* a (:qty item)))))")
+
 (def-full-indent-test defprotocol
   "(defprotocol IFoo
   (foo [this]
@@ -325,6 +334,15 @@ values of customisable variables."
   "(defrecord TheNameOfTheRecord [a pretty long argument list]
   SomeType (assoc [_ x]
              (.assoc pretty x 10)))")
+
+(def-full-indent-test defrecord-allow-multiarity
+  "(defrecord Banana []
+  Fruit
+  (subtotal
+    ([item]
+     (* 158 (:qty item)))
+    ([item a]
+     (* a (:qty item)))))")
 
 (def-full-indent-test letfn
   "(letfn [(f [x]
