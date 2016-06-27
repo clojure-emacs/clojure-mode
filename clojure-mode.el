@@ -1313,8 +1313,8 @@ work).  To set it from Lisp code, use
   (as-> 2)
 
   (reify '(:defn (1)))
-  (deftype '(2 nil nil (1)))
-  (defrecord '(2 nil nil (1)))
+  (deftype '(2 nil nil (:defn)))
+  (defrecord '(2 nil nil (:defn)))
   (defprotocol '(1 (:defn)))
   (extend 1)
   (extend-protocol '(1 :defn))
