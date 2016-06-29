@@ -261,6 +261,8 @@ Out-of-the box clojure-mode understands lein, boot and gradle."
     (modify-syntax-entry ?\] ")[" table)
     (modify-syntax-entry ?^ "'" table)
     (modify-syntax-entry ?@ "'" table)
+    (modify-syntax-entry ?! "w" table)
+    (modify-syntax-entry ?? "w" table)
     ;; Make hash a usual word character
     (modify-syntax-entry ?# "_ p" table)
     table)

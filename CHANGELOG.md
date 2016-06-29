@@ -4,6 +4,8 @@
 
 ### Bugs fixed
 
+* [#392](https://github.com/clojure-emacs/clojure-mode/issues/392): Wrong syntax class for `?` and `!`
+
 * [#389](https://github.com/clojure-emacs/clojure-mode/issues/389): Fixed the indentation of `defrecord` and `deftype` multiple airity protocol forms.
 
 ## 5.5.0 (2016-06-25)

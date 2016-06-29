@@ -32,6 +32,16 @@
     (clojure-forward-logical-sexp 1)
     (should (looking-at-p " :a, 2"))))
 
+(ert-deftest test-sexp-with-exclamation ()
+  (with-temp-buffer
+    (insert "foo! bar? baz")
+    (clojure-mode)
+    (goto-char (point-min))
+    (clojure-forward-logical-sexp 1)
+    (should (looking-at-p " bar?"))
+    (clojure-forward-logical-sexp 1)
+    (should (looking-at-p " baz"))))
+
 (ert-deftest test-sexp ()
   (with-temp-buffer
     (insert "^String #macro ^dynamic reverse")
