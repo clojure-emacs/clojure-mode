@@ -4,6 +4,7 @@
 
 ### Bugs fixed
 
+* Fixed indentation of `definterface` to match that of `defprotocol`.
 * [#389](https://github.com/clojure-emacs/clojure-mode/issues/389): Fixed the indentation of `defrecord` and `deftype` multiple airity protocol forms.
 
 ## 5.5.0 (2016-06-25)
