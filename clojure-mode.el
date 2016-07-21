@@ -1316,6 +1316,7 @@ work).  To set it from Lisp code, use
   (deftype '(2 nil nil (:defn)))
   (defrecord '(2 nil nil (:defn)))
   (defprotocol '(1 (:defn)))
+  (definterface '(1 (:defn)))
   (extend 1)
   (extend-protocol '(1 :defn))
   (extend-type '(1 :defn))
