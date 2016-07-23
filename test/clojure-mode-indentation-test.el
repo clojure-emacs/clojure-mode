@@ -637,6 +637,25 @@ x
     (should-not (non-func "^hint " form))
     (should-not (non-func "#macro " form))))
 
+(ert-deftest clojure-syntax-prefixed-symbols ()
+  (dolist (form '(("#?@aaa" . "aaa")
+                  ("#?aaa"  . "?aaa")
+                  ("#aaa"   . "aaa")
+                  ("'aaa"   . "aaa")))
+    (with-temp-buffer
+      (clojure-mode)
+      (insert (car form))
+      (equal (symbol-name (symbol-at-point)) (cdr form)))))
+
+(ert-deftest clojure-syntax-skip-prefixes ()
+  (dolist (form '("#?@aaa" "#?aaa" "#aaa" "'aaa"))
+    (with-temp-buffer
+      (clojure-mode)
+      (insert form)
+      (backward-word)
+      (backward-prefix-chars)
+      (should (bobp)))))
+
 (provide 'clojure-mode-indentation-test)
 
 ;;; clojure-mode-indentation-test.el ends here
