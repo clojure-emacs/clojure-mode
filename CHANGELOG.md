@@ -3,8 +3,8 @@
 ## master (unreleased)
 
 ### Bugs fixed
-
-* [#394](https://github.com/clojure-emacs/clojure-mode/issues/394): `#` character now has prefix syntax class. 
+* [#394](https://github.com/clojure-emacs/clojure-mode/issues/394): `?` character is now treated as prefix when outside symbols.
+* [#394](https://github.com/clojure-emacs/clojure-mode/issues/394): `#` character now has prefix syntax class.
 * Fixed indentation of `definterface` to match that of `defprotocol`.
 * [#389](https://github.com/clojure-emacs/clojure-mode/issues/389): Fixed the indentation of `defrecord` and `deftype` multiple airity protocol forms.
 
