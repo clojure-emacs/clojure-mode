@@ -6,6 +6,7 @@
 
 * Fixed indentation of `definterface` to match that of `defprotocol`.
 * [#389](https://github.com/clojure-emacs/clojure-mode/issues/389): Fixed the indentation of `defrecord` and `deftype` multiple airity protocol forms.
+* [#393](https://github.com/clojure-emacs/clojure-mode/issues/393): `imenu-generic-expression` is no longer hard-coded and its global value is respected.
 
 ## 5.5.0 (2016-06-25)
 
