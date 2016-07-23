@@ -602,59 +602,6 @@ x
     (insert "{:a 2, ,:c 4}")
     (call-interactively #'clojure-align)
     (should (string= (buffer-string) "{:a 2, :c 4}"))))
-
-;;; Misc
-
-(defun non-func (form-a form-b)
-  (with-temp-buffer
-    (clojure-mode)
-    (insert form-a)
-    (save-excursion (insert form-b))
-    (clojure--not-function-form-p)))
-
-(ert-deftest non-function-form ()
-  (dolist (form '(("#?@ " "(c d)")
-                  ("#?@" "(c d)")
-                  ("#? " "(c d)")
-                  ("#?" "(c d)")
-                  ("" "[asda]")
-                  ("" "{a b}")
-                  ("#" "{a b}")
-                  ("" "(~)")))
-    (should (apply #'non-func form)))
-  (dolist (form '("(c d)"
-                  "(.c d)"
-                  "(:c d)"
-                  "(c/a d)"
-                  "(.c/a d)"
-                  "(:c/a d)"
-                  "(c/a)"
-                  "(:c/a)"
-                  "(.c/a)"))
-    (should-not (non-func "" form))
-    (should-not (non-func "^hint" form))
-    (should-not (non-func "#macro" form))
-    (should-not (non-func "^hint " form))
-    (should-not (non-func "#macro " form))))
-
-(ert-deftest clojure-syntax-prefixed-symbols ()
-  (dolist (form '(("#?@aaa" . "aaa")
-                  ("#?aaa"  . "?aaa")
-                  ("#aaa"   . "aaa")
-                  ("'aaa"   . "aaa")))
-    (with-temp-buffer
-      (clojure-mode)
-      (insert (car form))
-      (equal (symbol-name (symbol-at-point)) (cdr form)))))
-
-(ert-deftest clojure-syntax-skip-prefixes ()
-  (dolist (form '("#?@aaa" "#?aaa" "#aaa" "'aaa"))
-    (with-temp-buffer
-      (clojure-mode)
-      (insert form)
-      (backward-word)
-      (backward-prefix-chars)
-      (should (bobp)))))
 
 (provide 'clojure-mode-indentation-test)
 
