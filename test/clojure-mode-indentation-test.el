@@ -297,6 +297,15 @@ values of customisable variables."
     [this]
     \"Why is this over here?\"))")
 
+
+(def-full-indent-test definterface
+  "(definterface IFoo
+  (foo [this]
+    \"Why is this over here?\")
+  (foo-2
+    [this]
+    \"Why is this over here?\"))")
+
 (def-full-indent-test specify
   "(specify obj
   ISwap
