@@ -254,15 +254,15 @@ Out-of-the box clojure-mode understands lein, boot and gradle."
 
 (defvar clojure-mode-syntax-table
   (let ((table (copy-syntax-table emacs-lisp-mode-syntax-table)))
-    (modify-syntax-entry ?~ "'   " table)
     (modify-syntax-entry ?\{ "(}" table)
     (modify-syntax-entry ?\} "){" table)
     (modify-syntax-entry ?\[ "(]" table)
     (modify-syntax-entry ?\] ")[" table)
+    (modify-syntax-entry ?? "_ p" table) ; prefix outside of symbols
+    (modify-syntax-entry ?~ "'" table)
     (modify-syntax-entry ?^ "'" table)
     (modify-syntax-entry ?@ "'" table)
-    ;; Make hash a usual word character
-    (modify-syntax-entry ?# "_ p" table)
+    (modify-syntax-entry ?# "'" table)
     table)
   "Syntax table for Clojure mode.
 Inherits from `emacs-lisp-mode-syntax-table'.")
