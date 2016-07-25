@@ -2,7 +2,10 @@
 
 ## master (unreleased)
 
+## 5.5.1 (2016-07-25)
+
 ### Bugs fixed
+
 * [#394](https://github.com/clojure-emacs/clojure-mode/issues/394): `?` character is now treated as prefix when outside symbols.
 * [#394](https://github.com/clojure-emacs/clojure-mode/issues/394): `#` character now has prefix syntax class.
 * Fixed indentation of `definterface` to match that of `defprotocol`.
