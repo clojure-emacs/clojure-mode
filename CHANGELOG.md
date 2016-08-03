@@ -2,9 +2,11 @@
 
 ## master (unreleased)
 
+## 5.5.2 (2016-08-03)
+
 ### Bugs fixed
 
-* [#399](https://github.com/clojure-emacs/clojure-mode/issues/399) Fix fontification of prefix characters inside keywords.
+* [#399](https://github.com/clojure-emacs/clojure-mode/issues/399): Fix fontification of prefix characters inside keywords.
 
 ## 5.5.1 (2016-07-25)
 
