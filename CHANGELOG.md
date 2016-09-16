@@ -2,6 +2,10 @@
 
 ## master (unreleased)
 
+### New features
+
+* Add [customizable variable](https://www.gnu.org/software/emacs/manual/html_node/emacs/Easy-Customization.html),`clojure-mode-keymap-prefix`, to allow customization of keymap prefix.
+
 ## 5.5.2 (2016-08-03)
 
 ### Bugs fixed

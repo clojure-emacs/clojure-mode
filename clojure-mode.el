@@ -191,38 +191,55 @@ Out-of-the box clojure-mode understands lein, boot and gradle."
           (and (listp value)
                (cl-every 'stringp value))))
 
+(defcustom clojure-mode-keymap-prefix "C-c C-r"
+  "Clojure mode keymap prefix."
+  :group 'clojure
+  :type 'string)
+
+(defvar clojure-mode-prefixed-bindings
+  '(("C-t" . clojure-thread)
+    ("t" . clojure-thread)
+    ("C-u" . clojure-unwind)
+    ("u" . clojure-unwind)
+    ("C-f" . clojure-thread-first-all)
+    ("f" . clojure-thread-first-all)
+    ("C-l" . clojure-thread-last-all)
+    ("l" . clojure-thread-last-all)
+    ("C-a" . clojure-unwind-all)
+    ("a" . clojure-unwind-all)
+    ("C-p" . clojure-cycle-privacy)
+    ("p" . clojure-cycle-privacy)
+    ("C-(" . clojure-convert-collection-to-list)
+    ("(" . clojure-convert-collection-to-list)
+    ("C-'" . clojure-convert-collection-to-quoted-list)
+    ("'" . clojure-convert-collection-to-quoted-list)
+    ("C-{" . clojure-convert-collection-to-map)
+    ("{" . clojure-convert-collection-to-map)
+    ("C-[" . clojure-convert-collection-to-vector)
+    ("[" . clojure-convert-collection-to-vector)
+    ("C-#" . clojure-convert-collection-to-set)
+    ("#" . clojure-convert-collection-to-set)
+    ("C-i" . clojure-cycle-if)
+    ("i" . clojure-cycle-if)
+    ("n i" . clojure-insert-ns-form)
+    ("n h" . clojure-insert-ns-form-at-point)
+    ("n u" . clojure-update-ns)
+    ("n s" . clojure-sort-ns))
+  "Alist of Clojure mode bindings with a common prefix.
+
+Each element is of the form (KEYSTRING . SYMBOL), where KEYSTRING
+is the string key sequence after `clojure-mode-keymap-prefix' and
+SYMBOL is the symbol for a command.")
+
 (defvar clojure-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "C-:") #'clojure-toggle-keyword-string)
     (define-key map (kbd "C-c SPC") #'clojure-align)
-    (define-key map (kbd "C-c C-r C-t") #'clojure-thread)
-    (define-key map (kbd "C-c C-r t") #'clojure-thread)
-    (define-key map (kbd "C-c C-r C-u") #'clojure-unwind)
-    (define-key map (kbd "C-c C-r u") #'clojure-unwind)
-    (define-key map (kbd "C-c C-r C-f") #'clojure-thread-first-all)
-    (define-key map (kbd "C-c C-r f") #'clojure-thread-first-all)
-    (define-key map (kbd "C-c C-r C-l") #'clojure-thread-last-all)
-    (define-key map (kbd "C-c C-r l") #'clojure-thread-last-all)
-    (define-key map (kbd "C-c C-r C-a") #'clojure-unwind-all)
-    (define-key map (kbd "C-c C-r a") #'clojure-unwind-all)
-    (define-key map (kbd "C-c C-r C-p") #'clojure-cycle-privacy)
-    (define-key map (kbd "C-c C-r p") #'clojure-cycle-privacy)
-    (define-key map (kbd "C-c C-r C-(") #'clojure-convert-collection-to-list)
-    (define-key map (kbd "C-c C-r (") #'clojure-convert-collection-to-list)
-    (define-key map (kbd "C-c C-r C-'") #'clojure-convert-collection-to-quoted-list)
-    (define-key map (kbd "C-c C-r '") #'clojure-convert-collection-to-quoted-list)
-    (define-key map (kbd "C-c C-r C-{") #'clojure-convert-collection-to-map)
-    (define-key map (kbd "C-c C-r {") #'clojure-convert-collection-to-map)
-    (define-key map (kbd "C-c C-r C-[") #'clojure-convert-collection-to-vector)
-    (define-key map (kbd "C-c C-r [") #'clojure-convert-collection-to-vector)
-    (define-key map (kbd "C-c C-r C-#") #'clojure-convert-collection-to-set)
-    (define-key map (kbd "C-c C-r #") #'clojure-convert-collection-to-set)
-    (define-key map (kbd "C-c C-r C-i") #'clojure-cycle-if)
-    (define-key map (kbd "C-c C-r i") #'clojure-cycle-if)
-    (define-key map (kbd "C-c C-r n i") #'clojure-insert-ns-form)
-    (define-key map (kbd "C-c C-r n h") #'clojure-insert-ns-form-at-point)
-    (define-key map (kbd "C-c C-r n u") #'clojure-update-ns)
-    (define-key map (kbd "C-c C-r n s") #'clojure-sort-ns)
+    (dolist (pair clojure-mode-prefixed-bindings)
+      (let ((keystring (car pair))
+            (symbol (cdr pair)))
+        (define-key map (kbd (concat clojure-mode-keymap-prefix " " keystring))
+          (symbol-function symbol))))
     (easy-menu-define clojure-mode-menu map "Clojure Mode Menu"
       '("Clojure"
         ["Toggle between string & keyword" clojure-toggle-keyword-string]
