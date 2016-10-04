@@ -248,6 +248,7 @@ Out-of-the box clojure-mode understands lein, boot and gradle."
          ["Unwind once" clojure-unwind]
          ["Fully unwind a threading macro" clojure-unwind-all])
         "--"
+        ["Report a clojure-mode bug" clojure-mode-report-bug]
         ["Clojure-mode version" clojure-mode-display-version]))
     map)
   "Keymap for Clojure mode.")
@@ -280,6 +281,14 @@ CIDER provides a more complex version which does classpath analysis.")
   "Display the current `clojure-mode-version' in the minibuffer."
   (interactive)
   (message "clojure-mode (version %s)" clojure-mode-version))
+
+(defconst clojure-mode-report-bug-url "https://github.com/clojure-emacs/clojure-mode/issues/new"
+  "The URL to report a clojure-mode issue.")
+
+(defun clojure-mode-report-bug ()
+  "Report a bug in your default browser."
+  (interactive)
+  (browse-url clojure-mode-report-bug-url))
 
 (defun clojure-space-for-delimiter-p (endp delim)
   "Prevent paredit from inserting useless spaces.

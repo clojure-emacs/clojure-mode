@@ -2,6 +2,10 @@
 
 ## master (unreleased)
 
+### New features.
+
+* New interactive command `clojure-mode-report-bug`.
+
 ## 5.5.2 (2016-08-03)
 
 ### Bugs fixed
