@@ -5,6 +5,7 @@
 ### New features.
 
 * New interactive command `clojure-mode-report-bug`.
+* New interactive command `clojure-view-guide`.
 
 ## 5.5.2 (2016-08-03)
 

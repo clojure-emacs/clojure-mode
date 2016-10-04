@@ -248,6 +248,8 @@ Out-of-the box clojure-mode understands lein, boot and gradle."
          ["Unwind once" clojure-unwind]
          ["Fully unwind a threading macro" clojure-unwind-all])
         "--"
+        ["View a Clojure guide" clojure-view-guide]
+        "--"
         ["Report a clojure-mode bug" clojure-mode-report-bug]
         ["Clojure-mode version" clojure-mode-display-version]))
     map)
@@ -289,6 +291,28 @@ CIDER provides a more complex version which does classpath analysis.")
   "Report a bug in your default browser."
   (interactive)
   (browse-url clojure-mode-report-bug-url))
+
+(defconst clojure-guides-base-url "https://clojure.org/guides/"
+  "The base URL for official Clojure guides.")
+
+(defconst clojure-guides '(("Getting Started" . "getting_started")
+                           ("FAQ" . "faq")
+                           ("spec" . "spec")
+                           ("Destructuring" . "destructuring")
+                           ("Threading Macros" . "threading_macros")
+                           ("Comparators" . "comparators")
+                           ("Reader Conditionals" . "reader_conditionals"))
+  "A list of all official Clojure guides.")
+
+(defun clojure-view-guide ()
+  "Open a Clojure guide in your default browser.
+
+The command will prompt you to select one of the available guides."
+  (interactive)
+  (let ((guide (completing-read "Select a guide: " (mapcar #'car clojure-guides))))
+    (when guide
+      (let ((guide-url (concat clojure-guides-base-url (cdr (assoc guide clojure-guides)))))
+        (browse-url guide-url)))))
 
 (defun clojure-space-for-delimiter-p (endp delim)
   "Prevent paredit from inserting useless spaces.
