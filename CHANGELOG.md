@@ -8,6 +8,7 @@
 * New interactive command `clojure-view-guide`.
 * New interactive command `clojure-view-reference-section`.
 * New interactive command `clojure-view-cheatsheet`.
+* New interactive command `clojure-view-grimoire`.
 * Make the refactoring keymap prefix customizable via `clojure-refactor-map-prefix`.
 
 ## 5.5.2 (2016-08-03)

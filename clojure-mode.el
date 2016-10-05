@@ -263,6 +263,7 @@ Out-of-the box clojure-mode understands lein, boot and gradle."
         ["View a Clojure guide" clojure-view-guide]
         ["View a Clojure reference section" clojure-view-reference-section]
         ["View the Clojure cheatsheet" clojure-view-cheatsheet]
+        ["View the Clojure Grimoire" clojure-view-grimoire]
         "--"
         ["Report a clojure-mode bug" clojure-mode-report-bug]
         ["Clojure-mode version" clojure-mode-display-version]))
@@ -374,6 +375,14 @@ The command will prompt you to select one of the available sections."
   "Open the Clojure cheatsheet in your default browser."
   (interactive)
   (browse-url clojure-cheatsheet-url))
+
+(defconst clojure-grimoire-url "https://www.conj.io/"
+  "The URL of the Grimoire community documentation site.")
+
+(defun clojure-view-grimoire ()
+  "Open the Clojure Grimoire in your default browser."
+  (interactive)
+  (browse-url clojure-grimoire-url))
 
 (defun clojure-space-for-delimiter-p (endp delim)
   "Prevent paredit from inserting useless spaces.
