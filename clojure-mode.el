@@ -259,11 +259,11 @@ Out-of-the box clojure-mode understands lein, boot and gradle."
          "--"
          ["Unwind once" clojure-unwind]
          ["Fully unwind a threading macro" clojure-unwind-all])
-        "--"
-        ["View a Clojure guide" clojure-view-guide]
-        ["View a Clojure reference section" clojure-view-reference-section]
-        ["View the Clojure cheatsheet" clojure-view-cheatsheet]
-        ["View the Clojure Grimoire" clojure-view-grimoire]
+        ("Documentation"
+         ["View a Clojure guide" clojure-view-guide]
+         ["View a Clojure reference section" clojure-view-reference-section]
+         ["View the Clojure cheatsheet" clojure-view-cheatsheet]
+         ["View the Clojure Grimoire" clojure-view-grimoire])
         "--"
         ["Report a clojure-mode bug" clojure-mode-report-bug]
         ["Clojure-mode version" clojure-mode-display-version]))
