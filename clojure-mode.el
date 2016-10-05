@@ -262,6 +262,7 @@ Out-of-the box clojure-mode understands lein, boot and gradle."
         "--"
         ["View a Clojure guide" clojure-view-guide]
         ["View a Clojure reference section" clojure-view-reference-section]
+        ["View the Clojure cheatsheet" clojure-view-cheatsheet]
         "--"
         ["Report a clojure-mode bug" clojure-mode-report-bug]
         ["Clojure-mode version" clojure-mode-display-version]))
@@ -366,6 +367,13 @@ The command will prompt you to select one of the available sections."
       (let ((section-url (concat clojure-reference-base-url (cdr (assoc section clojure-reference-sections)))))
         (browse-url section-url)))))
 
+(defconst clojure-cheatsheet-url "http://clojure.org/api/cheatsheet"
+  "The URL of the official Clojure cheatsheet.")
+
+(defun clojure-view-cheatsheet ()
+  "Open the Clojure cheatsheet in your default browser."
+  (interactive)
+  (browse-url clojure-cheatsheet-url))
 
 (defun clojure-space-for-delimiter-p (endp delim)
   "Prevent paredit from inserting useless spaces.
