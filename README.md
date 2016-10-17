@@ -33,6 +33,7 @@ specific `clojure-mode` release.**
   - [Threading macros](#threading-macros-related-features)
   - [Cycling things](#cycling-things)
   - [Convert collection](#convert-collection)
+  - [Let expression](#let-expression)
 - [Related packages](#related-packages)
 - [REPL Interaction](#repl-interaction)
   - [Basic REPL](#basic-repl)
@@ -264,15 +265,48 @@ Unwind and remove the threading macro. See demonstration on the
 
 * Cycle privacy
 
-Cycle privacy of `def`s or `defn`s. Use metadata explicitly with setting `clojure-use-metadata-for-privacy` to `t` for `defn`s too. See demonstration on the [clj-refactor.el wiki](https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-cycle-privacy).
+Cycle privacy of `def`s or `defn`s. Use metadata explicitly with setting
+`clojure-use-metadata-for-privacy` to `t` for `defn`s too. See demonstration
+on the [clj-refactor.el wiki](https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-cycle-privacy).
 
 * Cycle if/if-not
 
-Find the closest if or if-not up the syntax tree and toggle it. Also transpose the "else" and "then" branches, keeping the semantics the same as before. See demonstration on the [clj-refactor.el wiki](https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-cycle-if).
+Find the closest if or if-not up the syntax tree and toggle it.
+Also transpose the "else" and "then" branches, keeping the semantics
+the same as before. See demonstration on the [clj-refactor.el wiki](https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-cycle-if).
 
 ### Convert collection
 
 Convert any given collection at point to list, quoted list, map, vector or set.
+
+### Let expression
+
+* Introduce let
+
+Introduce a new let form. Put the current form into its binding form with
+a name provided by the user as a bound name. If called with a numeric prefix
+put the let form Nth level up in the form hierarchy. See demonstration on the
+[clj-refactor.el wiki](https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-introduce-let).
+
+* Move to let
+
+Move the current form to the closest let's binding form. Replace
+all occurrences of the form in the body of the let. See demonstration on the
+[clj-refactor.el wiki](https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-move-to-let).
+
+* Forward slurp form into let
+
+Slurp the next form after the let into the let. Replace all occurrences
+of the bound forms in the form added to the let form. If called with
+a prefix argument slurp the next n forms.
+
+* Backward slurp form into let
+
+Slurp the form before the let into the let. Replace all occurrences
+of the bound forms in the form added to the let form. If called with
+a prefix argument slurp the previous n forms.
+
+`paredit-convolute-sexp` is advised to replace occurrences of bound forms with their bound names when convolute is used on a let form.
 
 ## Related packages
 
