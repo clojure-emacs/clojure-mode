@@ -11,7 +11,7 @@
 * New interactive command `clojure-view-grimoire`.
 * New interactive command `clojure-view-style-guide`.
 * Make the refactoring keymap prefix customizable via `clojure-refactor-map-prefix`.
-* Port and rework let related features from clj-refactor. Available features: introduce-let, move to let, forward slurp form into let, backward slurp form into let.
+* Port and rework `let`-related features from `clj-refactor`. Available features: introduce `let`, move to `let`, forward slurp form into `let`, backward slurp form into `let`.
 
 ### Changes
 
