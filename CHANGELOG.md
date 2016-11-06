@@ -2,7 +2,7 @@
 
 ## master (unreleased)
 
-### New features.
+### New features
 
 * New interactive command `clojure-mode-report-bug`.
 * New interactive command `clojure-view-guide`.
@@ -12,6 +12,10 @@
 * New interactive command `clojure-view-style-guide`.
 * Make the refactoring keymap prefix customizable via `clojure-refactor-map-prefix`.
 * Port and rework let related features from clj-refactor. Available features: introduce-let, move to let, forward slurp form into let, backward slurp form into let.
+
+### Changes
+
+* `clojure-mode` now requires Emacs 24.4.
 
 ## 5.5.2 (2016-08-03)
 
