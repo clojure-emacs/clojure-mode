@@ -194,7 +194,6 @@ Out-of-the box clojure-mode understands lein, boot and gradle."
 
 (defcustom clojure-refactor-map-prefix (kbd "C-c C-r")
   "Clojure refactor keymap prefix."
-  :group 'clojure
   :type 'string
   :package-version '(clojure-mode . "5.6.0"))
 
