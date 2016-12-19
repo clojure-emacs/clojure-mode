@@ -2193,23 +2193,20 @@ BINDINGS is the list of bound names and init expressions, END denotes the end of
 Return a list: odd elements are bound names, even elements init expressions."
   (clojure--goto-let)
   (down-list 2)
-  (backward-char)
   (let* ((start (point))
          (sexp-start start)
          (end (save-excursion
+                (backward-char)
                 (forward-sexp)
                 (down-list -1)
                 (point)))
          bindings)
-    (forward-char)
     (while (/= sexp-start end)
       (forward-sexp)
-      (let ((sexp (buffer-substring-no-properties sexp-start (point))))
-        (push (string-trim
-               (if (= start sexp-start)
-                   (substring sexp 1)
-                 sexp))
-              bindings))
+      (push
+       (string-trim (buffer-substring-no-properties sexp-start (point)))
+       bindings)
+      (skip-chars-forward "\r\n\t[:blank:]")
       (setq sexp-start (point)))
     (nreverse bindings)))
 
