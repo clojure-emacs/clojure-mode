@@ -2,6 +2,10 @@
 
 ## master (unreleased)
 
+### Bugs fixed
+
+* Make `clojure--read-let-bindings` more robust so `let` related refactorings do not bail on an incorrectly formatted binding form.
+
 ## 5.6.0 (2016-11-18)
 
 ### New features
