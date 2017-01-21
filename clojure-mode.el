@@ -2064,6 +2064,7 @@ See: https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-cycle-privacy"
   (clojure--convert-collection "#{" "}"))
 
 (defun clojure--goto-if ()
+  "Find the first surrounding if or if-not expression."
   (when (in-string-p)
     (while (or (not (looking-at "("))
                (in-string-p))
