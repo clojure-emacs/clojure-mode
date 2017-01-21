@@ -225,6 +225,8 @@ Out-of-the box clojure-mode understands lein, boot and gradle."
     (define-key map (kbd "i") #'clojure-cycle-if)
     (define-key map (kbd "C-w") #'clojure-cycle-when)
     (define-key map (kbd "w") #'clojure-cycle-when)
+    (define-key map (kbd "C-o") #'clojure-cycle-not)
+    (define-key map (kbd "o") #'clojure-cycle-not)
     (define-key map (kbd "n i") #'clojure-insert-ns-form)
     (define-key map (kbd "n h") #'clojure-insert-ns-form-at-point)
     (define-key map (kbd "n u") #'clojure-update-ns)
@@ -249,6 +251,7 @@ Out-of-the box clojure-mode understands lein, boot and gradle."
         ["Cycle privacy" clojure-cycle-privacy]
         ["Cycle if, if-not" clojure-cycle-if]
         ["Cycle when, when-not" clojure-cycle-when]
+        ["Cycle not" clojure-cycle-not]
         ("ns forms"
          ["Insert ns form at the top" clojure-insert-ns-form]
          ["Insert ns form here" clojure-insert-ns-form-at-point]
@@ -2097,6 +2100,7 @@ See: https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-cycle-if"
       (forward-sexp 2)
       (transpose-sexps 1)))))
 
+;; TODO: Remove code duplication with `clojure--goto-if'.
 (defun clojure--goto-when ()
   "Find the first surrounding when or when-not expression."
   (when (in-string-p)
@@ -2121,6 +2125,22 @@ See: https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-cycle-if"
      ((looking-at "(when")
       (forward-char 5)
       (insert "-not")))))
+
+(defun clojure-cycle-not ()
+  "Add or remove a not form around the current form."
+  (interactive)
+  (save-excursion
+    (condition-case nil
+        (backward-up-list)
+      (scan-error (user-error "`clojure-cycle-not' must be invoked inside a list")))
+    (if (looking-back "(not ")
+        (progn
+          (delete-char -5)
+          (forward-sexp)
+          (delete-char 1))
+      (insert "(not ")
+      (forward-sexp)
+      (insert ")"))))
 
 ;;; let related stuff
 

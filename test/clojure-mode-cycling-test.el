@@ -143,6 +143,19 @@
   (search-forward "bbb))")
   (clojure-cycle-when))
 
+(def-refactor-test test-cycle-not-add
+  "(ala bala portokala)"
+  "(not (ala bala portokala))"
+  (beginning-of-buffer)
+  (search-forward "bala")
+  (clojure-cycle-not))
+
+(def-refactor-test test-cycle-not-remove
+  "(not (ala bala portokala))"
+  "(ala bala portokala)"
+  (beginning-of-buffer)
+  (search-forward "bala")
+  (clojure-cycle-not))
 
 (provide 'clojure-mode-cycling-test)
 

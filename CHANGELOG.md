@@ -5,6 +5,7 @@
 ### New features
 
 * New interactive command `clojure-cycle-when`.
+* New interactive command `clojure-cycle-not`.
 
 ## 5.6.1 (2016-12-21)
 
