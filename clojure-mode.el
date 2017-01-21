@@ -223,6 +223,8 @@ Out-of-the box clojure-mode understands lein, boot and gradle."
     (define-key map (kbd "#") #'clojure-convert-collection-to-set)
     (define-key map (kbd "C-i") #'clojure-cycle-if)
     (define-key map (kbd "i") #'clojure-cycle-if)
+    (define-key map (kbd "C-w") #'clojure-cycle-when)
+    (define-key map (kbd "w") #'clojure-cycle-when)
     (define-key map (kbd "n i") #'clojure-insert-ns-form)
     (define-key map (kbd "n h") #'clojure-insert-ns-form-at-point)
     (define-key map (kbd "n u") #'clojure-update-ns)
@@ -246,6 +248,7 @@ Out-of-the box clojure-mode understands lein, boot and gradle."
         ["Align expression" clojure-align]
         ["Cycle privacy" clojure-cycle-privacy]
         ["Cycle if, if-not" clojure-cycle-if]
+        ["Cycle when, when-not" clojure-cycle-when]
         ("ns forms"
          ["Insert ns form at the top" clojure-insert-ns-form]
          ["Insert ns form here" clojure-insert-ns-form-at-point]
@@ -2093,6 +2096,31 @@ See: https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-cycle-if"
       (insert "-not")
       (forward-sexp 2)
       (transpose-sexps 1)))))
+
+(defun clojure--goto-when ()
+  "Find the first surrounding when or when-not expression."
+  (when (in-string-p)
+    (while (or (not (looking-at "("))
+               (in-string-p))
+      (backward-char)))
+  (while (not (looking-at "\\((when \\)\\|\\((when-not \\)"))
+    (condition-case nil
+        (backward-up-list)
+      (scan-error (user-error "No when or when-not found")))))
+
+;;;###autoload
+(defun clojure-cycle-when ()
+  "Change a surrounding when to when-not, or vice-versa."
+  (interactive)
+  (save-excursion
+    (clojure--goto-when)
+    (cond
+     ((looking-at "(when-not")
+      (forward-char 9)
+      (delete-char -4))
+     ((looking-at "(when")
+      (forward-char 5)
+      (insert "-not")))))
 
 ;;; let related stuff
 

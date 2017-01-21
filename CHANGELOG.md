@@ -2,6 +2,10 @@
 
 ## master (unreleased)
 
+### New features
+
+* New interactive command `clojure-cycle-when`.
+
 ## 5.6.1 (2016-12-21)
 
 ### Bugs fixed

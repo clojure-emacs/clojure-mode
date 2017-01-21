@@ -113,6 +113,37 @@
   (search-forward "BBB))")
   (clojure-cycle-if))
 
+(def-refactor-test test-cycle-when-inner-when
+  "(when this
+  (when that
+    (aaa)
+    (bbb))
+  (ccc))"
+  "(when this
+  (when-not that
+    (aaa)
+    (bbb))
+  (ccc))"
+  (beginning-of-buffer)
+  (search-forward "bbb)")
+  (clojure-cycle-when))
+
+(def-refactor-test test-cycle-when-outer-when
+  "(when-not this
+  (when that
+    (aaa)
+    (bbb))
+  (ccc))"
+  "(when this
+  (when that
+    (aaa)
+    (bbb))
+  (ccc))"
+  (beginning-of-buffer)
+  (search-forward "bbb))")
+  (clojure-cycle-when))
+
+
 (provide 'clojure-mode-cycling-test)
 
 ;;; clojure-mode-cycling-test.el ends here
