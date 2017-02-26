@@ -1741,8 +1741,9 @@ Returns a list pair, e.g. (\"defn\" \"abc\") or (\"deftest\" \"some-test\")."
 
 ;;; Sexp navigation
 (defun clojure--looking-at-non-logical-sexp ()
-  "Return non-nil if sexp after point represents code.
-Sexps that don't represent code are ^metadata or #reader.macros."
+  "Return non-nil if text after point is \"non-logical\" sexp.
+
+\"Non-logical\" sexp are ^metadata and #reader.macros."
   (comment-normalize-vars)
   (comment-forward (point-max))
   (looking-at-p "\\^\\|#[?[:alpha:]]"))
