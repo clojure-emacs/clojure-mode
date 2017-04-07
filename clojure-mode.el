@@ -868,13 +868,12 @@ highlighted region)."
                          (setq docelt (funcall docelt)))
                        (goto-char listbeg)
                        (forward-char 1)
-                       (condition-case nil
-                           (while (and (> docelt 0) (< (point) startpos)
-                                       (progn (forward-sexp 1) t))
-                             ;; ignore metadata and type hints
-                             (unless (looking-at "[ \n\t]*\\(\\^[A-Z:].+\\|\\^?{.+\\)")
-                               (setq docelt (1- docelt))))
-                         (error nil))
+                       (ignore-errors
+                         (while (and (> docelt 0) (< (point) startpos)
+                                     (progn (forward-sexp 1) t))
+                           ;; ignore metadata and type hints
+                           (unless (looking-at "[ \n\t]*\\(\\^[A-Z:].+\\|\\^?{.+\\)")
+                             (setq docelt (1- docelt)))))
                        (and (zerop docelt) (<= (point) startpos)
                             (progn (forward-comment (point-max)) t)
                             (= (point) (nth 8 state)))))
@@ -901,20 +900,17 @@ highlighted region)."
 Note that this means that there is no guarantee of proper font
 locking in def* forms that are not at top level."
   (goto-char point)
-  (condition-case nil
-      (beginning-of-defun)
-    (error nil))
+  (ignore-errors
+    (beginning-of-defun))
 
   (let ((beg-def (point)))
     (when (and (not (= point beg-def))
                (looking-at "(def"))
-      (condition-case nil
-          (progn
-            ;; move forward as much as possible until failure (or success)
-            (forward-char)
-            (dotimes (_ 4)
-              (forward-sexp)))
-        (error nil))
+      (ignore-errors
+        ;; move forward as much as possible until failure (or success)
+        (forward-char)
+        (dotimes (_ 4)
+          (forward-sexp)))
       (cons beg-def (point)))))
 
 (defun clojure-font-lock-extend-region-def ()
