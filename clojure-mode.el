@@ -664,9 +664,8 @@ Called by `imenu--generic-function'."
         (down-list)
         (forward-sexp)
         (while (not found?)
-          (condition-case nil
-              (forward-sexp)
-            (error nil))
+          (ignore-errors
+            (forward-sexp))
           (or (if (char-equal ?[ (char-after (point)))
                               (backward-sexp))
                   (if (char-equal ?) (char-after (point)))
