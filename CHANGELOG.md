@@ -4,7 +4,7 @@
 
 ### Bugs fixed
 
-* Make `clojure-match-next-def` more robust against zero-arity def-like forms.
+* [#423](https://github.com/clojure-emacs/clojure-mode/issues/423): Make `clojure-match-next-def` more robust against zero-arity def-like forms.
 
 ### New features
 
