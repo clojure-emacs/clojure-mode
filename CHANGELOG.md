@@ -2,6 +2,10 @@
 
 ## master (unreleased)
 
+### Bugs fixed
+
+* Make `clojure-match-next-def` more robust against zero-arity def-like forms.
+
 ### New features
 
 * New interactive command `clojure-cycle-when`.
