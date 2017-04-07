@@ -2213,24 +2213,26 @@ Assume that point is in the binding form of a let."
                      "[[:space:]\n\r]+")
           "\\([^[:word:]^-]\\)"))
 
-(defun clojure--replace-sexp-with-binding (bound-name init-expr end)
+(defun clojure--replace-sexp-with-binding (bound-name init-expr)
   (save-excursion
-    (while (re-search-forward (clojure--sexp-regexp init-expr) end t)
+    (while (re-search-forward
+            (clojure--sexp-regexp init-expr)
+            (clojure--point-after 'clojure--goto-let 'forward-sexp)
+            t)
       (replace-match (concat "\\1" bound-name "\\2")))))
 
-(defun clojure--replace-sexps-with-bindings (bindings end)
+(defun clojure--replace-sexps-with-bindings (bindings)
   "Replace bindings with their respective bound names in the let form.
-BINDINGS is the list of bound names and init expressions, END denotes the end of the let expression."
+BINDINGS is the list of bound names and init expressions."
   (let ((bound-name (pop bindings))
         (init-expr (pop bindings)))
     (when bound-name
-      (clojure--replace-sexp-with-binding bound-name init-expr end)
-      (clojure--replace-sexps-with-bindings bindings end))))
+      (clojure--replace-sexp-with-binding bound-name init-expr)
+      (clojure--replace-sexps-with-bindings bindings))))
 
 (defun clojure--replace-sexps-with-bindings-and-indent ()
   (clojure--replace-sexps-with-bindings
-   (clojure--read-let-bindings)
-   (clojure--point-after 'clojure--goto-let 'forward-sexp))
+   (clojure--read-let-bindings))
   (clojure-indent-region
    (clojure--point-after 'clojure--goto-let)
    (clojure--point-after 'clojure--goto-let 'forward-sexp)))
