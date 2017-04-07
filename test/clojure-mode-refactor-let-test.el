@@ -164,6 +164,21 @@
   (search-backward "(or ")
   (clojure--move-to-let-internal "status"))
 
+(def-refactor-test test-move-to-let-name-longer-than-expression
+  "(defn handle-request
+  (let []
+    (println \"body: \" body \", params: \" \", status: \" 5)
+    {:body body
+     :status 5}))"
+  "(defn handle-request
+  (let [status 5]
+    (println \"body: \" body \", params: \" \", status: \" status)
+    {:body body
+     :status status}))"
+  (search-backward "5")
+  (search-backward "5")
+  (clojure--move-to-let-internal "status"))
+
 ;; clojure-emacs/clj-refactor.el#41
 (def-refactor-test test-move-to-let-nested-scope
   "(defn foo []
