@@ -11,6 +11,7 @@
 
 * New interactive command `clojure-cycle-when`.
 * New interactive command `clojure-cycle-not`.
+* New defcustom `clojure-comment-regexp` for font-locking `#_` or `#_` AND `(comment)` sexps.
 
 ## 5.6.1 (2016-12-21)
 
