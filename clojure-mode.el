@@ -657,23 +657,28 @@ and `(match-end 1)'."
 Called by `imenu--generic-function'."
   ;; we have to take into account namespace-definition forms
   ;; e.g. s/defn
-  (when (re-search-backward "^(\\([a-z0-9.-]+/\\)?def\\sw*" nil t)
+  (when (re-search-backward "^(\\([a-z0-9.-]+/\\)?\\(def\\sw*\\)" nil t)
     (save-excursion
       (let (found?
+            (deftype (match-string 2))
             (start (point)))
         (down-list)
         (forward-sexp)
         (while (not found?)
           (ignore-errors
             (forward-sexp))
-          (or (if (char-equal ?[ (char-after (point)))
-                              (backward-sexp))
-                  (if (char-equal ?) (char-after (point)))
+          (or (when (char-equal ?[ (char-after (point)))
+                (backward-sexp))
+              (when (char-equal ?) (char-after (point)))
                 (backward-sexp)))
           (cl-destructuring-bind (def-beg . def-end) (bounds-of-thing-at-point 'sexp)
             (if (char-equal ?^ (char-after def-beg))
                 (progn (forward-sexp) (backward-sexp))
               (setq found? t)
+              (when (string= deftype "defmethod")
+                (setq def-end (progn (goto-char def-end)
+                                     (forward-sexp)
+                                     (point))))
               (set-match-data (list def-beg def-end)))))
         (goto-char start)))))
 
