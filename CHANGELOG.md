@@ -10,6 +10,7 @@
 ### New features
 
 * Add imenu support for multimethods
+* Make imenu recognize indented def-forms
 * New interactive command `clojure-cycle-when`.
 * New interactive command `clojure-cycle-not`.
 

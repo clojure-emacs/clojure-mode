@@ -657,7 +657,7 @@ and `(match-end 1)'."
 Called by `imenu--generic-function'."
   ;; we have to take into account namespace-definition forms
   ;; e.g. s/defn
-  (when (re-search-backward "^(\\([a-z0-9.-]+/\\)?\\(def\\sw*\\)" nil t)
+  (when (re-search-backward "^[ \t]*(\\([a-z0-9.-]+/\\)?\\(def\\sw*\\)" nil t)
     (save-excursion
       (let (found?
             (deftype (match-string 2))
