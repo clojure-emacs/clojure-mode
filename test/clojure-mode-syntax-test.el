@@ -77,4 +77,32 @@
       (backward-prefix-chars)
       (should (bobp)))))
 
+(def-refactor-test test-paragraph-fill-within-comments
+    "
+;; Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+;; ut labore et dolore magna aliqua."
+    "
+;; Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+;; tempor incididunt ut labore et dolore magna aliqua."
+  (goto-char (point-min))
+  (let ((fill-column 80))
+    (fill-paragraph)))
+
+(def-refactor-test test-paragraph-fill-within-inner-comments
+    "
+(let [a 1]
+  ;; Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+  ;; ut labore et dolore
+  ;; magna aliqua.
+  )"
+    "
+(let [a 1]
+  ;; Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+  ;; tempor incididunt ut labore et dolore magna aliqua.
+  )"
+  (goto-char (point-min))
+  (forward-line 2)
+  (let ((fill-column 80))
+    (fill-paragraph)))
+
 (provide 'clojure-mode-syntax-test)
