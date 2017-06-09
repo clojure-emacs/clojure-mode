@@ -579,14 +579,14 @@ If JUSTIFY is non-nil, justify as well as fill the paragraph."
   (if (clojure-in-docstring-p)
       (let ((paragraph-start
              (concat paragraph-start
-                     "\\|\\s-*\\([(;:\"[]\\|~@\\|`(\\|#'(\\)"))
+                     "\\|\\s-*\\([(:\"[]\\|~@\\|`(\\|#'(\\)"))
             (paragraph-separate
              (concat paragraph-separate "\\|\\s-*\".*[,\\.]$"))
             (fill-column (or clojure-docstring-fill-column fill-column))
             (fill-prefix (clojure-docstring-fill-prefix)))
         (fill-paragraph justify))
     (let ((paragraph-start (concat paragraph-start
-                                   "\\|\\s-*\\([(;:\"[]\\|`(\\|#'(\\)"))
+                                   "\\|\\s-*\\([(:\"[]\\|`(\\|#'(\\)"))
           (paragraph-separate
            (concat paragraph-separate "\\|\\s-*\".*[,\\.[]$")))
       (or (fill-comment-paragraph justify)
