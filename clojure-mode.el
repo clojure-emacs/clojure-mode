@@ -679,9 +679,9 @@ Called by `imenu--generic-function'."
         (while (not found?)
           (ignore-errors
             (forward-sexp))
-          (or (when (char-equal ?[ (char-after (point)))
+          (or (when (char-equal ?\[ (char-after (point)))
                 (backward-sexp))
-              (when (char-equal ?) (char-after (point)))
+              (when (char-equal ?\) (char-after (point)))
                 (backward-sexp)))
           (cl-destructuring-bind (def-beg . def-end) (bounds-of-thing-at-point 'sexp)
             (if (char-equal ?^ (char-after def-beg))
