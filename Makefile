@@ -7,7 +7,7 @@ export EMACS
 
 PKGDIR := $(shell EMACS=$(EMACS) $(CASK) package-directory)
 
-SRCS = clojure-mode.el
+SRCS = $(wildcard *.el)
 OBJS = $(SRCS:.el=.elc)
 
 .PHONY: compile test clean
