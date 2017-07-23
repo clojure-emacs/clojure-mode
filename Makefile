@@ -12,6 +12,11 @@ OBJS = $(SRCS:.el=.elc)
 
 .PHONY: compile test clean
 
+elpa:
+	$(CASK) install
+	$(CASK) update
+	touch $@
+
 compile: $(OBJS)
 
 clean:
