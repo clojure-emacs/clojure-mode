@@ -25,9 +25,12 @@ clean:
 test: $(PKGDIR)
 	$(CASK) exec ert-runner $(TESTFLAGS)
 
-%.elc : %.el $(PKGDIR)
-	$(CASK) exec $(EMACS) -Q --batch $(EMACSFLAGS) -f batch-byte-compile $<
+test-checks:
+	$(CASK) exec $(EMACS) --no-site-file --no-site-lisp --batch \
+		-l test/test-checks.el ./
 
-$(PKGDIR) : Cask
-	$(CASK) install
-	touch $(PKGDIR)
+test-bytecomp: $(SRCS:.el=.elc-test)
+
+%.elc-test: %.el elpa
+	$(CASK) exec $(EMACS) --no-site-file --no-site-lisp --batch \
+		-l test/clojure-mode-bytecomp-warnings.el $
