@@ -1,9 +1,7 @@
 CASK = cask
-EMACS = emacs
+export EMACS ?= emacs
 EMACSFLAGS =
 TESTFLAGS =
-
-export EMACS
 
 PKGDIR := $(shell EMACS=$(EMACS) $(CASK) package-directory)
 
