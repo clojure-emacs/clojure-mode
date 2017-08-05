@@ -68,6 +68,7 @@
       (insert (car form))
       (equal (symbol-name (symbol-at-point)) (cdr form)))))
 
+
 (ert-deftest clojure-syntax-skip-prefixes ()
   (dolist (form '("#?@aaa" "#?aaa" "#aaa" "'aaa"))
     (with-temp-buffer
@@ -104,5 +105,33 @@
   (forward-line 2)
   (let ((fill-column 80))
     (fill-paragraph)))
+
+(when (fboundp 'font-lock-ensure)
+  (def-refactor-test test-paragraph-fill-not-altering-surrounding-code
+      "(def my-example-variable
+  \"It has a very long docstring. So long, in fact, that it wraps onto multiple lines! This is to demonstrate what happens when the docstring wraps over three lines.\"
+  nil)"
+      "(def my-example-variable
+  \"It has a very long docstring. So long, in fact, that it wraps onto multiple
+  lines! This is to demonstrate what happens when the docstring wraps over three
+  lines.\"
+  nil)"
+    (font-lock-ensure)
+    (goto-char 40)
+    (let ((clojure-docstring-fill-column 80)
+          (fill-column 80))
+      (fill-paragraph)))
+
+  (ert-deftest test-clojure-in-docstring-p ()
+    (with-temp-buffer
+      (insert  "(def my-example-variable
+  \"Doc here and `doc-here`\"
+  nil)")
+      (clojure-mode)
+      (font-lock-ensure)
+      (goto-char 32)
+      (should (clojure-in-docstring-p))
+      (goto-char 46)
+      (should (clojure-in-docstring-p)))))
 
 (provide 'clojure-mode-syntax-test)
