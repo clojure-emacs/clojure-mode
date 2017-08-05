@@ -574,7 +574,6 @@ This only takes care of filling docstring correctly."
 
 (defun clojure-fill-paragraph (&optional justify)
   "Like `fill-paragraph', but can handle Clojure docstrings.
-
 If JUSTIFY is non-nil, justify as well as fill the paragraph."
   (if (clojure-in-docstring-p)
       (let ((paragraph-start
@@ -584,7 +583,15 @@ If JUSTIFY is non-nil, justify as well as fill the paragraph."
              (concat paragraph-separate "\\|\\s-*\".*[,\\.]$"))
             (fill-column (or clojure-docstring-fill-column fill-column))
             (fill-prefix (clojure-docstring-fill-prefix)))
-        (fill-paragraph justify))
+        ;; we are in a string and string start pos (8th element) is non-nil
+        (let* ((beg-doc (nth 8 (syntax-ppss)))
+               (end-doc (save-excursion
+                          (goto-char beg-doc)
+                          (or (ignore-errors (forward-sexp) (point))
+                              (point-max)))))
+          (save-restriction
+            (narrow-to-region beg-doc end-doc)
+            (fill-paragraph justify))))
     (let ((paragraph-start (concat paragraph-start
                                    "\\|\\s-*\\([(:\"[]\\|`(\\|#'(\\)"))
           (paragraph-separate
