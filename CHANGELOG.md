@@ -5,6 +5,7 @@
 ### Bugs fixed
 
 * Fix fill-paragraph in multi-line comments.
+* [#443](https://github.com/clojure-emacs/clojure-mode/issues/443): Fix behavior of `clojure-forward-logical-sexp` and `clojure-backward-logical-sexp` with conditional macros.
 * [#429](https://github.com/clojure-emacs/clojure-mode/issues/429): Fix a bug causing last occurrence of expression sometimes is not replaced when using `move-to-let`.
 * [#423](https://github.com/clojure-emacs/clojure-mode/issues/423): Make `clojure-match-next-def` more robust against zero-arity def-like forms.
 
