@@ -524,7 +524,9 @@ replacement for `cljr-expand-let`."
 \\{clojure-mode-map}"
   (clojure-mode-variables)
   (clojure-font-lock-setup)
-  (add-hook 'paredit-mode-hook #'clojure-paredit-setup))
+  (add-hook 'paredit-mode-hook #'clojure-paredit-setup)
+  (add-hook 'electric-indent-functions
+            (lambda (c) (if (clojure-in-docstring-p) 'do-indent))))
 
 (defcustom clojure-verify-major-mode t
   "If non-nil, warn when activating the wrong `major-mode'."
