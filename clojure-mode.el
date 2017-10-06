@@ -1607,8 +1607,12 @@ Return nil if not inside a project."
                         (mapcar (lambda (fname)
                                   (locate-dominating-file dir-name fname))
                                 clojure-build-tool-files))))
-    (when (> (length choices) 0)
-      (car (sort choices #'file-in-directory-p)))))
+    (or (and (fboundp 'projectile-project-root)
+             (condition-case err
+                 (projectile-project-root)
+               (error nil)))
+        (when (> (length choices) 0)
+          (car (sort choices #'file-in-directory-p))))))
 
 (defun clojure-project-relative-path (path)
   "Denormalize PATH by making it relative to the project root."
