@@ -192,10 +192,11 @@ Out-of-the box `clojure-mode' understands lein, boot and gradle."
           (and (listp value)
                (cl-every 'stringp value))))
 
-(defcustom clojure-project-root-locating-function nil
-  "Alternative function to locate clojure project root directory, eg. projectile-project-root"
-  :type 'symbol
-  :safe 'symbolp)
+(defcustom clojure-project-root-function 'clojure-project-dir
+  "Function to locate clojure project root directory."
+  :type 'function
+  :risky t
+  :package-version '(clojure-mode . "5.7.0"))
 
 (defcustom clojure-refactor-map-prefix (kbd "C-c C-r")
   "Clojure refactor keymap prefix."
@@ -1612,10 +1613,8 @@ Return nil if not inside a project."
                         (mapcar (lambda (fname)
                                   (locate-dominating-file dir-name fname))
                                 clojure-build-tool-files))))
-    (or (and (fboundp clojure-project-root-locating-function)
-             (condition-case err
-                 (funcall clojure-project-root-locating-function)
-               (error nil)))
+    (or (ignore-errors
+          (funcall clojure-project-root-function))
         (when (> (length choices) 0)
           (car (sort choices #'file-in-directory-p))))))
 
