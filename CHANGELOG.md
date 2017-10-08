@@ -10,6 +10,7 @@
 * [#443](https://github.com/clojure-emacs/clojure-mode/issues/443): Fix behavior of `clojure-forward-logical-sexp` and `clojure-backward-logical-sexp` with conditional macros.
 * [#429](https://github.com/clojure-emacs/clojure-mode/issues/429): Fix a bug causing last occurrence of expression sometimes is not replaced when using `move-to-let`.
 * [#423](https://github.com/clojure-emacs/clojure-mode/issues/423): Make `clojure-match-next-def` more robust against zero-arity def-like forms.
+* [#451](https://github.com/clojure-emacs/clojure-mode/issues/451): Make project root directory calculation customized by `clojure-project-root-function`
 
 ### New features
 
