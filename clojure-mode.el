@@ -192,7 +192,7 @@ Out-of-the box `clojure-mode' understands lein, boot and gradle."
           (and (listp value)
                (cl-every 'stringp value))))
 
-(defcustom clojure-project-root-function 'clojure-project-root-path
+(defcustom clojure-project-root-function #'clojure-project-root-path
   "Function to locate clojure project root directory."
   :type 'function
   :risky t
