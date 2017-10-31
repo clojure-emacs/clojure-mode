@@ -1763,6 +1763,10 @@ no namespaces above point, return the first one in the buffer."
   (save-excursion
     (save-restriction
       (widen)
+
+      ;; Move to top-level to avoid searching from inside ns
+      (ignore-errors (while t (up-list nil t t)))
+
       ;; The closest ns form above point.
       (when (or (re-search-backward clojure-namespace-name-regex nil t)
                 ;; Or any form at all.
