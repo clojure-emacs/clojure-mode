@@ -20,6 +20,7 @@
 * New interactive command `clojure-cycle-when`.
 * New interactive command `clojure-cycle-not`.
 * New defcustom `clojure-comment-regexp` for font-locking `#_` or `#_` AND `(comment)` sexps.
+* [#459](https://github.com/clojure-emacs/clojure-mode/issues/459): Add font lock for new vars in clojure-1.9
 
 ## 5.6.1 (2016-12-21)
 
