@@ -523,6 +523,15 @@ replacement for `cljr-expand-let`."
   (setq-local prettify-symbols-alist clojure--prettify-symbols-alist)
   (setq-local open-paren-in-column-0-is-defun-start nil))
 
+(defsubst clojure-in-docstring-p ()
+  "Check whether point is in a docstring."
+  (let ((ppss (syntax-ppss)))
+    ;; are we in a string?
+    (when (nth 3 ppss)
+      ;; check font lock at the start of the string
+      (eq (get-text-property (nth 8 ppss) 'face)
+          'font-lock-doc-face))))
+
 ;;;###autoload
 (define-derived-mode clojure-mode prog-mode "Clojure"
   "Major mode for editing Clojure code.
@@ -573,15 +582,6 @@ This could cause problems.
                  problem)))))
 
 (add-hook 'clojure-mode-hook #'clojure--check-wrong-major-mode)
-
-(defsubst clojure-in-docstring-p ()
-  "Check whether point is in a docstring."
-  (let ((ppss (syntax-ppss)))
-    ;; are we in a string?
-    (when (nth 3 ppss)
-      ;; check font lock at the start of the string
-      (eq (get-text-property (nth 8 ppss) 'face)
-          'font-lock-doc-face))))
 
 (defsubst clojure-docstring-fill-prefix ()
   "The prefix string used by `clojure-fill-paragraph'.
