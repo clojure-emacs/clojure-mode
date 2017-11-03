@@ -2,25 +2,25 @@
 
 ## master (unreleased)
 
+### New features
+
+* Add imenu support for multimethods.
+* Make imenu recognize indented def-forms.
+* New interactive command `clojure-cycle-when`.
+* New interactive command `clojure-cycle-not`.
+* New defcustom `clojure-comment-regexp` for font-locking `#_` or `#_` AND `(comment)` sexps.
+* [#459](https://github.com/clojure-emacs/clojure-mode/issues/459): Add font-locking for new built-ins added in Clojure 1.9.
+
 ### Bugs fixed
 
 * [#458](https://github.com/clojure-emacs/clojure-mode/pull/458): Get correct ns when in middle of ns form with `clojure-find-ns`
 * [#447](https://github.com/clojure-emacs/clojure-mode/issues/241): When `electric-indent-mode` is on, force indentation from within docstrings.
-* [#438](https://github.com/clojure-emacs/clojure-mode/issues/438): Filling within a doc-string doesn't affect surrounding code. 
+* [#438](https://github.com/clojure-emacs/clojure-mode/issues/438): Filling within a doc-string doesn't affect surrounding code.
 * Fix fill-paragraph in multi-line comments.
 * [#443](https://github.com/clojure-emacs/clojure-mode/issues/443): Fix behavior of `clojure-forward-logical-sexp` and `clojure-backward-logical-sexp` with conditional macros.
 * [#429](https://github.com/clojure-emacs/clojure-mode/issues/429): Fix a bug causing last occurrence of expression sometimes is not replaced when using `move-to-let`.
 * [#423](https://github.com/clojure-emacs/clojure-mode/issues/423): Make `clojure-match-next-def` more robust against zero-arity def-like forms.
-* [#451](https://github.com/clojure-emacs/clojure-mode/issues/451): Make project root directory calculation customized by `clojure-project-root-function`
-
-### New features
-
-* Add imenu support for multimethods
-* Make imenu recognize indented def-forms
-* New interactive command `clojure-cycle-when`.
-* New interactive command `clojure-cycle-not`.
-* New defcustom `clojure-comment-regexp` for font-locking `#_` or `#_` AND `(comment)` sexps.
-* [#459](https://github.com/clojure-emacs/clojure-mode/issues/459): Add font lock for new vars in clojure-1.9
+* [#451](https://github.com/clojure-emacs/clojure-mode/issues/451): Make project root directory calculation customized by `clojure-project-root-function`.
 
 ## 5.6.1 (2016-12-21)
 
