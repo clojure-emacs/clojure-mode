@@ -91,6 +91,8 @@ well.
 
 ## Configuration
 
+In the spirit of Emacs, pretty much everything you can think of in `clojure-mode` is configurable.
+
 To see a list of available configuration options do `M-x customize-group RET clojure`.
 
 ### Indentation options
@@ -98,6 +100,13 @@ To see a list of available configuration options do `M-x customize-group RET clo
 The default indentation rules in `clojure-mode` are derived from the
 [community Clojure Style Guide](https://github.com/bbatsov/clojure-style-guide).
 Please, refer to the guide for the general Clojure indentation rules.
+
+#### Indentation of docstrings
+
+By default multi-line docstrings are indented with 2 spaces, as this is a
+somewhat common standard in the Clojure community. You can however adjust this
+by modifying `clojure-docstring-fill-prefix-width`. Set it to 0 if you don't
+want multi-line docstrings to be indented at all (which is pretty common in most lisps).
 
 #### Indentation of function forms
 
