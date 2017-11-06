@@ -16,7 +16,14 @@
   (ns ValidNs<>?+|?*.b*ar.ba*z)
   (ns other.valid.ns)
   (ns oneword)
-  (ns foo.bar))
+  (ns one.X)
+  (ns foo.bar)
+  (ns Foo.bar)
+  (ns Foo.Bar)
+  (ns foo.Bar)
+  (ns Foo-bar)
+  (ns Foo-Bar)
+  (ns foo-Bar))
 
 (comment ;; for indentation
   (with-hi heya
