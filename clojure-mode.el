@@ -1761,19 +1761,20 @@ content) are considered part of the preceding sexp."
   "Return the namespace of the current Clojure buffer.
 Return the namespace closest to point and above it.  If there are
 no namespaces above point, return the first one in the buffer."
-  (save-excursion
-    (save-restriction
-      (widen)
+  (if (not (equal major-mode 'org-mode)) ; don't find namespace in Org-mode buffer for ob-clojure `cider-current-ns'.
+      (save-excursion
+        (save-restriction
+          (widen)
 
-      ;; Move to top-level to avoid searching from inside ns
-      (ignore-errors (while t (up-list nil t t)))
+          ;; Move to top-level to avoid searching from inside ns
+          (ignore-errors (while t (up-list nil t t)))
 
-      ;; The closest ns form above point.
-      (when (or (re-search-backward clojure-namespace-name-regex nil t)
-                ;; Or any form at all.
-                (and (goto-char (point-min))
-                     (re-search-forward clojure-namespace-name-regex nil t)))
-        (match-string-no-properties 4)))))
+          ;; The closest ns form above point.
+          (when (or (re-search-backward clojure-namespace-name-regex nil t)
+                    ;; Or any form at all.
+                    (and (goto-char (point-min))
+                         (re-search-forward clojure-namespace-name-regex nil t)))
+            (match-string-no-properties 4))))))
 
 (defconst clojure-def-type-and-name-regex
   (concat "(\\(?:\\(?:\\sw\\|\\s_\\)+/\\)?"
