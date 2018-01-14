@@ -1,6 +1,6 @@
 ;;; clojure-mode-indentation-test.el --- Clojure Mode: indentation tests  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2015-2017 Bozhidar Batsov <bozhidar@batsov.com>
+;; Copyright (C) 2015-2018 Bozhidar Batsov <bozhidar@batsov.com>
 
 ;; This file is not part of GNU Emacs.
 
