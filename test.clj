@@ -25,13 +25,6 @@
 (FooBar/bar)
 (some.package.FooBar/baz)
 
-;; cljx
-(defn x-to-string
-  [x]
-  (let [buf #+clj (StringBuilder.) #+cljs (gstring/StringBuffer.)]
-    (.append buf "x is: ")
-    (.append buf (str x))))
-
 ;; metadata doesn't break docstrings
 (defn max
   "Returns the greatest of the nums."

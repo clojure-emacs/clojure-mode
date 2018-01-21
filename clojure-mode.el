@@ -567,10 +567,7 @@ non-nil."
                            'clojurescript-mode)
                           ((and (string-match "\\.cljc\\'" (buffer-file-name))
                                 (not (eq major-mode 'clojurec-mode)))
-                           'clojurec-mode)
-                          ((and (string-match "\\.cljx\\'" (buffer-file-name))
-                                (not (eq major-mode 'clojurex-mode)))
-                           'clojurex-mode))))
+                           'clojurec-mode))))
       (when problem
         (message "[WARNING] %s activated `%s' instead of `%s' in this buffer.
 This could cause problems.
@@ -2474,24 +2471,11 @@ With a numeric prefix argument the let is introduced N lists up."
 
 \\{clojurec-mode-map}")
 
-(defconst clojurex-font-lock-keywords
-  ;; cljx annotations (#+clj and #+cljs)
-  '(("#\\+cljs?\\>" 0 font-lock-preprocessor-face))
-  "Additional font-locking for `clojurex-mode'.")
-
-;;;###autoload
-(define-derived-mode clojurex-mode clojure-mode "ClojureX"
-  "Major mode for editing ClojureX code.
-
-\\{clojurex-mode-map}"
-  (font-lock-add-keywords nil clojurex-font-lock-keywords))
-
 ;;;###autoload
 (progn
   (add-to-list 'auto-mode-alist
                '("\\.\\(clj\\|dtm\\|edn\\)\\'" . clojure-mode))
   (add-to-list 'auto-mode-alist '("\\.cljc\\'" . clojurec-mode))
-  (add-to-list 'auto-mode-alist '("\\.cljx\\'" . clojurex-mode))
   (add-to-list 'auto-mode-alist '("\\.cljs\\'" . clojurescript-mode))
   ;; boot build scripts are Clojure source files
   (add-to-list 'auto-mode-alist '("\\(?:build\\|profile\\)\\.boot\\'" . clojure-mode)))

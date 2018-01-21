@@ -11,6 +11,10 @@
 * New defcustom `clojure-comment-regexp` for font-locking `#_` or `#_` AND `(comment)` sexps.
 * [#459](https://github.com/clojure-emacs/clojure-mode/issues/459): Add font-locking for new built-ins added in Clojure 1.9.
 
+### Changes
+
+* Drop support for CLJX.
+
 ### Bugs fixed
 
 * [#458](https://github.com/clojure-emacs/clojure-mode/pull/458): Get correct ns when in middle of ns form with `clojure-find-ns`

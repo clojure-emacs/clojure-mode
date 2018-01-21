@@ -72,7 +72,6 @@ The `clojure-mode` package actually bundles together several major modes:
 * `clojure-mode` is a major mode for editing Clojure code
 * `clojurescript-mode` is a major mode for editing ClojureScript code
 * `clojurec-mode` is a major mode for editing `.cljc` source files
-* `clojurex-mode` is a major mode for editing `.cljx` source files
 
 All the major modes derive from `clojure-mode` and provide more or less the same
 functionality.  Differences can be found mostly in the font-locking -
