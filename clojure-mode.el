@@ -2149,11 +2149,15 @@ See: https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-cycle-privacy"
   (interactive)
   (clojure--convert-collection "#{" "}"))
 
+(defun clojure--in-string-p ()
+  "Check whether the point is currently in a string."
+  (nth 3 (syntax-ppss)))
+
 (defun clojure--goto-if ()
   "Find the first surrounding if or if-not expression."
-  (when (in-string-p)
+  (when (clojure--in-string-p)
     (while (or (not (looking-at "("))
-               (in-string-p))
+               (clojure--in-string-p))
       (backward-char)))
   (while (not (looking-at "\\((if \\)\\|\\((if-not \\)"))
     (condition-case nil
@@ -2183,9 +2187,9 @@ See: https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-cycle-if"
 ;; TODO: Remove code duplication with `clojure--goto-if'.
 (defun clojure--goto-when ()
   "Find the first surrounding when or when-not expression."
-  (when (in-string-p)
+  (when (clojure--in-string-p)
     (while (or (not (looking-at "("))
-               (in-string-p))
+               (clojure--in-string-p))
       (backward-char)))
   (while (not (looking-at "\\((when \\)\\|\\((when-not \\)"))
     (condition-case nil
@@ -2236,9 +2240,9 @@ bracket.")
 
 (defun clojure--goto-let ()
   "Go to the beginning of the nearest let form."
-  (when (in-string-p)
+  (when (clojure--in-string-p)
     (while (or (not (looking-at "("))
-               (in-string-p))
+               (clojure--in-string-p))
       (backward-char)))
   (ignore-errors
     (while (not (looking-at clojure--let-regexp))
