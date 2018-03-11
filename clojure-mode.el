@@ -435,6 +435,10 @@ ENDP and DELIM."
                nil)
               (t)))))
 
+(defconst clojure--collection-tag-regexp "#\\(::[a-zA-Z0-9._-]*\\|:?\\([a-zA-Z0-9._-]+/\\)?[a-zA-Z0-9._-]+\\)"
+    "Allowed strings that can come before a collection literal (e.g. '[]' or '{}'), as reader macro tags.
+This includes #fully.qualified/my-ns[:kw val] and #::my-ns{:kw val} as of Clojure 1.9.")
+
 (defun clojure-no-space-after-tag (endp delimiter)
   "Prevent inserting a space after a reader-literal tag?
 
@@ -443,8 +447,8 @@ listed in `clojure-omit-space-between-tag-and-delimiters', this
 function returns t.
 
 This allows you to write things like #db/id[:db.part/user]
-without inserting a space between the tag and the opening
-bracket.
+and #::my-ns{:some \"map\"} without inserting a space between
+the tag and the opening bracket.
 
 See `paredit-space-for-delimiter-predicates' for the meaning of
 ENDP and DELIMITER."
@@ -454,7 +458,7 @@ ENDP and DELIMITER."
         (save-excursion
           (let ((orig-point (point)))
             (not (and (re-search-backward
-                       "#\\([a-zA-Z0-9._-]+/\\)?[a-zA-Z0-9._-]+"
+                       clojure--collection-tag-regexp
                        (line-beginning-position)
                        t)
                       (= orig-point (match-end 0)))))))))
