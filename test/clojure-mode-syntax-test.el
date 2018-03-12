@@ -78,6 +78,20 @@
       (backward-prefix-chars)
       (should (bobp)))))
 
+
+(ert-deftest clojure-allowed-collection-tags ()
+  (dolist (tag '("#::ns" "#:ns" "#ns" "#:f.q/ns" "#f.q/ns" "#::"))
+    (with-temp-buffer
+      (clojure-mode)
+      (insert tag)
+      (should-not (clojure-no-space-after-tag nil ?{))))
+  (dolist (tag '("#$:" "#/f" "#:/f" "#::f.q/ns" "::ns" "::" "#f:ns"))
+    (with-temp-buffer
+      (clojure-mode)
+      (insert tag)
+      (should (clojure-no-space-after-tag nil ?{)))))
+
+
 (def-refactor-test test-paragraph-fill-within-comments
     "
 ;; Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
