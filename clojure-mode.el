@@ -854,18 +854,19 @@ any number of matches of `clojure--sym-forbidden-rest-chars'."))
 
       ;; TODO dedupe the code for matching of keywords, type-hints and unmatched symbols
 
-      ;; keywords: {:oneword/veryCom|pLex.stu-ff 0}
-      (,(concat "\\(:\\)\\(" clojure--sym-regexp "\\)\\(/\\)\\(" clojure--sym-regexp "\\)")
+      ;; keywords: {:oneword/ve/yCom|pLex.stu-ff 0}
+      (,(concat "\\(:\\{1,2\\}\\)\\(" clojure--sym-regexp "?\\)\\(/\\)\\(" clojure--sym-regexp "\\)")
        (1 'clojure-keyword-face)
        (2 font-lock-type-face)
+       ;; (2 'clojure-keyword-face)
        (3 'default)
        (4 'clojure-keyword-face))
-      (,(concat "\\(:\\)\\(" clojure--sym-regexp "\\)")
+      (,(concat "\\(:\\{1,2\\}\\)\\(" clojure--sym-regexp "\\)")
        (1 'clojure-keyword-face)
        (2 'clojure-keyword-face))
 
       ;; type-hints: #^oneword
-      (,(concat "\\(#^\\)\\(" clojure--sym-regexp "\\)\\(/\\)\\(" clojure--sym-regexp "\\)")
+      (,(concat "\\(#^\\)\\(" clojure--sym-regexp "?\\)\\(/\\)\\(" clojure--sym-regexp "\\)")
        (1 'default)
        (2 font-lock-type-face)
        (3 'default)
@@ -875,7 +876,7 @@ any number of matches of `clojure--sym-forbidden-rest-chars'."))
        (2 font-lock-type-face))
 
       ;; clojure symbols not matched by the previous regexps
-      (,(concat "\\(" clojure--sym-regexp "\\)\\(/\\)\\(" clojure--sym-regexp "\\)")
+      (,(concat "\\(" clojure--sym-regexp "?\\)\\(/\\)\\(" clojure--sym-regexp "\\)")
        (1 font-lock-type-face)
        (2 'default)
        (3 'default))
