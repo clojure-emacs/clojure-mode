@@ -875,13 +875,18 @@ any number of matches of `clojure--sym-forbidden-rest-chars'."))
        (1 'default)
        (2 font-lock-type-face))
 
-      ;; clojure symbols not matched by the previous regexps
+      ;; clojure symbols not matched by the previous regexps; influences CIDER's
+      ;; dynamic syntax highlighting (CDSH). See https://git.io/vxEEA:
       (,(concat "\\(" clojure--sym-regexp "?\\)\\(/\\)\\(" clojure--sym-regexp "\\)")
        (1 font-lock-type-face)
-       (2 'default)
-       (3 'default))
+       ;; 2nd and 3th matching groups can be font-locked to `nil' or `default'.
+       ;; CDSH seems to kick in only for functions and variables referenced w/o
+       ;; writing their namespaces.
+       (2 nil)
+       (3 nil))
       (,(concat "\\(" clojure--sym-regexp "\\)")
-       (1 'default))
+       ;; this matching group must be font-locked to `nil' otherwise CDSH breaks.
+       (1 nil))
 
       ;; #_ and (comment ...) macros.
       (clojure--search-comment-macro 1 font-lock-comment-face t)
