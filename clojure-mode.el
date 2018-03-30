@@ -180,7 +180,8 @@ For example, \[ is allowed in :db/id[:db.part/user]."
 
 (defcustom clojure-build-tool-files '("project.clj" "build.boot" "build.gradle" "deps.edn")
   "A list of files, which identify a Clojure project's root.
-Out-of-the box `clojure-mode' understands lein, boot and gradle."
+Out-of-the box `clojure-mode' understands lein, boot, gradle
+and tools.deps."
   :type '(repeat string)
   :package-version '(clojure-mode . "5.0.0")
   :safe (lambda (value)
