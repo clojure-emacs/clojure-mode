@@ -12,6 +12,7 @@
 * [#459](https://github.com/clojure-emacs/clojure-mode/issues/459): Add font-locking for new built-ins added in Clojure 1.9.
 * [#471](https://github.com/clojure-emacs/clojure-mode/issues/471): Support tagged maps (new in Clojure 1.9) in paredit integration.
 * Consider `deps.edn` a project root.
+* [#467](https://github.com/clojure-emacs/clojure-mode/issues/467): Make `prog-mode-map` the parent keymap for `clojure-mode-map`.
 
 ### Changes
 

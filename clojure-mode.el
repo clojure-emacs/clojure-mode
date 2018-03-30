@@ -243,6 +243,7 @@ and tools.deps."
 
 (defvar clojure-mode-map
   (let ((map (make-sparse-keymap)))
+    (set-keymap-parent map prog-mode-map)
     (define-key map (kbd "C-:") #'clojure-toggle-keyword-string)
     (define-key map (kbd "C-c SPC") #'clojure-align)
     (define-key map clojure-refactor-map-prefix 'clojure-refactor-map)
