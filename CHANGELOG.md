@@ -2,6 +2,8 @@
 
 ## master (unreleased)
 
+## 5.7.0 (2018-04-29)
+
 ### New features
 
 * Add imenu support for multimethods.
@@ -17,6 +19,7 @@
 ### Changes
 
 * Drop support for CLJX.
+* Remove special font-locking of Java interop methods & constants: There is no semantic distinction between interop methods, constants and global vars in Clojure.
 
 ### Bugs fixed
 
@@ -28,7 +31,6 @@
 * [#429](https://github.com/clojure-emacs/clojure-mode/issues/429): Fix a bug causing last occurrence of expression sometimes is not replaced when using `move-to-let`.
 * [#423](https://github.com/clojure-emacs/clojure-mode/issues/423): Make `clojure-match-next-def` more robust against zero-arity def-like forms.
 * [#451](https://github.com/clojure-emacs/clojure-mode/issues/451): Make project root directory calculation customized by `clojure-project-root-function`.
-* Stop distinctive font-locking of java interop methods & constants: There is no semantic distinction between interop methods, constants and global vars in clojure.
 * Fix namespace font-locking: namespaces may also contain non alphanumeric chars.
 
 
