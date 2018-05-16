@@ -2,6 +2,8 @@
 
 ## master (unreleased)
 
+* Indent `fdef` (clojure.spec) like a `def`.
+
 ## 5.7.0 (2018-04-29)
 
 ### New features
