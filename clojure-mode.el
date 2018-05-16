@@ -1515,6 +1515,7 @@ work).  To set it from Lisp code, use
   (locking 1)
   (proxy '(2 nil nil (:defn)))
   (as-> 2)
+  (fdef 1)
 
   (reify '(:defn (1)))
   (deftype '(2 nil nil (:defn)))
