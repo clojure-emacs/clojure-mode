@@ -29,7 +29,8 @@
 (let ((project-dir "/home/user/projects/my-project/")
       (clj-file-path "/home/user/projects/my-project/src/clj/my_project/my_ns/my_file.clj")
       (project-relative-clj-file-path "src/clj/my_project/my_ns/my_file.clj")
-      (clj-file-ns "my-project.my-ns.my-file"))
+      (clj-file-ns "my-project.my-ns.my-file")
+      (clojure-cache-project nil))
 
   (ert-deftest project-relative-path ()
     :tags '(utils)

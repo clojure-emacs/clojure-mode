@@ -2,7 +2,10 @@
 
 ## master (unreleased)
 
+### Changes
+
 * Indent `fdef` (clojure.spec) like a `def`.
+* The results of `clojure-project-dir` are cached by default to optimize performance.
 
 ## 5.7.0 (2018-04-29)
 

@@ -1629,12 +1629,30 @@ nil."
 
 
 
+(defcustom clojure-cache-project-dir t
+  "Whether to cache the results of `clojure-project-dir'."
+  :type 'boolean
+  :safe #'booleanp
+  :package-version '(clojure-mode . "5.8.0"))
+
+(defvar-local clojure-cached-project-dir nil
+  "A project dir cache used to speed up related operations.")
+
 (defun clojure-project-dir (&optional dir-name)
   "Return the absolute path to the project's root directory.
 
 Call is delegated down to `clojure-project-root-function' with
-optional DIR-NAME as argument."
-  (funcall clojure-project-root-function dir-name))
+optional DIR-NAME as argument.
+
+When `clojure-cache-project-dir' is t the results of the command
+are cached in a buffer local variable (`clojure-cached-project-dir')."
+  (let ((project-dir (or clojure-cached-project-dir
+                         (funcall clojure-project-root-function dir-name))))
+    (when (and clojure-cache-project-dir
+               (derived-mode-p 'clojure-mode)
+               (not clojure-cached-project-dir))
+      (setq clojure-cached-project-dir project-dir))
+    project-dir))
 
 (defun clojure-project-root-path (&optional dir-name)
   "Return the absolute path to the project's root directory.
