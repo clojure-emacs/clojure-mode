@@ -1796,23 +1796,60 @@ content) are considered part of the preceding sexp."
       (zero-or-one (any ":'")) ;; (in-ns 'foo) or (ns+ :user)
       (group (one-or-more (not (any "()\"" whitespace))) symbol-end)))
 
+(defcustom clojure-cache-ns t
+  "Whether to cache the results of `clojure-find-ns'.
+
+Note that this won't work well in buffers with multiple namespace
+declarations (which rarely occur in practice) and you'll
+have to invalidate this manually after changing the ns for
+a buffer."
+  :type 'boolean
+  :safe #'booleanp
+  :package-version '(clojure-mode . "5.8.0"))
+
+(defvar-local clojure-cached-ns nil
+  "A buffer ns cache used to speed up ns-related operations.")
+
 (defun clojure-find-ns ()
   "Return the namespace of the current Clojure buffer.
 Return the namespace closest to point and above it.  If there are
-no namespaces above point, return the first one in the buffer."
-  (save-excursion
-    (save-restriction
-      (widen)
+no namespaces above point, return the first one in the buffer.
 
-      ;; Move to top-level to avoid searching from inside ns
-      (ignore-errors (while t (up-list nil t t)))
+The results will be cached if `clojure-cache-ns' is set to t."
+  (if (and clojure-cache-ns clojure-cached-ns)
+      clojure-cached-ns
+    (let ((ns (save-excursion
+                (save-restriction
+                  (widen)
 
-      ;; The closest ns form above point.
-      (when (or (re-search-backward clojure-namespace-name-regex nil t)
-                ;; Or any form at all.
-                (and (goto-char (point-min))
-                     (re-search-forward clojure-namespace-name-regex nil t)))
-        (match-string-no-properties 4)))))
+                  ;; Move to top-level to avoid searching from inside ns
+                  (ignore-errors (while t (up-list nil t t)))
+
+                  ;; The closest ns form above point.
+                  (when (or (re-search-backward clojure-namespace-name-regex nil t)
+                            ;; Or any form at all.
+                            (and (goto-char (point-min))
+                                 (re-search-forward clojure-namespace-name-regex nil t)))
+                    (match-string-no-properties 4))))))
+      (setq clojure-cached-ns ns)
+      ns)))
+
+(defun clojure-show-cache ()
+  "Display cached values if present.
+Useful for debugging."
+  (interactive)
+  (message "Cached Project: %s, Cached Namespace: %s" clojure-cached-project-dir clojure-cached-ns))
+
+(defun clojure-clear-cache ()
+  "Clear all buffer-local cached values.
+
+Normally you'd need to do this very infrequently - e.g.
+after renaming the root folder of project or after
+renaming a namespace."
+  (interactive)
+  (setq clojure-cached-project-dir nil
+        clojure-cached-ns nil)
+  (message "Buffer-local clojure-mode cache cleared"))
 
 (defconst clojure-def-type-and-name-regex
   (concat "(\\(?:\\(?:\\sw\\|\\s_\\)+/\\)?"

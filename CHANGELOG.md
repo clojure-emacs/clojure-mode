@@ -7,6 +7,7 @@
 * Indent `fdef` (clojure.spec) like a `def`.
 * The results of `clojure-project-dir` are cached by default to optimize performance.
 * Add `shadow-cljs.edn` to the default list of build tool files.
+* [#478](https://github.com/clojure-emacs/clojure-mode/issues/478): Cache the result of `clojure-find-ns` to optimize performance.
 
 ## 5.7.0 (2018-04-29)
 
