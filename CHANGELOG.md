@@ -4,6 +4,7 @@
 
 ### Changes
 
+* Introduce `clojure-global-constant-face`, `clojure-def-symbol-face`, `clojure-lambda-arg-face`.
 * Indent `fdef` (clojure.spec) like a `def`.
 * The results of `clojure-project-dir` are cached by default to optimize performance.
 * Add `shadow-cljs.edn` to the default list of build tool files.

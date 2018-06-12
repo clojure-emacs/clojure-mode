@@ -92,6 +92,26 @@
   "Face used to font-lock Clojure character literals."
   :package-version '(clojure-mode . "3.0.0"))
 
+(defface clojure-interop-method-face
+  '((t (:inherit font-lock-preprocessor-face)))
+  "Face used to font-lock interop method names (camelCase)."
+  :package-version '(clojure-mode . "3.0.0"))
+
+(defface clojure-global-constant-face
+  '((t (:inherit font-lock-constant-face)))
+  "Face used to font-lock the Clojure global constants: nil, true, false."
+  :package-version '(clojure-mode . "3.0.0"))
+
+(defface clojure-def-symbol-face
+  '((t (:inherit font-lock-keyword-face)))
+  "Face used to font-lock the symbols `def`, `defn`, and all detected variants (be them from clojure.core or not)."
+  :package-version '(clojure-mode . "3.0.0"))
+
+(defface clojure-lambda-arg-face
+  '((t (:inherit font-lock-variable-name-face)))
+  "Face used to font-lock the function literal args: %, %&, %1 and so on."
+  :package-version '(clojure-mode . "3.0.0"))
+
 (defcustom clojure-indent-style :always-align
   "Indentation style to use for function forms and macro forms.
 There are two cases of interest configured by this variable.
@@ -754,7 +774,7 @@ any number of matches of `clojure--sym-forbidden-rest-chars'."))
                 ;; Possibly type or metadata
                 "\\(?:#?^\\(?:{[^}]*}\\|\\sw+\\)[ \r\n\t]*\\)*"
                 "\\(\\sw+\\)?")
-       (1 font-lock-keyword-face)
+       (1 'clojure-def-symbol-face)
        (2 font-lock-variable-name-face nil t))
       ;; Type definition
       (,(concat "(\\(?:clojure.core/\\)?\\("
@@ -767,7 +787,7 @@ any number of matches of `clojure--sym-forbidden-rest-chars'."))
                 ;; Possibly type or metadata
                 "\\(?:#?^\\(?:{[^}]*}\\|\\sw+\\)[ \r\n\t]*\\)*"
                 "\\(\\sw+\\)?")
-       (1 font-lock-keyword-face)
+       (1 'clojure-def-symbol-face)
        (2 font-lock-type-face nil t))
       ;; Function definition (anything that starts with def and is not
       ;; listed above)
@@ -780,7 +800,7 @@ any number of matches of `clojure--sym-forbidden-rest-chars'."))
                 ;; Possibly type or metadata
                 "\\(?:#?^\\(?:{[^}]*}\\|\\sw+\\)[ \r\n\t]*\\)*"
                 "\\(\\sw+\\)?")
-       (1 font-lock-keyword-face)
+       (1 'clojure-def-symbol-face)
        (2 font-lock-function-name-face nil t))
       ;; (fn name? args ...)
       (,(concat "(\\(?:clojure.core/\\)?\\(fn\\)[ \t]+"
@@ -791,7 +811,7 @@ any number of matches of `clojure--sym-forbidden-rest-chars'."))
        (1 font-lock-keyword-face)
        (2 font-lock-function-name-face nil t))
       ;; lambda arguments - %, %&, %1, %2, etc
-      ("\\<%[&1-9]?" (0 font-lock-variable-name-face))
+      ("\\<%[&1-9]?" (0 'clojure-lambda-arg-face))
       ;; Special forms
       (,(concat
          "("
@@ -848,7 +868,7 @@ any number of matches of `clojure--sym-forbidden-rest-chars'."))
          (regexp-opt
           '("true" "false" "nil") t)
          "\\>")
-       0 font-lock-constant-face)
+       0 'clojure-global-constant-face)
       ;; Character literals - \1, \a, \newline, \u0000
       ("\\\\\\([[:punct:]]\\|[a-z0-9]+\\>\\)" 0 'clojure-character-face)
 
