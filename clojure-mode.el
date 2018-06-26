@@ -439,11 +439,14 @@ ENDP and DELIM."
               (t)))))
 
 (defconst clojure--collection-tag-regexp "#\\(::[a-zA-Z0-9._-]*\\|:?\\([a-zA-Z0-9._-]+/\\)?[a-zA-Z0-9._-]+\\)"
-    "Allowed strings that can come before a collection literal (e.g. '[]' or '{}'), as reader macro tags.
-This includes #fully.qualified/my-ns[:kw val] and #::my-ns{:kw val} as of Clojure 1.9.")
+    "Collection reader macro tag regexp.
+It is intended to check for allowed strings that can come before a
+collection literal (e.g. '[]' or '{}'), as reader macro tags.
+This includes #fully.qualified/my-ns[:kw val] and #::my-ns{:kw
+val} as of Clojure 1.9.")
 
 (defun clojure-no-space-after-tag (endp delimiter)
-  "Prevent inserting a space after a reader-literal tag?
+  "Prevent inserting a space after a reader-literal tag.
 
 When a reader-literal tag is followed be an opening delimiter
 listed in `clojure-omit-space-between-tag-and-delimiters', this
