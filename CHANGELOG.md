@@ -2,6 +2,8 @@
 
 ## master (unreleased)
 
+## 5.8.0 (2018-06-26)
+
 ### New features
 
 * New interactive commands `clojure-show-cache` and `clojure-clear-cache`.
