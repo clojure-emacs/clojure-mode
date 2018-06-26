@@ -550,7 +550,9 @@ replacement for `cljr-expand-let`."
   ;; `electric-layout-post-self-insert-function' prevents indentation in strings
   ;; and comments, force indentation in docstrings:
   (add-hook 'electric-indent-functions
-            (lambda (_char) (if (clojure-in-docstring-p) 'do-indent))))
+            (lambda (_char) (if (clojure-in-docstring-p) 'do-indent)))
+  ;; integration with project.el
+  (add-hook 'project-find-functions #'clojure-project-dir))
 
 (defcustom clojure-verify-major-mode t
   "If non-nil, warn when activating the wrong `major-mode'."
