@@ -76,24 +76,26 @@
     (newline-and-indent)))
 
 (ert-deftest clojure-find-ns-test ()
-  (with-temp-buffer
-    (insert "(ns ^{:doc \"Some docs\"}\nfoo-bar)")
-    (newline)
-    (newline)
-    (insert "(in-ns 'baz-quux)")
-    (clojure-mode)
+  ;; we should not cache the results of `clojure-find-ns' here
+  (let ((clojure-cache-ns nil))
+    (with-temp-buffer
+     (insert "(ns ^{:doc \"Some docs\"}\nfoo-bar)")
+     (newline)
+     (newline)
+     (insert "(in-ns 'baz-quux)")
+     (clojure-mode)
 
-    ;; From inside docstring of first ns
-    (goto-char 18)
-    (should (equal "foo-bar" (clojure-find-ns)))
+     ;; From inside docstring of first ns
+     (goto-char 18)
+     (should (equal "foo-bar" (clojure-find-ns)))
 
-    ;; From inside first ns's name, on its own line
-    (goto-char 29)
-    (should (equal "foo-bar" (clojure-find-ns)))
+     ;; From inside first ns's name, on its own line
+     (goto-char 29)
+     (should (equal "foo-bar" (clojure-find-ns)))
 
-    ;; From inside second ns's name
-    (goto-char 42)
-    (should (equal "baz-quux" (clojure-find-ns)))))
+     ;; From inside second ns's name
+     (goto-char 42)
+     (should (equal "baz-quux" (clojure-find-ns))))))
 
 (provide 'clojure-mode-sexp-test)
 
