@@ -555,7 +555,7 @@ replacement for `cljr-expand-let`."
   (add-hook 'electric-indent-functions
             (lambda (_char) (if (clojure-in-docstring-p) 'do-indent)))
   ;; integration with project.el
-  (add-hook 'project-find-functions #'clojure-project-dir))
+  (add-hook 'project-find-functions #'clojure-find-function))
 
 (defcustom clojure-verify-major-mode t
   "If non-nil, warn when activating the wrong `major-mode'."
@@ -1687,6 +1687,10 @@ Return nil if not inside a project."
                                 clojure-build-tool-files))))
     (when (> (length choices) 0)
       (car (sort choices #'file-in-directory-p)))))
+
+(defun clojure-project-find-function (dir)
+  "Based on DIR return cons for use in `project-find-functions'."
+  (cons 'clojure (clojure-project-root-path dir)))
 
 (defun clojure-project-relative-path (path)
   "Denormalize PATH by making it relative to the project root."
