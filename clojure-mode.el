@@ -555,7 +555,7 @@ replacement for `cljr-expand-let`."
   (add-hook 'electric-indent-functions
             (lambda (_char) (if (clojure-in-docstring-p) 'do-indent)))
   ;; integration with project.el
-  (add-hook 'project-find-functions #'clojure-project-dir))
+  (add-hook 'project-find-functions #'clojure-current-project))
 
 (defcustom clojure-verify-major-mode t
   "If non-nil, warn when activating the wrong `major-mode'."
@@ -1664,6 +1664,16 @@ are cached in a buffer local variable (`clojure-cached-project-dir')."
                (not clojure-cached-project-dir))
       (setq clojure-cached-project-dir project-dir))
     project-dir))
+
+(defun clojure-current-project (&optional dir-name)
+  "Return the current project as a cons cell usable by project.el.
+
+Call is delegated down to `clojure-clojure-dir' with
+optional DIR-NAME as argument."
+  (let ((project-dir (clojure-project-dir dir-name)))
+    (if project-dir
+        (cons 'clojure project-dir)
+      nil)))
 
 (defun clojure-project-root-path (&optional dir-name)
   "Return the absolute path to the project's root directory.
