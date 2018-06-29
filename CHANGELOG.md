@@ -2,6 +2,10 @@
 
 ## master (unreleased)
 
+### Bugs fixed
+
+* Fix the project.el integration.
+
 ## 5.8.0 (2018-06-26)
 
 ### New features
