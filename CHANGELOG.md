@@ -2,9 +2,9 @@
 
 ## master (unreleased)
 
-### Bugs fixed
-
 ## 5.8.1 (2018-07-03)
+
+### Bugs fixed
 
 * Fix the project.el integration.
 
