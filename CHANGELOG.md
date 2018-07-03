@@ -4,6 +4,8 @@
 
 ### Bugs fixed
 
+## 5.8.1 (2018-07-03)
+
 * Fix the project.el integration.
 
 ## 5.8.0 (2018-06-26)
