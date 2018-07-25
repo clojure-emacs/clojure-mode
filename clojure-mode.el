@@ -1825,7 +1825,8 @@ content) are considered part of the preceding sexp."
 Note that this won't work well in buffers with multiple namespace
 declarations (which rarely occur in practice) and you'll
 have to invalidate this manually after changing the ns for
-a buffer."
+a buffer.  If you update the ns using `clojure-update-ns'
+the cached value will be updated automatically."
   :type 'boolean
   :safe #'booleanp
   :package-version '(clojure-mode . "5.8.0"))
