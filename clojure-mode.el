@@ -1733,7 +1733,7 @@ Useful if a file has been renamed."
                 (replace-match nsname nil nil nil 4)
                 (message "ns form updated to `%s'" nsname)
                 (setq clojure-cached-ns nsname))
-            (error "Namespace not found")))))))
+            (user-error "Can't find ns form")))))))
 
 (defun clojure--sort-following-sexps ()
   "Sort sexps between point and end of current sexp.
@@ -1799,7 +1799,7 @@ content) are considered part of the preceding sexp."
             (redisplay)
             (message "ns form has been sorted")
             (sleep-for 0.1))))
-    (user-error "Namespace not found")))
+    (user-error "Can't find ns form")))
 
 (defconst clojure-namespace-name-regex
   (rx line-start
