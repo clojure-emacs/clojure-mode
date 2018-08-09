@@ -5,6 +5,11 @@
 ### Changes
 
 * Require Emacs 25.1+.
+
+## 5.8.2 (2018-08-09)
+
+### Changes
+
 * Disable ns caching by default.
 
 ## 5.8.1 (2018-07-03)
