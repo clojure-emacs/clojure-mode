@@ -531,7 +531,8 @@ replacement for `cljr-expand-let`."
   (setq-local clojure-expected-ns-function #'clojure-expected-ns)
   (setq-local parse-sexp-ignore-comments t)
   (setq-local prettify-symbols-alist clojure--prettify-symbols-alist)
-  (setq-local open-paren-in-column-0-is-defun-start nil))
+  (setq-local open-paren-in-column-0-is-defun-start nil)
+  (setq-local beginning-of-defun-function #'clojure-beginning-of-defun-function))
 
 (defsubst clojure-in-docstring-p ()
   "Check whether point is in a docstring."
@@ -1898,6 +1899,7 @@ Returns a list pair, e.g. (\"defn\" \"abc\") or (\"deftest\" \"some-test\")."
 
 
 ;;; Sexp navigation
+
 (defun clojure--looking-at-non-logical-sexp ()
   "Return non-nil if text after point is \"non-logical\" sexp.
 \"Non-logical\" sexp are ^metadata and #reader.macros."
@@ -1942,6 +1944,77 @@ This will skip over sexps that don't represent objects, so that ^hints and
                         (clojure--looking-at-non-logical-sexp))))
           (backward-sexp 1))
         (setq n (1- n))))))
+
+(defun clojure-top-level-form-p (first-form)
+  "Return truthy if the first form matches FIRST-FORM."
+  (condition-case nil
+      (save-excursion
+        (end-of-defun)
+        (clojure-backward-logical-sexp 1)
+        (forward-char 1)
+        (clojure-forward-logical-sexp 1)
+        (clojure-backward-logical-sexp 1)
+        (looking-at-p first-form))
+    (scan-error nil)))
+
+(defun clojure-sexp-starts-until-position (position)
+  "Return the starting points for forms before POSITION.
+Positions are in descending order to aide in finding the first starting
+position before the current position."
+  (save-excursion
+    (let (sexp-positions)
+      (condition-case nil
+          (while (< (point) position)
+            (clojure-forward-logical-sexp 1)
+            (clojure-backward-logical-sexp 1)
+            (push (point) sexp-positions)
+            (clojure-forward-logical-sexp 1))
+        (scan-error nil))
+      sexp-positions)))
+
+(defcustom clojure-toplevel-inside-comment-form nil
+  "Eval top level forms inside comment forms instead of the comment form itself.
+Experimental.  Function `cider-defun-at-point' is used extensively so if we
+change this heuristic it needs to be bullet-proof and desired.  While
+testing, give an easy way to turn this new behavior off."
+  :type 'boolean
+  :safe #'booleanp
+  :package-version '(clojure-mode . "5.8.3"))
+
+(defun clojure-find-first (pred coll)
+  "Find first element of COLL for which PRED return truthy."
+  (let ((found)
+        (haystack coll))
+    (while (and (not found)
+                haystack)
+      (if (funcall pred (car haystack))
+          (setq found (car haystack))
+        (setq haystack (cdr haystack))))
+    found))
+
+(defun clojure-beginning-of-defun-function ()
+  "Go to top level form.
+Set as `beginning-of-defun-function' so that these generic
+operators can be used."
+  (let ((beginning-of-defun-function nil))
+    (if (and clojure-toplevel-inside-comment-form
+             (clojure-top-level-form-p "comment"))
+        (save-match-data
+          (let ((original-position (point))
+                clojure-comment-start clojure-comment-end)
+            (end-of-defun)
+            (setq clojure-comment-end (point))
+            (clojure-backward-logical-sexp 1) ;; beginning of comment form
+            (setq clojure-comment-start (point))
+            (forward-char 1)              ;; skip paren so we start at comment
+            (clojure-forward-logical-sexp) ;; skip past the comment form itself
+            (if-let ((sexp-start (clojure-find-first (lambda (beg-pos)
+                                                       (< beg-pos original-position))
+                                                     (clojure-sexp-starts-until-position
+                                                      clojure-comment-end))))
+                (progn (goto-char sexp-start) t)
+              (progn (beginning-of-defun) t))))
+      (progn (beginning-of-defun) t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;

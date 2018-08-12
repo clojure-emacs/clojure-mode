@@ -22,6 +22,51 @@
 (require 'clojure-mode)
 (require 'ert)
 
+(defmacro clojure-buffer-with-text (text &rest body)
+  "Run body in a temporary clojure buffer with TEXT.
+TEXT is a string with a | indicating where point is. The | will be erased
+and point left there."
+  (declare (indent 2))
+  `(progn
+     (with-temp-buffer
+       (erase-buffer)
+       (clojure-mode)
+       (insert ,text)
+       (goto-char (point-min))
+       (re-search-forward "|")
+       (delete-char -1)
+       ,@body)))
+
+(ert-deftest test-clojure-top-level-form-p ()
+  (clojure-buffer-with-text
+      "(comment
+         (wrong)
+         (rig|ht)
+         (wrong))"
+      ;; make this use the native beginning of defun since this is used to
+      ;; determine whether to use the comment aware version or not.
+      (should (let ((beginning-of-defun-function nil))
+                (clojure-top-level-form-p "comment")))))
+
+(ert-deftest test-clojure-beginning-of-defun-function ()
+  (clojure-buffer-with-text
+      "(comment
+          (wrong)
+          (wrong)
+          (rig|ht)
+          (wrong))"
+      (beginning-of-defun)
+    (should (looking-at-p "(comment")))
+  (clojure-buffer-with-text
+      "(comment
+          (wrong)
+          (wrong)
+          (rig|ht)
+          (wrong))"
+      (let ((clojure-toplevel-inside-comment-form t))
+       (beginning-of-defun))
+    (should (looking-at-p "(right)"))))
+
 (ert-deftest test-sexp-with-commas ()
   (with-temp-buffer
     (insert "[], {}, :a, 2")
