@@ -4,6 +4,7 @@
 
 ### Changes
 
+* Add `clojure-toplevel-inside-comment-form` to make forms inside of `(comment ...)` forms appear as top level forms for evaluation and navigation.
 * Require Emacs 25.1+.
 
 ## 5.8.2 (2018-08-09)
