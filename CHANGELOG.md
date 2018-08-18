@@ -2,6 +2,8 @@
 
 ## master (unreleased)
 
+## 5.9.0 (2018-08-18)
+
 ### Changes
 
 * Add `clojure-toplevel-inside-comment-form` to make forms inside of `(comment ...)` forms appear as top level forms for evaluation and navigation.
