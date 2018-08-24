@@ -485,7 +485,8 @@ x
   "Verify that all FORMs correspond to a properly indented sexps."
   (declare (indent defun))
   `(ert-deftest ,(intern (format "test-align-%s" name)) ()
-     (let ((clojure-align-forms-automatically t))
+     (let ((clojure-align-forms-automatically t)
+           (clojure-align-reader-conditionals t))
        ,@(mapcar (lambda (form)
                    `(with-temp-buffer
                       (clojure-mode)
@@ -595,6 +596,28 @@ x
      :aa :a},
  :b {:a  :a,
      :aa :a}}")
+
+(def-full-align-test reader-conditional
+  "#?(:clj  2
+   :cljs 2)")
+
+(def-full-align-test reader-conditional-splicing
+  "#?@(:clj  [2]
+    :cljs [2])")
+
+(ert-deftest reader-conditional-alignment-disabled-by-default ()
+  (let ((content "#?(:clj 2\n   :cljs 2)"))
+    (with-temp-buffer
+      (clojure-mode)
+      (insert content)
+      (call-interactively #'clojure-align)
+      (should (string= (buffer-string) content)))
+    (with-temp-buffer
+      (clojure-mode)
+      (setq-local clojure-align-reader-conditionals t)
+      (insert content)
+      (call-interactively #'clojure-align)
+      (should-not (string= (buffer-string) content)))))
 
 (ert-deftest clojure-align-remove-extra-commas ()
   (with-temp-buffer

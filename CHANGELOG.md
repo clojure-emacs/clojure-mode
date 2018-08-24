@@ -2,6 +2,14 @@
 
 ## master (unreleased)
 
+### New features
+
+* [#483](https://github.com/clojure-emacs/clojure-mode/issues/483): Support alignment for reader conditionals, with the new `clojure-align-reader-conditionals` user option.
+
+## 5.9.1 (2018-08-27)
+
+* [#485](https://github.com/clojure-emacs/clojure-mode/issues/485): Fix a regression in `end-f-defun`.
+
 ## 5.9.0 (2018-08-18)
 
 ### Changes
