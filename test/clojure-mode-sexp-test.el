@@ -65,7 +65,21 @@ and point left there."
           (wrong))"
       (let ((clojure-toplevel-inside-comment-form t))
        (beginning-of-defun))
-    (should (looking-at-p "(right)"))))
+    (should (looking-at-p "[[:space:]]*(right)"))))
+
+(ert-deftest test-clojure-end-of-defun-function ()
+  (clojure-buffer-with-text
+      "
+(first form)
+|
+(second form)
+
+(third form)"
+      
+      (end-of-defun)
+    (backward-char)
+    (should (looking-back "(second form)"))))
+
 
 (ert-deftest test-sexp-with-commas ()
   (with-temp-buffer
