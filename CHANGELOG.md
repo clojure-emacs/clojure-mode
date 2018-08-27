@@ -2,6 +2,10 @@
 
 ## master (unreleased)
 
+## 5.9.1 (2018-08-27)
+
+* [#485](https://github.com/clojure-emacs/clojure-mode/issues/485): Fix a regression in `end-f-defun`.
+
 ## 5.9.0 (2018-08-18)
 
 ### Changes
