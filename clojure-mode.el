@@ -439,7 +439,7 @@ ENDP and DELIM."
               (t)))))
 
 (defconst clojure--collection-tag-regexp "#\\(::[a-zA-Z0-9._-]*\\|:?\\([a-zA-Z0-9._-]+/\\)?[a-zA-Z0-9._-]+\\)"
-  "Collection reader macro tag regexp.
+    "Collection reader macro tag regexp.
 It is intended to check for allowed strings that can come before a
 collection literal (e.g. '[]' or '{}'), as reader macro tags.
 This includes #fully.qualified/my-ns[:kw val] and #::my-ns{:kw
