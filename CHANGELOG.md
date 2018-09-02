@@ -4,6 +4,7 @@
 
 ### New features
 
+* [#481](https://github.com/clojure-emacs/clojure-mode/issues/481): Support vertical alignment even in the presence of blank lines, with the new `clojure-align-separator` user option.
 * [#483](https://github.com/clojure-emacs/clojure-mode/issues/483): Support alignment for reader conditionals, with the new `clojure-align-reader-conditionals` user option.
 
 ## 5.9.1 (2018-08-27)
