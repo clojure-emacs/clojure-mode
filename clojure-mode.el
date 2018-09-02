@@ -1090,6 +1090,16 @@ will align the values like this:
   :safe #'booleanp
   :type 'boolean)
 
+(defconst clojure--align-separator-newline-regexp "^ *$")
+
+(defcustom clojure-align-separator clojure--align-separator-newline-regexp
+  "The separator that will be passed to `align-region' when performing verical alignment."
+  :package-version '(clojure-mode . "5.10")
+  :type `(choice (const :tag "Make blank lines prevent vertical alignment from happening."
+                        ,clojure--align-separator-newline-regexp)
+                 (other :tag "Allow blank lines to happen within a vertically-aligned expression."
+                        'entire)))
+
 (defcustom clojure-align-reader-conditionals nil
   "Whether to align reader conditionals, as if they were maps."
   :package-version '(clojure-mode . "5.10")
@@ -1235,9 +1245,9 @@ When called from lisp code align everything between BEG and END."
             (cl-incf count)))
         (dotimes (_ count)
           (align-region (point) sexp-end nil
-                        '((clojure-align (regexp . clojure--search-whitespace-after-next-sexp)
+                        `((clojure-align (regexp . clojure--search-whitespace-after-next-sexp)
                                          (group . 1)
-                                         (separate . "^ *$")
+                                         (separate . ,clojure-align-separator)
                                          (repeat . t)))
                         nil))
         ;; Reindent after aligning because of #360.
