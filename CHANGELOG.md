@@ -6,6 +6,10 @@
 
 * [#483](https://github.com/clojure-emacs/clojure-mode/issues/483): Support alignment for reader conditionals, with the new `clojure-align-reader-conditionals` user option.
 
+### Bugs fixed
+
+* [#489](https://github.com/clojure-emacs/clojure-mode/issues/489) Inserting parens before comment form doesn't move point
+
 ## 5.9.1 (2018-08-27)
 
 * [#485](https://github.com/clojure-emacs/clojure-mode/issues/485): Fix a regression in `end-f-defun`.
