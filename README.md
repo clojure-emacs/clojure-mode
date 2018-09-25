@@ -407,7 +407,9 @@ running Clojure process and evaluating code interactively.
 
 ### Basic REPL
 
-Install [inf-clojure][] for basic interaction with a REPL process.
+[inf-clojure][] provides basic interaction with a Clojure REPL process.
+It's very similar in nature and supported functionality to `inferior-lisp-mode`
+for Common Lisp.
 
 ### CIDER
 
