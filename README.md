@@ -393,8 +393,8 @@ enable it like this:
 
 ## REPL Interaction
 
-One of the fundamental aspects of Lisps in general and Clojure in
-particular is the notion of interactive programming - building your
+One of the fundamental aspects of Lisps in general, and Clojure in
+particular, is the notion of interactive programming - building your
 programs by continuously changing the state of the running Lisp
 program (as opposed to doing something more traditional like making a
 change and re-running the program afterwards to see the changes in
