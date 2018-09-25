@@ -1093,7 +1093,7 @@ will align the values like this:
 (defconst clojure--align-separator-newline-regexp "^ *$")
 
 (defcustom clojure-align-separator clojure--align-separator-newline-regexp
-  "The separator that will be passed to `align-region' when performing verical alignment."
+  "The separator that will be passed to `align-region' when performing vertical alignment."
   :package-version '(clojure-mode . "5.10")
   :type `(choice (const :tag "Make blank lines prevent vertical alignment from happening."
                         ,clojure--align-separator-newline-regexp)
