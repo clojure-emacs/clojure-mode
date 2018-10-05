@@ -2007,7 +2007,7 @@ change this heuristic it needs to be bullet-proof and desired.  While
 testing, give an easy way to turn this new behavior off."
   :type 'boolean
   :safe #'booleanp
-  :package-version '(clojure-mode . "5.8.3"))
+  :package-version '(clojure-mode . "5.9.0"))
 
 (defun clojure-find-first (pred coll)
   "Find first element of COLL for which PRED return truthy."
