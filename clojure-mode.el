@@ -2622,9 +2622,9 @@ lists up."
 With a numberic prefix argument slurp the previous N s-expression
 into the let form."
   (interactive "p")
-  (unless n (setq n 1))
-  (dotimes (_ n)
-    (save-excursion (clojure--let-backward-slurp-sexp-internal))))
+  (let ((n (or n 1)))
+    (dotimes (_ n)
+      (save-excursion (clojure--let-backward-slurp-sexp-internal)))))
 
 (defun clojure--let-forward-slurp-sexp-internal ()
   "Slurp the next s-expression after the let form into the let form."
