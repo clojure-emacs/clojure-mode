@@ -2028,22 +2028,24 @@ many times."
   (let ((beginning-of-defun-function nil))
     (if (and clojure-toplevel-inside-comment-form
              (clojure-top-level-form-p "comment"))
-        (save-match-data
-          (let ((original-position (point))
-                clojure-comment-start clojure-comment-end)
-            (beginning-of-defun)
-            (setq clojure-comment-start (point))
-            (end-of-defun)
-            (setq clojure-comment-end (point))
-            (beginning-of-defun)
-            (forward-char 1)              ;; skip paren so we start at comment
-            (clojure-forward-logical-sexp) ;; skip past the comment form itself
-            (if-let ((sexp-start (clojure-find-first (lambda (beg-pos)
-                                                       (< beg-pos original-position))
-                                                     (clojure-sexp-starts-until-position
-                                                      clojure-comment-end))))
-                (progn (goto-char sexp-start) t)
-              (beginning-of-defun n))))
+        (condition-case nil
+            (save-match-data
+              (let ((original-position (point))
+                    clojure-comment-start clojure-comment-end)
+                (beginning-of-defun)
+                (setq clojure-comment-start (point))
+                (end-of-defun)
+                (setq clojure-comment-end (point))
+                (beginning-of-defun)
+                (forward-char 1)              ;; skip paren so we start at comment
+                (clojure-forward-logical-sexp) ;; skip past the comment form itself
+                (if-let ((sexp-start (clojure-find-first (lambda (beg-pos)
+                                                           (< beg-pos original-position))
+                                                         (clojure-sexp-starts-until-position
+                                                          clojure-comment-end))))
+                    (progn (goto-char sexp-start) t)
+                  (beginning-of-defun n))))
+          (scan-error (beginning-of-defun n)))
       (beginning-of-defun n))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
