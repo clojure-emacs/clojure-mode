@@ -347,9 +347,10 @@ POS."
 
   ;; type-hint
   (should (eq (clojure-test-face-at 1 2     "#^ve/yCom|pLex.stu-ff") 'default))
-  (should (eq (clojure-test-face-at 3 4     "#^ve/yCom|pLex.stu-ff")
-              'font-lock-type-face))
+  (should (eq (clojure-test-face-at 3 4     "#^ve/yCom|pLex.stu-ff") 'font-lock-type-face))
   (should (eq (clojure-test-face-at 5 21    "#^ve/yCom|pLex.stu-ff") 'default))
+  (should (eq (clojure-test-face-at 2 3     "^ve/yCom|pLex.stu-ff") 'font-lock-type-face))
+  (should (eq (clojure-test-face-at 5 20    "^ve/yCom|pLex.stu-ff") 'default))
 
   (should (eq (clojure-test-face-at 3 4     " (ve/yCom|pLex.stu-ff)")
               'font-lock-type-face))
