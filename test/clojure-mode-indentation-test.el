@@ -423,7 +423,7 @@ values of customisable variables."
   "(while-alist [x 1]\n  ())"
   "(when-alist [x 1]\n  ())"
   "(if-alist [x 1]\n  ())"
-  "(indents-like-fn-when-let-while-are-not-the-start [x 1]\n                                                  ())")
+  "(indents-like-fn-when-let-while-if-are-not-the-start [x 1]\n                                                     ())")
 
 (defun indent-cond (indent-point state)
   (goto-char (elt state 1))
