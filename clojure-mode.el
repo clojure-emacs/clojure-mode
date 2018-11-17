@@ -1304,7 +1304,10 @@ symbol properties."
                  'clojure-indent-function)
             (get (intern-soft (match-string 1 function-name))
                  'clojure-backtracking-indent)))
-      (when (string-match (rx string-start (or "let" "when" "while" "if") (syntax symbol))
+      ;; indent symbols starting if, when, ...
+      ;; such as if-let, when-let, ...
+      ;; like if, when, ...
+      (when (string-match (rx string-start (or "if" "when" "let" "while") (syntax symbol))
                           function-name)
         (clojure--get-indent-method (substring (match-string 0 function-name) 0 -1)))))
 
