@@ -70,6 +70,7 @@
 (require 'align)
 (require 'subr-x)
 (require 'lisp-mnt)
+(require 'project)
 
 (declare-function lisp-fill-paragraph  "lisp-mode" (&optional justify))
 
@@ -1717,6 +1718,9 @@ Return nil if not inside a project."
                                 clojure-build-tool-files))))
     (when (> (length choices) 0)
       (car (sort choices #'file-in-directory-p)))))
+
+(cl-defmethod project-roots ((project (head clojure)))
+  (list (cdr project)))
 
 (defun clojure-project-relative-path (path)
   "Denormalize PATH by making it relative to the project root."
