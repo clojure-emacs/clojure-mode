@@ -180,11 +180,12 @@ For example, \[ is allowed in :db/id[:db.part/user]."
                (cl-every 'characterp value))))
 
 (defcustom clojure-build-tool-files
-  '("project.clj"     ; Leiningen
-    "build.boot"      ; Boot
-    "build.gradle"    ; Gradle
-    "deps.edn"        ; Clojure CLI (a.k.a. tools.deps)
-    "shadow-cljs.edn" ; shadow-cljs
+  '("project.clj"      ; Leiningen
+    "build.boot"       ; Boot
+    "build.gradle"     ; Gradle
+    "build.gradle.kts" ; Gradle
+    "deps.edn"         ; Clojure CLI (a.k.a. tools.deps)
+    "shadow-cljs.edn"  ; shadow-cljs
     )
   "A list of files, which identify a Clojure project's root.
 Out-of-the box `clojure-mode' understands lein, boot, gradle,
