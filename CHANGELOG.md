@@ -2,6 +2,8 @@
 
 ## master (unreleased)
 
+## 5.10.0 (2019-01-05)
+
 ### New features
 
 * Recognize Gradle projects using the new Kotlin DSL (`build.gradle.kts`).
