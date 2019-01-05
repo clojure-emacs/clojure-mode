@@ -4,13 +4,15 @@
 
 ### New features
 
+* Recognize Gradle projects using the new Kotlin DSL (`build.gradle.kts`).
 * [#481](https://github.com/clojure-emacs/clojure-mode/issues/481): Support vertical alignment even in the presence of blank lines, with the new `clojure-align-separator` user option.
 * [#483](https://github.com/clojure-emacs/clojure-mode/issues/483): Support alignment for reader conditionals, with the new `clojure-align-reader-conditionals` user option.
 * [#497](https://github.com/clojure-emacs/clojure-mode/pull/497) Indent "let", "when" and "while" as function form if not at start of a symbol
 
 ### Bugs fixed
 
-* [#489](https://github.com/clojure-emacs/clojure-mode/issues/489) Inserting parens before comment form doesn't move point
+* [#489](https://github.com/clojure-emacs/clojure-mode/issues/489): Inserting parens before comment form doesn't move point.
+* [#500](https://github.com/clojure-emacs/clojure-mode/pull/500): Fix project.el integration.
 
 ## 5.9.1 (2018-08-27)
 
