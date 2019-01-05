@@ -1720,6 +1720,7 @@ Return nil if not inside a project."
     (when (> (length choices) 0)
       (car (sort choices #'file-in-directory-p)))))
 
+;; project.el integration
 (cl-defmethod project-roots ((project (head clojure)))
   (list (cdr project)))
 
