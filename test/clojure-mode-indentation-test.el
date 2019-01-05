@@ -238,14 +238,14 @@ values of customisable variables."
   (declare (indent 1))
   (when (stringp style)
     (setq forms (cons style forms))
-    (setq style 'always-align))
+    (setq style '(quote always-align)))
   `(ert-deftest ,(intern (format "test-backtracking-%s" name)) ()
      (progn
        ,@(mapcar (lambda (form)
                    `(with-temp-buffer
                       (clojure-mode)
                       (insert "\n" ,(replace-regexp-in-string "\n +" "\n " form))
-                      (let ((clojure-indent-style (quote ,style)))
+                      (let ((clojure-indent-style ,style))
                         (indent-region (point-min) (point-max)))
                       (should (equal (buffer-string)
                                      ,(concat "\n" form)))))
