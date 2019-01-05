@@ -14,6 +14,10 @@
 * [#489](https://github.com/clojure-emacs/clojure-mode/issues/489): Inserting parens before comment form doesn't move point.
 * [#500](https://github.com/clojure-emacs/clojure-mode/pull/500): Fix project.el integration.
 
+### Changes
+
+* Change the accepted values of `clojure-indent-style` from keywords to symbols.
+
 ## 5.9.1 (2018-08-27)
 
 * [#485](https://github.com/clojure-emacs/clojure-mode/issues/485): Fix a regression in `end-f-defun`.

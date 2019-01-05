@@ -112,7 +112,7 @@ want multi-line docstrings to be indented at all (which is pretty common in most
 The indentation of function forms is configured by the variable
 `clojure-indent-style`. It takes three possible values:
 
-- `:always-align` (the default)
+- `always-align` (the default)
 
 ```clj
 (some-function
@@ -124,7 +124,7 @@ The indentation of function forms is configured by the variable
                2)
 ```
 
-- `:always-indent`
+- `always-indent`
 
 ```clj
 (some-function
@@ -136,7 +136,7 @@ The indentation of function forms is configured by the variable
   2)
 ```
 
-- `:align-arguments`
+- `align-arguments`
 
 ```clj
 (some-function
@@ -147,6 +147,9 @@ The indentation of function forms is configured by the variable
                1
                2)
 ```
+
+**Note:** Prior to clojure-mode 5.10 the configuration options for `clojure-indent-style` used to be
+keywords, but now they are symbols. Keywords will still be supported at least until clojure-mode 6.
 
 #### Indentation of macro forms
 
