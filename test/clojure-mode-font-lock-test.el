@@ -822,6 +822,8 @@ POS."
   (should (eq (clojure-test-face-at 2 11 "@*some-var*")
               'font-lock-variable-name-face))
   (should (eq (clojure-test-face-at 9 13 "some.ns/*var*")
+              'font-lock-variable-name-face))
+  (should (eq (clojure-test-face-at 1 11 "*some-var?*")
               'font-lock-variable-name-face)))
 
 (provide 'clojure-mode-font-lock-test)

@@ -2,6 +2,10 @@
 
 ## master (unreleased)
 
+### Bugs fixed
+
+* Dynamic vars whose names contain non-alphanumeric characters are now font-locked correctly.
+
 ## 5.10.0 (2019-01-05)
 
 ### New features
