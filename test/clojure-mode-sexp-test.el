@@ -117,7 +117,15 @@ and point left there."
       (clojure-forward-logical-sexp 2)
       (expect (looking-back "\\^String biverse"))
       (clojure-backward-logical-sexp 1)
-      (expect (looking-at-p "\\^String biverse")))))
+      (expect (looking-at-p "\\^String biverse"))))
+
+  (it "should handle a namespaced map"
+    (with-clojure-buffer "first #:name/space{:k v}"
+      (clojure-backward-logical-sexp 1)
+      (expect (looking-at-p "#:name/space{:k v}"))
+      (insert  " #::ns {:k v}")
+      (clojure-backward-logical-sexp 1)
+      (expect (looking-at-p "#::ns {:k v}")))))
 
 (describe "clojure-backward-logical-sexp"
   (it "should work with buffer corners"
