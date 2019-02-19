@@ -23,6 +23,7 @@
 
 * [#489](https://github.com/clojure-emacs/clojure-mode/issues/489): Inserting parens before comment form doesn't move point.
 * [#500](https://github.com/clojure-emacs/clojure-mode/pull/500): Fix project.el integration.
+* [#513](https://github.com/clojure-emacs/clojure-mode/pull/513): Fix incorrect indentation of namespaced map.
 
 ### Changes
 
