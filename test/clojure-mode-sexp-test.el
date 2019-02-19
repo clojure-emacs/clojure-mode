@@ -117,6 +117,16 @@ and point left there."
     (clojure-backward-logical-sexp 1)
     (should (looking-at-p "\\^String biverse"))))
 
+(ert-deftest test-sexp-with-namespaced-map ()
+  (with-temp-buffer
+    (insert "first #:name/space{:k v}")
+    (clojure-mode)
+    (clojure-backward-logical-sexp 1)
+    (should (looking-at-p "#:name/space{:k v}"))
+    (insert " #::ns {:k v}")
+    (clojure-backward-logical-sexp 1)
+    (should (looking-at-p "#::ns {:k v}"))))
+
 (ert-deftest test-buffer-corners ()
   (with-temp-buffer
     (insert "^String reverse")

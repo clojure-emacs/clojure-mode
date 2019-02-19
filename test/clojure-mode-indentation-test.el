@@ -102,6 +102,14 @@ values of customisable variables."
 (cond
   |x)")
 
+(check-indentation cond-indentation-with-namespaced-map
+  "
+(cond-> #:a{:b 1}
+|x 1)"
+  "
+(cond-> #:a{:b 1}
+  |x 1)")
+
 (check-indentation threading-with-expression-on-first-line
   "
 (->> expr
