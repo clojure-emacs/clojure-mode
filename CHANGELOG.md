@@ -5,6 +5,7 @@
 ### Bugs fixed
 
 * Dynamic vars whose names contain non-alphanumeric characters are now font-locked correctly.
+* [#508](https://github.com/clojure-emacs/clojure-mode/issues/508): Fix font lock for namespaces with metadata
 
 ## 5.10.0 (2019-01-05)
 
