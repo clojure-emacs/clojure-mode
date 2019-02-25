@@ -82,9 +82,8 @@
   :link '(emacs-commentary-link :tag "Commentary" "clojure-mode"))
 
 (defconst clojure-mode-version
-  (let ((thisbuffer (or load-file-name buffer-file-name)))
-    (with-temp-buffer (insert-file-contents thisbuffer)
-                      (lm-version)))
+  (eval-when-compile
+    (lm-version (or load-file-name buffer-file-name)))
   "The current version of `clojure-mode'.")
 
 (defface clojure-keyword-face
