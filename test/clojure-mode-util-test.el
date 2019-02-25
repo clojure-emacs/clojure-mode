@@ -26,6 +26,10 @@
 (require 'cl-lib)
 (require 'ert)
 
+
+(ert-deftest clojure-mode-version-should-be-non-nil ()
+  (should (not (eq clojure-mode-version nil))))
+
 (let ((project-dir "/home/user/projects/my-project/")
       (clj-file-path "/home/user/projects/my-project/src/clj/my_project/my_ns/my_file.clj")
       (project-relative-clj-file-path "src/clj/my_project/my_ns/my_file.clj")

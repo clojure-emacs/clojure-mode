@@ -5,6 +5,7 @@
 ### Bugs fixed
 
 * Dynamic vars whose names contain non-alphanumeric characters are now font-locked correctly.
+* [#506](https://github.com/clojure-emacs/clojure-mode/issues/506): `clojure-mode-display-version` correctly displays the package's version
 
 ## 5.10.0 (2019-01-05)
 
