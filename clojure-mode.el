@@ -955,7 +955,13 @@ highlighted region)."
                              (setq docelt (1- docelt)))))
                        (and (zerop docelt) (<= (point) startpos)
                             (progn (forward-comment (point-max)) t)
-                            (= (point) (nth 8 state)))))
+                            (= (point) (nth 8 state))))
+                     ;; In a def, at last position is not a docstring
+                     (not (and (string= "def" firstsym)
+                               (save-excursion
+                                 (goto-char startpos)
+                                 (goto-char (+ startpos (length (sexp-at-point)) 2))
+                                 (looking-at "[ \r\n\t]*\)")))))
                 font-lock-doc-face
               font-lock-string-face))))
     font-lock-comment-face))

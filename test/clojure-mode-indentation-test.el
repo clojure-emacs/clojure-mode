@@ -68,6 +68,7 @@ values of customisable variables."
            (search-forward "|")
            (delete-char -1)
            (clojure-mode)
+           (font-lock-ensure)
            (indent-according-to-mode)
 
            (should (equal expected-state (buffer-string)))
@@ -117,6 +118,10 @@ values of customisable variables."
   "
 (->>
  |expr)")
+
+(check-indentation no-indent-for-def-string
+  "(def foo \"hello|\")"
+  "(def foo \"hello|\")")
 
 (check-indentation doc-strings-without-indent-specified
   "

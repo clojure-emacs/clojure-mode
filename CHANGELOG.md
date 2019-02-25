@@ -5,6 +5,7 @@
 ### Bugs fixed
 
 * Dynamic vars whose names contain non-alphanumeric characters are now font-locked correctly.
+* [#445](https://github.com/clojure-emacs/clojure-mode/issues/445), [#405](https://github.com/clojure-emacs/clojure-mode/issues/405), [#469](https://github.com/clojure-emacs/clojure-mode/issues/469): Correct font-lock on string definitions with docstrings, e.g: `(def foo "doc" "value")`. Correct indentation as well.
 
 ## 5.10.0 (2019-01-05)
 
