@@ -8,6 +8,9 @@ default: &default-steps
     - run: make elpa
     - run: emacs --version
     - run: make test
+    # Make sure to run test-checks before test-bytecomp, as test-bytecomp autogenerates
+    # files which won't pass test-checks.
+    - run: make test-checks
     - run: make test-bytecomp
 
 # Enumerated list of Emacs versions
