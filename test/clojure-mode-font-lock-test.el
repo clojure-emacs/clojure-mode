@@ -709,7 +709,13 @@ POS."
     (should (eq (clojure-test-face-at 2 4) 'font-lock-type-face))
     (should (eq (clojure-test-face-at 5 5) nil))
     (should (eq (clojure-test-face-at 6 11) 'font-lock-keyword-face))
-    (should (eq (clojure-test-face-at 13 15) 'font-lock-function-name-face))))
+    (should (eq (clojure-test-face-at 13 15) 'font-lock-function-name-face)))
+  (clojure-test-with-temp-buffer "(s/def ::keyword)"
+    (should (eq (clojure-test-face-at 2 2) 'font-lock-type-face))
+    (should (eq (clojure-test-face-at 3 3) nil))
+    (should (eq (clojure-test-face-at 4 6) 'font-lock-keyword-face))
+    (should (eq (clojure-test-face-at 8 16) 'clojure-keyword-face))))
+
 
 (ert-deftest clojure-mode-syntax-table/variable-def ()
   :tags '(fontification syntax-table)
