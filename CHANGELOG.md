@@ -27,6 +27,7 @@
 ### Changes
 
 * Change the accepted values of `clojure-indent-style` from keywords to symbols.
+* [#503](https://github.com/clojure-emacs/clojure-mode/pull/503): Fix Makefile so that we can compile again.
 
 ## 5.9.1 (2018-08-27)
 
