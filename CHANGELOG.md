@@ -7,6 +7,7 @@
 * Dynamic vars whose names contain non-alphanumeric characters are now font-locked correctly.
 * [#445 (comment)](https://github.com/clojure-emacs/clojure-mode/issues/445#issuecomment-340460753): Proper font lock for namespaced keywords like for example `(s/def ::keyword)`
 * [#508](https://github.com/clojure-emacs/clojure-mode/issues/508): Fix font lock for namespaces with metadata
+* [#506](https://github.com/clojure-emacs/clojure-mode/issues/506): `clojure-mode-display-version` correctly displays the package's version
 
 ## 5.10.0 (2019-01-05)
 
