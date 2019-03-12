@@ -81,7 +81,9 @@
   :link '(url-link :tag "GitHub" "https://github.com/clojure-emacs/clojure-mode")
   :link '(emacs-commentary-link :tag "Commentary" "clojure-mode"))
 
-(defconst clojure-mode-version (lm-version)
+(defconst clojure-mode-version
+  (eval-when-compile
+    (lm-version (or load-file-name buffer-file-name)))
   "The current version of `clojure-mode'.")
 
 (defface clojure-keyword-face
@@ -785,7 +787,7 @@ any number of matches of `clojure--sym-forbidden-rest-chars'."))
                 "[ \r\n\t]*"
                 ;; Possibly type or metadata
                 "\\(?:#?^\\(?:{[^}]*}\\|\\sw+\\)[ \r\n\t]*\\)*"
-                "\\(\\sw+\\)?")
+                (concat "\\(" clojure--sym-regexp "\\)?"))
        (1 font-lock-keyword-face)
        (2 font-lock-function-name-face nil t))
       ;; (fn name? args ...)
@@ -847,7 +849,8 @@ any number of matches of `clojure--sym-forbidden-rest-chars'."))
          "\\>")
        0 font-lock-builtin-face)
       ;; Dynamic variables - *something* or @*something*
-      ("\\(?:\\<\\|/\\)@?\\(\\*[a-z-]*\\*\\)\\>" 1 font-lock-variable-name-face)
+      (,(concat "\\(?:\\<\\|/\\)@?\\(\\*" clojure--sym-regexp "\\*\\)\\>")
+       1 font-lock-variable-name-face)
       ;; Global constants - nil, true, false
       (,(concat
          "\\<"
@@ -860,8 +863,8 @@ any number of matches of `clojure--sym-forbidden-rest-chars'."))
 
       ;; namespace definitions: (ns foo.bar)
       (,(concat "(\\<ns\\>[ \r\n\t]*"
-                ;; Possibly metadata
-                "\\(?:\\^?{[^}]+}[ \r\n\t]*\\)*"
+                ;; Possibly metadata, shorthand and/or longhand
+                "\\(?:\\^?\\(?:{[^}]+}\\|:[^ \r\n\t]+[ \r\n\t]\\)[ \r\n\t]*\\)*"
                 ;; namespace
                 "\\(" clojure--sym-regexp "\\)")
        (1 font-lock-type-face))
@@ -954,7 +957,13 @@ highlighted region)."
                              (setq docelt (1- docelt)))))
                        (and (zerop docelt) (<= (point) startpos)
                             (progn (forward-comment (point-max)) t)
-                            (= (point) (nth 8 state)))))
+                            (= (point) (nth 8 state))))
+                     ;; In a def, at last position is not a docstring
+                     (not (and (string= "def" firstsym)
+                               (save-excursion
+                                 (goto-char startpos)
+                                 (goto-char (+ startpos (length (sexp-at-point)) 2))
+                                 (looking-at "[ \r\n\t]*\)")))))
                 font-lock-doc-face
               font-lock-string-face))))
     font-lock-comment-face))

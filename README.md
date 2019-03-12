@@ -1,7 +1,7 @@
 [![License GPL 3][badge-license]][copying]
 [![MELPA][melpa-badge]][melpa-package]
 [![MELPA Stable][melpa-stable-badge]][melpa-stable-package]
-[![travis][badge-travis]][travis]
+[![circleci][badge-circleci]][circleci]
 
 # Clojure Mode
 
@@ -438,8 +438,8 @@ Distributed under the GNU General Public License; type <kbd>C-h C-c</kbd> to vie
 [melpa-package]: http://melpa.org/#/clojure-mode
 [melpa-stable-package]: http://stable.melpa.org/#/clojure-mode
 [COPYING]: http://www.gnu.org/copyleft/gpl.html
-[badge-travis]: https://travis-ci.org/clojure-emacs/clojure-mode.svg?branch=master
-[travis]: https://travis-ci.org/clojure-emacs/clojure-mode
+[badge-circleci]: https://circleci.com/gh/clojure-emacs/clojure-mode.svg?style=svg
+[circleci]: https://circleci.com/gh/clojure-emacs/clojure-mode
 [CIDER]: https://github.com/clojure-emacs/cider
 [cider-nrepl]: https://github.com/clojure-emacs/cider-nrepl
 [inf-clojure]: https://github.com/clojure-emacs/inf-clojure
