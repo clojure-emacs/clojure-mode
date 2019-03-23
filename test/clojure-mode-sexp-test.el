@@ -162,7 +162,22 @@ and point left there."
 
       ;; From inside second ns's name
       (goto-char 42)
-      (should (equal "baz-quux" (clojure-find-ns))))))
+      (should (equal "baz-quux" (clojure-find-ns))))
+    (let ((data
+           '(("\"\n(ns foo-bar)\"\n" "(in-ns 'baz-quux)" "baz-quux")
+             (";(ns foo-bar)\n" "(in-ns 'baz-quux)" "baz-quux")
+             ("(ns foo-bar)\n" "\"\n(in-ns 'baz-quux)\"" "foo-bar")
+             ("(ns foo-bar)\n" ";(in-ns 'baz-quux)" "foo-bar"))))
+      (pcase-dolist (`(,form1 ,form2 ,expected) data)
+        (with-temp-buffer
+          (insert form1)
+          (save-excursion (insert form2))
+          (clojure-mode)
+          ;; Between the two namespaces
+          (should (equal expected (clojure-find-ns)))
+          ;; After both namespaces
+          (goto-char (point-max))
+          (should (equal expected (clojure-find-ns))))))))
 
 (provide 'clojure-mode-sexp-test)
 
