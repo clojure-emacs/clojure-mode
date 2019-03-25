@@ -146,23 +146,38 @@ and point left there."
   ;; we should not cache the results of `clojure-find-ns' here
   (let ((clojure-cache-ns nil))
     (with-temp-buffer
-     (insert "(ns ^{:doc \"Some docs\"}\nfoo-bar)")
-     (newline)
-     (newline)
-     (insert "(in-ns 'baz-quux)")
-     (clojure-mode)
+      (insert "(ns ^{:doc \"Some docs\"}\nfoo-bar)")
+      (newline)
+      (newline)
+      (insert "(in-ns 'baz-quux)")
+      (clojure-mode)
 
-     ;; From inside docstring of first ns
-     (goto-char 18)
-     (should (equal "foo-bar" (clojure-find-ns)))
+      ;; From inside docstring of first ns
+      (goto-char 18)
+      (should (equal "foo-bar" (clojure-find-ns)))
 
-     ;; From inside first ns's name, on its own line
-     (goto-char 29)
-     (should (equal "foo-bar" (clojure-find-ns)))
+      ;; From inside first ns's name, on its own line
+      (goto-char 29)
+      (should (equal "foo-bar" (clojure-find-ns)))
 
-     ;; From inside second ns's name
-     (goto-char 42)
-     (should (equal "baz-quux" (clojure-find-ns))))))
+      ;; From inside second ns's name
+      (goto-char 42)
+      (should (equal "baz-quux" (clojure-find-ns))))
+    (let ((data
+           '(("\"\n(ns foo-bar)\"\n" "(in-ns 'baz-quux)" "baz-quux")
+             (";(ns foo-bar)\n" "(in-ns 'baz-quux)" "baz-quux")
+             ("(ns foo-bar)\n" "\"\n(in-ns 'baz-quux)\"" "foo-bar")
+             ("(ns foo-bar)\n" ";(in-ns 'baz-quux)" "foo-bar"))))
+      (pcase-dolist (`(,form1 ,form2 ,expected) data)
+        (with-temp-buffer
+          (insert form1)
+          (save-excursion (insert form2))
+          (clojure-mode)
+          ;; Between the two namespaces
+          (should (equal expected (clojure-find-ns)))
+          ;; After both namespaces
+          (goto-char (point-max))
+          (should (equal expected (clojure-find-ns))))))))
 
 (provide 'clojure-mode-sexp-test)
 
