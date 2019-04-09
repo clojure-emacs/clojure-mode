@@ -475,18 +475,11 @@ ENDP and DELIMITER."
 (declare-function paredit-close-curly "ext:paredit")
 (declare-function paredit-convolute-sexp "ext:paredit")
 
-(defun clojure--replace-let-bindings-and-indent (orig-fun &rest args)
-  "Advise ORIG-FUN to replace let bindings.
-
-Sexps are replace by their bound name if a let form was
-convoluted.
-
-ORIG-FUN should be `paredit-convolute-sexp'.
-
-ARGS are passed to ORIG-FUN, as with all advice."
+(defun clojure--replace-let-bindings-and-indent ()
+  "Replace let bindings and indent."
   (save-excursion
     (backward-sexp)
-    (when (looking-back clojure--let-regexp)
+    (when (looking-back clojure--let-regexp nil)
       (clojure--replace-sexps-with-bindings-and-indent))))
 
 (defun clojure-paredit-setup (&optional keymap)
@@ -2063,9 +2056,8 @@ many times."
         (condition-case nil
             (save-match-data
               (let ((original-position (point))
-                    clojure-comment-start clojure-comment-end)
+                    clojure-comment-end)
                 (beginning-of-defun)
-                (setq clojure-comment-start (point))
                 (end-of-defun)
                 (setq clojure-comment-end (point))
                 (beginning-of-defun)
@@ -2120,8 +2112,7 @@ list of (fn args) to pass to `apply''"
 Point must be between the opening paren and the ->> symbol."
   (forward-sexp)
   (save-excursion
-    (let ((beg (point))
-          (contents (clojure-delete-and-extract-sexp)))
+    (let ((contents (clojure-delete-and-extract-sexp)))
       (when (looking-at " *\n")
         (join-line 'following))
       (clojure--ensure-parens-around-function-names)
@@ -2461,7 +2452,7 @@ See: https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-cycle-if"
     (condition-case nil
         (backward-up-list)
       (scan-error (user-error "`clojure-cycle-not' must be invoked inside a list")))
-    (if (looking-back "(not ")
+    (if (looking-back "(not " nil)
         (progn
           (delete-char -5)
           (forward-sexp)
@@ -2680,7 +2671,7 @@ into the let form."
 With a numeric prefix argument slurp the next N s-expressions into the let form."
   (interactive "p")
   (unless n (setq n 1))
-  (dotimes (k n)
+  (dotimes (_ n)
     (save-excursion (clojure--let-forward-slurp-sexp-internal))))
 
 ;;;###autoload
