@@ -911,6 +911,10 @@ any number of matches of `clojure--sym-forbidden-rest-chars'."))
       (,(rx "`" (group-n 1 (optional "#'")
                          (+ (or (syntax symbol) (syntax word)))) "`")
        (1 'font-lock-constant-face prepend))
+      ;; Highlight [[var]] comments
+      (,(rx "[[" (group-n 1 (optional "#'")
+                         (+ (or (syntax symbol) (syntax word)))) "]]")
+       (1 'font-lock-constant-face prepend))
       ;; Highlight escaped characters in strings.
       (clojure-font-lock-escaped-chars 0 'bold prepend)
       ;; Highlight grouping constructs in regular expressions

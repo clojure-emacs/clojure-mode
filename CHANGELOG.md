@@ -2,6 +2,10 @@
 
 ## master (unreleased)
 
+### New features
+
+* [#496](https://github.com/clojure-emacs/clojure-mode/issues/496): Highlight `[[wikilinks]]` in comments
+
 ### Bugs fixed
 
 * Dynamic vars whose names contain non-alphanumeric characters are now font-locked correctly.
