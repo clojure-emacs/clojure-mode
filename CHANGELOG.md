@@ -15,6 +15,10 @@
 * [#445](https://github.com/clojure-emacs/clojure-mode/issues/445), [#405](https://github.com/clojure-emacs/clojure-mode/issues/405), [#469](https://github.com/clojure-emacs/clojure-mode/issues/469): Correct font-locking on string definitions with docstrings, e.g: `(def foo "doc" "value")`. Correct indentation as well.
 * [#518](https://github.com/clojure-emacs/clojure-mode/issues/518): Fix `clojure-find-ns` when there's an `ns` form inside a string.
 
+### Changes
+
+* [#524](https://github.com/clojure-emacs/clojure-mode/issues/524): Add proper indentation rule for `delay` (same as for `future`).
+
 ## 5.10.0 (2019-01-05)
 
 ### New features

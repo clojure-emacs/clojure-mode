@@ -1572,6 +1572,7 @@ work).  To set it from Lisp code, use
   (when-not 1)
   (when-first 1)
   (do 0)
+  (delay 0)
   (future 0)
   (comment 0)
   (doto 1)
