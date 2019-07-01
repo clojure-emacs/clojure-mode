@@ -2659,6 +2659,23 @@ lists up."
     (insert sexp)
     (clojure--replace-sexps-with-bindings-and-indent)))
 
+(defun clojure--rename-ns-alias-internal (current-alias new-alias)
+  "Rename a namespace alias CURRENT-ALIAS to NEW-ALIAS."
+  (clojure--find-ns-in-direction 'backward)
+  (let ((rgx (concat ":as +" current-alias))
+        (bound (save-excursion (forward-list 1) (point))))
+    (when (save-excursion (search-forward-regexp rgx bound t))
+      (save-excursion
+        (while (re-search-forward rgx bound t)
+          (replace-match (concat ":as " new-alias))))
+      (save-excursion
+        (while (re-search-forward (concat current-alias "/") nil t)
+          (replace-match (concat new-alias "/"))))
+      (save-excursion
+        (while (re-search-forward (concat "#::" current-alias "{") nil t)
+          (replace-match (concat "#::" new-alias "{"))))
+      (message "Successfully renamed alias '%s' to '%s'" current-alias new-alias))))
+
 ;;;###autoload
 (defun clojure-let-backward-slurp-sexp (&optional n)
   "Slurp the s-expression before the let form into the let form.
@@ -2700,6 +2717,20 @@ With a numeric prefix argument the let is introduced N lists up."
   "Move the form at point to a binding in the nearest let."
   (interactive)
   (clojure--move-to-let-internal (read-from-minibuffer "Name of bound symbol: ")))
+
+;;;###autoload
+(defun clojure-rename-ns-alias ()
+  "Rename a namespace alias."
+  (interactive)
+  (let ((current-alias (read-from-minibuffer "Current alias: ")))
+    (save-excursion
+      (clojure--find-ns-in-direction 'backward)
+      (let ((rgx (concat ":as +" current-alias))
+            (bound (save-excursion (forward-list 1) (point))))
+        (if (save-excursion (search-forward-regexp rgx bound t))
+          (let ((new-alias (read-from-minibuffer "New alias: ")))
+            (clojure--rename-ns-alias-internal current-alias new-alias))
+          (message "Cannot find namespace alias: '%s'" current-alias))))))
 
 
 ;;; ClojureScript
