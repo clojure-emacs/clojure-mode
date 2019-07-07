@@ -554,9 +554,14 @@ replacement for `cljr-expand-let`."
   (clojure-font-lock-setup)
   (add-hook 'paredit-mode-hook #'clojure-paredit-setup)
   ;; `electric-layout-post-self-insert-function' prevents indentation in strings
-  ;; and comments, force indentation in docstrings:
+  ;; and comments, force indentation of non-inlined docstrings:
   (add-hook 'electric-indent-functions
-            (lambda (_char) (if (clojure-in-docstring-p) 'do-indent)))
+            (lambda (_char) (if (and (clojure-in-docstring-p)
+                                     (save-excursion
+                                       (beginning-of-line-text)
+                                       (eq (get-text-property (point) 'face)
+                                           'font-lock-doc-face)))
+                                'do-indent)))
   ;; integration with project.el
   (add-hook 'project-find-functions #'clojure-current-project))
 
