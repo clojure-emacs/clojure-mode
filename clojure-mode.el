@@ -471,8 +471,8 @@ ENDP and DELIMITER."
                        t)
                       (= orig-point (match-end 0)))))))))
 
-(declare-function paredit-open-curly "ext:paredit")
-(declare-function paredit-close-curly "ext:paredit")
+(declare-function paredit-open-curly "ext:paredit" t t)
+(declare-function paredit-close-curly "ext:paredit" t t)
 (declare-function paredit-convolute-sexp "ext:paredit")
 
 (defun clojure--replace-let-bindings-and-indent (orig-fun &rest args)
