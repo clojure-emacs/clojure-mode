@@ -15,6 +15,7 @@
 * [#506](https://github.com/clojure-emacs/clojure-mode/issues/506): `clojure-mode-display-version` correctly displays the package's version.
 * [#445](https://github.com/clojure-emacs/clojure-mode/issues/445), [#405](https://github.com/clojure-emacs/clojure-mode/issues/405), [#469](https://github.com/clojure-emacs/clojure-mode/issues/469): Correct font-locking on string definitions with docstrings, e.g: `(def foo "doc" "value")`. Correct indentation as well.
 * [#518](https://github.com/clojure-emacs/clojure-mode/issues/518): Fix `clojure-find-ns` when there's an `ns` form inside a string.
+* [#530](https://github.com/clojure-emacs/clojure-mode/pull/530): Prevent electric indentation within inlined docstrings.
 
 ### Changes
 
