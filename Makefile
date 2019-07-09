@@ -29,7 +29,7 @@ clean:
 	rm -f $(OBJS)
 
 test: $(PKGDIR)
-	$(CASK) exec buttercup -L .
+	$(CASK) exec buttercup -L . -L ./test/
 
 test-checks:
 	$(CASK) exec $(EMACS) --no-site-file --no-site-lisp --batch \

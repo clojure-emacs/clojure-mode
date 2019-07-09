@@ -20,44 +20,47 @@
 ;;; Code:
 
 (require 'clojure-mode)
-(require 'ert)
+(require 'test-helper)
+(require 'buttercup)
 
-(defmacro clojure-buffer-with-text (text &rest body)
-  "Run body in a temporary clojure buffer with TEXT.
-TEXT is a string with a | indicating where point is. The | will be erased
+(defmacro with-clojure-buffer-point (text &rest body)
+  "Run BODY in a temporary clojure buffer with TEXT.
+
+TEXT is a string with a | indicating where point is.  The | will be erased
 and point left there."
   (declare (indent 2))
   `(progn
-     (with-temp-buffer
-       (erase-buffer)
-       (clojure-mode)
-       (insert ,text)
+     (with-clojure-buffer ,text
        (goto-char (point-min))
        (re-search-forward "|")
        (delete-char -1)
        ,@body)))
 
-(ert-deftest test-clojure-top-level-form-p ()
-  (clojure-buffer-with-text
-      "(comment
-         (wrong)
-         (rig|ht)
-         (wrong))"
-      ;; make this use the native beginning of defun since this is used to
-      ;; determine whether to use the comment aware version or not.
-      (should (let ((beginning-of-defun-function nil))
-                (clojure-top-level-form-p "comment")))))
+(describe "clojure-top-level-form-p"
+  (it "should return true when passed the correct form"
+    (with-clojure-buffer-point
+        "(comment
+           (wrong)
+           (rig|ht)
+           (wrong))"
+        ;; make this use the native beginning of defun since this is used to
+        ;; determine whether to use the comment aware version or not.
+        (expect (let ((beginning-of-defun-function nil))
+                  (clojure-top-level-form-p "comment"))))))
 
-(ert-deftest test-clojure-beginning-of-defun-function ()
-  (clojure-buffer-with-text
+(describe "clojure-beginning-of-defun-function"
+  (it "should go to top level form"
+    (with-clojure-buffer-point
       "(comment
           (wrong)
           (wrong)
           (rig|ht)
           (wrong))"
       (beginning-of-defun)
-    (should (looking-at-p "(comment")))
-  (clojure-buffer-with-text
+      (expect (looking-at-p "(comment"))))
+
+  (it "should eval top level forms inside comment forms when clojure-toplevel-inside-comment-form set to true"
+    (with-clojure-buffer-point
       "(comment
           (wrong)
           (wrong)
@@ -65,119 +68,112 @@ and point left there."
           (wrong))"
       (let ((clojure-toplevel-inside-comment-form t))
        (beginning-of-defun))
-      (should (looking-at-p "[[:space:]]*(right)")))
-  (clojure-buffer-with-text
-   "
+      (expect (looking-at-p "[[:space:]]*(right)"))))
+
+  (it "should go to beginning of previous top level form"
+    (with-clojure-buffer-point
+     "
 (formA)
 |
 (formB)"
-   (let ((clojure-toplevel-inside-comment-form t))
-     (beginning-of-defun)
-     (should (looking-at-p "(formA)")))))
+     (let ((clojure-toplevel-inside-comment-form t))
+       (beginning-of-defun)
+       (expect (looking-at-p "(formA)")))))
 
-(ert-deftest test-clojure-end-of-defun-function ()
-  (clojure-buffer-with-text
+  (it "should move forward to next top level form"
+    (with-clojure-buffer-point
       "
 (first form)
 |
 (second form)
 
 (third form)"
-      
+
       (end-of-defun)
-    (backward-char)
-    (should (looking-back "(second form)"))))
+      (backward-char)
+      (expect (looking-back "(second form)")))))
 
+(describe "clojure-forward-logical-sexp"
+  (it "should work with commas"
+    (with-clojure-buffer "[], {}, :a, 2"
+      (goto-char (point-min))
+      (clojure-forward-logical-sexp 1)
+      (expect (looking-at-p " {}, :a, 2"))
+      (clojure-forward-logical-sexp 1)
+      (expect (looking-at-p " :a, 2")))))
 
-(ert-deftest test-sexp-with-commas ()
-  (with-temp-buffer
-    (insert "[], {}, :a, 2")
-    (clojure-mode)
-    (goto-char (point-min))
-    (clojure-forward-logical-sexp 1)
-    (should (looking-at-p " {}, :a, 2"))
-    (clojure-forward-logical-sexp 1)
-    (should (looking-at-p " :a, 2"))))
+(describe "clojure-backward-logical-sexp"
+  (it "should work when used in conjunction with clojure-forward-logical-sexp"
+    (with-clojure-buffer "^String #macro ^dynamic reverse"
+      (clojure-backward-logical-sexp 1)
+      (expect (looking-at-p "\\^String \\#macro \\^dynamic reverse"))
+      (clojure-forward-logical-sexp 1)
+      (expect (looking-back "\\^String \\#macro \\^dynamic reverse"))
+      (insert " ^String biverse inverse")
+      (clojure-backward-logical-sexp 1)
+      (expect (looking-at-p "inverse"))
+      (clojure-backward-logical-sexp 2)
+      (expect (looking-at-p "\\^String \\#macro \\^dynamic reverse"))
+      (clojure-forward-logical-sexp 2)
+      (expect (looking-back "\\^String biverse"))
+      (clojure-backward-logical-sexp 1)
+      (expect (looking-at-p "\\^String biverse")))))
 
-(ert-deftest test-sexp ()
-  (with-temp-buffer
-    (insert "^String #macro ^dynamic reverse")
-    (clojure-mode)
-    (clojure-backward-logical-sexp 1)
-    (should (looking-at-p "\\^String \\#macro \\^dynamic reverse"))
-    (clojure-forward-logical-sexp 1)
-    (should (looking-back "\\^String \\#macro \\^dynamic reverse"))
-    (insert " ^String biverse inverse")
-    (clojure-backward-logical-sexp 1)
-    (should (looking-at-p "inverse"))
-    (clojure-backward-logical-sexp 2)
-    (should (looking-at-p "\\^String \\#macro \\^dynamic reverse"))
-    (clojure-forward-logical-sexp 2)
-    (should (looking-back "\\^String biverse"))
-    (clojure-backward-logical-sexp 1)
-    (should (looking-at-p "\\^String biverse"))))
-
-(ert-deftest test-buffer-corners ()
-  (with-temp-buffer
-    (insert "^String reverse")
-    (clojure-mode)
-    ;; Return nil and don't error
-    (should-not (clojure-backward-logical-sexp 100))
-    (should (looking-at-p "\\^String reverse"))
-    (should-not (clojure-forward-logical-sexp 100))
-    (should (looking-at-p "$")))
-  (with-temp-buffer
-    (clojure-mode)
-    (insert "(+ 10")
-    (should-error (clojure-backward-logical-sexp 100))
-    (goto-char (point-min))
-    (should-error (clojure-forward-logical-sexp 100))
-    ;; Just don't hang.
-    (goto-char (point-max))
-    (should-not (clojure-forward-logical-sexp 1))
-    (erase-buffer)
-    (insert "(+ 10")
-    (newline)
-    (erase-buffer)
-    (insert "(+ 10")
-    (newline-and-indent)))
-
-(ert-deftest clojure-find-ns-test ()
-  ;; we should not cache the results of `clojure-find-ns' here
-  (let ((clojure-cache-ns nil))
-    (with-temp-buffer
-      (insert "(ns ^{:doc \"Some docs\"}\nfoo-bar)")
+(describe "clojure-backward-logical-sexp"
+  (it "should work with buffer corners"
+    (with-clojure-buffer "^String reverse"
+      ;; Return nil and don't error
+      (expect (clojure-backward-logical-sexp 100) :to-be nil)
+      (expect (looking-at-p "\\^String reverse"))
+      (expect (clojure-forward-logical-sexp 100) :to-be nil)
+      (expect (looking-at-p "$")))
+    (with-clojure-buffer "(+ 10"
+      (expect (clojure-backward-logical-sexp 100) :to-throw 'error)
+      (goto-char (point-min))
+      (expect (clojure-forward-logical-sexp 100) :to-throw 'error)
+      ;; Just don't hang.
+      (goto-char (point-max))
+      (expect (clojure-forward-logical-sexp 1) :to-be nil)
+      (erase-buffer)
+      (insert "(+ 10")
       (newline)
-      (newline)
-      (insert "(in-ns 'baz-quux)")
-      (clojure-mode)
+      (erase-buffer)
+      (insert "(+ 10")
+      (newline-and-indent))))
 
-      ;; From inside docstring of first ns
-      (goto-char 18)
-      (should (equal "foo-bar" (clojure-find-ns)))
+(describe "clojure-find-ns"
+  (it "should return the namespace from various locations in the buffer"
+    ;; we should not cache the results of `clojure-find-ns' here
+    (let ((clojure-cache-ns nil))
+      (with-clojure-buffer "(ns ^{:doc \"Some docs\"}\nfoo-bar)"
+        (newline)
+        (newline)
+        (insert "(in-ns 'baz-quux)")
 
-      ;; From inside first ns's name, on its own line
-      (goto-char 29)
-      (should (equal "foo-bar" (clojure-find-ns)))
+        ;; From inside docstring of first ns
+        (goto-char 18)
+        (expect (clojure-find-ns) :to-equal "foo-bar")
 
-      ;; From inside second ns's name
-      (goto-char 42)
-      (should (equal "baz-quux" (clojure-find-ns))))
-    (let ((data
-           '(("\"\n(ns foo-bar)\"\n" "(in-ns 'baz-quux)" "baz-quux")
-             (";(ns foo-bar)\n" "(in-ns 'baz-quux)" "baz-quux")
-             ("(ns foo-bar)\n" "\"\n(in-ns 'baz-quux)\"" "foo-bar")
-             ("(ns foo-bar)\n" ";(in-ns 'baz-quux)" "foo-bar"))))
-      (pcase-dolist (`(,form1 ,form2 ,expected) data)
-        (with-temp-buffer
-          (insert form1)
-          (save-excursion (insert form2))
-          (clojure-mode)
-          ;; Between the two namespaces
-          (should (equal expected (clojure-find-ns)))
-          ;; After both namespaces
-          (goto-char (point-max))
-          (should (equal expected (clojure-find-ns))))))))
+        ;; From inside first ns's name, on its own line
+        (goto-char 29)
+        (expect (clojure-find-ns) :to-equal "foo-bar")
+
+        ;; From inside second ns's name
+        (goto-char 42)
+        (expect (equal "baz-quux" (clojure-find-ns))))
+      (let ((data
+             '(("\"\n(ns foo-bar)\"\n" "(in-ns 'baz-quux)" "baz-quux")
+               (";(ns foo-bar)\n" "(in-ns 'baz-quux)" "baz-quux")
+               ("(ns foo-bar)\n" "\"\n(in-ns 'baz-quux)\"" "foo-bar")
+               ("(ns foo-bar)\n" ";(in-ns 'baz-quux)" "foo-bar"))))
+        (pcase-dolist (`(,form1 ,form2 ,expected) data)
+          (with-clojure-buffer form1
+            (save-excursion (insert form2))
+            ;; Between the two namespaces
+            (expect (clojure-find-ns) :to-equal expected)
+            ;; After both namespaces
+            (goto-char (point-max))
+            (expect (clojure-find-ns) :to-equal expected)))))))
 
 (provide 'clojure-mode-sexp-test)
 
