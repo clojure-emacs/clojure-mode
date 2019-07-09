@@ -210,7 +210,7 @@ indent specifications. Here are a few examples:
 
 These follow the same rules as the `:style/indent` metadata specified by [cider-nrepl][].
 For instructions on how to write these specifications, see
-[this document](http://cider.readthedocs.org/en/latest/indent_spec/).
+[this document](https://docs.cider.mx/cider/indent_spec.html).
 The only difference is that you're allowed to use lists instead of vectors.
 
 ### Vertical alignment
