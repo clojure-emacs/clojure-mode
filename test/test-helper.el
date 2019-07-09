@@ -19,7 +19,7 @@
 
 ;;; Commentary:
 
-;; Non-interactive test suite setup for ERT Runner.
+;; Non-interactive test suite setup.
 
 ;;; Code:
 
@@ -32,20 +32,26 @@
   ;; Load the file under test
   (load (expand-file-name "clojure-mode" source-directory)))
 
-(defmacro def-refactor-test (name before after &rest body)
-  (declare (indent 3))
-  `(progn
-     (put ',name 'definition-name ',name)
-     (ert-deftest ,name ()
-       (let ((clojure-thread-all-but-last nil)
-             (clojure-use-metadata-for-privacy nil))
-         (with-temp-buffer
-           (insert ,before)
-           (clojure-mode)
-           ,@body
-           (should (equal ,(concat "\n" after)
-                          (concat "\n" (buffer-substring-no-properties
-                                        (point-min) (point-max))))))))))
+(defmacro with-clojure-buffer (text &rest body)
+  "Create a temporary buffer, insert TEXT, switch to clojure-mode and evaluate BODY."
+  `(with-temp-buffer
+     (erase-buffer)
+     (insert ,text)
+     (clojure-mode)
+     ,@body))
 
+(defmacro when-refactoring-it (description before after &rest body)
+  "Return a buttercup spec.
+
+Insert BEFORE into a buffer, evaluate BODY and compare the resulting buffer to
+AFTER.
+
+BODY should contain the refactoring that transforms BEFORE into AFTER.
+
+DESCRIPTION is the description of the spec."
+  `(it ,description
+     (with-clojure-buffer ,before
+       ,@body
+       (expect (buffer-string) :to-equal ,after))))
 
 ;;; test-helper.el ends here
