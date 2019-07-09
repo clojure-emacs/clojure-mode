@@ -18,37 +18,44 @@
 ;;; Code:
 
 (require 'clojure-mode)
+(require 'test-helper)
 (require 'ert)
 
-(def-refactor-test test-rename-ns-alias
-  "(ns cljr.core
+(describe "clojure--rename-ns-alias-internal"
+
+  (when-refactoring-it "should rename an alias"
+    "(ns cljr.core
        (:require [my.lib :as lib]))
 
      (def m #::lib{:kw 1, :n/kw 2, :_/bare 3, 0 4})
 
      (+ (lib/a 1) (b 2))"
-  "(ns cljr.core
+
+    "(ns cljr.core
        (:require [my.lib :as foo]))
 
      (def m #::foo{:kw 1, :n/kw 2, :_/bare 3, 0 4})
 
      (+ (foo/a 1) (b 2))"
-  (clojure--rename-ns-alias-internal "lib" "foo"))
 
-(def-refactor-test test-rename-ns-alias-with-missing-as
-  "(ns cljr.core
+    (clojure--rename-ns-alias-internal "lib" "foo"))
+
+  (when-refactoring-it "should handle ns declarations with missing as"
+    "(ns cljr.core
        (:require [my.lib :as lib]))
 
      (def m #::lib{:kw 1, :n/kw 2, :_/bare 3, 0 4})
 
      (+ (lib/a 1) (b 2))"
-  "(ns cljr.core
+
+    "(ns cljr.core
        (:require [my.lib :as lib]))
 
      (def m #::lib{:kw 1, :n/kw 2, :_/bare 3, 0 4})
 
      (+ (lib/a 1) (b 2))"
-  (clojure--rename-ns-alias-internal "foo" "bar"))
+
+    (clojure--rename-ns-alias-internal "foo" "bar")))
 
 (provide 'clojure-mode-refactor-rename-ns-alias-test)
 

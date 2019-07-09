@@ -23,12 +23,14 @@
 
 ;;; Code:
 (require 'clojure-mode)
+(require 'test-helper)
 (require 'cl-lib)
-(require 'ert)
+(require 'buttercup)
 
 
-(ert-deftest clojure-mode-version-should-be-non-nil ()
-  (should (not (eq clojure-mode-version nil))))
+(describe "clojure-mode-version"
+  (it "should not be nil"
+    (expect clojure-mode-version)))
 
 (let ((project-dir "/home/user/projects/my-project/")
       (clj-file-path "/home/user/projects/my-project/src/clj/my_project/my_ns/my_file.clj")
@@ -36,52 +38,50 @@
       (clj-file-ns "my-project.my-ns.my-file")
       (clojure-cache-project nil))
 
-  (ert-deftest project-relative-path ()
-    :tags '(utils)
+  (describe "clojure-project-relative-path"
     (cl-letf (((symbol-function 'clojure-project-dir) (lambda () project-dir)))
-      (should (string= (clojure-project-relative-path clj-file-path)
+      (expect (string= (clojure-project-relative-path clj-file-path)
                        project-relative-clj-file-path))))
 
-  (ert-deftest expected-ns ()
-    :tags '(utils)
-    (cl-letf (((symbol-function 'clojure-project-relative-path)
-               (lambda (&optional current-buffer-file-name)
-                 project-relative-clj-file-path)))
-      (should (string= (clojure-expected-ns clj-file-path) clj-file-ns))))
+  (describe "clojure-expected-ns"
+    (it "should return the namespace matching a path"
+      (cl-letf (((symbol-function 'clojure-project-relative-path)
+                 (lambda (&optional current-buffer-file-name)
+                   project-relative-clj-file-path)))
+        (expect (string= (clojure-expected-ns clj-file-path) clj-file-ns))))
 
-  (ert-deftest expected-ns-without-argument ()
-    :tags '(utils)
-    (cl-letf (((symbol-function 'clojure-project-relative-path)
-               (lambda (&optional current-buffer-file-name)
-                 project-relative-clj-file-path)))
-      (should (string= (let ((buffer-file-name clj-file-path))
-                         (clojure-expected-ns))
-                       clj-file-ns)))))
+    (it "should return the namespace even without a path"
+      (cl-letf (((symbol-function 'clojure-project-relative-path)
+                 (lambda (&optional current-buffer-file-name)
+                   project-relative-clj-file-path)))
+        (expect (string= (let ((buffer-file-name clj-file-path))
+                           (clojure-expected-ns))
+                         clj-file-ns))))))
 
-(ert-deftest clojure-namespace-name-regex-test ()
-  :tags '(regexp)
-  (let ((ns "(ns foo)"))
-    (should (string-match clojure-namespace-name-regex ns))
-    (match-string 4 ns))
-  (let ((ns "(ns
-foo)"))
-    (should (string-match clojure-namespace-name-regex ns))
-    (should (equal "foo" (match-string 4 ns))))
-  (let ((ns "(ns foo.baz)"))
-    (should (string-match clojure-namespace-name-regex ns))
-    (should (equal "foo.baz" (match-string 4 ns))))
-  (let ((ns "(ns ^:bar foo)"))
-    (should (string-match clojure-namespace-name-regex ns))
-    (should (equal "foo" (match-string 4 ns))))
-  (let ((ns "(ns ^:bar ^:baz foo)"))
-    (should (string-match clojure-namespace-name-regex ns))
-    (should (equal "foo" (match-string 4 ns))))
-  (let ((ns "(ns ^{:bar true} foo)"))
-    (should (string-match clojure-namespace-name-regex ns))
-    (should (equal "foo" (match-string 4 ns))))
-  (let ((ns "(ns #^{:bar true} foo)"))
-    (should (string-match clojure-namespace-name-regex ns))
-    (should (equal "foo" (match-string 4 ns))))
+(describe "clojure-namespace-name-regex"
+  (it "should match common namespace declarations"
+    (let ((ns "(ns foo)"))
+      (expect (string-match clojure-namespace-name-regex ns))
+      (match-string 4 ns))
+    (let ((ns "(ns
+  foo)"))
+      (expect (string-match clojure-namespace-name-regex ns))
+      (expect (match-string 4 ns) :to-equal "foo"))
+    (let ((ns "(ns foo.baz)"))
+      (expect (string-match clojure-namespace-name-regex ns))
+      (expect (match-string 4 ns) :to-equal "foo.baz"))
+    (let ((ns "(ns ^:bar foo)"))
+      (expect (string-match clojure-namespace-name-regex ns))
+      (expect (match-string 4 ns) :to-equal "foo"))
+    (let ((ns "(ns ^:bar ^:baz foo)"))
+      (expect (string-match clojure-namespace-name-regex ns))
+      (expect (match-string 4 ns) :to-equal "foo"))
+    (let ((ns "(ns ^{:bar true} foo)"))
+      (expect (string-match clojure-namespace-name-regex ns))
+      (expect (match-string 4 ns) :to-equal "foo"))
+    (let ((ns "(ns #^{:bar true} foo)"))
+      (expect (string-match clojure-namespace-name-regex ns))
+      (expect (match-string 4 ns) :to-equal "foo"))
   ;; TODO
   ;; (let ((ns "(ns #^{:fail {}} foo)"))
   ;;   (should (string-match clojure-namespace-name-regex ns))
@@ -89,50 +89,50 @@ foo)"))
   ;; (let ((ns "(ns ^{:fail2 {}} foo.baz)"))
   ;;   (should (string-match clojure-namespace-name-regex ns))
   ;;   (should (equal "foo.baz" (match-string 4 ns))))
-  (let ((ns "(ns ^{} foo)"))
-    (should (string-match clojure-namespace-name-regex ns))
-    (should (equal "foo" (match-string 4 ns))))
-  (let ((ns "(ns ^{:skip-wiki true}
-  aleph.netty"))
-    (should (string-match clojure-namespace-name-regex ns))
-    (should (equal "aleph.netty" (match-string 4 ns))))
-  (let ((ns "(ns foo+)"))
-    (should (string-match clojure-namespace-name-regex ns))
-    (should (equal "foo+" (match-string 4 ns)))))
+    (let ((ns "(ns ^{} foo)"))
+      (expect (string-match clojure-namespace-name-regex ns))
+      (expect (match-string 4 ns) :to-equal "foo"))
+    (let ((ns "(ns ^{:skip-wiki true}
+    aleph.netty"))
+      (expect (string-match clojure-namespace-name-regex ns))
+      (expect (match-string 4 ns) :to-equal "aleph.netty"))
+    (let ((ns "(ns foo+)"))
+      (expect (string-match clojure-namespace-name-regex ns))
+      (expect (match-string 4 ns) :to-equal "foo+"))))
 
-(ert-deftest test-sort-ns ()
-  (with-temp-buffer
-    (insert "\n(ns my-app.core
-  (:require [my-app.views [front-page :as front-page]]
-            [my-app.state :refer [state]] ; Comments too.
-            ;; Some comments.
-            [rum.core :as rum]
-            [my-app.views [user-page :as user-page]]
-            my-app.util.api)
-  (:import java.io.Writer
-           [clojure.lang AFunction Atom MultiFn Namespace]))")
-    (clojure-mode)
-    (clojure-sort-ns)
-    (should (equal (buffer-string)
-                   "\n(ns my-app.core
-  (:require [my-app.state :refer [state]] ; Comments too.
-            my-app.util.api
-            [my-app.views [front-page :as front-page]]
-            [my-app.views [user-page :as user-page]]
-            ;; Some comments.
-            [rum.core :as rum])
-  (:import [clojure.lang AFunction Atom MultiFn Namespace]
-           java.io.Writer))")))
-  (with-temp-buffer
-    (insert "(ns my-app.core
-  (:require [rum.core :as rum] ;comment
-            [my-app.views [user-page :as user-page]]))")
-    (clojure-mode)
-    (clojure-sort-ns)
-    (should (equal (buffer-string)
-                   "(ns my-app.core
-  (:require [my-app.views [user-page :as user-page]]
-            [rum.core :as rum] ;comment\n))"))))
+(describe "clojure-sort-ns"
+  (it "should sort requires in a basic ns"
+    (with-clojure-buffer "(ns my-app.core
+    (:require [rum.core :as rum] ;comment
+              [my-app.views [user-page :as user-page]]))"
+      (clojure-sort-ns)
+      (expect (buffer-string) :to-equal
+              "(ns my-app.core
+    (:require [my-app.views [user-page :as user-page]]
+              [rum.core :as rum] ;comment\n))")))
+
+  (it "should also sort imports in a ns"
+    (with-clojure-buffer "\n(ns my-app.core
+    (:require [my-app.views [front-page :as front-page]]
+              [my-app.state :refer [state]] ; Comments too.
+              ;; Some comments.
+              [rum.core :as rum]
+              [my-app.views [user-page :as user-page]]
+              my-app.util.api)
+    (:import java.io.Writer
+             [clojure.lang AFunction Atom MultiFn Namespace]))"
+      (clojure-mode)
+      (clojure-sort-ns)
+      (expect (buffer-string) :to-equal
+                     "\n(ns my-app.core
+    (:require [my-app.state :refer [state]] ; Comments too.
+              my-app.util.api
+              [my-app.views [front-page :as front-page]]
+              [my-app.views [user-page :as user-page]]
+              ;; Some comments.
+              [rum.core :as rum])
+    (:import [clojure.lang AFunction Atom MultiFn Namespace]
+             java.io.Writer))"))))
 
 (provide 'clojure-mode-util-test)
 

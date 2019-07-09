@@ -54,4 +54,6 @@ DESCRIPTION is the description of the spec."
        ,@body
        (expect (buffer-string) :to-equal ,after))))
 
+(provide 'test-helper)
+
 ;;; test-helper.el ends here
