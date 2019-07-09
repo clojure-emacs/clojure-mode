@@ -157,6 +157,15 @@ DESCRIPTION is a string with the description of the spec."
 (cond-> #:a{:b 1}
   |x 1)")
 
+  (when-indenting-with-point-it "should indent cond-> with a namespaced map 2"
+    "
+(cond-> #::a{:b 1}
+|x 1)"
+
+    "
+(cond-> #::a{:b 1}
+  |x 1)")
+
   (when-indenting-with-point-it "should indent threading macro with expression on first line"
     "
     (->> expr
