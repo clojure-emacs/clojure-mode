@@ -557,6 +557,8 @@ replacement for `cljr-expand-let`."
   ;; and comments, force indentation of non-inlined docstrings:
   (add-hook 'electric-indent-functions
             (lambda (_char) (if (and (clojure-in-docstring-p)
+                                     ;; make sure we're not dealing with an inline docstring
+                                     ;; e.g. (def foo "inline docstring" bar)
                                      (save-excursion
                                        (beginning-of-line-text)
                                        (eq (get-text-property (point) 'face)
