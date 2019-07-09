@@ -5,4 +5,4 @@
 
 (development
  (depends-on "s")
- (depends-on "ert-runner"))
+ (depends-on "buttercup"))

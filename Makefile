@@ -1,7 +1,6 @@
 CASK = cask
 export EMACS ?= emacs
 EMACSFLAGS =
-TESTFLAGS =
 
 PKGDIR := $(shell EMACS=$(EMACS) $(CASK) package-directory)
 
@@ -30,7 +29,7 @@ clean:
 	rm -f $(OBJS)
 
 test: $(PKGDIR)
-	$(CASK) exec ert-runner $(TESTFLAGS)
+	$(CASK) exec buttercup -L .
 
 test-checks:
 	$(CASK) exec $(EMACS) --no-site-file --no-site-lisp --batch \
