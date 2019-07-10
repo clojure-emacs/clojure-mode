@@ -55,8 +55,44 @@
 
      (+ (lib/a 1) (b 2))"
 
-    (clojure--rename-ns-alias-internal "foo" "bar")))
+    (clojure--rename-ns-alias-internal "foo" "bar"))
 
-(provide 'clojure-mode-refactor-rename-ns-alias-test)
+  (when-refactoring-it "should skip strings"
+    "(ns cljr.core
+       (:require [my.lib :as lib]))
+
+     (def dirname \"/usr/local/lib/python3.6/site-packages\")
+
+     (+ (lib/a 1) (b 2))"
+
+    "(ns cljr.core
+       (:require [my.lib :as foo]))
+
+     (def dirname \"/usr/local/lib/python3.6/site-packages\")
+
+     (+ (foo/a 1) (b 2))"
+
+    (clojure--rename-ns-alias-internal "lib" "foo"))
+
+  (when-refactoring-it "should not skip comments"
+    "(ns cljr.core
+       (:require [my.lib :as lib]))
+
+     (def dirname \"/usr/local/lib/python3.6/site-packages\")
+
+     ;; TODO refactor using lib/foo
+     (+ (lib/a 1) (b 2))"
+
+    "(ns cljr.core
+       (:require [my.lib :as new-lib]))
+
+     (def dirname \"/usr/local/lib/python3.6/site-packages\")
+
+     ;; TODO refactor using new-lib/foo
+     (+ (new-lib/a 1) (b 2))"
+
+    (clojure--rename-ns-alias-internal "lib" "new-lib")))
+
+  (provide 'clojure-mode-refactor-rename-ns-alias-test)
 
 ;;; clojure-mode-refactor-rename-ns-alias-test.el ends here
