@@ -2729,6 +2729,38 @@ With a numeric prefix argument the let is introduced N lists up."
             (clojure--rename-ns-alias-internal current-alias new-alias))
           (message "Cannot find namespace alias: '%s'" current-alias))))))
 
+;;;###autoload
+(defun clojure-add-arity ()
+  "Add an arity to a function."
+  (interactive)
+  (let ((end (save-excursion (end-of-defun)
+                             (point)))
+        (beg (progn (beginning-of-defun)
+                    (point))))
+    (down-list 2)
+    (when (looking-back "{" 1) ;; skip metadata if present
+      (up-list)
+      (down-list))
+    (cond
+     ((looking-back "(" 1) ;; multi-arity defn
+      (insert "[")
+      (save-excursion (insert "])\n("))
+      (indent-region beg end))
+     ((looking-back "\\[" 1)  ;; single-arity defn
+      (let* ((bol (save-excursion (beginning-of-line) (point)))
+             (same-line (save-excursion (re-search-backward "defn" bol t)))
+               (new-arity-text (concat (when same-line "\n") "([])\n[")))
+        (re-search-backward " +\\[")
+        (replace-match new-arity-text)
+        (save-excursion
+          (end-of-defun)
+          (re-search-backward ")")
+          (insert ")"))
+        (left-char)
+        (insert "(")
+        (indent-region beg end)
+        (left-char 6))))))
+
 
 ;;; ClojureScript
 (defconst clojurescript-font-lock-keywords
