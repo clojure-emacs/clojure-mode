@@ -34,6 +34,8 @@ specific `clojure-mode` release.**
   - [Cycling things](#cycling-things)
   - [Convert collection](#convert-collection)
   - [Let expression](#let-expression)
+  - [Rename ns alias](#rename-ns-alias)
+  - [Add arity to a function](#add-arity-to-a-function)
 - [Related packages](#related-packages)
 - [REPL Interaction](#repl-interaction)
   - [Basic REPL](#basic-repl)
@@ -318,6 +320,14 @@ of the bound forms in the form added to the let form. If called with
 a prefix argument slurp the previous n forms.
 
 `paredit-convolute-sexp` is advised to replace occurrences of bound forms with their bound names when convolute is used on a let form.
+
+### Rename ns alias
+
+Rename an alias inside a namespace declaration.
+
+### Add arity to a function
+
+Add a new arity to an existing single-arity or multi-arity function.
 
 ## Related packages
 
