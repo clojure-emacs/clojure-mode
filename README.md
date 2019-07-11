@@ -325,9 +325,13 @@ a prefix argument slurp the previous n forms.
 
 Rename an alias inside a namespace declaration.
 
+<img width="512" src="/doc/clojure-rename-ns-alias.gif">
+
 ### Add arity to a function
 
 Add a new arity to an existing single-arity or multi-arity function.
+
+<img width="512" src="/doc/clojure-add-arity.gif">
 
 ## Related packages
 
