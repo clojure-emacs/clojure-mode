@@ -23,7 +23,6 @@
 
 ;;; Code:
 (require 'clojure-mode)
-(require 'test-helper)
 (require 'cl-lib)
 (require 'buttercup)
 

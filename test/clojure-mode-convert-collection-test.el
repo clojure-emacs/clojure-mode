@@ -26,7 +26,6 @@
 ;;; Code:
 
 (require 'clojure-mode)
-(require 'test-helper)
 (require 'buttercup)
 
 (describe "clojure-convert-collection-to-map"

@@ -20,7 +20,6 @@
 ;;; Code:
 
 (require 'clojure-mode)
-(require 'test-helper)
 (require 'buttercup)
 
 (defmacro with-clojure-buffer-point (text &rest body)

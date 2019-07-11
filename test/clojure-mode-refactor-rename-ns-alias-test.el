@@ -18,7 +18,6 @@
 ;;; Code:
 
 (require 'clojure-mode)
-(require 'test-helper)
 (require 'ert)
 
 (describe "clojure--rename-ns-alias-internal"
