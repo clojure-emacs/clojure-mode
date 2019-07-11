@@ -24,7 +24,6 @@
 ;;; Code:
 
 (require 'clojure-mode)
-(require 'test-helper)
 (require 'buttercup)
 
 (defun non-func (form-a form-b)

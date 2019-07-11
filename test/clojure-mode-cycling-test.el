@@ -25,7 +25,6 @@
 ;;; Code:
 
 (require 'clojure-mode)
-(require 'test-helper)
 (require 'buttercup)
 
 (describe "clojure-cycle-privacy"
