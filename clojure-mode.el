@@ -2682,7 +2682,7 @@ lists up."
 ;;;###autoload
 (defun clojure-let-backward-slurp-sexp (&optional n)
   "Slurp the s-expression before the let form into the let form.
-With a numberic prefix argument slurp the previous N s-expression
+With a numeric prefix argument slurp the previous N s-expressions
 into the let form."
   (interactive "p")
   (let ((n (or n 1)))
@@ -2702,7 +2702,8 @@ into the let form."
 ;;;###autoload
 (defun clojure-let-forward-slurp-sexp (&optional n)
   "Slurp the next s-expression after the let form into the let form.
-With a numeric prefix argument slurp the next N s-expressions into the let form."
+With a numeric prefix argument slurp the next N s-expressions
+into the let form."
   (interactive "p")
   (unless n (setq n 1))
   (dotimes (_ n)
@@ -2731,8 +2732,8 @@ With a numeric prefix argument the let is introduced N lists up."
       (let ((rgx (concat ":as +" current-alias))
             (bound (save-excursion (forward-list 1) (point))))
         (if (save-excursion (search-forward-regexp rgx bound t))
-          (let ((new-alias (read-from-minibuffer "New alias: ")))
-            (clojure--rename-ns-alias-internal current-alias new-alias))
+            (let ((new-alias (read-from-minibuffer "New alias: ")))
+              (clojure--rename-ns-alias-internal current-alias new-alias))
           (message "Cannot find namespace alias: '%s'" current-alias))))))
 
 ;;;###autoload
@@ -2755,7 +2756,7 @@ With a numeric prefix argument the let is introduced N lists up."
      ((looking-back "\\[" 1)  ;; single-arity defn
       (let* ((bol (save-excursion (beginning-of-line) (point)))
              (same-line (save-excursion (re-search-backward "defn" bol t)))
-               (new-arity-text (concat (when same-line "\n") "([])\n[")))
+             (new-arity-text (concat (when same-line "\n") "([])\n[")))
         (re-search-backward " +\\[")
         (replace-match new-arity-text)
         (save-excursion
