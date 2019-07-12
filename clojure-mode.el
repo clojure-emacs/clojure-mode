@@ -217,8 +217,6 @@ Out-of-the box `clojure-mode' understands lein, boot, gradle,
     (define-key map (kbd "f") #'clojure-thread-first-all)
     (define-key map (kbd "C-l") #'clojure-thread-last-all)
     (define-key map (kbd "l") #'clojure-thread-last-all)
-    (define-key map (kbd "C-a") #'clojure-unwind-all)
-    (define-key map (kbd "a") #'clojure-unwind-all)
     (define-key map (kbd "C-p") #'clojure-cycle-privacy)
     (define-key map (kbd "p") #'clojure-cycle-privacy)
     (define-key map (kbd "C-(") #'clojure-convert-collection-to-list)
@@ -241,10 +239,13 @@ Out-of-the box `clojure-mode' understands lein, boot, gradle,
     (define-key map (kbd "n h") #'clojure-insert-ns-form-at-point)
     (define-key map (kbd "n u") #'clojure-update-ns)
     (define-key map (kbd "n s") #'clojure-sort-ns)
+    (define-key map (kbd "n r") #'clojure-rename-ns-alias)
     (define-key map (kbd "s i") #'clojure-introduce-let)
     (define-key map (kbd "s m") #'clojure-move-to-let)
     (define-key map (kbd "s f") #'clojure-let-forward-slurp-sexp)
     (define-key map (kbd "s b") #'clojure-let-backward-slurp-sexp)
+    (define-key map (kbd "C-a") #'clojure-add-arity)
+    (define-key map (kbd "a") #'clojure-add-arity)
     map)
   "Keymap for Clojure refactoring commands.")
 (fset 'clojure-refactor-map clojure-refactor-map)
@@ -263,11 +264,13 @@ Out-of-the box `clojure-mode' understands lein, boot, gradle,
         ["Cycle if, if-not" clojure-cycle-if]
         ["Cycle when, when-not" clojure-cycle-when]
         ["Cycle not" clojure-cycle-not]
+        ["Add function arity" clojure-add-arity]
         ("ns forms"
          ["Insert ns form at the top" clojure-insert-ns-form]
          ["Insert ns form here" clojure-insert-ns-form-at-point]
          ["Update ns form" clojure-update-ns]
-         ["Sort ns form" clojure-sort-ns])
+         ["Sort ns form" clojure-sort-ns]
+         ["Rename ns alias" clojure-rename-ns-alias])
         ("Convert collection"
          ["Convert to list" clojure-convert-collection-to-list]
          ["Convert to quoted list" clojure-convert-collection-to-quoted-list]
