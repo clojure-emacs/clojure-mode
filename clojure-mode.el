@@ -1,7 +1,7 @@
 ;;; clojure-mode.el --- Major mode for Clojure code -*- lexical-binding: t; -*-
 
-;; Copyright © 2007-2018 Jeffrey Chu, Lennart Staflin, Phil Hagelberg
-;; Copyright © 2013-2018 Bozhidar Batsov, Artur Malabarba
+;; Copyright © 2007-2019 Jeffrey Chu, Lennart Staflin, Phil Hagelberg
+;; Copyright © 2013-2019 Bozhidar Batsov, Artur Malabarba
 ;;
 ;; Authors: Jeffrey Chu <jochu0@gmail.com>
 ;;       Lennart Staflin <lenst@lysator.liu.se>
