@@ -246,47 +246,52 @@ to `clojure-mode`.
 
 ### Threading macros related features
 
-* Thread another expression.
+`clojure-thread`: Thread another form into the surrounding thread. Both `->>`
+and `->` variants are supported.
 
-Thread another form into the surrounding thread. Both `->>` and `->` variants
-are supported. See demonstration on the
-[clj-refactor.el wiki](https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-thread).
+<img width="512" src="/doc/clojure-thread.gif">
 
-* Unwind a threaded expression.
+`clojure-unwind`: Unwind a threaded expression. Supports both `->>` and `->`.
 
-Supports both `->>` and `->`. See demonstration on the
-[clj-refactor.el wiki](https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-unwind-thread).
+<img width="512" src="/doc/clojure-unwind.gif">
 
-* Wrap in thread first (`->`) and fully thread.
+`clojure-thread-first-all`: Introduce the thread first macro (`->`) and rewrite
+the entire form. With a prefix argument do not thread the last form.
 
-Introduce the thread first macro and rewrite the entire form. With a prefix
-argument do not thread the last form. See demonstration on the
-[clj-refactor.el wiki](https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-thread-first-all).
+<img width="512" src="/doc/clojure-thread-first-all.gif">
 
-* Wrap in thread last (`->>`) and fully thread.
+`clojure-thread-last-all`: Introduce the thread last macro and rewrite the
+entire form. With a prefix argument do not thread the last form.
 
-Introduce the thread last macro and rewrite the entire form. With a prefix
-argument do not thread the last form. See demonstration on the
-[clj-refactor.el wiki](https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-thread-last-all).
+<img width="512" src="/doc/clojure-thread-last-all.gif">
 
-* Fully unwind a threaded expression.
+`clojure-unwind-all`: Fully unwind a threaded expression removing the threading
+macro.
 
-Unwind and remove the threading macro. See demonstration on the
-[clj-refactor.el wiki](https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-unwind-all).
+<img width="512" src="/doc/clojure-unwind-all.gif">
 
 ### Cycling things
 
-* Cycle privacy
+`clojure-cycle-privacy`: Cycle privacy of `def`s or `defn`s. Use metadata
+explicitly with setting `clojure-use-metadata-for-privacy` to `t` for `defn`s
+too.
 
-Cycle privacy of `def`s or `defn`s. Use metadata explicitly with setting
-`clojure-use-metadata-for-privacy` to `t` for `defn`s too. See demonstration
-on the [clj-refactor.el wiki](https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-cycle-privacy).
+<img width="512" src="/doc/clojure-cycle-privacy.gif">
 
-* Cycle if/if-not
+`clojure-cycle-not`: Add or remove a `not` form around the current form.
 
-Find the closest if or if-not up the syntax tree and toggle it.
-Also transpose the "else" and "then" branches, keeping the semantics
-the same as before. See demonstration on the [clj-refactor.el wiki](https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-cycle-if).
+<img width="512" src="/doc/clojure-cycle-not.gif">
+
+`clojure-cycle-when`: Find the closest `when` or `when-not` up the syntax tree
+and toggle it.
+
+<img width="512" src="/doc/clojure-cycle-when.gif">
+
+`clojure-cycle-if`: Find the closest `if` or `if-not` up the syntax tree and
+toggle it. Also transpose the `else` and `then` branches, keeping the semantics
+the same as before.
+
+<img width="512" src="/doc/clojure-cycle-if.gif">
 
 ### Convert collection
 
@@ -294,42 +299,40 @@ Convert any given collection at point to list, quoted list, map, vector or set.
 
 ### Let expression
 
-* Introduce let
+`clojure-introduce-let`: Introduce a new `let` form. Put the current form into
+its binding form with a name provided by the user as a bound name. If called
+with a numeric prefix put the let form Nth level up in the form hierarchy.
 
-Introduce a new let form. Put the current form into its binding form with
-a name provided by the user as a bound name. If called with a numeric prefix
-put the let form Nth level up in the form hierarchy. See demonstration on the
-[clj-refactor.el wiki](https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-introduce-let).
+<img width="512" src="/doc/clojure-introduce-let.gif">
 
-* Move to let
+`clojure-move-to-let`: Move the current form to the closest `let`'s binding
+form. Replace all occurrences of the form in the body of the let.
 
-Move the current form to the closest let's binding form. Replace
-all occurrences of the form in the body of the let. See demonstration on the
-[clj-refactor.el wiki](https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-move-to-let).
+<img width="512" src="/doc/clojure-move-to-let.gif">
 
-* Forward slurp form into let
+`clojure-let-forward-slurp-sexp`: Slurp the next form after the `let` into the
+`let`. Replace all occurrences of the bound forms in the form added to the `let`
+form. If called with a prefix argument slurp the next n forms.
 
-Slurp the next form after the let into the let. Replace all occurrences
-of the bound forms in the form added to the let form. If called with
-a prefix argument slurp the next n forms.
+<img width="512" src="/doc/clojure-let-forward-slurp-sexp.gif">
 
-* Backward slurp form into let
+`clojure-let-backward-slurp-sexp`: Slurp the form before the `let` into the
+`let`. Replace all occurrences of the bound forms in the form added to the `let`
+form. If called with a prefix argument slurp the previous n forms.
 
-Slurp the form before the let into the let. Replace all occurrences
-of the bound forms in the form added to the let form. If called with
-a prefix argument slurp the previous n forms.
+<img width="512" src="/doc/clojure-let-backward-slurp-sexp.gif">
 
 `paredit-convolute-sexp` is advised to replace occurrences of bound forms with their bound names when convolute is used on a let form.
 
 ### Rename ns alias
 
-Rename an alias inside a namespace declaration.
+`clojure-rename-ns-alias`: Rename an alias inside a namespace declaration.
 
 <img width="512" src="/doc/clojure-rename-ns-alias.gif">
 
 ### Add arity to a function
 
-Add a new arity to an existing single-arity or multi-arity function.
+`clojure-add-arity`: Add a new arity to an existing single-arity or multi-arity function.
 
 <img width="512" src="/doc/clojure-add-arity.gif">
 
