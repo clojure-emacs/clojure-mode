@@ -2196,10 +2196,12 @@ before fixing whitespace."
       (delete-trailing-whitespace (car sexp) (cdr sexp)))))
 
 ;;;###autoload
-(defun clojure-unwind ()
-  "Unwind thread at point or above point by one level.
-Return nil if there are no more levels to unwind."
-  (interactive)
+(defun clojure-unwind (&optional n)
+  "Unwind thread at point or above point by N levels.
+With universal argument \\[universal-argument], fully unwind thread."
+  (interactive "P")
+  (setq n (cond ((equal n '(4)) 999)
+                (n) (1)))
   (save-excursion
     (let ((limit (save-excursion
                    (beginning-of-defun)
@@ -2208,23 +2210,24 @@ Return nil if there are no more levels to unwind."
         (when (looking-at "(")
           (forward-char 1)
           (forward-sexp 1)))
-      (search-backward-regexp "([^-]*->" limit)
-      (if (clojure--nothing-more-to-unwind)
-          (progn (clojure--pop-out-of-threading)
-                 (clojure--fix-sexp-whitespace)
-                 nil)
-        (down-list)
-        (prog1 (cond
-                ((looking-at "[^-]*->\\_>")  (clojure--unwind-first))
-                ((looking-at "[^-]*->>\\_>") (clojure--unwind-last)))
-          (clojure--fix-sexp-whitespace 'move-out))
-        t))))
+      (while (> n 0)
+        (search-backward-regexp "([^-]*->" limit)
+        (if (clojure--nothing-more-to-unwind)
+            (progn (clojure--pop-out-of-threading)
+                   (clojure--fix-sexp-whitespace)
+                   (setq n 0)) ;; break out of loop
+          (down-list)
+          (cond
+           ((looking-at "[^-]*->\\_>")  (clojure--unwind-first))
+           ((looking-at "[^-]*->>\\_>") (clojure--unwind-last)))
+          (clojure--fix-sexp-whitespace 'move-out)
+          (setq n (1- n)))))))
 
 ;;;###autoload
 (defun clojure-unwind-all ()
   "Fully unwind thread at point or above point."
   (interactive)
-  (while (clojure-unwind)))
+  (clojure-unwind '(4)))
 
 (defun clojure--remove-superfluous-parens ()
   "Remove extra parens from a form."
