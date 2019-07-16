@@ -6,7 +6,7 @@
 
 * [#496](https://github.com/clojure-emacs/clojure-mode/issues/496): Highlight `[[wikilinks]]` in comments.
 * [#366](https://github.com/clojure-emacs/clj-refactor.el/issues/366): Add support for renaming ns aliases (`clojure-rename-ns-alias`, default binding `C-c C-r n r`).
-* [#410](https://github.com/clojure-emacs/clojure-mode/issues/410): Add support for adding an arity to a function (`clojure-add-arity`, default binding `C-c C-r a`), .
+* [#410](https://github.com/clojure-emacs/clojure-mode/issues/410): Add support for adding an arity to a function (`clojure-add-arity`, default binding `C-c C-r a`).
 
 ### Bugs fixed
 
