@@ -5,8 +5,8 @@
 ### New features
 
 * [#496](https://github.com/clojure-emacs/clojure-mode/issues/496): Highlight `[[wikilinks]]` in comments.
-* [#366](https://github.com/clojure-emacs/clj-refactor.el/issues/366): Add support for renaming ns aliases (`clojure-rename-ns-alias`).
-* [#410](https://github.com/clojure-emacs/clojure-mode/issues/410): Add support for adding an arity to a function (`clojure-add-arity`).
+* [#366](https://github.com/clojure-emacs/clj-refactor.el/issues/366): Add support for renaming ns aliases (`clojure-rename-ns-alias`, default binding `C-c C-r n r`).
+* [#410](https://github.com/clojure-emacs/clojure-mode/issues/410): Add support for adding an arity to a function (`clojure-add-arity`, default binding `C-c C-r a`), .
 
 ### Bugs fixed
 
@@ -21,6 +21,7 @@
 ### Changes
 
 * [#524](https://github.com/clojure-emacs/clojure-mode/issues/524): Add proper indentation rule for `delay` (same as for `future`).
+* [#538](https://github.com/clojure-emacs/clojure-mode/pull/538): Refactor `clojure-unwind` to take numeric prefix argument for unwinding N steps, and universal argument for unwinding completely. The dedicated `C-c C-r a` binding for `clojure-unwind-all`is now removed and replaced with the universal arg convention `C-u C-c C-r u`.
 
 ## 5.10.0 (2019-01-05)
 
