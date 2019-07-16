@@ -227,6 +227,26 @@
     (clojure-unwind)
     (clojure-unwind))
 
+  (when-refactoring-it "should unwind N steps with numeric prefix arg"
+    "(->> [1 2 3 4 5]
+     (filter even?)
+     (map square)
+     sum)"
+
+    "(->> (sum (map square (filter even? [1 2 3 4 5]))))"
+
+    (clojure-unwind 3))
+
+  (when-refactoring-it "should unwind completely with universal prefix arg"
+    "(->> [1 2 3 4 5]
+     (filter even?)
+     (map square)
+     sum)"
+
+    "(sum (map square (filter even? [1 2 3 4 5])))"
+
+    (clojure-unwind '(4)))
+
   (when-refactoring-it "should unwind with function name"
     "(->> [1 2 3 4 5]
      sum
