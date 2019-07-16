@@ -2,6 +2,8 @@
 
 ## master (unreleased)
 
+## 5.11.0 (2019-07-16)
+
 ### New features
 
 * [#496](https://github.com/clojure-emacs/clojure-mode/issues/496): Highlight `[[wikilinks]]` in comments.
