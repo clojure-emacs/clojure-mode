@@ -1130,7 +1130,9 @@ will align the values like this:
   :safe #'listp
   :type '(repeat string))
 
-(defcustom clojure-align-cond-forms '("condp" "cond" "cond->" "cond->>" "case" "are")
+(defcustom clojure-align-cond-forms '("condp" "cond" "cond->" "cond->>" "case" "are"
+                                      "clojure.core/condp" "clojure.core/cond" "clojure.core/cond->"
+                                      "clojure.core/cond->>" "clojure.core/case" "clojure.test/are")
   "List of strings identifying cond-like forms."
   :package-version '(clojure-mode . "5.1")
   :safe #'listp

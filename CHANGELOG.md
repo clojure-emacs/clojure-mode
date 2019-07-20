@@ -2,6 +2,10 @@
 
 ## master (unreleased)
 
+### Bugs fixed
+
+* [#520](https://github.com/clojure-emacs/clojure-mode/issues/508): Fix allow `clojure-align-cond-forms` to recognize qualified forms.
+
 ## 5.11.0 (2019-07-16)
 
 ### New features
