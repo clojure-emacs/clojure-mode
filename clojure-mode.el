@@ -2738,37 +2738,80 @@ With a numeric prefix argument the let is introduced N lists up."
               (clojure--rename-ns-alias-internal current-alias new-alias))
           (message "Cannot find namespace alias: '%s'" current-alias))))))
 
-;;;###autoload
-(defun clojure-add-arity ()
-  "Add an arity to a function."
-  (interactive)
-  (let ((end (save-excursion (end-of-defun)
-                             (point)))
-        (beg (progn (beginning-of-defun)
-                    (point))))
+(defun clojure--add-arity-defprotocol-internal ()
+  "Add an arity to a signature inside a defprotocol.
+
+Assumes cursor is at beginning of signature."
+  (re-search-forward "\\[")
+  (save-excursion (insert "] [")))
+
+(defun clojure--add-arity-reify-internal ()
+  "Add an arity to a function inside a reify.
+
+Assumes cursor is at beginning of function."
+  (re-search-forward "\\(\\w+ \\)")
+  (insert "[")
+  (save-excursion (insert "])\n(" (match-string 0))))
+
+(defun clojure--add-arity-internal ()
+  "Add an arity to a function.
+
+Assumes cursor is at beginning of function."
+  (let ((beg-line (what-line))
+        (end (save-excursion (forward-sexp)
+                             (point))))
     (down-list 2)
     (when (looking-back "{" 1) ;; skip metadata if present
       (up-list)
       (down-list))
     (cond
-     ((looking-back "(" 1) ;; multi-arity defn
+     ((looking-back "(" 1) ;; multi-arity fn
       (insert "[")
-      (save-excursion (insert "])\n("))
-      (indent-region beg end))
-     ((looking-back "\\[" 1)  ;; single-arity defn
-      (let* ((bol (save-excursion (beginning-of-line) (point)))
-             (same-line (save-excursion (re-search-backward "defn" bol t)))
-             (new-arity-text (concat (when same-line "\n") "([])\n[")))
+      (save-excursion (insert "])\n(")))
+     ((looking-back "\\[" 1)  ;; single-arity fn
+      (let* ((same-line (string= beg-line (what-line)))
+             (new-arity-text (concat (when same-line "\n") "([")))
+        (save-excursion
+          (goto-char end)
+          (insert ")"))
+
         (re-search-backward " +\\[")
         (replace-match new-arity-text)
-        (save-excursion
-          (end-of-defun)
-          (re-search-backward ")")
-          (insert ")"))
-        (left-char)
-        (insert "(")
-        (indent-region beg end)
-        (left-char 6))))))
+        (save-excursion (insert "])\n([")))))))
+
+;;;###autoload
+(defun clojure-add-arity ()
+  "Add an arity to a function."
+  (interactive)
+  (let ((original-pos (point))
+        (n 0))
+    (while (not (looking-at-p "(\\(defn\\|letfn\\|fn\\|defmacro\\|defmethod\\|defprotocol\\|reify\\|proxy\\)"))
+      (setq n (1+ n))
+      (backward-up-list 1 t))
+    (let ((beg (point))
+          (end-marker (make-marker))
+          (end (save-excursion (forward-sexp)
+                               (point)))
+          (jump-up (lambda (x)
+                     (goto-char original-pos)
+                     (backward-up-list x t))))
+      (set-marker end-marker end)
+      (cond
+       ((looking-at-p "(\\(defn\\|fn\\|defmethod\\|defmacro\\)")
+        (clojure--add-arity-internal))
+       ((looking-at-p "(letfn")
+        (funcall jump-up (- n 2))
+        (clojure--add-arity-internal))
+       ((looking-at-p "(proxy")
+        (funcall jump-up (- n 1))
+        (clojure--add-arity-internal))
+       ((looking-at-p "(defprotocol")
+        (funcall jump-up (- n 1))
+        (clojure--add-arity-defprotocol-internal))
+       ((looking-at-p "(reify")
+        (funcall jump-up (- n 1))
+        (clojure--add-arity-reify-internal)))
+      (indent-region beg end-marker))))
 
 
 ;;; ClojureScript
