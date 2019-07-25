@@ -149,6 +149,202 @@ DESCRIPTION is a string with the description of the spec."
   ([arg]
    body))"
 
+    (clojure-add-arity))
+
+  (when-refactoring-with-point-it "should handle a single-arity fn"
+    "(fn foo [arg]
+  body|)"
+
+    "(fn foo
+  ([|])
+  ([arg]
+   body))"
+
+    (clojure-add-arity))
+
+  (when-refactoring-with-point-it "should handle a multi-arity fn"
+    "(fn foo
+  ([x y]
+   body)
+  ([a|rg]
+   body))"
+
+    "(fn foo
+  ([|])
+  ([x y]
+   body)
+  ([arg]
+   body))"
+
+    (clojure-add-arity))
+
+  (when-refactoring-with-point-it "should handle a single-arity defmacro"
+    "(defmacro foo [arg]
+  body|)"
+
+    "(defmacro foo
+  ([|])
+  ([arg]
+   body))"
+
+    (clojure-add-arity))
+
+  (when-refactoring-with-point-it "should handle a multi-arity defmacro"
+    "(defmacro foo
+  ([x y]
+   body)
+  ([a|rg]
+   body))"
+
+    "(defmacro foo
+  ([|])
+  ([x y]
+   body)
+  ([arg]
+   body))"
+
+    (clojure-add-arity))
+
+  (when-refactoring-with-point-it "should handle a single-arity defmethod"
+    "(defmethod foo :bar [arg]
+  body|)"
+
+    "(defmethod foo :bar
+  ([|])
+  ([arg]
+   body))"
+
+    (clojure-add-arity))
+
+  (when-refactoring-with-point-it "should handle a multi-arity defmethod"
+    "(defmethod foo :bar
+  ([x y]
+   body)
+  ([a|rg]
+   body))"
+
+    "(defmethod foo :bar
+  ([|])
+  ([x y]
+   body)
+  ([arg]
+   body))"
+
+    (clojure-add-arity))
+
+  (when-refactoring-with-point-it "should handle a defn inside a reader conditional"
+    "#?(:clj
+   (defn foo
+     \"some docstring\"
+     ^{:bla \"meta\"}
+     |([arg]
+      body)))"
+
+    "#?(:clj
+   (defn foo
+     \"some docstring\"
+     ^{:bla \"meta\"}
+     ([|])
+     ([arg]
+      body)))"
+
+    (clojure-add-arity))
+
+  (when-refactoring-with-point-it "should handle a defn inside a reader conditional with 2 platform tags"
+    "#?(:clj
+   (defn foo
+     \"some docstring\"
+     ^{:bla \"meta\"}
+     |([arg]
+      body))
+   :cljs
+   (defn foo
+     \"some docstring\"
+     ^{:bla \"meta\"}
+     ([arg]
+      body)))"
+
+    "#?(:clj
+   (defn foo
+     \"some docstring\"
+     ^{:bla \"meta\"}
+     ([|])
+     ([arg]
+      body))
+   :cljs
+   (defn foo
+     \"some docstring\"
+     ^{:bla \"meta\"}
+     ([arg]
+      body)))"
+
+    (clojure-add-arity))
+
+  (when-refactoring-with-point-it "should handle a single-arity fn inside a letfn"
+    "(letfn [(foo [x]
+           bo|dy)]
+  (foo 3))"
+
+    "(letfn [(foo
+          ([|])
+          ([x]
+           body))]
+  (foo 3))"
+
+    (clojure-add-arity))
+
+    (when-refactoring-with-point-it "should handle a multi-arity fn inside a letfn"
+    "(letfn [(foo
+          ([x]
+           body)
+          |([x y]
+           body))]
+  (foo 3))"
+
+    "(letfn [(foo
+          ([|])
+          ([x]
+           body)
+          ([x y]
+           body))]
+  (foo 3))"
+
+    (clojure-add-arity))
+
+  (when-refactoring-with-point-it "should handle a proxy"
+    "(proxy [Foo] []
+  (bar [arg]
+     body|))"
+
+    "(proxy [Foo] []
+  (bar
+    ([|])
+    ([arg]
+     body)))"
+
+    (clojure-add-arity))
+
+  (when-refactoring-with-point-it "should handle a defprotocol"
+    "(defprotocol Foo
+  \"some docstring\"
+  (bar [arg] [x |y] \"some docstring\"))"
+
+    "(defprotocol Foo
+  \"some docstring\"
+  (bar [|] [arg] [x y] \"some docstring\"))"
+
+    (clojure-add-arity))
+
+  (when-refactoring-with-point-it "should handle a reify"
+    "(reify Foo
+  (bar [arg] body)
+  (blahs [arg]| body))"
+
+    "(reify Foo
+  (bar [arg] body)
+  (blahs [|])
+  (blahs [arg] body))"
+
     (clojure-add-arity)))
 
 (provide 'clojure-mode-refactor-add-arity-test)

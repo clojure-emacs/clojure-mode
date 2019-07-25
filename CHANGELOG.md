@@ -5,6 +5,11 @@
 ### Bugs fixed
 
 * [#520](https://github.com/clojure-emacs/clojure-mode/issues/508): Fix allow `clojure-align-cond-forms` to recognize qualified forms.
+* Enhance add arity refactoring to support a defn inside a reader conditional.
+
+### Changes
+
+* Enhance add arity refactoring to support new forms: letfn, fn, defmacro, defmethod, defprotocol, reify and proxy.
 
 ## 5.11.0 (2019-07-16)
 
