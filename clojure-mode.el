@@ -2683,6 +2683,22 @@ lists up."
     (insert sexp)
     (clojure--replace-sexps-with-bindings-and-indent)))
 
+(defun clojure-collect-ns-aliases (ns-form)
+  "Collect all namespace aliases in NS-FORM."
+  (with-temp-buffer
+    (delay-mode-hooks
+      (clojure-mode)
+      (insert ns-form)
+      (goto-char (point-min))
+      (let ((end (point-max))
+            (rgx (rx ":as" (+ space)
+                     (group-n 1 (+ (not (in " ,]\n"))))))
+            (res ()))
+        (while (re-search-forward rgx end 'noerror)
+          (unless (or (clojure--in-string-p) (clojure--in-comment-p))
+            (push (match-string-no-properties 1) res)))
+        res))))
+
 (defun clojure--rename-ns-alias-internal (current-alias new-alias)
   "Rename a namespace alias CURRENT-ALIAS to NEW-ALIAS."
   (clojure--find-ns-in-direction 'backward)
@@ -2746,15 +2762,17 @@ With a numeric prefix argument the let is introduced N lists up."
 (defun clojure-rename-ns-alias ()
   "Rename a namespace alias."
   (interactive)
-  (let ((current-alias (read-from-minibuffer "Current alias: ")))
-    (save-excursion
-      (clojure--find-ns-in-direction 'backward)
-      (let ((rgx (concat ":as +" current-alias))
-            (bound (save-excursion (forward-list 1) (point))))
-        (if (save-excursion (search-forward-regexp rgx bound t))
-            (let ((new-alias (read-from-minibuffer "New alias: ")))
-              (clojure--rename-ns-alias-internal current-alias new-alias))
-          (message "Cannot find namespace alias: '%s'" current-alias))))))
+  (save-excursion
+    (clojure--find-ns-in-direction 'backward)
+    (let* ((current-alias (completing-read "Current alias: "
+                                           (clojure-collect-ns-aliases
+                                            (thing-at-point 'list))))
+           (rgx (concat ":as +" current-alias))
+           (bound (save-excursion (forward-list 1) (point))))
+      (if (save-excursion (search-forward-regexp rgx bound t))
+          (let ((new-alias (read-from-minibuffer "New alias: ")))
+            (clojure--rename-ns-alias-internal current-alias new-alias))
+        (message "Cannot find namespace alias: '%s'" current-alias)))))
 
 (defun clojure--add-arity-defprotocol-internal ()
   "Add an arity to a signature inside a defprotocol.
