@@ -1726,7 +1726,7 @@ are cached in a buffer local variable (`clojure-cached-project-dir')."
 (defun clojure-current-project (&optional dir-name)
   "Return the current project as a cons cell usable by project.el.
 
-Call is delegated down to `clojure-clojure-dir' with
+Call is delegated down to `clojure-project-dir' with
 optional DIR-NAME as argument."
   (let ((project-dir (clojure-project-dir dir-name)))
     (if project-dir
