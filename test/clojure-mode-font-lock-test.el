@@ -133,11 +133,35 @@ DESCRIPTION is the description of the spec."
     ("#_"
      (1 2 nil))
 
+    ("#_#_"
+     (1 2 nil))
+
+    ("#_#_"
+     (3 2 font-lock-comment-face))
+
+    ("#_ #_"
+     (1 3 nil))
+
+    ("#_ #_"
+     (4 2 font-lock-comment-face))
+
     ("#_ \n;; some crap\n (lala 0101\n lao\n\n 0 0i)"
      (1 2 nil))
 
     ("#_ \n;; some crap\n (lala 0101\n lao\n\n 0 0i)"
-     (5 41 font-lock-comment-face)))
+     (5 41 font-lock-comment-face))
+
+    ("#_#_ \n;; some crap\n (lala 0101\n lao\n\n 0 0i)\n;; more crap\n (foobar tnseriao)"
+     (1 4 nil))
+
+    ("#_ #_ \n;; some crap\n (lala 0101\n lao\n\n 0 0i)\n;; more crap\n (foobar tnseriao)"
+     (1 5 nil))
+
+    ("#_#_ \n;; some crap\n (lala 0101\n lao\n\n 0 0i)\n;; more crap\n (foobar tnseriao)"
+     (7 75 font-lock-comment-face))
+
+    ("#_ #_ \n;; some crap\n (lala 0101\n lao\n\n 0 0i)\n;; more crap\n (foobar tnseriao)"
+     (8 75 font-lock-comment-face)))
 
   (when-fontifying-it "should handle namespace declarations"
     ("(ns .validns)"
