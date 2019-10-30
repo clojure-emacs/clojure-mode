@@ -2,6 +2,10 @@
 
 ## master (unreleased)
 
+### New features
+
+* Add custom faces for definitions. This feature makes it possible to use a different face when introducing names. The customizable faces are `clojure-function-definition-face`, `clojure-variable-definition-face`, `clojure-type-definition-face`, `clojure-keyword-definition-face` and `clojure-namespace-definition-face`. The new faces have the same default face as before that they inherit.
+
 ### Bugs fixed
 
 * [#520](https://github.com/clojure-emacs/clojure-mode/issues/508): Fix allow `clojure-align-cond-forms` to recognize qualified forms.

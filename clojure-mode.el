@@ -86,6 +86,31 @@
     (lm-version (or load-file-name buffer-file-name)))
   "The current version of `clojure-mode'.")
 
+(defface clojure-function-definition-face
+  '((t (:inherit font-lock-function-name-face)))
+  "Face used to font-lock Clojure function definitions (defn xxx [] ...)."
+  :package-version '(clojure-mode . "5.12.0"))
+
+(defface clojure-variable-definition-face
+  '((t (:inherit font-lock-variable-name-face)))
+  "Face used to font-lock Clojure variable definitions (def xxx ...)."
+  :package-version '(clojure-mode . "5.12.0"))
+
+(defface clojure-type-definition-face
+  '((t (:inherit font-lock-type-face)))
+  "Face used to font-lock Clojure variable definitions (def xxx ...)."
+  :package-version '(clojure-mode . "5.12.0"))
+
+(defface clojure-namespace-definition-face
+  '((t (:inherit font-lock-type-face)))
+  "Face used to font-lock Clojure namespace definitions (ns xxx)."
+  :package-version '(clojure-mode . "5.12.0"))
+
+(defface clojure-keyword-definition-face
+  '((t (:inherit clojure-keyword-face)))
+  "Face used to font-lock Clojure definitions with keyword name (def :xxx ...)."
+  :package-version '(clojure-mode . "5.12.0"))
+
 (defface clojure-keyword-face
   '((t (:inherit font-lock-constant-face)))
   "Face used to font-lock Clojure keywords (:something)."
@@ -751,7 +776,9 @@ definition of 'macros': URL `http://git.io/vRGLD'.")
     (concat "[^" clojure--sym-forbidden-1st-chars "][^" clojure--sym-forbidden-rest-chars "]*")
     "A regexp matching a Clojure symbol or namespace alias.
 Matches the rule `clojure--sym-forbidden-1st-chars' followed by
-any number of matches of `clojure--sym-forbidden-rest-chars'."))
+any number of matches of `clojure--sym-forbidden-rest-chars'.")
+  (defconst clojure--keyword-regexp
+    (concat "\\(:\\{1,2\\}\\(?:" clojure--sym-regexp "/\\)?" clojure--sym-regexp "\\)")))
 
 (defconst clojure-font-lock-keywords
   (eval-when-compile
@@ -766,7 +793,7 @@ any number of matches of `clojure--sym-forbidden-rest-chars'."))
                 "\\(?:#?^\\(?:{[^}]*}\\|\\sw+\\)[ \r\n\t]*\\)*"
                 "\\(\\sw+\\)?")
        (1 font-lock-keyword-face)
-       (2 font-lock-variable-name-face nil t))
+       (2 'clojure-variable-definition-face nil t))
       ;; Type definition
       (,(concat "(\\(?:clojure.core/\\)?\\("
                 (regexp-opt '("defstruct" "deftype" "defprotocol"
@@ -779,7 +806,19 @@ any number of matches of `clojure--sym-forbidden-rest-chars'."))
                 "\\(?:#?^\\(?:{[^}]*}\\|\\sw+\\)[ \r\n\t]*\\)*"
                 "\\(\\sw+\\)?")
        (1 font-lock-keyword-face)
-       (2 font-lock-type-face nil t))
+       (2 'clojure-type-definition-face nil t))
+      ;; Definition with a keyword in the name e.g. spec (s/def :foobar ...)
+      (,(concat "(\\(?:" clojure--sym-regexp "/\\)?"
+                "\\(def[^ \r\n\t]*\\)"
+                ;; Function declarations
+                "\\>"
+                ;; Any whitespace
+                "[ \r\n\t]*"
+                ;; Possibly type or metadata
+                "\\(?:#?^\\(?:{[^}]*}\\|\\sw+\\)[ \r\n\t]*\\)*"
+                (concat "\\(" clojure--keyword-regexp "\\)?"))
+       (1 font-lock-keyword-face)
+       (2 'clojure-keyword-definition-face nil t))
       ;; Function definition (anything that starts with def and is not
       ;; listed above)
       (,(concat "(\\(?:" clojure--sym-regexp "/\\)?"
@@ -792,7 +831,7 @@ any number of matches of `clojure--sym-forbidden-rest-chars'."))
                 "\\(?:#?^\\(?:{[^}]*}\\|\\sw+\\)[ \r\n\t]*\\)*"
                 (concat "\\(" clojure--sym-regexp "\\)?"))
        (1 font-lock-keyword-face)
-       (2 font-lock-function-name-face nil t))
+       (2 'clojure-function-definition-face nil t))
       ;; (fn name? args ...)
       (,(concat "(\\(?:clojure.core/\\)?\\(fn\\)[ \t]+"
                 ;; Possibly type
@@ -800,7 +839,7 @@ any number of matches of `clojure--sym-forbidden-rest-chars'."))
                 ;; Possibly name
                 "\\(\\sw+\\)?" )
        (1 font-lock-keyword-face)
-       (2 font-lock-function-name-face nil t))
+       (2 'clojure-function-definition-face nil t))
       ;; lambda arguments - %, %&, %1, %2, etc
       ("\\<%[&1-9]?" (0 font-lock-variable-name-face))
       ;; Special forms
@@ -870,7 +909,7 @@ any number of matches of `clojure--sym-forbidden-rest-chars'."))
                 "\\(?:\\^?\\(?:{[^}]+}\\|:[^ \r\n\t]+[ \r\n\t]\\)[ \r\n\t]*\\)*"
                 ;; namespace
                 "\\(" clojure--sym-regexp "\\)")
-       (1 font-lock-type-face))
+       (1 'clojure-namespace-definition-face nil t))
 
       ;; TODO dedupe the code for matching of keywords, type-hints and unmatched symbols
 
@@ -916,7 +955,7 @@ any number of matches of `clojure--sym-forbidden-rest-chars'."))
        (1 'font-lock-constant-face prepend))
       ;; Highlight [[var]] comments
       (,(rx "[[" (group-n 1 (optional "#'")
-                         (+ (or (syntax symbol) (syntax word)))) "]]")
+                          (+ (or (syntax symbol) (syntax word)))) "]]")
        (1 'font-lock-constant-face prepend))
       ;; Highlight escaped characters in strings.
       (clojure-font-lock-escaped-chars 0 'bold prepend)

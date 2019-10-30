@@ -141,61 +141,61 @@ DESCRIPTION is the description of the spec."
 
   (when-fontifying-it "should handle namespace declarations"
     ("(ns .validns)"
-     (5 12 font-lock-type-face))
+     (5 12 clojure-namespace-definition-face))
 
     ("(ns =validns)"
-     (5 12 font-lock-type-face))
+     (5 12 clojure-namespace-definition-face))
 
     ("(ns .ValidNs=<>?+|?*.)"
-     (5 21 font-lock-type-face))
+     (5 21 clojure-namespace-definition-face))
 
     ("(ns ValidNs<>?+|?*.b*ar.ba*z)"
-     (5 28 font-lock-type-face))
+     (5 28 clojure-namespace-definition-face))
 
     ("(ns other.valid.ns)"
-     (5 18 font-lock-type-face))
+     (5 18 clojure-namespace-definition-face))
 
     ("(ns oneword)"
-     (5 11 font-lock-type-face))
+     (5 11 clojure-namespace-definition-face))
 
     ("(ns foo.bar)"
-     (5 11 font-lock-type-face))
+     (5 11 clojure-namespace-definition-face))
 
     ("(ns Foo.bar)"
-     (5 11 font-lock-type-face)
-     (5 11 font-lock-type-face)
-     (5 11 font-lock-type-face))
+     (5 11 clojure-namespace-definition-face)
+     (5 11 clojure-namespace-definition-face)
+     (5 11 clojure-namespace-definition-face))
 
     ("(ns Foo-bar)"
-     (5 11 font-lock-type-face)
-     (5 11 font-lock-type-face))
+     (5 11 clojure-namespace-definition-face)
+     (5 11 clojure-namespace-definition-face))
 
     ("(ns foo-Bar)"
-     (5 11 font-lock-type-face))
+     (5 11 clojure-namespace-definition-face))
 
     ("(ns one.X)"
-     (5 9 font-lock-type-face))
+     (5 9 clojure-namespace-definition-face))
 
     ("(ns ^:md ns-name)"
-     (10 16 font-lock-type-face))
+     (10 16 clojure-namespace-definition-face))
 
     ("(ns ^:md \n  ns-name)"
-     (13 19 font-lock-type-face))
+     (13 19 clojure-namespace-definition-face))
 
     ("(ns ^:md1 ^:md2 ns-name)"
-     (17 23 font-lock-type-face))
+     (17 23 clojure-namespace-definition-face))
 
     ("(ns ^:md1 ^{:md2 true} ns-name)"
-     (24 30 font-lock-type-face))
+     (24 30 clojure-namespace-definition-face))
 
     ("(ns ^{:md2 true} ^:md1 ns-name)"
-     (24 30 font-lock-type-face))
+     (24 30 clojure-namespace-definition-face))
 
     ("(ns ^:md1 ^{:md2 true} \n  ns-name)"
-     (27 33 font-lock-type-face))
+     (27 33 clojure-namespace-definition-face))
 
     ("(ns ^{:md2 true} ^:md1 \n  ns-name)"
-     (27 33 font-lock-type-face)))
+     (27 33 clojure-namespace-definition-face)))
 
   (when-fontifying-it "should handle one word"
     (" oneword"
@@ -723,24 +723,24 @@ DESCRIPTION is the description of the spec."
      (2 4 font-lock-type-face)
      (5 5 nil)
      (6 18 font-lock-keyword-face)
-     (23 25 font-lock-function-name-face))
+     (23 25 clojure-function-definition-face))
 
     ("(clo/defbar foo nil)"
      (2 4 font-lock-type-face)
      (5 5 nil)
      (6 11 font-lock-keyword-face)
-     (13 15 font-lock-function-name-face))
+     (13 15 clojure-function-definition-face))
 
     ("(s/def ::keyword)"
      (2 2 font-lock-type-face)
      (3 3 nil)
      (4 6 font-lock-keyword-face)
-     (8 16 clojure-keyword-face)))
+     (8 16 clojure-keyword-definition-face)))
 
   (when-fontifying-it "should handle variables defined with def"
     ("(def foo 10)"
      (2 4 font-lock-keyword-face)
-     (6 8 font-lock-variable-name-face)))
+     (6 8 clojure-variable-definition-face)))
 
   (when-fontifying-it "should handle variables definitions of type string"
     ("(def foo \"hello\")"
@@ -776,35 +776,35 @@ DESCRIPTION is the description of the spec."
   (when-fontifying-it "should handle deftype"
     ("(deftype Foo)"
      (2 8 font-lock-keyword-face)
-     (10 12 font-lock-type-face)))
+     (10 12 clojure-type-definition-face)))
 
   (when-fontifying-it "should handle defn"
     ("(defn foo [x] x)"
      (2 5 font-lock-keyword-face)
-     (7 9 font-lock-function-name-face)))
+     (7 9 clojure-function-definition-face)))
 
   (when-fontifying-it "should handle a custom def with special chars 1"
     ("(defn* foo [x] x)"
      (2 6 font-lock-keyword-face)
-     (8 10 font-lock-function-name-face)))
+     (8 10 clojure-function-definition-face)))
 
   (when-fontifying-it "should handle a custom def with special chars 2"
     ("(defsomething! foo [x] x)"
      (2 14 font-lock-keyword-face)
-     (16 18 font-lock-function-name-face)))
+     (16 18 clojure-function-definition-face)))
 
   (when-fontifying-it "should handle a custom def with special chars 3"
     ("(def-something foo [x] x)"
      (2 14 font-lock-keyword-face))
 
     ("(def-something foo [x] x)"
-     (16 18 font-lock-function-name-face)))
+     (16 18 clojure-function-definition-face)))
 
   (when-fontifying-it "should handle fn"
     ;; try to byte-recompile the clojure-mode.el when the face of 'fn' is 't'
     ("(fn foo [x] x)"
      (2 3 font-lock-keyword-face)
-     ( 5 7 font-lock-function-name-face)))
+     ( 5 7 clojure-function-definition-face)))
 
   (when-fontifying-it "should handle lambda-params"
     ("#(+ % %2 %3 %&)"
