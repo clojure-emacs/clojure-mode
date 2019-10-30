@@ -794,10 +794,10 @@ any number of matches of `clojure--sym-forbidden-rest-chars'.")
                 "\\(\\sw+\\)?")
        (1 font-lock-keyword-face)
        (2 'clojure-variable-definition-face nil t))
-      ;; Type definition
+      ;; Core type definition
       (,(concat "(\\(?:clojure.core/\\)?\\("
                 (regexp-opt '("defstruct" "deftype" "defprotocol"
-                              "defrecord"))
+                              "defrecord" "definterface"))
                 ;; type declarations
                 "\\)\\>"
                 ;; Any whitespace

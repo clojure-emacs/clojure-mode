@@ -778,6 +778,11 @@ DESCRIPTION is the description of the spec."
      (2 8 font-lock-keyword-face)
      (10 12 clojure-type-definition-face)))
 
+  (when-fontifying-it "should handle definterface"
+    ("(definterface FooBar)"
+     (2 13 font-lock-keyword-face)
+     (15 20 clojure-type-definition-face)))
+
   (when-fontifying-it "should handle defn"
     ("(defn foo [x] x)"
      (2 5 font-lock-keyword-face)

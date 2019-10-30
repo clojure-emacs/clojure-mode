@@ -10,6 +10,7 @@
 
 * [#520](https://github.com/clojure-emacs/clojure-mode/issues/508): Fix allow `clojure-align-cond-forms` to recognize qualified forms.
 * Enhance add arity refactoring to support a defn inside a reader conditional.
+* Add `definterface` to the list of font locks with type face like `defrecord` et al.
 
 ### Changes
 
