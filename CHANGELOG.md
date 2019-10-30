@@ -5,6 +5,7 @@
 ### New features
 
 * Add custom faces for definitions. This feature makes it possible to use a different face when introducing names. The customizable faces are `clojure-function-definition-face`, `clojure-variable-definition-face`, `clojure-type-definition-face`, `clojure-keyword-definition-face` and `clojure-namespace-definition-face`. The new faces have the same default face as before that they inherit.
+- Add support for Schema `defschema` as a type face.
 
 ### Bugs fixed
 

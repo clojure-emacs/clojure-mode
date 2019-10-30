@@ -805,6 +805,13 @@ DESCRIPTION is the description of the spec."
     ("(def-something foo [x] x)"
      (16 18 clojure-function-definition-face)))
 
+  (when-fontifying-it "should handle a known non-core def with type behavior"
+    ("(s/defschema FooBar)"
+     (2 2 font-lock-type-face)
+     (3 3 nil)
+     (4 12 font-lock-keyword-face)
+     (14 19 clojure-type-definition-face)))
+
   (when-fontifying-it "should handle fn"
     ;; try to byte-recompile the clojure-mode.el when the face of 'fn' is 't'
     ("(fn foo [x] x)"
