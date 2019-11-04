@@ -807,7 +807,10 @@ any number of matches of `clojure--sym-forbidden-rest-chars'.")
                 "\\(\\sw+\\)?")
        (1 font-lock-keyword-face)
        (2 'clojure-type-definition-face nil t))
-      ;; Known other type definition e.g. Schema (s/defschema FooBar ...)
+      ;; Known other type definition
+      ;; - Schema (s/defschema FooBar ...) -> clojure-type-definition-face
+      ;; - spec (s/def :foobar ...) -> clojure-keyword-definition-face
+      ;; May have keyword as the name like
       (,(concat "(\\(?:" clojure--sym-regexp "/\\)?\\("
                 (regexp-opt '("defschema"))
                 ;; Function declarations
@@ -819,11 +822,10 @@ any number of matches of `clojure--sym-forbidden-rest-chars'.")
                 (concat "\\(" clojure--sym-regexp "\\)?"))
        (1 font-lock-keyword-face)
        (2 'clojure-type-definition-face nil t))
-      ;; Definition with a keyword in the name e.g. spec (s/def :foobar ...)
-      (,(concat "(\\(?:" clojure--sym-regexp "/\\)?"
-                "\\(def[^ \r\n\t]*\\)"
+      (,(concat "(\\(?:" clojure--sym-regexp "/\\)?\\("
+                (regexp-opt '("def"))
                 ;; Function declarations
-                "\\>"
+                "\\)\\>"
                 ;; Any whitespace
                 "[ \r\n\t]*"
                 ;; Possibly type or metadata
