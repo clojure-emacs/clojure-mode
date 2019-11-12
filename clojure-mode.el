@@ -333,6 +333,7 @@ Out-of-the box `clojure-mode' understands lein, boot, gradle,
     (modify-syntax-entry ?@ "'" table)
     (modify-syntax-entry ?? "_ p" table) ; ? is a prefix outside symbols
     (modify-syntax-entry ?# "_ p" table) ; # is allowed inside keywords (#399)
+    (modify-syntax-entry ?' "_ p" table) ; ' is allowed anywhere but the start of symbols
 
     ;; Others
     (modify-syntax-entry ?\; "<" table) ; comment start
@@ -772,10 +773,10 @@ Called by `imenu--generic-function'."
         (goto-char start)))))
 
 (eval-and-compile
-  (defconst clojure--sym-forbidden-rest-chars "][\";\'@\\^`~\(\)\{\}\\,\s\t\n\r"
+  (defconst clojure--sym-forbidden-rest-chars "][\";@\\^`~\(\)\{\}\\,\s\t\n\r"
     "A list of chars that a Clojure symbol cannot contain.
 See definition of 'macros': URL `http://git.io/vRGLD'.")
-  (defconst clojure--sym-forbidden-1st-chars (concat clojure--sym-forbidden-rest-chars "0-9:")
+  (defconst clojure--sym-forbidden-1st-chars (concat clojure--sym-forbidden-rest-chars "0-9:'")
     "A list of chars that a Clojure symbol cannot start with.
 See the for-loop: URL `http://git.io/vRGTj' lines: URL
 `http://git.io/vRGIh', URL `http://git.io/vRGLE' and value
