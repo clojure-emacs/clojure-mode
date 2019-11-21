@@ -823,7 +823,7 @@ any number of matches of `clojure--sym-forbidden-rest-chars'.")
        (1 font-lock-keyword-face)
        (2 'clojure-type-definition-face nil t))
       (,(concat "(\\(?:" clojure--sym-regexp "/\\)?\\("
-                (regexp-opt '("def"))
+                (regexp-opt '("def" "reg-event-db" "reg-event-fx" "reg-sub" "reg-fx" "reg-cofx"))
                 ;; Function declarations
                 "\\)\\>"
                 ;; Any whitespace
