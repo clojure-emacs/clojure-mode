@@ -302,19 +302,45 @@ Out-of-the box `clojure-mode' understands lein, boot, gradle,
   "Keymap for Clojure mode.")
 
 (defvar clojure-mode-syntax-table
-  (let ((table (copy-syntax-table emacs-lisp-mode-syntax-table)))
-    (modify-syntax-entry ?\{ "(}" table)
-    (modify-syntax-entry ?\} "){" table)
+  (let ((table (make-syntax-table)))
+    ;; Initialize ASCII charset as symbol syntax
+    (modify-syntax-entry '(0 . 127) "_" table)
+
+    ;; Word syntax
+    (modify-syntax-entry '(?0 . ?9) "w" table)
+    (modify-syntax-entry '(?a . ?z) "w" table)
+    (modify-syntax-entry '(?A . ?Z) "w" table)
+
+    ;; Whitespace
+    (modify-syntax-entry ?\s " " table)
+    (modify-syntax-entry ?\xa0 " " table) ; non-breaking space
+    (modify-syntax-entry ?\t " " table)
+    (modify-syntax-entry ?\f " " table)
+
+    ;; Delimiters
+    (modify-syntax-entry ?\( "()" table)
+    (modify-syntax-entry ?\) ")(" table)
     (modify-syntax-entry ?\[ "(]" table)
     (modify-syntax-entry ?\] ")[" table)
-    (modify-syntax-entry ?? "_ p" table) ; ? is a prefix outside symbols
-    (modify-syntax-entry ?# "_ p" table) ; # is allowed inside keywords (#399)
+    (modify-syntax-entry ?\{ "(}" table)
+    (modify-syntax-entry ?\} "){" table)
+
+    ;; Prefix chars
+    (modify-syntax-entry ?` "'" table)
     (modify-syntax-entry ?~ "'" table)
     (modify-syntax-entry ?^ "'" table)
     (modify-syntax-entry ?@ "'" table)
+    (modify-syntax-entry ?? "_ p" table) ; ? is a prefix outside symbols
+    (modify-syntax-entry ?# "_ p" table) ; # is allowed inside keywords (#399)
+
+    ;; Others
+    (modify-syntax-entry ?\; "<" table) ; comment start
+    (modify-syntax-entry ?\n ">" table) ; comment end
+    (modify-syntax-entry ?\" "\"" table) ; string
+    (modify-syntax-entry ?\\ "\\" table) ; escape
+
     table)
-  "Syntax table for Clojure mode.
-Inherits from `emacs-lisp-mode-syntax-table'.")
+  "Syntax table for Clojure mode.")
 
 (defconst clojure--prettify-symbols-alist
   '(("fn"  . ?λ)))
