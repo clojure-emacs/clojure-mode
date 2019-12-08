@@ -316,6 +316,7 @@ Out-of-the box `clojure-mode' understands lein, boot, gradle,
     (modify-syntax-entry ?\xa0 " " table) ; non-breaking space
     (modify-syntax-entry ?\t " " table)
     (modify-syntax-entry ?\f " " table)
+    (modify-syntax-entry ?, " " table)
 
     ;; Delimiters
     (modify-syntax-entry ?\( "()" table)
