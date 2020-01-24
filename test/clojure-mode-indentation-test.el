@@ -659,6 +659,13 @@ x
     "#?@(:clj  [2]
     :cljs [2])")
 
+  (it "should handle improperly indented content"
+    (let ((content "(let [a-long-name 10\nb 20])")
+          (aligned-content "(let [a-long-name 10\n      b           20])"))
+      (with-clojure-buffer content
+        (call-interactively #'clojure-align)
+        (expect (buffer-string) :to-equal aligned-content))))
+
   (it "should not align reader conditionals by default"
     (let ((content "#?(:clj 2\n   :cljs 2)"))
       (with-clojure-buffer content
