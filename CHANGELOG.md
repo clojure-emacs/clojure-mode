@@ -2,8 +2,14 @@
 
 ## master (unreleased)
 
+### New features
+
+* [#556](https://github.com/clojure-emacs/clojure-mode/issues/556): `clojure-rename-ns-alias` picks up existing aliases for minibuffer completion.
+
 ### Bugs fixed
 
+* [#556](https://github.com/clojure-emacs/clojure-mode/issues/556): Fix renaming of ns aliases containing regex characters.
+* [#555](https://github.com/clojure-emacs/clojure-mode/issues/555): Fix ns detection for ns forms with complex metadata.
 * [#550](https://github.com/clojure-emacs/clojure-mode/issues/550): Fix `outline-regexp` so `outline-insert-heading` behaves correctly.
 * [#551](https://github.com/clojure-emacs/clojure-mode/issues/551): Indent `clojure-align` region before aligning.
 * [#520](https://github.com/clojure-emacs/clojure-mode/issues/508): Fix allow `clojure-align-cond-forms` to recognize qualified forms.
