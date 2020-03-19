@@ -57,47 +57,57 @@
                            (clojure-expected-ns))
                          clj-file-ns))))))
 
-(describe "clojure-namespace-name-regex"
-  (it "should match common namespace declarations"
-    (let ((ns "(ns foo)"))
-      (expect (string-match clojure-namespace-name-regex ns))
-      (match-string 4 ns))
-    (let ((ns "(ns
-  foo)"))
-      (expect (string-match clojure-namespace-name-regex ns))
-      (expect (match-string 4 ns) :to-equal "foo"))
-    (let ((ns "(ns foo.baz)"))
-      (expect (string-match clojure-namespace-name-regex ns))
-      (expect (match-string 4 ns) :to-equal "foo.baz"))
-    (let ((ns "(ns ^:bar foo)"))
-      (expect (string-match clojure-namespace-name-regex ns))
-      (expect (match-string 4 ns) :to-equal "foo"))
-    (let ((ns "(ns ^:bar ^:baz foo)"))
-      (expect (string-match clojure-namespace-name-regex ns))
-      (expect (match-string 4 ns) :to-equal "foo"))
-    (let ((ns "(ns ^{:bar true} foo)"))
-      (expect (string-match clojure-namespace-name-regex ns))
-      (expect (match-string 4 ns) :to-equal "foo"))
-    (let ((ns "(ns #^{:bar true} foo)"))
-      (expect (string-match clojure-namespace-name-regex ns))
-      (expect (match-string 4 ns) :to-equal "foo"))
-  ;; TODO
-  ;; (let ((ns "(ns #^{:fail {}} foo)"))
-  ;;   (should (string-match clojure-namespace-name-regex ns))
-  ;;   (match-string 4 ns))
-  ;; (let ((ns "(ns ^{:fail2 {}} foo.baz)"))
-  ;;   (should (string-match clojure-namespace-name-regex ns))
-  ;;   (should (equal "foo.baz" (match-string 4 ns))))
-    (let ((ns "(ns ^{} foo)"))
-      (expect (string-match clojure-namespace-name-regex ns))
-      (expect (match-string 4 ns) :to-equal "foo"))
-    (let ((ns "(ns ^{:skip-wiki true}
-    aleph.netty"))
-      (expect (string-match clojure-namespace-name-regex ns))
-      (expect (match-string 4 ns) :to-equal "aleph.netty"))
-    (let ((ns "(ns foo+)"))
-      (expect (string-match clojure-namespace-name-regex ns))
-      (expect (match-string 4 ns) :to-equal "foo+"))))
+(describe "clojure-find-ns"
+  (it "should find common namespace declarations"
+    (with-clojure-buffer "(ns foo)"
+      (expect (clojure-find-ns) :to-equal "foo"))
+    (with-clojure-buffer "(ns
+    foo)"
+      (expect (clojure-find-ns) :to-equal "foo"))
+    (with-clojure-buffer "(ns foo.baz)"
+      (expect (clojure-find-ns) :to-equal "foo.baz"))
+    (with-clojure-buffer "(ns ^:bar foo)"
+      (expect (clojure-find-ns) :to-equal "foo"))
+    (with-clojure-buffer "(ns ^:bar ^:baz foo)"
+      (expect (clojure-find-ns) :to-equal "foo")))
+  (it "should find namespace declarations with nested metadata and docstrings"
+    (with-clojure-buffer "(ns ^{:bar true} foo)"
+      (expect (clojure-find-ns) :to-equal "foo"))
+    (with-clojure-buffer "(ns #^{:bar true} foo)"
+      (expect (clojure-find-ns) :to-equal "foo"))
+    (with-clojure-buffer "(ns #^{:fail {}} foo)"
+      (expect (clojure-find-ns) :to-equal "foo"))
+    (with-clojure-buffer "(ns ^{:fail2 {}} foo.baz)"
+      (expect (clojure-find-ns) :to-equal "foo.baz"))
+    (with-clojure-buffer "(ns ^{} foo)"
+      (expect (clojure-find-ns) :to-equal "foo"))
+    (with-clojure-buffer "(ns ^{:skip-wiki true}
+      aleph.netty"
+      (expect (clojure-find-ns) :to-equal "aleph.netty"))
+    (with-clojure-buffer "(ns ^{:foo {:bar :baz} :fake (ns in.meta)} foo
+  \"docstring
+(ns misleading)\")"
+      (expect (clojure-find-ns) :to-equal "foo")))
+  (it "should support non-alphanumeric characters"
+    (with-clojure-buffer "(ns foo+)"
+      (expect (clojure-find-ns) :to-equal "foo+"))
+    (with-clojure-buffer "(ns bar**baz$-_quux)"
+      (expect (clojure-find-ns) :to-equal "bar**baz$-_quux")))
+  (it "should support in-ns forms"
+    (with-clojure-buffer "(in-ns 'bar.baz)"
+      (expect (clojure-find-ns) :to-equal "bar.baz")))
+  (it "should take the closest ns before point"
+    (with-clojure-buffer " (ns foo1)
+
+(ns foo2)"
+      (expect (clojure-find-ns) :to-equal "foo2"))
+    (with-clojure-buffer " (in-ns foo1)
+(ns 'foo2)
+(in-ns 'foo3)
+|
+(ns foo4)"
+      (re-search-backward "|")
+      (expect (clojure-find-ns) :to-equal "foo3"))))
 
 (describe "clojure-sort-ns"
   (it "should sort requires in a basic ns"
