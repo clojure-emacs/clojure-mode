@@ -1888,6 +1888,11 @@ content) are considered part of the preceding sexp."
       (zero-or-one (any ":'")) ;; (in-ns 'foo) or (ns+ :user)
       (group (one-or-more (not (any "()\"" whitespace))) symbol-end)))
 
+(make-obsolete-variable 'clojure-namespace-name-regex 'clojure-namespace-regexp "5.12.0")
+
+(defconst clojure-namespace-regexp
+  (rx line-start "(" (? "clojure.core/") (or "in-ns" "ns" "ns+")))
+
 (defcustom clojure-cache-ns nil
   "Whether to cache the results of `clojure-find-ns'.
 
@@ -1911,9 +1916,16 @@ DIRECTION is `forward' or `backward'."
                 #'search-forward-regexp
               #'search-backward-regexp)))
     (while (and (not candidate)
-                (funcall fn clojure-namespace-name-regex nil t))
-      (unless (or (clojure--in-string-p) (clojure--in-comment-p))
-        (setq candidate (match-string-no-properties 4))))
+                (funcall fn clojure-namespace-regexp nil t))
+      (let ((end (match-end 0)))
+        (save-excursion
+          (save-match-data
+            (goto-char end)
+            (clojure-forward-logical-sexp)
+            (when (and (looking-back clojure--sym-regexp end 'greedy)
+                       (not (clojure--in-string-p))
+                       (not (clojure--in-comment-p)))
+              (setq candidate (match-string-no-properties 0)))))))
     candidate))
 
 (defun clojure-find-ns ()
