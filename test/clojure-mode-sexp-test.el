@@ -1,6 +1,6 @@
 ;;; clojure-mode-sexp-test.el --- Clojure Mode: sexp tests  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2015-2019 Artur Malabarba <artur@endlessparentheses.com>
+;; Copyright (C) 2015-2020 Artur Malabarba <artur@endlessparentheses.com>
 
 ;; This file is not part of GNU Emacs.
 
