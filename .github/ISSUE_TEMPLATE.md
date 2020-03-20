@@ -15,7 +15,7 @@ a problem will expedite its solution.*
 
 ## Environment & Version information
 
-### clojure-mode version information
+### clojure-mode version
 
 *Include here the version string displayed by `M-x
 clojure-mode-display-version`. Here's an example:*
