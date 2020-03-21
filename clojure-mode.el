@@ -1922,7 +1922,8 @@ DIRECTION is `forward' or `backward'."
           (save-match-data
             (goto-char end)
             (clojure-forward-logical-sexp)
-            (when (and (looking-back clojure--sym-regexp end 'greedy)
+            (clojure-backward-logical-sexp)
+            (when (and (looking-at clojure--sym-regexp)
                        (not (clojure--in-string-p))
                        (not (clojure--in-comment-p)))
               (setq candidate (match-string-no-properties 0)))))))
