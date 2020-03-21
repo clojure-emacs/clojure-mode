@@ -92,7 +92,9 @@
     (with-clojure-buffer "(ns foo+)"
       (expect (clojure-find-ns) :to-equal "foo+"))
     (with-clojure-buffer "(ns bar**baz$-_quux)"
-      (expect (clojure-find-ns) :to-equal "bar**baz$-_quux")))
+      (expect (clojure-find-ns) :to-equal "bar**baz$-_quux"))
+    (with-clojure-buffer "(ns aoc-2019.puzzles.day14)"
+      (expect (clojure-find-ns) :to-equal "aoc-2019.puzzles.day14")))
   (it "should support in-ns forms"
     (with-clojure-buffer "(in-ns 'bar.baz)"
       (expect (clojure-find-ns) :to-equal "bar.baz")))

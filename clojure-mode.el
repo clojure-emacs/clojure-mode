@@ -1923,10 +1923,8 @@ DIRECTION is `forward' or `backward'."
           (save-match-data
             (goto-char end)
             (clojure-forward-logical-sexp)
-            (when (and (looking-back clojure--sym-regexp end 'greedy)
-                       (not (clojure--in-string-p))
-                       (not (clojure--in-comment-p)))
-              (setq candidate (match-string-no-properties 0)))))))
+            (unless (or (clojure--in-string-p) (clojure--in-comment-p))
+              (setq candidate (thing-at-point 'symbol)))))))
     candidate))
 
 (defun clojure-find-ns ()
