@@ -1268,15 +1268,16 @@ When called from lisp code align everything between BEG and END."
         (save-excursion
           (while (search-forward-regexp "^ *\n" sexp-end 'noerror)
             (cl-incf count)))
+        ;; Pre-indent the region to avoid aligning to improperly indented
+        ;; contents (#551). Also fixes #360.
+        (indent-region (point) sexp-end)
         (dotimes (_ count)
           (align-region (point) sexp-end nil
                         `((clojure-align (regexp . clojure--search-whitespace-after-next-sexp)
                                          (group . 1)
                                          (separate . ,clojure-align-separator)
                                          (repeat . t)))
-                        nil))
-        ;; Reindent after aligning because of #360.
-        (indent-region (point) sexp-end)))))
+                        nil))))))
 
 ;;; Indentation
 (defun clojure-indent-region (beg end)
