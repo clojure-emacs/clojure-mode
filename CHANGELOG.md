@@ -4,6 +4,7 @@
 
 ### Bugs fixed
 
+* [#550](https://github.com/clojure-emacs/clojure-mode/issues/550): Fix `outline-regexp` so `outline-insert-heading` behaves correctly.
 * [#551](https://github.com/clojure-emacs/clojure-mode/issues/551): Indent `clojure-align` region before aligning.
 * [#520](https://github.com/clojure-emacs/clojure-mode/issues/508): Fix allow `clojure-align-cond-forms` to recognize qualified forms.
 * Enhance add arity refactoring to support a `defn` inside a reader conditional.
