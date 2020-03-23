@@ -34,6 +34,7 @@
 
 (defmacro with-clojure-buffer (text &rest body)
   "Create a temporary buffer, insert TEXT, switch to clojure-mode and evaluate BODY."
+  (declare (indent 1))
   `(with-temp-buffer
      (erase-buffer)
      (insert ,text)
@@ -49,6 +50,7 @@ AFTER.
 BODY should contain the refactoring that transforms BEFORE into AFTER.
 
 DESCRIPTION is the description of the spec."
+  (declare (indent 1))
   `(it ,description
      (with-clojure-buffer ,before
        ,@body
