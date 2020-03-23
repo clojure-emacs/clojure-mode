@@ -2702,7 +2702,7 @@ lists up."
 (defun clojure--rename-ns-alias-internal (current-alias new-alias)
   "Rename a namespace alias CURRENT-ALIAS to NEW-ALIAS."
   (clojure--find-ns-in-direction 'backward)
-  (let ((rgx (concat ":as +" (regexp-quote current-alias)))
+  (let ((rgx (concat ":as +" (regexp-quote current-alias) "\\_>"))
         (bound (save-excursion (forward-list 1) (point))))
     (when (search-forward-regexp rgx bound t)
       (replace-match (concat ":as " new-alias))
@@ -2767,7 +2767,7 @@ With a numeric prefix argument the let is introduced N lists up."
     (let* ((current-alias (completing-read "Current alias: "
                                            (clojure-collect-ns-aliases
                                             (thing-at-point 'list))))
-           (rgx (concat ":as +" current-alias))
+           (rgx (concat ":as +" (regexp-quote current-alias) "\\_>"))
            (bound (save-excursion (forward-list 1) (point))))
       (if (save-excursion (search-forward-regexp rgx bound t))
           (let ((new-alias (read-from-minibuffer "New alias: ")))
