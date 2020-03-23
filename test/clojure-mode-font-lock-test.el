@@ -77,6 +77,7 @@ TESTS are lists of the form (content (start end expected-face)*).  For each test
 check that each `expected-face` is found in `content` between `start` and `end`.
 
 DESCRIPTION is the description of the spec."
+  (declare (indent 1))
   `(it ,description
      (dolist (test (quote ,tests))
        (apply #'expect-faces-at test))))
@@ -797,8 +798,8 @@ DESCRIPTION is the description of the spec."
     ("(def foo \"usage\" \"hello\"   )"
      (18 24 font-lock-string-face))
 
-     ("(def foo \"usage\" \n  \"hello\")"
-      (21 27 font-lock-string-face))
+    ("(def foo \"usage\" \n  \"hello\")"
+     (21 27 font-lock-string-face))
 
     ("(def foo \n  \"usage\" \"hello\")"
      (13 19 font-lock-doc-face))
@@ -864,8 +865,8 @@ DESCRIPTION is the description of the spec."
 
   (when-fontifying-it "should handle keyword-meta"
     ("^:meta-data"
-      (1 1 nil)
-      (2 11 clojure-keyword-face)))
+     (1 1 nil)
+     (2 11 clojure-keyword-face)))
 
   (when-fontifying-it "should handle a keyword with allowed characters"
     (":aaa#bbb"
