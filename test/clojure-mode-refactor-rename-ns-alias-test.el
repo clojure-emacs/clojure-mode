@@ -43,6 +43,23 @@
      (+ (foo/a 1) (b 2))"
 
     (clojure--rename-ns-alias-internal "lib" "foo"))
+  (when-refactoring-it "should handle multiple aliases with common prefixes"
+
+    "(ns foo
+  (:require [clojure.string :as string]
+            [clojure.spec.alpha :as s]
+            [clojure.java.shell :as shell]))
+
+(s/def ::abc string/blank?)
+"
+    "(ns foo
+  (:require [clojure.string :as string]
+            [clojure.spec.alpha :as spec]
+            [clojure.java.shell :as shell]))
+
+(spec/def ::abc string/blank?)
+"
+    (clojure--rename-ns-alias-internal "s" "spec"))
 
   (when-refactoring-it "should handle ns declarations with missing as"
     "(ns cljr.core
