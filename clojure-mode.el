@@ -1007,7 +1007,7 @@ highlighted region)."
                  (not (and (string= "def" firstsym)
                            (save-excursion
                              (goto-char startpos)
-                             (goto-char (+ startpos (length (sexp-at-point)) 2))
+                             (goto-char (end-of-thing 'sexp))
                              (looking-at "[ \r\n\t]*\)")))))
             font-lock-doc-face
           font-lock-string-face))
