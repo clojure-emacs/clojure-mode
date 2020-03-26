@@ -417,6 +417,16 @@ DESCRIPTION is the description of the spec."
      (9 10 nil)
      (12 29 nil)))
 
+  (when-fontifying-it "should handle quotes in tail of symbols and keywords"
+    ("'quot'ed'/sy'm'bol''"
+     (2 9 font-lock-type-face)
+     (10 20 nil))
+
+    (":qu'ote'd''/key'word'"
+     (2 11 font-lock-type-face)
+     (12 12 default)
+     (13 21 clojure-keyword-face)))
+
   (when-fontifying-it "should handle very complex stuff"
     ("  ve/yCom|pLex.stu-ff"
      (3 4 font-lock-type-face)
