@@ -884,14 +884,29 @@ DESCRIPTION is the description of the spec."
     ("\\a"
      (1 2 clojure-character-face))
 
+    ("\\A"
+     (1 2 clojure-character-face))
+
     ("\\newline"
      (1 8 clojure-character-face))
+
+    ("\\abc"
+     (1 4 nil))
+
+    ("\\newlin"
+     (1 7 nil))
+
+    ("\\newlinex"
+     (1 9 nil))
 
     ("\\1"
      (1 2 clojure-character-face))
 
     ("\\u0032"
      (1 6 clojure-character-face))
+
+    ("\\o127"
+     (1 4 clojure-character-face))
 
     ("\\+"
      (1 2 clojure-character-face))
@@ -903,6 +918,12 @@ DESCRIPTION is the description of the spec."
      (1 2 clojure-character-face))
 
     ("\\;"
+     (1 2 clojure-character-face))
+
+    ("\\Ω"
+     (1 2 clojure-character-face))
+
+    ("\\ク"
      (1 2 clojure-character-face)))
 
   (when-fontifying-it "should handle referred vars"
