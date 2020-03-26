@@ -868,7 +868,13 @@ any number of matches of `clojure--sym-forbidden-rest-chars'."))
          "\\>")
        0 font-lock-constant-face)
       ;; Character literals - \1, \a, \newline, \u0000
-      ("\\\\\\([[:punct:]]\\|[a-z0-9]+\\>\\)" 0 'clojure-character-face)
+      (,(rx "\\" (or any
+                    "newline" "space" "tab" "formfeed" "backspace"
+                    "return"
+                    (: "u" (= 4 (char "0-9a-fA-F")))
+                    (: "o" (repeat 1 3 (char "0-7"))))
+            word-boundary)
+       0 'clojure-character-face)
 
       ;; namespace definitions: (ns foo.bar)
       (,(concat "(\\<ns\\>[ \r\n\t]*"
