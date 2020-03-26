@@ -18,6 +18,7 @@
 
 ### Changes
 
+* Inline definition of `clojure-mode-syntax-table` and support `'` quotes in symbols and commas as whitespace.
 * Enhance add arity refactoring to support a `defn` inside a reader conditional.
 * Enhance add arity refactoring to support new forms: `letfn`, `fn`, `defmacro`, `defmethod`, `defprotocol`, `reify` and `proxy`.
 
