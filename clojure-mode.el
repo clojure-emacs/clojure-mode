@@ -1952,7 +1952,7 @@ DIRECTION is `forward' or `backward'."
             (goto-char end)
             (clojure-forward-logical-sexp)
             (unless (or (clojure--in-string-p) (clojure--in-comment-p))
-              (setq candidate (thing-at-point 'symbol)))))))
+              (setq candidate (string-remove-prefix "'" (thing-at-point 'symbol))))))))
     candidate))
 
 (defun clojure-find-ns ()
