@@ -806,7 +806,12 @@ DESCRIPTION is the description of the spec."
 
     ("(def foo \n  \"usage\" \n  \"hello\")"
      (13 19 font-lock-doc-face)
-     (24 30 font-lock-string-face)))
+     (24 30 font-lock-string-face))
+
+    ("(def test-string\n  \"this\\n\n  is\n  my\n  string\")"
+     (20 24 font-lock-string-face)
+     (25 26 (bold font-lock-string-face))
+     (27 46 font-lock-string-face)))
 
   (when-fontifying-it "should handle deftype"
     ("(deftype Foo)"

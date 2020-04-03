@@ -8,6 +8,7 @@
 
 ### Bugs fixed
 
+* [#544](https://github.com/clojure-emacs/clojure-mode/issues/544): Fix docstring detection when string contains backslash.
 * [#547](https://github.com/clojure-emacs/clojure-mode/issues/547): Fix font-lock regex for character literals for uppercase chars and other symbols.
 * [#556](https://github.com/clojure-emacs/clojure-mode/issues/556): Fix renaming of ns aliases containing regex characters.
 * [#555](https://github.com/clojure-emacs/clojure-mode/issues/555): Fix ns detection for ns forms with complex metadata.
