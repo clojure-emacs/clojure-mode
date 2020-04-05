@@ -109,7 +109,11 @@
 |
 (ns foo4)"
       (re-search-backward "|")
-      (expect (clojure-find-ns) :to-equal "foo3"))))
+      (expect (clojure-find-ns) :to-equal "foo3"))
+    (with-clojure-buffer "(ns foo)
+(ns-unmap *ns* 'map)
+(ns.misleading 1 2 3)"
+      (expect (clojure-find-ns) :to-equal "foo"))))
 
 (describe "clojure-sort-ns"
   (it "should sort requires in a basic ns"
