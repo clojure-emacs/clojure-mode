@@ -514,6 +514,7 @@ replacement for `cljr-expand-let`."
     (let ((keymap (or keymap clojure-mode-map)))
       (define-key keymap "{" #'paredit-open-curly)
       (define-key keymap "}" #'paredit-close-curly))
+    (make-local-variable 'paredit-space-for-delimiter-predicates)
     (add-to-list 'paredit-space-for-delimiter-predicates
                  #'clojure-space-for-delimiter-p)
     (add-to-list 'paredit-space-for-delimiter-predicates
