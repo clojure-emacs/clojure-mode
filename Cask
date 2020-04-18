@@ -5,4 +5,5 @@
 
 (development
  (depends-on "s")
- (depends-on "buttercup"))
+ (depends-on "buttercup")
+ (depends-on "paredit"))
