@@ -456,11 +456,12 @@ The command will prompt you to select one of the available sections."
   "Prevent paredit from inserting useless spaces.
 See `paredit-space-for-delimiter-predicates' for the meaning of
 ENDP and DELIM."
-  (or endp
-      (not (memq delim '(?\" ?\{ ?\()))  ;;  always insert for [
-      (not (or (derived-mode-p 'clojure-mode) ;; FIXME why does this check exist
-               (derived-mode-p 'cider-repl-mode)))
-      (not (looking-back "\\_<#\\??")))) ;; auto-gensym syntax foo#
+  (and (not (eq (char-before) ?'))
+       (or endp
+           (not (memq delim '(?\" ?\{ ?\()))      ;;  always insert for [
+           (not (or (derived-mode-p 'clojure-mode) ;; FIXME why does this check exist
+                    (derived-mode-p 'cider-repl-mode)))
+           (not (looking-back "\\_<#\\??"))))) ;; auto-gensym syntax foo#
 
 
 (defconst clojure--collection-tag-regexp "#\\(::[a-zA-Z0-9._-]*\\|:?\\([a-zA-Z0-9._-]+/\\)?[a-zA-Z0-9._-]+\\)"
