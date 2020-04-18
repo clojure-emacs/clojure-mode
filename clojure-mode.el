@@ -452,16 +452,13 @@ The command will prompt you to select one of the available sections."
   (interactive)
   (browse-url clojure-style-guide-url))
 
-(defun clojure-space-for-delimiter-p (endp delim)
+(defun clojure-space-for-delimiter-p (endp _delim)
   "Prevent paredit from inserting useless spaces.
 See `paredit-space-for-delimiter-predicates' for the meaning of
 ENDP and DELIM."
-  (and (not (eq (char-before) ?'))
-       (or endp
-           (not (memq delim '(?\" ?\{ ?\()))      ;;  always insert for [
-           (not (or (derived-mode-p 'clojure-mode) ;; FIXME why does this check exist
-                    (derived-mode-p 'cider-repl-mode)))
-           (not (looking-back "\\_<#\\??"))))) ;; auto-gensym syntax foo#
+  (and (not endp)
+       ;; don't insert after ' or # that is part of auto-gensym or reader conditional syntax
+       (not (looking-back "\\_<\\(?:'+\\|#\\??\\)" (point-at-bol)))))
 
 
 (defconst clojure--collection-tag-regexp "#\\(::[a-zA-Z0-9._-]*\\|:?\\([a-zA-Z0-9._-]+/\\)?[a-zA-Z0-9._-]+\\)"
