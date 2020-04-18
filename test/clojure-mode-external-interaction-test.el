@@ -23,7 +23,7 @@
 (require 'buttercup)
 (require 'paredit)
 
-(describe "Interactions with Paredit"
+(describe "Interactions with Paredit:"
   ;; reuse existing when-refactoring-it macro
   (describe "it should insert a space"
     (when-refactoring-it "before lists"
@@ -56,7 +56,7 @@
       "foo' ()"
       (paredit-mode)
       (paredit-open-round)))
-  (describe "should not insert a space"
+  (describe "it should not insert a space"
     (when-refactoring-it "for anonymous fn syntax"
       "foo #"
       "foo #()"
@@ -81,7 +81,33 @@
       "foo #?"
       "foo #?()"
       (paredit-mode)
-      (paredit-open-round))))
+      (paredit-open-round)))
+  (describe "reader tags"
+    (when-refactoring-it "should insert a space before strings"
+      "#uuid"
+      "#uuid \"\""
+      (paredit-mode)
+      (paredit-doublequote))
+    (when-refactoring-it "should not insert a space before namespaced maps"
+      "#::my-ns"
+      "#::my-ns{}"
+      (paredit-mode)
+      (paredit-open-curly))
+    (when-refactoring-it "should not insert a space before namespaced maps 2"
+      "#::"
+      "#::{}"
+      (paredit-mode)
+      (paredit-open-curly))
+    (when-refactoring-it "should not insert a space before namespaced maps 3"
+      "#:fully.qualified.ns123.-$#.%*+!"
+      "#:fully.qualified.ns123.-$#.%*+!{}"
+      (paredit-mode)
+      (paredit-open-curly))
+    (when-refactoring-it "should not insert a space before tagged vectors"
+      "#tag123.-$#.%*+!"
+      "#tag123.-$#.%*+![]"
+      (paredit-mode)
+      (paredit-open-square))))
 
 
 (describe "Interactions with delete-trailing-whitespace"
