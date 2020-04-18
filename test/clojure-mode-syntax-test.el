@@ -75,15 +75,6 @@
         (backward-prefix-chars)
         (expect (bobp))))))
 
-(describe "clojure-no-space-after-tag"
-  (it "should allow allow collection tags"
-    (dolist (tag '("#::ns" "#:ns" "#ns" "#:f.q/ns" "#f.q/ns" "#::"))
-      (with-clojure-buffer tag
-        (expect (clojure-no-space-after-tag nil ?{) :to-be nil)))
-    (dolist (tag '("#$:" "#/f" "#:/f" "#::f.q/ns" "::ns" "::" "#f:ns"))
-      (with-clojure-buffer tag
-        (expect (clojure-no-space-after-tag nil ?{))))))
-
 (describe "fill-paragraph"
 
   (it "should work within comments"
