@@ -84,6 +84,24 @@
       (paredit-open-round))))
 
 
+(describe "Interactions with delete-trailing-whitespace"
+  (when-refactoring-it "should not delete trailing commas"
+    "(def foo
+    \\\"foo\\\": 1,
+    \\\"bar\\\": 2}
+
+(-> m
+  (assoc ,,,
+    :foo 123))"
+    "(def foo
+    \\\"foo\\\": 1,
+    \\\"bar\\\": 2}
+
+(-> m
+  (assoc ,,,
+    :foo 123))"
+    (delete-trailing-whitespace)))
+
 (provide 'clojure-mode-external-interaction-test)
 
 
