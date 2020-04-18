@@ -444,7 +444,7 @@ The command will prompt you to select one of the available sections."
   (interactive)
   (browse-url clojure-grimoire-url))
 
-(defconst clojure-style-guide-url "https://github.com/bbatsov/clojure-style-guide"
+(defconst clojure-style-guide-url "https://guide.clojure.style"
   "The URL of the Clojure style guide.")
 
 (defun clojure-view-style-guide ()
