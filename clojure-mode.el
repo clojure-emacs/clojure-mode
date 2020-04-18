@@ -457,20 +457,11 @@ The command will prompt you to select one of the available sections."
 See `paredit-space-for-delimiter-predicates' for the meaning of
 ENDP and DELIM."
   (or endp
-      (not (memq delim '(?\" ?{ ?\( )))
-      (not (or (derived-mode-p 'clojure-mode)
+      (not (memq delim '(?\" ?\{ ?\()))  ;;  always insert for [
+      (not (or (derived-mode-p 'clojure-mode) ;; FIXME why does this check exist
                (derived-mode-p 'cider-repl-mode)))
-      (save-excursion
-        (backward-char)
-        (cond ((eq (char-after) ?#)
-               (and (not (bobp))
-                    (or (char-equal ?w (char-syntax (char-before)))
-                        (char-equal ?_ (char-syntax (char-before))))))
-              ((and (eq delim ?\()
-                    (eq (char-after) ??)
-                    (eq (char-before) ?#))
-               nil)
-              (t)))))
+      (not (looking-back "\\_<#\\??")))) ;; auto-gensym syntax foo#
+
 
 (defconst clojure--collection-tag-regexp "#\\(::[a-zA-Z0-9._-]*\\|:?\\([a-zA-Z0-9._-]+/\\)?[a-zA-Z0-9._-]+\\)"
   "Collection reader macro tag regexp.
