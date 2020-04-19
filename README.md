@@ -238,6 +238,19 @@ This can also be done automatically (as part of indentation) by
 turning on `clojure-align-forms-automatically`. This way it will
 happen whenever you select some code and hit `TAB`.
 
+### Comments
+
+`clojure-mode` differentiates between comments like `;`, `;;`, etc.
+By default `clojure-mode` treats `;` as inline comments and *always* indents those.
+You can change this behaviour like this:
+
+```emacs-lisp
+(add-hook 'clojure-mode-hook (lambda () (setq-local comment-column 0)))
+```
+
+You might also want to change `comment-add` to 0 in that way, so that Emacs comment
+functions (e.g. `comment-region`) would use `;` by default instead of `;;`.
+
 ## Refactoring support
 
 The available refactorings were originally created and maintained by the
