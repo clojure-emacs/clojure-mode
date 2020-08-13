@@ -27,6 +27,12 @@ jobs:
         entrypoint: bash
     <<: *default-steps
 
+  test-emacs-27:
+    docker:
+      - image: silex/emacs:27-dev
+        entrypoint: bash
+    <<: *default-steps
+
   test-emacs-master:
     docker:
       - image: silex/emacs:master-dev
@@ -39,4 +45,5 @@ workflows:
     jobs:
       - test-emacs-25
       - test-emacs-26
+      - test-emacs-27
       - test-emacs-master
