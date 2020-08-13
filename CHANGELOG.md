@@ -2,6 +2,8 @@
 
 ## master (unreleased)
 
+## 5.12.0 (2020-08-13)
+
 ### New features
 
 * [#556](https://github.com/clojure-emacs/clojure-mode/issues/556): `clojure-rename-ns-alias` picks up existing aliases for minibuffer completion.
