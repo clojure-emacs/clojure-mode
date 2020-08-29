@@ -1758,6 +1758,7 @@ Return nil if not inside a project."
 
 ;; project.el integration
 (cl-defmethod project-roots ((project (head clojure)))
+  "Return the list of directory roots of the PROJECT."
   (list (cdr project)))
 
 (defun clojure-project-relative-path (path)
