@@ -2,6 +2,8 @@
 
 ## master (unreleased)
 
+* [#571](https://github.com/clojure-emacs/clojure-mode/issues/571): Ensure clojure-current-project is appended to project-find-functions.
+
 ## 5.12.0 (2020-08-13)
 
 ### New features

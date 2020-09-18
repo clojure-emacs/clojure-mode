@@ -560,7 +560,7 @@ replacement for `cljr-expand-let`."
                                            'font-lock-doc-face)))
                                 'do-indent)))
   ;; integration with project.el
-  (add-hook 'project-find-functions #'clojure-current-project))
+  (add-hook 'project-find-functions #'clojure-current-project t))
 
 (defcustom clojure-verify-major-mode t
   "If non-nil, warn when activating the wrong `major-mode'."
