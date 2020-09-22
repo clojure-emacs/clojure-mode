@@ -8,6 +8,7 @@
 ;;       Phil Hagelberg <technomancy@gmail.com>
 ;;       Bozhidar Batsov <bozhidar@batsov.com>
 ;;       Artur Malabarba <bruce.connor.am@gmail.com>
+;; Maintainer: Bozhidar Batsov <bozhidar@batsov.com>
 ;; URL: http://github.com/clojure-emacs/clojure-mode
 ;; Keywords: languages clojure clojurescript lisp
 ;; Version: 5.13.0-snapshot
