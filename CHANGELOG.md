@@ -2,6 +2,10 @@
 
 ## master (unreleased)
 
+### Changes
+
+* [#571](https://github.com/clojure-emacs/clojure-mode/issues/571): Remove `project.el` integration.
+
 ## 5.12.0 (2020-08-13)
 
 ### New features
