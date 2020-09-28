@@ -1470,7 +1470,7 @@ the indentation.
 
 The property value can be
 
-- `defun', meaning indent `defun'-style;
+- `:defn', meaning indent `defn'-style;
 - an integer N, meaning indent the first N arguments specially
   like ordinary function arguments and then indent any further
   arguments like a body;
