@@ -5,6 +5,7 @@
 ### Changes
 
 * [#571](https://github.com/clojure-emacs/clojure-mode/issues/571): Remove `project.el` integration.
+* [#574](https://github.com/clojure-emacs/clojure-mode/issues/574): Remove `clojure-view-grimoire` command.
 
 ## 5.12.0 (2020-08-13)
 
