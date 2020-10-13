@@ -469,7 +469,7 @@ val} as of Clojure 1.9.")
 (declare-function paredit-close-curly "ext:paredit" t t)
 (declare-function paredit-convolute-sexp "ext:paredit")
 
-(defun clojure--replace-let-bindings-and-indent ()
+(defun clojure--replace-let-bindings-and-indent (&rest _)
   "Replace let bindings and indent."
   (save-excursion
     (backward-sexp)
