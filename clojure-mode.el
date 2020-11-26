@@ -1827,7 +1827,6 @@ content) are considered part of the preceding sexp."
   (if (clojure-find-ns)
       (save-excursion
         (goto-char (match-beginning 0))
-        (redisplay)
         (let ((beg (point))
               (ns))
           (forward-sexp 1)
@@ -1842,10 +1841,7 @@ content) are considered part of the preceding sexp."
           (goto-char beg)
           (if (looking-at (regexp-quote ns))
               (message "ns form is already sorted")
-            (sleep-for 0.1)
-            (redisplay)
-            (message "ns form has been sorted")
-            (sleep-for 0.1))))
+            (message "ns form has been sorted"))))
     (user-error "Can't find ns form")))
 
 (defconst clojure-namespace-name-regex
