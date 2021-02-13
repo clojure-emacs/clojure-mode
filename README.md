@@ -186,6 +186,12 @@ A more compact way to do the same thing is:
   (->> 1))
 ```
 
+To indent something like a definition (`defn`) you can do something like:
+
+``` el
+(put-clojure-indent '>defn :defn)
+```
+
 You can also specify different indentation settings for symbols
 prefixed with some ns (or ns alias):
 
