@@ -30,6 +30,7 @@ specific `clojure-mode` release.**
     - [Indentation of function forms](#indentation-of-function-forms)
     - [Indentation of macro forms](#indentation-of-macro-forms)
   - [Vertical alignment](#vertical-alignment)
+  - [Font-locking](#font-locking)
 - [Refactoring support](#refactoring-support)
   - [Threading macros](#threading-macros-related-features)
   - [Cycling things](#cycling-things)
@@ -257,6 +258,64 @@ Leads to the following:
 This can also be done automatically (as part of indentation) by
 turning on `clojure-align-forms-automatically`. This way it will
 happen whenever you select some code and hit `TAB`.
+
+### Font-locking
+
+`clojure-mode` features static font-locking (syntax highlighting) that you can extend yourself
+if needed. As typical for Emacs, it's based on regular expressions. You can find
+the default font-locking rules in `clojure-font-lock-keywords`. Here's how you can add font-locking for built-in Clojure functions and vars:
+
+``` el
+(defvar clojure-built-in-vars
+  '(;; clojure.core
+    "accessor" "aclone"
+    "agent" "agent-errors" "aget" "alength" "alias"
+    "all-ns" "alter" "alter-meta!" "alter-var-root" "amap"
+    ;; omitted for brevity
+    ))
+
+(defvar clojure-built-in-dynamic-vars
+  '(;; clojure.test
+    "*initial-report-counters*" "*load-tests*" "*report-counters*"
+    "*stack-trace-depth*" "*test-out*" "*testing-contexts*" "*testing-vars*"
+    ;; clojure.xml
+    "*current*" "*sb*" "*stack*" "*state*"
+    ))
+
+(font-lock-add-keywords 'clojure-mode
+                        `((,(concat "(\\(?:\.*/\\)?"
+                                    (regexp-opt clojure-built-in-vars t)
+                                    "\\>")
+                           1 font-lock-builtin-face)))
+
+(font-lock-add-keywords 'clojure-mode
+                        `((,(concat "\\<"
+                                    (regexp-opt clojure-built-in-dynamic-vars t)
+                                    "\\>")
+                           0 font-lock-builtin-face)))
+
+```
+
+**Note:** The package `clojure-mode-extra-font-locking` provides such additional
+font-locking for Clojure built-ins.
+
+As you might imagine one problem with this font-locking approach is that because
+it's based on regular expressions you'll get some false positives here and there
+(there's no namespace information, and no way for `clojure-mode` to know what
+var a symbol resolves to). That's why `clojure-mode`'s font-locking defaults are
+conservative and minimalistic.
+
+Precise font-locking requires additional data that can obtained from a running
+REPL (that's how CIDER's [dynamic font-locking](https://docs.cider.mx/cider/config/syntax_highlighting.html) works) or from static code analysis.
+
+When it comes to definitions, `clojure-mode` employs a simple heuristic and will treat every symbol named `def`something as a built-in keyword. Still, you'll need to
+teach `clojure-mode` manually how to handle the docstrings of non built-in definition forms. Here's an example:
+
+``` emacs-lisp
+(put '>defn 'clojure-doc-string-elt 2)
+```
+
+**Note:** The `clojure-doc-string-elt` attribute is processed by the function `clojure-font-lock-syntactic-face-function`.
 
 ## Refactoring support
 
