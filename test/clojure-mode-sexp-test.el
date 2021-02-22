@@ -22,19 +22,6 @@
 (require 'clojure-mode)
 (require 'buttercup)
 
-(defmacro with-clojure-buffer-point (text &rest body)
-  "Run BODY in a temporary clojure buffer with TEXT.
-
-TEXT is a string with a | indicating where point is.  The | will be erased
-and point left there."
-  (declare (indent 2))
-  `(progn
-     (with-clojure-buffer ,text
-       (goto-char (point-min))
-       (re-search-forward "|")
-       (delete-char -1)
-       ,@body)))
-
 (describe "clojure-top-level-form-p"
   (it "should return true when passed the correct form"
     (with-clojure-buffer-point
