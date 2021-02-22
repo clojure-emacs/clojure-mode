@@ -2,6 +2,10 @@
 
 ## master (unreleased)
 
+### New features
+
+* [#567](https://github.com/clojure-emacs/clojure-mode/issues/567): Add new commands `clojure-toggle-ignore`, `clojure-toggle-ignore-surrounding-form`, and `clojure-toggle-defun` for inserting/deleting #_ ignore forms.
+
 ### Changes
 
 * [#571](https://github.com/clojure-emacs/clojure-mode/issues/571): Remove `project.el` integration.
