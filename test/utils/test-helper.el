@@ -82,6 +82,7 @@ AFTER is the expected buffer string after refactoring, where a pipe (|)
 represents the expected position of point.
 
 DESCRIPTION is a string with the description of the spec."
+  (declare (indent 1))
   `(it ,description
      (let* ((after ,after)
             (expected-cursor-pos (1+ (s-index-of "|" after)))
