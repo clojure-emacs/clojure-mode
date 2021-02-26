@@ -246,6 +246,10 @@ Out-of-the box `clojure-mode' understands lein, boot, gradle,
     (define-key map (kbd "s b") #'clojure-let-backward-slurp-sexp)
     (define-key map (kbd "C-a") #'clojure-add-arity)
     (define-key map (kbd "a") #'clojure-add-arity)
+    (define-key map (kbd "-") #'clojure-toggle-ignore)
+    (define-key map (kbd "C--") #'clojure-toggle-ignore)
+    (define-key map (kbd "_") #'clojure-toggle-ignore-surrounding-form)
+    (define-key map (kbd "C-_") #'clojure-toggle-ignore-surrounding-form)
     map)
   "Keymap for Clojure refactoring commands.")
 (fset 'clojure-refactor-map clojure-refactor-map)
@@ -264,6 +268,8 @@ Out-of-the box `clojure-mode' understands lein, boot, gradle,
         ["Cycle if, if-not" clojure-cycle-if]
         ["Cycle when, when-not" clojure-cycle-when]
         ["Cycle not" clojure-cycle-not]
+        ["Toggle #_ ignore form" clojure-toggle-ignore]
+        ["Toggle #_ ignore of surrounding form" clojure-toggle-ignore-surrounding-form]
         ["Add function arity" clojure-add-arity]
         ("ns forms"
          ["Insert ns form at the top" clojure-insert-ns-form]
