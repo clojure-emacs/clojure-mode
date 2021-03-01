@@ -223,7 +223,7 @@ For instructions on how to write these specifications, see
 [this document](https://docs.cider.mx/cider/indent_spec.html).
 The only difference is that you're allowed to use lists instead of vectors.
 
-The indentation of special arguments is controlled by
+The indentation of [special arguments](https://docs.cider.mx/cider/indent_spec.html#special-arguments) is controlled by
 `clojure-special-arg-indent-factor`, which by default indents special arguments
 a further `lisp-body-indent` when compared to ordinary arguments.
 
@@ -233,6 +233,9 @@ An example of the default formatting is:
 (defrecord MyRecord
     [my-field])
 ```
+
+Note that `defrecord` has two special arguments, followed by the form's body -
+namely the record's name and its fields vector.
 
 Setting `clojure-special-arg-indent-factor` to 1, results in:
 
