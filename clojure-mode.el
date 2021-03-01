@@ -1142,6 +1142,13 @@ will align the values like this:
   :safe #'listp
   :type '(repeat string))
 
+(defcustom clojure-special-arg-indent-factor
+  2
+  "Factor of the 'lisp-body-indent' used to indent special arguments."
+  :package-version '(clojure-mode . "5.13")
+  :type 'integer
+  :safe 'integerp)
+
 (defvar clojure--beginning-of-reader-conditional-regexp
   "#\\?@(\\|#\\?("
   "Regexp denoting the beginning of a reader conditional.")
@@ -1509,7 +1516,8 @@ This function also returns nil meaning don't specify the indentation."
              (clojure--normal-indent last-sexp 'always-align))
             ;; Special arg. Rigidly indent with a large indentation.
             (t
-             (+ (* 2 lisp-body-indent) containing-form-column)))))
+             (+ (* clojure-special-arg-indent-factor lisp-body-indent)
+                containing-form-column)))))
         (`:defn
          (+ lisp-body-indent containing-form-column))
         ((pred functionp)

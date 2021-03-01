@@ -233,6 +233,51 @@ DESCRIPTION is a string with the description of the spec."
       (ala/bala top
         |one)"))
 
+  (describe "specify an indentation for symbol"
+    (put-clojure-indent 'cala 1)
+
+    (when-indenting-with-point-it "should handle a symbol with ns"
+      "
+      (cala top
+      |one)"
+      "
+      (cala top
+        |one)")
+    (when-indenting-with-point-it "should handle special arguments"
+      "
+      (cala
+       |top
+        one)"
+      "
+      (cala
+          |top
+        one)"))
+  (describe "should respect special argument indentation"
+    :var (clojure-special-arg-indent-factor)
+    (before-each
+     (setq clojure-special-arg-indent-factor 1))
+    (after-each
+     (setq clojure-special-arg-indent-factor 2))
+
+    (put-clojure-indent 'cala 1)
+
+    (when-indenting-with-point-it "should handle a symbol with ns"
+      "
+      (cala top
+      |one)"
+      "
+      (cala top
+        |one)")
+    (when-indenting-with-point-it "should handle special arguments"
+      "
+      (cala
+       |top
+        one)"
+      "
+      (cala
+        |top
+        one)"))
+
   (describe "we can pass a lambda to explicitly set the column"
     (put-clojure-indent 'arsymbol (lambda (indent-point state) 0))
 

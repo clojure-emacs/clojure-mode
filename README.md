@@ -223,6 +223,24 @@ For instructions on how to write these specifications, see
 [this document](https://docs.cider.mx/cider/indent_spec.html).
 The only difference is that you're allowed to use lists instead of vectors.
 
+The indentation of special arguments is controlled by
+`clojure-special-arg-indent-factor`, which by default indents special arguments
+a further `lisp-body-indent` when compared to ordinary arguments.
+
+An example of the default formatting is:
+
+```clojure
+(defrecord MyRecord
+    [my-field])
+```
+
+Setting `clojure-special-arg-indent-factor` to 1, results in:
+
+```clojure
+(defrecord MyRecord
+  [my-field])
+```
+
 ### Indentation of Comments
 
 `clojure-mode` differentiates between comments like `;`, `;;`, etc.
