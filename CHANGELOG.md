@@ -5,7 +5,7 @@
 ### New features
 
 * [#567](https://github.com/clojure-emacs/clojure-mode/issues/567): Add new commands `clojure-toggle-ignore`, `clojure-toggle-ignore-surrounding-form`, and `clojure-toggle-defun` for inserting/deleting #_ ignore forms.
-* [#582](https://github.com/clojure-emacs/clojure-mode/pull/582): Add 'clojure-special-arg-indent-factor' to control special argument indentation.
+* [#582](https://github.com/clojure-emacs/clojure-mode/pull/582): Add `clojure-special-arg-indent-factor` to control special argument indentation.
 
 ### Changes
 
