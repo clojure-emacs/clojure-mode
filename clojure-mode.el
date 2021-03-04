@@ -1495,7 +1495,7 @@ This function also returns nil meaning don't specify the indentation."
           (last-sexp calculate-lisp-indent-last-sexp)
           (containing-form-column (1- (current-column))))
       (pcase method
-        ((or (pred integerp) `(,method))
+        ((or (and (pred integerp) method) `(,method))
          (let ((pos -1))
            (condition-case nil
                (while (and (<= (point) indent-point)
