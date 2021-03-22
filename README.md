@@ -29,6 +29,7 @@ specific `clojure-mode` release.**
   - [Indentation options](#indentation-options)
     - [Indentation of function forms](#indentation-of-function-forms)
     - [Indentation of macro forms](#indentation-of-macro-forms)
+  - [Indentation of comments](#indentation-of-comments)
   - [Vertical alignment](#vertical-alignment)
   - [Font-locking](#font-locking)
 - [Refactoring support](#refactoring-support)
