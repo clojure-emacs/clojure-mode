@@ -258,6 +258,8 @@ You can change this behaviour like this:
 You might also want to change `comment-add` to 0 in that way, so that Emacs comment
 functions (e.g. `comment-region`) would use `;` by default instead of `;;`.
 
+**Note:** Check out [this section](https://guide.clojure.style/#comments) of the Clojure style guide to understand better the semantics of the different comment levels and why `clojure-mode` treats them differently by default.
+
 ### Vertical alignment
 
 You can vertically align sexps with `C-c SPC`. For instance, typing
