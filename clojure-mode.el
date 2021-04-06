@@ -2807,7 +2807,7 @@ END marks the end of the fn expression"
   (when-let (beg (clojure-string-start))
     (goto-char beg))
   (if (or (looking-at-p "#(")
-          (forward-char 1)
+          (ignore-errors (forward-char 1))
           (re-search-backward "#(" (save-excursion (beginning-of-defun) (point)) 'noerror))
       (let* ((end (save-excursion (clojure-forward-logical-sexp) (point-marker)))
              (argspec (clojure--gather-shorthand-args))
