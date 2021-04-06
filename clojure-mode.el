@@ -2769,6 +2769,67 @@ With a numeric prefix argument the let is introduced N lists up."
   (interactive)
   (clojure--move-to-let-internal (read-from-minibuffer "Name of bound symbol: ")))
 
+;;; Shorthand fn conversion
+(defun clojure--gather-shorthand-args ()
+  "Return a cons cell (ARITY . VARARG)
+ARITY is number of arguments in the function,
+VARARG is a boolean of whether it takes a variable argument %&."
+  (save-excursion
+    (let ((end (save-excursion (clojure-forward-logical-sexp) (point)))
+          (rgx (rx symbol-start "%" (group (?  (or "&" (+ (in "0-9"))))) symbol-end))
+          (arity 0)
+          (vararg nil))
+      (while (re-search-forward rgx end 'noerror)
+        (when (not (or (clojure--in-comment-p) (clojure--in-string-p)))
+          (let ((s (match-string 1)))
+            (if (string= s "&")
+                (setq vararg t)
+              (setq arity
+                    (max arity
+                         (if (string= s "") 1
+                           (string-to-number s))))))))
+      (cons arity vararg))))
+
+(defun clojure--substitute-shorthand-arg (arg sub end)
+  "ARG is either a number or the symbol '&.
+SUB is a string to substitute with, and
+END marks the end of the fn expression"
+  (save-excursion
+    (let ((rgx (format "\\_<%%%s\\_>" (if (eq arg 1) "1?" arg))))
+      (while (re-search-forward rgx end 'noerror)
+        (when (and (not (clojure--in-comment-p))
+                   (not (clojure--in-string-p)))
+          (replace-match sub))))))
+
+(defun clojure-convert-shorthand-fn ()
+  "Convert a #(...) function into (fn [...] ...), prompting for the argument names."
+  (interactive)
+  (when-let (beg (clojure-string-start))
+    (goto-char beg))
+  (if (or (looking-at-p "#(")
+          (forward-char 1)
+          (re-search-backward "#(" (save-excursion (beginning-of-defun) (point)) 'noerror))
+      (let* ((end (save-excursion (clojure-forward-logical-sexp) (point-marker)))
+             (argspec (clojure--gather-shorthand-args))
+             (arity (car argspec))
+             (vararg (cdr argspec)))
+        (delete-char 1)
+        (save-excursion (forward-sexp 1) (insert ")"))
+        (save-excursion
+          (insert "(fn [] ")
+          (backward-char 2)
+          (mapc (lambda (n)
+                  (let ((name (read-string (format "Name of argument %d: " n))))
+                    (when (/= n 1) (insert " "))
+                    (insert name)
+                    (clojure--substitute-shorthand-arg n name end)))
+                (number-sequence 1 arity))
+          (when vararg
+            (insert " & ")
+            (let ((name (read-string "Name of variadic argument: ")))
+              (insert name)
+              (clojure--substitute-shorthand-arg '& name end)))))
+    (user-error "No #() shorthand at point!")))
 
 ;;; Renaming ns aliases
 
