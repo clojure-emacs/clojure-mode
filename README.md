@@ -22,31 +22,6 @@ older releases (including the current stable release). Please, consult
 the relevant git tag (e.g. 5.1.0) if you need documentation for a
 specific `clojure-mode` release.**
 
-***
-
-- [Installation](#installation)
-- [Bundled major modes](#bundled-major-modes)
-- [Configuration](#configuration)
-  - [Indentation options](#indentation-options)
-    - [Indentation of function forms](#indentation-of-function-forms)
-    - [Indentation of macro forms](#indentation-of-macro-forms)
-  - [Indentation of comments](#indentation-of-comments)
-  - [Vertical alignment](#vertical-alignment)
-  - [Font-locking](#font-locking)
-- [Refactoring support](#refactoring-support)
-  - [Threading macros](#threading-macros-related-features)
-  - [Cycling things](#cycling-things)
-  - [Convert collection](#convert-collection)
-  - [Let expression](#let-expression)
-  - [Rename ns alias](#rename-ns-alias)
-  - [Add arity to a function](#add-arity-to-a-function)
-- [Related packages](#related-packages)
-- [REPL Interaction](#repl-interaction)
-  - [Basic REPL](#basic-repl)
-  - [CIDER](#cider)
-- [Changelog](#changelog)
-- [License](#license)
-
 ## Installation
 
 Available on the major `package.el` community maintained repos -
