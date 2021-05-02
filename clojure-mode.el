@@ -2723,7 +2723,7 @@ The first match-group is the alias."
   (let ((alias (if alias (regexp-quote alias) clojure--sym-regexp)))
     (concat "#::\\(?1:" alias "\\)[ ,\r\n\t]*{"
             "\\|"
-            "\\(?1:" alias "\\)/")))
+            "\\_<\\(?1:" alias "\\)/")))
 
 (defun clojure--rename-ns-alias-usages (current-alias new-alias beg end)
   "Rename all usages of CURRENT-ALIAS in region BEG to END with NEW-ALIAS."
