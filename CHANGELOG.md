@@ -10,6 +10,7 @@
 
 ### Changes
 
+* [#589](https://github.com/clojure-emacs/clojure-mode/issues/589): Improve font-locking performance on strings with escaped characters.
 * [#571](https://github.com/clojure-emacs/clojure-mode/issues/571): Remove `project.el` integration.
 * [#574](https://github.com/clojure-emacs/clojure-mode/issues/574): Remove `clojure-view-grimoire` command.
 * Stop `clojure-sort-ns` from calling `redisplay`.

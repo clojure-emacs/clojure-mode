@@ -1662,17 +1662,11 @@ If REGEX is non-nil, return the position of the # that begins the
 regex at point.  If point is not inside a string or regex, return
 nil."
   (when (nth 3 (syntax-ppss)) ;; Are we really in a string?
-    (save-excursion
-      (save-match-data
-        ;; Find a quote that appears immediately after whitespace,
-        ;; beginning of line, hash, or an open paren, brace, or bracket
-        (re-search-backward "\\(\\s-\\|^\\|#\\|(\\|\\[\\|{\\)\\(\"\\)")
-        (let ((beg (match-beginning 2)))
-          (when beg
-            (if regex
-                (and (char-before beg) (eq ?# (char-before beg)) (1- beg))
-              (when (not (eq ?# (char-before beg)))
-                beg))))))))
+    (let* ((beg (nth 8 (syntax-ppss)))
+           (hash (eq ?# (char-before beg))))
+      (if regex
+          (and hash (1- beg))
+        (and (not hash) beg)))))
 
 (defun clojure-char-at-point ()
   "Return the char at point or nil if at buffer end."
