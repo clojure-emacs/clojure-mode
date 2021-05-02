@@ -401,9 +401,13 @@ form. If called with a prefix argument slurp the previous n forms.
 
 ### Rename ns alias
 
-`clojure-rename-ns-alias`: Rename an alias inside a namespace declaration.
+`clojure-rename-ns-alias`: Rename an alias inside a namespace declaration, 
+and all of its usages in the buffer
 
 <img width="512" src="/doc/clojure-rename-ns-alias.gif">
+
+If there is an active selected region, only rename usages of aliases within the region, 
+without affecting the namespace declaration.  
 
 ### Add arity to a function
 
