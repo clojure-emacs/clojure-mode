@@ -10,11 +10,7 @@
 highlighting), indentation, navigation and refactoring support for the
 [Clojure(Script) programming language](http://clojure.org).
 
-This document assumes you're familiar with Emacs.  More thorough walkthroughs,
-targeting Emacs beginners, are available at
-[clojure-doc.org](http://clojure-doc.org/articles/tutorials/emacs.html) and
-[Clojure for the Brave and the True](http://www.braveclojure.com/basic-emacs/).
-Keep in mind, however, that they might be out-of-date.
+-----------
 
 **This documentation tracks the `master` branch of `clojure-mode`. Some of
 the features and settings discussed here might not be available in
@@ -516,6 +512,14 @@ for Common Lisp.
 similar to SLIME for Common Lisp.
 
 If you're into Clojure and Emacs you should definitely check it out.
+
+## Tutorials
+
+Tutorials,
+targeting Emacs beginners, are available at
+[clojure-doc.org](http://clojure-doc.org/articles/tutorials/emacs.html) and
+[Clojure for the Brave and the True](http://www.braveclojure.com/basic-emacs/).
+Keep in mind, however, that they might be out-of-date.
 
 ## Changelog
 
