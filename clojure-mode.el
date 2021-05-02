@@ -2728,7 +2728,7 @@ The first match-group is the alias."
 (defun clojure--rename-ns-alias-usages (current-alias new-alias beg end)
   "Rename all usages of CURRENT-ALIAS in region BEG to END with NEW-ALIAS."
   (let ((rgx (clojure--alias-usage-regexp current-alias)))
-    (save-excursion
+    (save-mark-and-excursion
       (goto-char end)
       (setq end (point-marker))
       (goto-char beg)
@@ -2772,13 +2772,17 @@ Assume point is at the start of ns form."
 If a region is active, only pick up and rename aliases within the region."
   (interactive)
   (if (use-region-p)
-      (let* ((beg (region-beginning))
-             (end (region-end))
-             (current-alias (completing-read "Current alias: "
-                                             (clojure--collect-ns-aliases
-                                              beg end nil)))
-             (new-alias (read-from-minibuffer (format "Replace %s with: " current-alias))))
-        (clojure--rename-ns-alias-usages current-alias new-alias beg end))
+      (let ((beg (region-beginning))
+            (end (copy-marker (region-end)))
+            current-alias new-alias)
+        ;; while loop for renaming multiple aliases in the region.
+        ;; C-g or leave blank to break out of the loop
+        (while (not (string-empty-p
+                     (setq current-alias
+                           (completing-read "Current alias: "
+                                            (clojure--collect-ns-aliases beg end nil)))))
+          (setq new-alias (read-from-minibuffer (format "Replace %s with: " current-alias)))
+          (clojure--rename-ns-alias-usages current-alias new-alias beg end)))
     (save-excursion
       (clojure--find-ns-in-direction 'backward)
       (let* ((bounds (bounds-of-thing-at-point 'list))
