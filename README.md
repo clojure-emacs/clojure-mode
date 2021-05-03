@@ -409,6 +409,8 @@ and all of its usages in the buffer
 If there is an active selected region, only rename usages of aliases within the region, 
 without affecting the namespace declaration.  
 
+<img width="512" src="/doc/clojure-rename-ns-alias-region.gif">
+
 ### Add arity to a function
 
 `clojure-add-arity`: Add a new arity to an existing single-arity or multi-arity function.
