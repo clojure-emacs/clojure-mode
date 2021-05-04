@@ -8,14 +8,17 @@
 * [#567](https://github.com/clojure-emacs/clojure-mode/issues/567): Add new commands `clojure-toggle-ignore`, `clojure-toggle-ignore-surrounding-form`, and `clojure-toggle-defun` for inserting/deleting #_ ignore forms.
 * [#582](https://github.com/clojure-emacs/clojure-mode/pull/582): Add `clojure-special-arg-indent-factor` to control special argument indentation.
 
+### Bugs fixed
+
+* [#588](https://github.com/clojure-emacs/clojure-mode/pull/588): Fix font-lock for character literals.
+* Stop `clojure-sort-ns` from calling `redisplay`.
+
 ### Changes
 
 * [#589](https://github.com/clojure-emacs/clojure-mode/issues/589): Improve font-locking performance on strings with escaped characters.
 * [#571](https://github.com/clojure-emacs/clojure-mode/issues/571): Remove `project.el` integration.
 * [#574](https://github.com/clojure-emacs/clojure-mode/issues/574): Remove `clojure-view-grimoire` command.
-* Stop `clojure-sort-ns` from calling `redisplay`.
 * [#584](https://github.com/clojure-emacs/clojure-mode/issues/584): Align to recent `pcase` changes on Emacs master.
-* [#588](https://github.com/clojure-emacs/clojure-mode/pull/588): Fix font-lock for character literals.
 
 ## 5.12.0 (2020-08-13)
 
