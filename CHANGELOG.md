@@ -2,6 +2,9 @@
 
 ## master (unreleased)
 
+### Bugs fixed
+* [#593] clojure-find-ns breaks if the ns form is preceded by whitespace
+
 ## 5.13.0 (2021-05-05)
 
 ### New features

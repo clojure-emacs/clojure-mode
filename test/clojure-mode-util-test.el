@@ -61,6 +61,8 @@
   (it "should find common namespace declarations"
     (with-clojure-buffer "(ns foo)"
       (expect (clojure-find-ns) :to-equal "foo"))
+    (with-clojure-buffer " (ns foo)"
+      (expect (clojure-find-ns) :to-equal "foo"))
     (with-clojure-buffer "(ns
     foo)"
       (expect (clojure-find-ns) :to-equal "foo"))
