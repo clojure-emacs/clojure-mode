@@ -2,6 +2,8 @@
 
 ## master (unreleased)
 
+## 5.13.0 (2021-05-05)
+
 ### New features
 
 * [#590](https://github.com/clojure-emacs/clojure-mode/pull/590): Extend `clojure-rename-ns-alias` to work on selected regions.
