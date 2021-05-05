@@ -74,7 +74,7 @@ To see a list of available configuration options do `M-x customize-group RET clo
 ### Indentation options
 
 The default indentation rules in `clojure-mode` are derived from the
-[community Clojure Style Guide](https://github.com/bbatsov/clojure-style-guide).
+[community Clojure Style Guide](https://guide.clojure.style).
 Please, refer to the guide for the general Clojure indentation rules.
 
 #### Indentation of docstrings
@@ -401,13 +401,13 @@ form. If called with a prefix argument slurp the previous n forms.
 
 ### Rename ns alias
 
-`clojure-rename-ns-alias`: Rename an alias inside a namespace declaration, 
+`clojure-rename-ns-alias`: Rename an alias inside a namespace declaration,
 and all of its usages in the buffer
 
 <img width="512" src="/doc/clojure-rename-ns-alias.gif">
 
-If there is an active selected region, only rename usages of aliases within the region, 
-without affecting the namespace declaration.  
+If there is an active selected region, only rename usages of aliases within the region,
+without affecting the namespace declaration.
 
 <img width="512" src="/doc/clojure-rename-ns-alias-region.gif">
 
