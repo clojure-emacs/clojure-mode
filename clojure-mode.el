@@ -196,6 +196,15 @@ Out-of-the box `clojure-mode' understands lein, boot, gradle,
           (and (listp value)
                (cl-every 'stringp value))))
 
+(defcustom clojure-elided-prefixes-ns
+  '()
+  "A list of additional regexp prefixes that are elided when formulating ns."
+  :type '(repeat string)
+  :package-version '(clojure-mode . "5.0.0")
+  :safe (lambda (value)
+          (and (listp value)
+               (cl-every 'stringp value))))
+
 (defcustom clojure-project-root-function #'clojure-project-root-path
   "Function to locate clojure project root directory."
   :type 'function
@@ -1761,7 +1770,10 @@ If PATH is nil, use the path to the file backing the current buffer."
          (sans-file-sep (mapconcat 'identity (cdr (split-string sans-file-type "/")) "."))
          (sans-underscores (replace-regexp-in-string "_" "-" sans-file-sep)))
     ;; Drop prefix from ns for projects with structure src/{clj,cljs,cljc}
-    (replace-regexp-in-string "\\`clj[scx]?\\." "" sans-underscores)))
+    (cl-reduce (lambda (a x)
+                 (replace-regexp-in-string x "" a))
+               (add-to-list 'clojure-elided-prefixes-ns "\\`clj[scx]?\\.")
+               :initial-value sans-underscores)))
 
 (defun clojure-insert-ns-form-at-point ()
   "Insert a namespace form at point."

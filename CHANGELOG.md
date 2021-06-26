@@ -2,6 +2,8 @@
 
 ## master (unreleased)
 
+* Allow additional eliding beyond just `clj[sc]` in `clojure-expected-ns` via new `defcustom` entitled `clojure-elided-prefixes-ns`
+
 ## 5.13.0 (2021-05-05)
 
 ### New features
