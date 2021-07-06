@@ -198,9 +198,9 @@ Out-of-the box `clojure-mode' understands lein, boot, gradle,
 
 (defcustom clojure-directory-prefixes
   '("\\`clj[scx]?\\.")
-  "A list of directory prefixes used by clojure-expected-ns to formulate correct ns."
+  "A list of directory prefixes used by `clojure-expected-ns' to formulate correct ns."
   :type '(repeat string)
-  :package-version '(clojure-mode . "5.0.0")
+  :package-version '(clojure-mode . "5.14.0")
   :safe (lambda (value)
           (and (listp value)
                (cl-every 'stringp value))))
