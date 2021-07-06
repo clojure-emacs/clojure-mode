@@ -1771,7 +1771,7 @@ If PATH is nil, use the path to the file backing the current buffer."
          (sans-underscores (replace-regexp-in-string "_" "-" sans-file-sep)))
     ;; Drop prefix from ns for projects with structure src/{clj,cljs,cljc}
     (cl-reduce (lambda (a x) (replace-regexp-in-string x "" a))
-               'clojure-directory-prefixes
+               clojure-directory-prefixes
                :initial-value sans-underscores)))
 
 (defun clojure-insert-ns-form-at-point ()
