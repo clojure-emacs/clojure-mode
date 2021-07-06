@@ -1554,6 +1554,53 @@ This function also returns nil meaning don't specify the indentation."
   "Instruct `clojure-indent-function' to indent the body of SYM by INDENT."
   (put sym 'clojure-indent-function indent))
 
+(defun clojure--maybe-quoted-symbol-p (x)
+  "Check that X is either a symbol or a quoted symbol like :foo or 'foo."
+  (or (symbolp x)
+      (and (listp x)
+           (= 2 (length x))
+           (eq 'quote (car x))
+           (symbolp (cadr x)))))
+
+(defun clojure--valid-unquoted-indent-spec-p (spec)
+  "Check that the indentation SPEC is valid.
+Validate it with respect to
+https://docs.cider.mx/cider/indent_spec.html e.g. (2 :form
+:form (1)))."
+  (or (integerp spec)
+      (memq spec '(:form :defn))
+      (and (listp spec)
+           (not (null spec))
+           (or (integerp (car spec))
+               (memq (car spec) '(:form :defn)))
+           (seq-every-p 'clojure--valid-unquoted-indent-spec-p (cdr spec)))))
+
+(defun clojure--valid-indent-spec-p (spec)
+  "Check that the indentation SPEC (quoted if a list) is valid.
+Validate it with respect to
+https://docs.cider.mx/cider/indent_spec.html e.g. (2 :form
+:form (1)))."
+  (or (integerp spec)
+      (and (keywordp spec) (memq spec '(:form :defn)))
+      (and (listp spec)
+           (= 2 (length spec))
+           (eq 'quote (car spec))
+           (clojure--valid-unquoted-indent-spec-p (cadr spec)))))
+
+(defun clojure--valid-put-clojure-indent-call-p (exp)
+  "Check that EXP is a valid `put-clojure-indent' expression.
+For example: (put-clojure-indent 'defrecord '(2 :form :form (1))."
+  (unless (and (listp exp)
+               (= 3 (length exp))
+               (eq 'put-clojure-indent (car exp))
+               (clojure--maybe-quoted-symbol-p (cadr exp))
+               (clojure--valid-indent-spec-p (caddr exp)))
+    (error "Unrecognized put-clojure-indent call: %s" exp))
+  t)
+
+(put 'put-clojure-indent 'safe-local-eval-function
+     'clojure--valid-put-clojure-indent-call-p)
+
 (defmacro define-clojure-indent (&rest kvs)
   "Call `put-clojure-indent' on a series, KVS."
   `(progn
