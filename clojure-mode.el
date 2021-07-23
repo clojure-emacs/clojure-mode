@@ -480,7 +480,7 @@ This includes #fully.qualified/my-ns[:kw val] and #::my-ns{:kw
 val} as of Clojure 1.9.")
 
 (make-obsolete-variable 'clojure--collection-tag-regexp nil "5.12.0")
-(make-obsolete #'clojure-no-space-after-tag #'clojure-space-for-delimiter-p "5.12.0")
+(make-obsolete 'clojure-no-space-after-tag 'clojure-space-for-delimiter-p "5.12.0")
 
 (declare-function paredit-open-curly "ext:paredit" t t)
 (declare-function paredit-close-curly "ext:paredit" t t)
