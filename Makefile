@@ -26,7 +26,7 @@ compile: elpa
 	$(CASK) build
 
 clean:
-	rm -f $(OBJS)
+	rm -f $(OBJS) clojure-mode-autoloads.el
 
 test: $(PKGDIR)
 	$(CASK) exec buttercup
