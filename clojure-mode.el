@@ -486,6 +486,16 @@ val} as of Clojure 1.9.")
 (declare-function paredit-close-curly "ext:paredit" t t)
 (declare-function paredit-convolute-sexp "ext:paredit")
 
+(defvar clojure--let-regexp
+  "\(\\(when-let\\|if-let\\|let\\)\\(\\s-*\\|\\[\\)"
+  "Regexp matching let like expressions, i.e. \"let\", \"when-let\", \"if-let\".
+
+The first match-group is the let expression.
+
+The second match-group is the whitespace or the opening square
+bracket if no whitespace between the let expression and the
+bracket.")
+
 (defun clojure--replace-let-bindings-and-indent (&rest _)
   "Replace let bindings and indent."
   (save-excursion
@@ -2541,16 +2551,6 @@ See: https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-cycle-if"
       (insert ")"))))
 
 ;;; let related stuff
-
-(defvar clojure--let-regexp
-  "\(\\(when-let\\|if-let\\|let\\)\\(\\s-*\\|\\[\\)"
-  "Regexp matching let like expressions, i.e. \"let\", \"when-let\", \"if-let\".
-
-The first match-group is the let expression.
-
-The second match-group is the whitespace or the opening square
-bracket if no whitespace between the let expression and the
-bracket.")
 
 (defun clojure--goto-let ()
   "Go to the beginning of the nearest let form."
