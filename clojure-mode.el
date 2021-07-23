@@ -1845,6 +1845,9 @@ If PATH is nil, use the path to the file backing the current buffer."
   (goto-char (point-min))
   (clojure-insert-ns-form-at-point))
 
+(defvar-local clojure-cached-ns nil
+  "A buffer ns cache used to speed up ns-related operations.")
+
 (defun clojure-update-ns ()
   "Update the namespace of the current buffer.
 Useful if a file has been renamed."
@@ -1956,9 +1959,6 @@ the cached value will be updated automatically."
   :type 'boolean
   :safe #'booleanp
   :package-version '(clojure-mode . "5.8.0"))
-
-(defvar-local clojure-cached-ns nil
-  "A buffer ns cache used to speed up ns-related operations.")
 
 (defun clojure--find-ns-in-direction (direction)
   "Return the nearest namespace in a specific DIRECTION.
