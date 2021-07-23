@@ -39,4 +39,4 @@ test-bytecomp: $(SRCS:.el=.elc-test)
 
 %.elc-test: %.el elpa
 	$(CASK) exec $(EMACS) --no-site-file --no-site-lisp --batch \
-		-l test/clojure-mode-bytecomp-warnings.el $
+		-l test/clojure-mode-bytecomp-warnings.el $<
