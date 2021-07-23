@@ -68,6 +68,7 @@
 (require 'cl-lib)
 (require 'imenu)
 (require 'newcomment)
+(require 'thingatpt)
 (require 'align)
 (require 'subr-x)
 (require 'lisp-mnt)
