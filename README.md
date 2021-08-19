@@ -1,8 +1,9 @@
-[![License GPL 3][badge-license]][copying]
+[![circleci][badge-circleci]][circleci]
 [![MELPA][melpa-badge]][melpa-package]
 [![MELPA Stable][melpa-stable-badge]][melpa-stable-package]
-[![circleci][badge-circleci]][circleci]
+[![NonGNU ELPA](https://elpa.nongnu.org/nongnu/clojure-mode.svg)](https://elpa.nongnu.org/nongnu/clojure-mode.html)
 [![Discord](https://img.shields.io/badge/chat-on%20discord-7289da.svg?sanitize=true)](https://discord.com/invite/nFPpynQPME)
+[![License GPL 3][badge-license]][copying]
 
 # Clojure Mode
 
