@@ -3004,7 +3004,9 @@ With universal argument \\[universal-argument], act on the \"top-level\" form."
   (add-to-list 'auto-mode-alist '("\\.cljc\\'" . clojurec-mode))
   (add-to-list 'auto-mode-alist '("\\.cljs\\'" . clojurescript-mode))
   ;; boot build scripts are Clojure source files
-  (add-to-list 'auto-mode-alist '("\\(?:build\\|profile\\)\\.boot\\'" . clojure-mode)))
+  (add-to-list 'auto-mode-alist '("\\(?:build\\|profile\\)\\.boot\\'" . clojure-mode))
+  ;; babashka scripts are Clojure source files
+  (add-to-list 'interpreter-mode-alist '("bb" . clojure-mode)))
 
 (provide 'clojure-mode)
 
