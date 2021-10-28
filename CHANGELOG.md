@@ -5,6 +5,7 @@
 ### New features
 
 * Allow additional directories, beyond the default `clj[sc]`, to be correctly formulated by `clojure-expected-ns` via new `defcustom` entitled `clojure-directory-prefixes`
+* Recognize babashka projects (identified by the presence of `bb.edn`).
 
 ## 5.13.0 (2021-05-05)
 

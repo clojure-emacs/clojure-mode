@@ -187,10 +187,11 @@ For example, \[ is allowed in :db/id[:db.part/user]."
     "build.gradle.kts" ; Gradle
     "deps.edn"         ; Clojure CLI (a.k.a. tools.deps)
     "shadow-cljs.edn"  ; shadow-cljs
+    "bb.edn"           ; babashka
     )
   "A list of files, which identify a Clojure project's root.
 Out-of-the box `clojure-mode' understands lein, boot, gradle,
- shadow-cljs and tools.deps."
+ shadow-cljs, tools.deps and babashka."
   :type '(repeat string)
   :package-version '(clojure-mode . "5.0.0")
   :safe (lambda (value)
