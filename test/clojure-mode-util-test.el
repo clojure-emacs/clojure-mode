@@ -1,6 +1,6 @@
 ;;; clojure-mode-util-test.el --- Clojure Mode: util test suite  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2014-2021 Bozhidar Batsov <bozhidar@batsov.com>
+;; Copyright (C) 2014-2021 Bozhidar Batsov <bozhidar@batsov.dev>
 
 ;; This file is not part of GNU Emacs.
 

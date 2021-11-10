@@ -6,10 +6,10 @@
 ;; Authors: Jeffrey Chu <jochu0@gmail.com>
 ;;       Lennart Staflin <lenst@lysator.liu.se>
 ;;       Phil Hagelberg <technomancy@gmail.com>
-;;       Bozhidar Batsov <bozhidar@batsov.com>
+;;       Bozhidar Batsov <bozhidar@batsov.dev>
 ;;       Artur Malabarba <bruce.connor.am@gmail.com>
 ;;       Magnar Sveen <magnars@gmail.com>
-;; Maintainer: Bozhidar Batsov <bozhidar@batsov.com>
+;; Maintainer: Bozhidar Batsov <bozhidar@batsov.dev>
 ;; URL: http://github.com/clojure-emacs/clojure-mode
 ;; Keywords: languages clojure clojurescript lisp
 ;; Version: 5.13.0

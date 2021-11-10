@@ -1,6 +1,6 @@
 ;;; clojure-mode-safe-eval-test.el --- Clojure Mode: safe eval test suite  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2014-2021 Bozhidar Batsov <bozhidar@batsov.com>
+;; Copyright (C) 2014-2021 Bozhidar Batsov <bozhidar@batsov.dev>
 ;; Copyright (C) 2021 Rob Browning <rlb@defaultvalue.org>
 
 ;; This file is not part of GNU Emacs.
