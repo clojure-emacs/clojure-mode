@@ -73,6 +73,7 @@
 (require 'align)
 (require 'subr-x)
 (require 'lisp-mnt)
+(require 'seq)
 
 (declare-function lisp-fill-paragraph  "lisp-mode" (&optional justify))
 
