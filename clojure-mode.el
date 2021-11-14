@@ -1586,7 +1586,7 @@ https://docs.cider.mx/cider/indent_spec.html e.g. (2 :form
            (not (null spec))
            (or (integerp (car spec))
                (memq (car spec) '(:form :defn)))
-           (seq-every-p 'clojure--valid-unquoted-indent-spec-p (cdr spec)))))
+           (cl-every 'clojure--valid-unquoted-indent-spec-p (cdr spec)))))
 
 (defun clojure--valid-indent-spec-p (spec)
   "Check that the indentation SPEC (quoted if a list) is valid.
