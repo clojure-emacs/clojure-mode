@@ -1,4 +1,4 @@
-;;; clojure-mode-convert-fn-test.el --- Clojure Mode: convert fn syntax -*- lexical-binding: t; -*-
+;;; clojure-mode-promote-fn-literal-test.el --- Clojure Mode: convert fn syntax -*- lexical-binding: t; -*-
 
 ;; This file is not part of GNU Emacs.
 
@@ -17,14 +17,14 @@
 
 ;;; Commentary:
 
-;; Tests for clojure-convert-shorthand-fn
+;; Tests for clojure-promote-fn-literal
 
 ;;; Code:
 
 (require 'clojure-mode)
 (require 'buttercup)
 
-(describe "clojure-convert-shorthand-fn"
+(describe "clojure-promote-fn-literal"
   :var (names)
 
   (before-each
@@ -34,19 +34,19 @@
   (when-refactoring-it "should convert 0-arg fns"
     "#(rand)"
     "(fn [] (rand))"
-    (clojure-convert-shorthand-fn))
+    (clojure-promote-fn-literal))
 
   (when-refactoring-it "should convert 1-arg fns"
     "#(= % 1)"
     "(fn [x] (= x 1))"
     (setq names '("x"))
-    (clojure-convert-shorthand-fn))
+    (clojure-promote-fn-literal))
 
   (when-refactoring-it "should convert 2-arg fns"
-    "#(conj (pop %1) (assoc (peek %1) %2 (* %2 %2)))"
+    "#(conj (pop %) (assoc (peek %1) %2 (* %2 %2)))"
     "(fn [acc x] (conj (pop acc) (assoc (peek acc) x (* x x))))"
     (setq names '("acc" "x"))
-    (clojure-convert-shorthand-fn))
+    (clojure-promote-fn-literal))
 
   (when-refactoring-it "should convert variadic fns"
     ;; from https://hypirion.com/musings/swearjure
@@ -55,7 +55,7 @@
     "(fn [v & vs] (* (`[~@vs] (+))
    ((v (+)) v (- (`[~@vs] (+)) (*)))))"
     (setq names '("v" "vs"))
-    (clojure-convert-shorthand-fn))
+    (clojure-promote-fn-literal))
 
   (when-refactoring-it "should ignore strings and comments"
     "#(format \"%2\" ;; FIXME: %2 is an illegal specifier
@@ -63,10 +63,10 @@
     "(fn [_ _ _ _ _ _ id] (format \"%2\" ;; FIXME: %2 is an illegal specifier
    id)) "
     (setq names '("_" "_" "_" "_" "_" "_" "id"))
-    (clojure-convert-shorthand-fn)))
+    (clojure-promote-fn-literal)))
 
 
 (provide 'clojure-mode-convert-fn-test)
 
 
-;;; clojure-mode-convert-fn-test.el ends here
+;;; clojure-mode-promote-fn-literal-test.el ends here
