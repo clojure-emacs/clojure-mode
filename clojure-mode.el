@@ -263,6 +263,8 @@ The prefixes are used to generate the correct namespace."
     (define-key map (kbd "C--") #'clojure-toggle-ignore)
     (define-key map (kbd "_") #'clojure-toggle-ignore-surrounding-form)
     (define-key map (kbd "C-_") #'clojure-toggle-ignore-surrounding-form)
+    (define-key map (kbd "P") #'clojure-promote-fn-literal)
+    (define-key map (kbd "C-P") #'clojure-promote-fn-literal)
     map)
   "Keymap for Clojure refactoring commands.")
 (fset 'clojure-refactor-map clojure-refactor-map)
