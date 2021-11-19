@@ -286,6 +286,7 @@ The prefixes are used to generate the correct namespace."
         ["Toggle #_ ignore form" clojure-toggle-ignore]
         ["Toggle #_ ignore of surrounding form" clojure-toggle-ignore-surrounding-form]
         ["Add function arity" clojure-add-arity]
+        ["Promote #() fn literal" clojure-promote-fn-literal]
         ("ns forms"
          ["Insert ns form at the top" clojure-insert-ns-form]
          ["Insert ns form here" clojure-insert-ns-form-at-point]
