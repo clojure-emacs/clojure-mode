@@ -530,6 +530,10 @@ Keep in mind, however, that they might be out-of-date.
 
 ## Caveats
 
+`clojure-mode` is a capable tool, but it's certainly not perfect. This section
+lists a couple of general design problems/limitations that might affect your
+experience negatively.
+
 ### General Issues
 
 `clojure-mode` derives a lot of functionality directly from `lisp-mode` (an Emacs major mode for Common Lisp), which
@@ -547,7 +551,7 @@ We should look into ways to optimize the performance of the backtracking indenta
 
 ### Font-locking Implementation
 
-As mentioned [above](https://github.com/clojure-emacs/clojure-mode#font-locking), the font-locking is implemented in terms of regular expressions with makes it both slow and inaccurate.
+As mentioned [above](https://github.com/clojure-emacs/clojure-mode#font-locking), the font-locking is implemented in terms of regular expressions which makes it both slow and inaccurate.
 
 ## Changelog
 
