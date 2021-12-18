@@ -528,6 +528,27 @@ targeting Emacs beginners, are available at
 [Clojure for the Brave and the True](http://www.braveclojure.com/basic-emacs/).
 Keep in mind, however, that they might be out-of-date.
 
+## Caveats
+
+### General Issues
+
+`clojure-mode` derives a lot of functionality directly from `lisp-mode` (an Emacs major mode for Common Lisp), which
+simplified the initial implementation, but also made it harder to implement
+certain functionality. Down the road it'd be nice to fully decouple `clojure-mode`
+from `lisp-mode`.
+
+See [this ticket](https://github.com/clojure-emacs/clojure-mode/issues/270) for a bit more details.
+
+### Indentation Performance
+
+`clojure-mode`'s indentation engine is a bit slow. You can speed things up significantly by disabling `clojure-use-backtracking-indent`, but this will break the indentation of complex forms like `deftype`, `defprotocol`, `reify`, `letfn`, etc.
+
+We should look into ways to optimize the performance of the backtracking indentation logic. See [this ticket](https://github.com/clojure-emacs/clojure-mode/issues/606) for more details.
+
+### Font-locking Implementation
+
+As mentioned [above](https://github.com/clojure-emacs/clojure-mode#font-locking), the font-locking is implemented in terms of regular expressions with makes it both slow and inaccurate.
+
 ## Changelog
 
 An extensive changelog is available [here](CHANGELOG.md).
