@@ -100,6 +100,8 @@
 
 (defcustom clojure-indent-style 'always-align
   "Indentation style to use for function forms and macro forms.
+For forms that start with a keyword see `clojure-indent-keyword-style'.
+
 There are two cases of interest configured by this variable.
 
 - Case (A) is when at least one function argument is on the same
@@ -146,6 +148,51 @@ to indent function forms.
                  (const :tag "Indent like a macro body unless first arg is on the same line"
                         'align-arguments))
   :package-version '(clojure-mode . "5.2.0"))
+
+(defcustom clojure-indent-keyword-style 'always-align
+  "Indentation style to use for forms that start with a keyword.
+For function/macro forms, see `clojure-indent-style'.
+There are two cases of interest configured by this variable.
+
+- Case (A) is when at least one argument following the keyword is
+  on the same line as the keyword.
+- Case (B) is the opposite (no arguments are on the same line as
+  the keyword).
+
+The possible values for this variable are keywords indicating how
+to indent keyword invocation forms.
+
+    `always-align' - Follow the same rules as `lisp-mode'.  All
+    args are vertically aligned with the first arg in case (A),
+    and vertically aligned with the function name in case (B).
+    For instance:
+        (:require [foo.bar]
+                  [bar.baz])
+        (:require
+         [foo.bar]
+         [bar.baz])
+
+    `always-indent' - All args are indented like a macro body.
+        (:require [foo.bar]
+           [bar.baz])
+        (:x
+           location
+           0)
+
+    `align-arguments' - Case (A) is indented like `lisp', and
+    case (B) is indented like a macro body.
+        (:require [foo.bar]
+                  [bar.baz])
+        (:x
+           location
+           0)
+        "
+  :safe #'symbolp
+  :type '(choice (const :tag "Same as `lisp-mode'" 'always-align)
+                 (const :tag "Indent like a macro body" 'always-indent)
+                 (const :tag "Indent like a macro body unless first arg is on the same line"
+                        'align-arguments))
+  :package-version '(clojure-mode . "5.14.0"))
 
 (defcustom clojure-use-backtracking-indent t
   "When non-nil, enable context sensitive indentation."
@@ -1517,7 +1564,8 @@ This function also returns nil meaning don't specify the indentation."
       (1+ (current-column))
     ;; Function or macro call.
     (forward-char 1)
-    (let ((method (clojure--find-indent-spec))
+    (let ((method (and clojure-enable-indent-specs
+                       (clojure--find-indent-spec)))
           (last-sexp calculate-lisp-indent-last-sexp)
           (containing-form-column (1- (current-column))))
       (pcase method
@@ -1554,7 +1602,7 @@ This function also returns nil meaning don't specify the indentation."
            (cond
             ;; Preserve useful alignment of :require (and friends) in `ns' forms.
             ((and function (string-match "^:" function))
-             (clojure--normal-indent last-sexp 'always-align))
+             (clojure--normal-indent last-sexp clojure-indent-keyword-style))
             ;; This should be identical to the :defn above.
             ((and function
                   (string-match "\\`\\(?:\\S +/\\)?\\(def[a-z]*\\|with-\\)"
@@ -1632,6 +1680,14 @@ Requires the macro's NAME and a VALUE."
   (mapcar (lambda (x)
             (put-clojure-indent x 'defun))
           value))
+
+(defcustom clojure-enable-indent-specs t
+  "Honor indent specs, either set via metadata on the
+function/macro, or via `define-clojure-indent'. Set this to `nil'
+to get uniform formatting of all forms."
+  :type 'boolean
+  :safe #'booleanp
+  :package-version '(clojure-mode . "5.14.0"))
 
 (defcustom clojure-defun-indents nil
   "List of additional symbols with defun-style indentation in Clojure.
