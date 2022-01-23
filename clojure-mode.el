@@ -1252,6 +1252,9 @@ Place point as in `clojure--position-for-alignment'."
 
 (defun clojure--search-whitespace-after-next-sexp (&optional bound _noerror)
   "Move point after all whitespace after the next sexp.
+Additionally, move past a comment if one exists (this is only
+possible when the end of the sexp coincides with the end of a
+line).
 
 Set the match data group 1 to be this region of whitespace and
 return point.
@@ -1260,7 +1263,8 @@ BOUND is bounds the whitespace search."
   (unwind-protect
       (ignore-errors
         (clojure-forward-logical-sexp 1)
-        (search-forward-regexp "\\([,\s\t]*\\)" bound)
+        ;; Move past any whitespace or comment.
+        (search-forward-regexp "\\([,\s\t]*\\)\\(;+.*\\)?" bound)
         (pcase (syntax-after (point))
           ;; End-of-line, try again on next line.
           (`(12) (clojure--search-whitespace-after-next-sexp bound))
