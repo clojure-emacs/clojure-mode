@@ -24,6 +24,7 @@
 
 * [#588](https://github.com/clojure-emacs/clojure-mode/pull/588): Fix font-lock for character literals.
 * Stop `clojure-sort-ns` from calling `redisplay`.
+* [#608](https://github.com/clojure-emacs/clojure-mode/issues/608) Fix alignment issue involving margin comments at the end of nested forms.
 
 ### Changes
 

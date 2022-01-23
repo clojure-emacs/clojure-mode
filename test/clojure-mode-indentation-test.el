@@ -705,6 +705,43 @@ x
     "#?@(:clj  [2]
     :cljs [2])")
 
+  (when-aligning-it "should handle sexps broken up by line comments"
+    "
+(let [x  1
+      ;; comment
+      xx 1]
+  xx)"
+
+    "
+{:x   1
+ ;; comment
+ :xxx 2}"
+
+    "
+(case x
+  :aa 1
+  ;; comment
+  :a  2)")
+ 
+  (when-aligning-it "should work correctly when margin comments appear after nested, multi-line, non-terminal sexps"
+    "
+(let [x  {:a 1
+          :b 2} ; comment
+      xx 3]
+  x)"
+
+    "
+{:aa {:b  1
+      :cc 2} ;; comment
+ :a  1}}"
+
+    "
+(case x
+  :a  (let [a  1
+            aa (+ a 1)]
+       aa); comment
+  :aa 2)")
+
   (it "should handle improperly indented content"
     (let ((content "(let [a-long-name 10\nb 20])")
           (aligned-content "(let [a-long-name 10\n      b           20])"))
