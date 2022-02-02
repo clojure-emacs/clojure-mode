@@ -58,14 +58,13 @@
 ;;; Code:
 
 
-(eval-when-compile
-  (defvar calculate-lisp-indent-last-sexp)
-  (defvar delete-pair-blink-delay)
-  (defvar font-lock-beg)
-  (defvar font-lock-end)
-  (defvar paredit-space-for-delimiter-predicates)
-  (defvar paredit-version)
-  (defvar paredit-mode))
+(defvar calculate-lisp-indent-last-sexp)
+(defvar delete-pair-blink-delay)
+(defvar font-lock-beg)
+(defvar font-lock-end)
+(defvar paredit-space-for-delimiter-predicates)
+(defvar paredit-version)
+(defvar paredit-mode)
 
 (require 'cl-lib)
 (require 'imenu)
