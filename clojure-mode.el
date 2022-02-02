@@ -2311,7 +2311,8 @@ With universal argument \\[universal-argument], fully unwind thread."
 (defun clojure--remove-superfluous-parens ()
   "Remove extra parens from a form."
   (when (looking-at "([^ )]+)")
-    (delete-pair)))
+    (let ((delete-pair-blink-delay 0))
+      (delete-pair))))
 
 (defun clojure--thread-first ()
   "Thread a nested sexp using ->."
