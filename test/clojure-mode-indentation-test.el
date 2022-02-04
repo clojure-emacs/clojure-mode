@@ -327,43 +327,51 @@ DESCRIPTION is a string with the description of the spec."
       :a)")
 
   (when-indenting-with-point-it "should handle fixed-normal-indent"
-    "(cond
+    "
+     (cond
       (or 1
           2) 3
     |:else 4)"
 
-    "(cond
+    "
+     (cond
       (or 1
           2) 3
       |:else 4)")
 
   (when-indenting-with-point-it "should handle fixed-normal-indent-2"
-    "(fact {:spec-type
+    "
+(fact {:spec-type
        :charnock-column-id} #{\"charnock\"}
 |{:spec-type
        :charnock-column-id} #{\"current_charnock\"})"
 
-    "(fact {:spec-type
+    "
+(fact {:spec-type
        :charnock-column-id} #{\"charnock\"}
       |{:spec-type
        :charnock-column-id} #{\"current_charnock\"})")
 
   (when-indenting-it "closing-paren"
-    "(ns ca
+    "
+(ns ca
   (:gen-class)
   )")
 
   (when-indenting-it "default-is-not-a-define"
-    "(default a
+    "
+(default a
          b
          b)"
-    "(some.namespace/default a
+    "
+(some.namespace/default a
                         b
                         b)")
 
 
   (when-indenting-it "should handle extend-type with multiarity"
-    "(extend-type Banana
+    "
+(extend-type Banana
   Fruit
   (subtotal
     ([item]
@@ -371,7 +379,8 @@ DESCRIPTION is a string with the description of the spec."
     ([item a]
      (* a (:qty item)))))"
 
-    "(extend-protocol Banana
+    "
+(extend-protocol Banana
   Fruit
   (subtotal
     ([item]
@@ -381,7 +390,8 @@ DESCRIPTION is a string with the description of the spec."
 
 
   (when-indenting-it "should handle deftype with multiarity"
-    "(deftype Banana []
+    "
+(deftype Banana []
   Fruit
   (subtotal
     ([item]
@@ -390,7 +400,8 @@ DESCRIPTION is a string with the description of the spec."
      (* a (:qty item)))))")
 
   (when-indenting-it "should handle defprotocol"
-    "(defprotocol IFoo
+    "
+(defprotocol IFoo
   (foo [this]
     \"Why is this over here?\")
   (foo-2
@@ -399,7 +410,8 @@ DESCRIPTION is a string with the description of the spec."
 
 
   (when-indenting-it "should handle definterface"
-    "(definterface IFoo
+    "
+(definterface IFoo
   (foo [this]
     \"Why is this over here?\")
   (foo-2
@@ -407,7 +419,8 @@ DESCRIPTION is a string with the description of the spec."
     \"Why is this over here?\"))")
 
   (when-indenting-it "should handle specify"
-    "(specify obj
+    "
+(specify obj
   ISwap
   (-swap!
     ([this f] (reset! this (f @this)))
@@ -416,7 +429,8 @@ DESCRIPTION is a string with the description of the spec."
     ([this f a b xs] (reset! this (apply f @this a b xs)))))")
 
   (when-indenting-it "should handle specify!"
-    "(specify! obj
+    "
+(specify! obj
   ISwap
   (-swap!
     ([this f] (reset! this (f @this)))
@@ -425,27 +439,32 @@ DESCRIPTION is a string with the description of the spec."
     ([this f a b xs] (reset! this (apply f @this a b xs)))))")
 
   (when-indenting-it "should handle non-symbol at start"
-    "{\"1\" 2
+    "
+{\"1\" 2
  *3 4}")
 
   (when-indenting-it "should handle non-symbol at start 2"
-    "(\"1\" 2
+    "
+(\"1\" 2
  *3 4)")
 
   (when-indenting-it "should handle defrecord"
-    "(defrecord TheNameOfTheRecord
+    "
+(defrecord TheNameOfTheRecord
     [a pretty long argument list]
   SomeType
   (assoc [_ x]
     (.assoc pretty x 10)))")
 
   (when-indenting-it "should handle defrecord 2"
-    "(defrecord TheNameOfTheRecord [a pretty long argument list]
+    "
+(defrecord TheNameOfTheRecord [a pretty long argument list]
   SomeType (assoc [_ x]
              (.assoc pretty x 10)))")
 
   (when-indenting-it "should handle defrecord with multiarity"
-    "(defrecord Banana []
+    "
+(defrecord Banana []
   Fruit
   (subtotal
     ([item]
@@ -454,7 +473,8 @@ DESCRIPTION is a string with the description of the spec."
      (* a (:qty item)))))")
 
   (when-indenting-it "should handle letfn"
-    "(letfn [(f [x]
+    "
+(letfn [(f [x]
           (* x 2))
         (f [x]
           (* x 2))]
@@ -463,11 +483,13 @@ DESCRIPTION is a string with the description of the spec."
   e)")
 
   (when-indenting-it "should handle reify"
-    "(reify Object
+    "
+(reify Object
   (x [_]
     1))"
 
-    "(reify
+    "
+(reify
   om/IRender
   (render [this]
     (let [indent-test :fail]
@@ -478,7 +500,8 @@ DESCRIPTION is a string with the description of the spec."
       ...)))")
 
   (when-indenting-it "proxy"
-    "(proxy [Writer] []
+    "
+(proxy [Writer] []
   (close [] (.flush ^Writer this))
   (write
     ([x]
@@ -496,29 +519,36 @@ DESCRIPTION is a string with the description of the spec."
      :cljs [])")
 
   (when-indenting-it "should handle an empty close paren"
-    "(let [x]
+    "
+(let [x]
   )"
 
-    "(ns ok
+    "
+(ns ok
   )"
 
-    "(ns ^{:zen :dikar}
+    "
+(ns ^{:zen :dikar}
     ok
   )")
 
   (when-indenting-it "should handle unfinished sexps"
-    "(letfn [(tw [x]
+    "
+(letfn [(tw [x]
           dd")
 
   (when-indenting-it "should handle symbols ending in crap"
-    "(msg? ExceptionInfo
+    "
+(msg? ExceptionInfo
       10)"
 
-    "(thrown-with-msg? ExceptionInfo
+    "
+(thrown-with-msg? ExceptionInfo
                   #\"Storage must be initialized before use\"
                   (f))"
 
-    "(msg' 1
+    "
+(msg' 1
       10)")
 
   (when-indenting-it "should handle let, when and while forms"
@@ -553,14 +583,16 @@ DESCRIPTION is a string with the description of the spec."
 
 
   (when-indenting-it "should handle function spec"
-    "(when me
+    "
+(when me
   (test-cond
     x
   1
     2
   3))"
 
-    "(when me
+    "
+(when me
   (test-cond-0
 x
 1
@@ -570,139 +602,174 @@ x
   (when-indenting-it "should respect indent style 'align-arguments"
     'align-arguments
 
-    "(some-function
+    "
+(some-function
   10
   1
   2)"
 
-    "(some-function 10
+    "
+(some-function 10
                1
                2)")
 
   (when-indenting-it "should respect indent style 'always-indent"
     'always-indent
 
-    "(some-function
+    "
+(some-function
   10
   1
   2)"
 
-    "(some-function 10
+    "
+(some-function 10
   1
   2)")
 
   (when-aligning-it "should basic forms"
-    "{:this-is-a-form b
+    "
+{:this-is-a-form b
  c               d}"
 
-    "{:this-is b
+    "
+{:this-is b
  c        d}"
 
-    "{:this b
+    "
+{:this b
  c     d}"
 
-    "{:a b
+    "
+{:a b
  c  d}"
 
-    "(let [this-is-a-form b
+    "
+(let [this-is-a-form b
       c              d])"
 
-    "(let [this-is b
+    "
+(let [this-is b
       c       d])"
 
-    "(let [this b
+    "
+(let [this b
       c    d])"
 
-    "(let [a b
+    "
+(let [a b
       c d])")
 
   (when-aligning-it "should handle a blank line"
-    "(let [this-is-a-form b
+    "
+(let [this-is-a-form b
       c              d
 
       another form
       k       g])"
 
-    "{:this-is-a-form b
+    "
+{:this-is-a-form b
  c               d
 
  :another form
  k        g}")
 
   (when-aligning-it "should handle basic forms (reversed)"
-    "{c               d
+    "
+{c               d
  :this-is-a-form b}"
-  "{c        d
+  "
+{c        d
  :this-is b}"
-  "{c     d
+  "
+{c     d
  :this b}"
-  "{c  d
+  "
+{c  d
  :a b}"
 
-  "(let [c              d
+  "
+(let [c              d
       this-is-a-form b])"
 
-  "(let [c       d
+  "
+(let [c       d
       this-is b])"
 
-  "(let [c    d
+  "
+(let [c    d
       this b])"
 
-  "(let [c d
+  "
+(let [c d
       a b])")
 
   (when-aligning-it "should handle incomplete sexps"
-    "(cond aa b
+    "
+(cond aa b
       casodkas )"
 
-    "(cond aa b
+    "
+(cond aa b
       casodkas)"
 
-    "(cond aa b
+    "
+(cond aa b
       casodkas "
 
-    "(cond aa b
+    "
+(cond aa b
       casodkas"
 
-    "(cond aa       b
+    "
+(cond aa       b
       casodkas a)"
 
-    "(cond casodkas a
+    "
+(cond casodkas a
       aa       b)"
 
-    "(cond casodkas
+    "
+(cond casodkas
       aa b)")
 
 
   (when-aligning-it "should handle multiple words"
-    "(cond this     is    just
+    "
+(cond this     is    just
       a        test  of
       how      well
       multiple words will work)")
 
   (when-aligning-it "should handle nested maps"
-    "{:a    {:a    :a
+    "
+{:a    {:a    :a
         :bbbb :b}
  :bbbb :b}")
 
   (when-aligning-it "should regard end as a marker"
-    "{:a {:a                                :a
+    "
+{:a {:a                                :a
      :aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa :a}
  :b {:a  :a
      :aa :a}}")
 
   (when-aligning-it "should handle trailing commas"
-    "{:a {:a  :a,
+    "
+{:a {:a  :a,
      :aa :a},
  :b {:a  :a,
      :aa :a}}")
 
   (when-aligning-it "should handle standard reader conditionals"
-    "#?(:clj  2
+    "
+#?(:clj  2
    :cljs 2)")
 
   (when-aligning-it "should handle splicing reader conditional"
-    "#?@(:clj  [2]
+    "
+#?@(:clj  [2]
     :cljs [2])")
 
   (when-aligning-it "should handle sexps broken up by line comments"
