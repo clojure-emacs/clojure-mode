@@ -2,6 +2,8 @@
 
 ## master (unreleased)
 
+## 5.14.0 (2022-03-07)
+
 ### New features
 
 * Allow additional directories, beyond the default `clj[sc]`, to be correctly formulated by `clojure-expected-ns` via new `defcustom` entitled `clojure-directory-prefixes`

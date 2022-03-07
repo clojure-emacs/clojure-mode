@@ -16,7 +16,7 @@ highlighting), indentation, navigation and refactoring support for the
 **This documentation tracks the `master` branch of `clojure-mode`. Some of
 the features and settings discussed here might not be available in
 older releases (including the current stable release). Please, consult
-the relevant git tag (e.g. 5.1.0) if you need documentation for a
+the relevant git tag (e.g. 5.14.0) if you need documentation for a
 specific `clojure-mode` release.**
 
 ## Installation
@@ -126,7 +126,7 @@ The indentation of function forms is configured by the variable
                2)
 ```
 
-**Note:** Prior to clojure-mode 5.10 the configuration options for `clojure-indent-style` used to be
+**Note:** Prior to clojure-mode 5.10, the configuration options for `clojure-indent-style` used to be
 keywords, but now they are symbols. Keywords will still be supported at least until clojure-mode 6.
 
 #### Indentation of macro forms
@@ -559,7 +559,7 @@ An extensive changelog is available [here](CHANGELOG.md).
 
 ## License
 
-Copyright © 2007-2021 Jeffrey Chu, Lennart Staflin, Phil Hagelberg, Bozhidar
+Copyright © 2007-2022 Jeffrey Chu, Lennart Staflin, Phil Hagelberg, Bozhidar
 Batsov, Artur Malabarba, Magnar Sveen and [contributors][].
 
 Distributed under the GNU General Public License; type <kbd>C-h C-c</kbd> to view it.
