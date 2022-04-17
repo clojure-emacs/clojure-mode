@@ -2,6 +2,10 @@
 
 ## master (unreleased)
 
+### Changes
+
+* [#615](https://github.com/clojure-emacs/clojure-mode/issues/615): Support clojure-dart files.
+
 ## 5.14.0 (2022-03-07)
 
 ### New features
