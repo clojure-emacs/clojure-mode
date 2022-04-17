@@ -524,7 +524,7 @@ If you're into Clojure and Emacs you should definitely check it out.
 
 Tutorials,
 targeting Emacs beginners, are available at
-[clojure-doc.org](http://clojure-doc.org/articles/tutorials/emacs.html) and
+[clojure-doc.org](http://clojure-doc.org/articles/tutorials/emacs/) and
 [Clojure for the Brave and the True](http://www.braveclojure.com/basic-emacs/).
 Keep in mind, however, that they might be out-of-date.
 
