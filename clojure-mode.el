@@ -200,7 +200,7 @@ Out-of-the box `clojure-mode' understands lein, boot, gradle,
                (cl-every 'stringp value))))
 
 (defcustom clojure-directory-prefixes
-  '("\\`clj[scx]?\\.")
+  '("\\`clj[scxd]?\\.")
   "A list of directory prefixes used by `clojure-expected-ns'.
 The prefixes are used to generate the correct namespace."
   :type '(repeat string)
@@ -3070,7 +3070,7 @@ With universal argument \\[universal-argument], act on the \"top-level\" form."
 ;;;###autoload
 (progn
   (add-to-list 'auto-mode-alist
-               '("\\.\\(clj\\|dtm\\|edn\\)\\'" . clojure-mode))
+               '("\\.\\(clj\\|cljd\\|dtm\\|edn\\)\\'" . clojure-mode))
   (add-to-list 'auto-mode-alist '("\\.cljc\\'" . clojurec-mode))
   (add-to-list 'auto-mode-alist '("\\.cljs\\'" . clojurescript-mode))
   ;; boot build scripts are Clojure source files
