@@ -2,6 +2,10 @@
 
 ## master (unreleased)
 
+### Changes
+
+* Add `cljd` (clojuredart) to `interpreter-mode-alist`.
+
 ## 5.14.0 (2022-03-07)
 
 ### New features
