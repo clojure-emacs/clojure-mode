@@ -141,10 +141,10 @@ to indent function forms.
           merge
           some-coll)"
   :safe #'symbolp
-  :type '(choice (const :tag "Same as `lisp-mode'" 'always-align)
-                 (const :tag "Indent like a macro body" 'always-indent)
+  :type '(choice (const :tag "Same as `lisp-mode'" always-align)
+                 (const :tag "Indent like a macro body" always-indent)
                  (const :tag "Indent like a macro body unless first arg is on the same line"
-                        'align-arguments))
+                        align-arguments))
   :package-version '(clojure-mode . "5.2.0"))
 
 (defcustom clojure-use-backtracking-indent t
@@ -1143,7 +1143,7 @@ will align the values like this:
   :type `(choice (const :tag "Make blank lines prevent vertical alignment from happening."
                         ,clojure--align-separator-newline-regexp)
                  (other :tag "Allow blank lines to happen within a vertically-aligned expression."
-                        'entire)))
+                        entire)))
 
 (defcustom clojure-align-reader-conditionals nil
   "Whether to align reader conditionals, as if they were maps."
