@@ -760,7 +760,9 @@ Called by `imenu--generic-function'."
                       (and (char-equal ?^ (char-after (point))) (= def-beg (point))))
               (setq found? t)
               (when (string= deftype "defmethod")
-                (setq def-end (progn (goto-char def-end))))
+                (setq def-end (progn (goto-char def-end)
+                                     (forward-sexp)
+                                     (point))))
               (set-match-data (list def-beg def-end)))))
         (goto-char start)))))
 
