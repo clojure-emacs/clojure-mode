@@ -60,6 +60,36 @@
       (expect (non-func "^hint " form) :to-be nil)
       (expect (non-func "#macro " form) :to-be nil))))
 
+(describe "clojure-match-next-def"
+  (it "handles vars with metadata"
+    (with-clojure-buffer "
+(def ^Integer a 1)
+(list [1 2 3])"
+      (end-of-buffer)
+      (clojure-match-next-def)
+      (expect (looking-at "(def"))))
+  (it "handles vars with metadata only"
+    (with-clojure-buffer "
+(def ^Integer)
+(list [1 2 3])"
+      (end-of-buffer)
+      (clojure-match-next-def)
+      (expect (looking-at "(def"))))
+  (it "handles vars without metadata"
+    (with-clojure-buffer "
+(def a 1)
+(list [1 2 3])"
+      (end-of-buffer)
+      (clojure-match-next-def)
+      (expect (looking-at "(def"))))
+  (it "handles empty def forms"
+    (with-clojure-buffer "
+(def)
+(list [1 2 3])"
+      (end-of-buffer)
+      (clojure-match-next-def)
+      (expect (looking-at "(def")))))
+
 (describe "clojure syntax"
   (it "handles prefixed symbols"
     (dolist (form '(("#?@aaa" . "aaa")
