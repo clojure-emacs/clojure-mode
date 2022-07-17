@@ -755,6 +755,7 @@ Called by `imenu--generic-function'."
                 (backward-sexp)))
           (cl-destructuring-bind (def-beg . def-end) (bounds-of-thing-at-point 'sexp)
             (when (char-equal ?^ (char-after def-beg))
+              ;; move to the beginning of next sexp
               (progn (forward-sexp) (backward-sexp)))
             (when (or (not (char-equal ?^ (char-after (point))))
                       (and (char-equal ?^ (char-after (point))) (= def-beg (point))))
