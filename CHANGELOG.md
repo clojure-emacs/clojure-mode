@@ -2,6 +2,8 @@
 
 ## master (unreleased)
 
+## 5.15.0 (2022-07-19)
+
 ### Changes
 
 * [#622](https://github.com/clojure-emacs/clojure-mode/issues/622): Add font locking for missing clojure.core macros
