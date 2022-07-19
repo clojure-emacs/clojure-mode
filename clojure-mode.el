@@ -2502,7 +2502,8 @@ See: https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-cycle-privacy"
                 "-")))))
 
 (defun clojure--convert-collection (coll-open coll-close)
-  "Convert the collection at (point) by unwrapping it an wrapping it between COLL-OPEN and COLL-CLOSE."
+  "Convert the collection at (point)
+by unwrapping it an wrapping it between COLL-OPEN and COLL-CLOSE."
   (save-excursion
     (while (and
             (not (bobp))
