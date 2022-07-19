@@ -223,6 +223,10 @@
   ([x y & more]
      (reduce1 max (max x y) more)))
 
+
+;; definitions with metadata only don't cause freezing
+(def ^String)
+
 (defn ^String reverse
   "Returns s with its characters reversed."
   {:added "1.2"}

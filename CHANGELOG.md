@@ -7,6 +7,10 @@
 * [#622](https://github.com/clojure-emacs/clojure-mode/issues/622): Add font locking for missing clojure.core macros
 * [#615](https://github.com/clojure-emacs/clojure-mode/issues/615): Support clojure-dart files.
 
+### Bugs fixed
+
+* [#595](https://github.com/clojure-emacs/clojure-mode/issues/595), [#612](https://github.com/clojure-emacs/clojure-mode/issues/612): Fix buffer freezing when typing metadata for a definition
+
 ## 5.14.0 (2022-03-07)
 
 ### New features
