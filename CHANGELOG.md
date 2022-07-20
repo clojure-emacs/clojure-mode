@@ -11,7 +11,7 @@
 
 ### Bugs fixed
 
-* [#595](https://github.com/clojure-emacs/clojure-mode/issues/595), [#612](https://github.com/clojure-emacs/clojure-mode/issues/612): Fix buffer freezing when typing metadata for a definition
+* [#595](https://github.com/clojure-emacs/clojure-mode/issues/595), [#612](https://github.com/clojure-emacs/clojure-mode/issues/612): Fix buffer freezing when typing metadata for a definition.
 
 ## 5.14.0 (2022-03-07)
 
@@ -19,7 +19,7 @@
 
 * Allow additional directories, beyond the default `clj[sc]`, to be correctly formulated by `clojure-expected-ns` via new `defcustom` entitled `clojure-directory-prefixes`
 * Recognize babashka projects (identified by the presence of `bb.edn`).
-* [#601](https://github.com/clojure-emacs/clojure-mode/pull/601): Add new command `clojure-promote-fn-literal` for converting #() function literals to `fn` form 
+* [#601](https://github.com/clojure-emacs/clojure-mode/pull/601): Add new command `clojure-promote-fn-literal` for converting `#()` function literals to `fn` form.
 
 ### Changes
 
