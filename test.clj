@@ -227,6 +227,10 @@
 ;; definitions with metadata only don't cause freezing
 (def ^String)
 
+(defmulti multi (fn [a _] a))
+(defmethod multi :test [_ b] b)
+(defmethod multi :best [_ b] b)
+
 (defn ^String reverse
   "Returns s with its characters reversed."
   {:added "1.2"}

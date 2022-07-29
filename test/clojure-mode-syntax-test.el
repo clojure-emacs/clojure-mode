@@ -89,7 +89,31 @@
         (with-clojure-buffer (concat form some-sexp)
           (end-of-buffer)
           (clojure-match-next-def)
-          (expect (looking-at "(def")))))))
+          (expect (looking-at "(def"))))))
+
+  (it "captures var name"
+    (let ((var-name "some-name"))
+      (dolist (form '("(def %s 1)"
+                      "(def %s)"
+                      "(def ^:private %s 2)"
+                      "(def ^{:private true} %s 3)"))
+        (with-clojure-buffer (format form var-name)
+          (end-of-buffer)
+          (clojure-match-next-def)
+          (cl-destructuring-bind (name-beg name-end) (match-data)
+            (expect (string= var-name (buffer-substring name-beg name-end))))))))
+
+  (it "captures var name with dispatch value for defmethod"
+    (let ((name "some-name :key"))
+      (dolist (form '("(defmethod %s [a])"
+                      "(defmethod ^:meta %s [a])"
+                      "(defmethod ^{:meta true} %s [a])"
+                      "(defmethod %s)"))
+        (with-clojure-buffer (format form name)
+          (end-of-buffer)
+          (clojure-match-next-def)
+          (cl-destructuring-bind (name-beg name-end) (match-data)
+            (expect (string= name (buffer-substring name-beg name-end)))))))))
 
 (describe "clojure syntax"
   (it "handles prefixed symbols"
