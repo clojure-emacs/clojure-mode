@@ -16,7 +16,7 @@ highlighting), indentation, navigation and refactoring support for the
 **This documentation tracks the `master` branch of `clojure-mode`. Some of
 the features and settings discussed here might not be available in
 older releases (including the current stable release). Please, consult
-the relevant git tag (e.g. 5.15.0) if you need documentation for a
+the relevant git tag (e.g. 5.15.1) if you need documentation for a
 specific `clojure-mode` release.**
 
 ## Installation
