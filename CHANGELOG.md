@@ -2,6 +2,10 @@
 
 ## master (unreleased)
 
+### Bugs fixed
+
+* [#625](https://github.com/clojure-emacs/clojure-mode/issues/625): Fix metadata being displayed in imenu instead of var name
+
 ## 5.15.0 (2022-07-19)
 
 ### Changes

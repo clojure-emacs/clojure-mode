@@ -757,7 +757,7 @@ Called by `imenu--generic-function'."
             (when (char-equal ?^ (char-after def-beg))
               ;; move to the beginning of next sexp
               (progn (forward-sexp) (backward-sexp)))
-            (when (or (not (char-equal ?^ (char-after (point))))
+            (when (or (not (char-equal ?^ (char-after def-beg)))
                       (and (char-equal ?^ (char-after (point))) (= def-beg (point))))
               (setq found? t)
               (when (string= deftype "defmethod")
