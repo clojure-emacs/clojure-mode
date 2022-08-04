@@ -487,10 +487,16 @@ DESCRIPTION is the description of the spec."
 
   (when-fontifying-it "should handle oneword keywords"
     (" :oneword"
-     (3 9 clojure-keyword-face ))
+     (3 9 clojure-keyword-face))
+
+    (" :1oneword"
+     (3 10 clojure-keyword-face))
 
     ("{:oneword 0}"
      (3 9 clojure-keyword-face))
+
+    ("{:1oneword 0}"
+     (3 10 clojure-keyword-face))
 
     ("{:#oneword 0}"
      (3 10 clojure-keyword-face))
@@ -563,7 +569,22 @@ DESCRIPTION is the description of the spec."
      (10 17 clojure-keyword-face))
 
     (":_:_:foo/bar_:_:foo"
-     (10 19 clojure-keyword-face)))
+     (10 19 clojure-keyword-face))
+
+    (":1foo/bar"
+     (2 5 font-lock-type-face)
+     (6 6 default)
+     (7 9 clojure-keyword-face))
+
+    (":foo/1bar"
+     (2 4 font-lock-type-face)
+     (5 5 default)
+     (6 9 clojure-keyword-face))
+
+    (":1foo/1bar"
+     (2 5 font-lock-type-face)
+     (6 6 default)
+     (7 10 clojure-keyword-face)))
 
   (when-fontifying-it "should handle segment keywords"
     (" :seg.mnt"
