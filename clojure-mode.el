@@ -780,6 +780,15 @@ definition of 'macros': URL `http://git.io/vRGLD'.")
     (concat "[^" clojure--sym-forbidden-1st-chars "][^" clojure--sym-forbidden-rest-chars "]*")
     "A regexp matching a Clojure symbol or namespace alias.
 Matches the rule `clojure--sym-forbidden-1st-chars' followed by
+any number of matches of `clojure--sym-forbidden-rest-chars'.")
+  (defconst clojure--keyword-sym-forbidden-1st-chars
+    (concat clojure--sym-forbidden-rest-chars ":'")
+    "A list of chars that a Clojure keyword symbol cannot start with.")
+  (defconst clojure--keyword-sym-regexp
+    (concat "[^" clojure--keyword-sym-forbidden-1st-chars "]"
+            "[^" clojure--sym-forbidden-rest-chars "]*")
+    "A regexp matching a Clojure keyword name or keyword namespace.
+Matches the rule `clojure--keyword-sym-forbidden-1st-chars' followed by
 any number of matches of `clojure--sym-forbidden-rest-chars'."))
 
 (defconst clojure-font-lock-keywords
@@ -974,13 +983,14 @@ any number of matches of `clojure--sym-forbidden-rest-chars'."))
       ;; TODO dedupe the code for matching of keywords, type-hints and unmatched symbols
 
       ;; keywords: {:oneword/ve/yCom|pLex.stu-ff 0}
-      (,(concat "\\(:\\{1,2\\}\\)\\(" clojure--sym-regexp "?\\)\\(/\\)\\(" clojure--sym-regexp "\\)")
+      (,(concat "\\(:\\{1,2\\}\\)\\(" clojure--keyword-sym-regexp "?\\)\\(/\\)"
+                "\\(" clojure--keyword-sym-regexp "\\)")
        (1 'clojure-keyword-face)
        (2 font-lock-type-face)
        ;; (2 'clojure-keyword-face)
        (3 'default)
        (4 'clojure-keyword-face))
-      (,(concat "\\(:\\{1,2\\}\\)\\(" clojure--sym-regexp "\\)")
+      (,(concat "\\(:\\{1,2\\}\\)\\(" clojure--keyword-sym-regexp "\\)")
        (1 'clojure-keyword-face)
        (2 'clojure-keyword-face))
 
