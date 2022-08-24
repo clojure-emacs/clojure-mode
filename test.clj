@@ -163,6 +163,11 @@
   {:oneword/ve/yCom|pLex.stu-ff 0}
   {:oneword/.ve/yCom|pLex.stu-ff 0}
 
+  :1oneword
+  :ns/1word
+  :1ns/word
+  :1ns/1word
+
   {:seg.mnt 0}
   ;; {:@seg.mnt 0} ; not allowed
   {:#seg.mnt 0}
