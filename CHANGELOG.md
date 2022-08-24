@@ -2,6 +2,10 @@
 
 ## master (unreleased)
 
+### Changes
+
+* [#629](https://github.com/clojure-emacs/clojure-mode/pull/629): Set `add-log-current-defun-function` to new function `clojure-current-defun-name` (this is used by which-function-mode and easy-kill).
+
 ### Bugs fixed
 
 * [#581](https://github.com/clojure-emacs/clojure-mode/issues/581): Fix font locking not working for keywords starting with a number
