@@ -30,7 +30,7 @@ version.  MELPA has a development snapshot for users who don't mind
 
 You can install `clojure-mode` using the following command:
 
-<kbd>M-x package-install [RET] clojure-mode [RET]</kbd>
+<kbd>M-x</kbd> `package-install` <kbd>[RET]</kbd> `clojure-mode` <kbd>[RET]</kbd>
 
 or if you'd rather keep it in your dotfiles:
 
@@ -41,7 +41,7 @@ or if you'd rather keep it in your dotfiles:
 
 If the installation doesn't work try refreshing the package list:
 
-<kbd>M-x package-refresh-contents</kbd>
+<kbd>M-x</kbd> `package-refresh-contents`
 
 ## Bundled major modes
 
