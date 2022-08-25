@@ -4,23 +4,23 @@
 
 ### Changes
 
-* [#629](https://github.com/clojure-emacs/clojure-mode/pull/629): Set `add-log-current-defun-function` to new function `clojure-current-defun-name` (this is used by which-function-mode and easy-kill).
+* [#629](https://github.com/clojure-emacs/clojure-mode/pull/629): Set `add-log-current-defun-function` to new function `clojure-current-defun-name` (this is used by `which-function-mode` and `easy-kill`).
 
 ### Bugs fixed
 
-* [#581](https://github.com/clojure-emacs/clojure-mode/issues/581): Fix font locking not working for keywords starting with a number
+* [#581](https://github.com/clojure-emacs/clojure-mode/issues/581): Fix font locking not working for keywords starting with a number.
 
 ## 5.15.1 (2022-07-30)
 
 ### Bugs fixed
 
-* [#625](https://github.com/clojure-emacs/clojure-mode/issues/625): Fix metadata being displayed in imenu instead of var name
+* [#625](https://github.com/clojure-emacs/clojure-mode/issues/625): Fix metadata being displayed in `imenu` instead of var name.
 
 ## 5.15.0 (2022-07-19)
 
 ### Changes
 
-* [#622](https://github.com/clojure-emacs/clojure-mode/issues/622): Add font locking for missing clojure.core macros
+* [#622](https://github.com/clojure-emacs/clojure-mode/issues/622): Add font locking for missing `clojure.core` macros.
 * [#615](https://github.com/clojure-emacs/clojure-mode/issues/615): Support clojure-dart files.
 
 ### Bugs fixed
