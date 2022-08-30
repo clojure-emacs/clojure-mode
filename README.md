@@ -305,11 +305,15 @@ conservative and minimalistic.
 Precise font-locking requires additional data that can obtained from a running
 REPL (that's how CIDER's [dynamic font-locking](https://docs.cider.mx/cider/config/syntax_highlighting.html) works) or from static code analysis.
 
-When it comes to definitions, `clojure-mode` employs a simple heuristic and will treat every symbol named `def`something as a built-in keyword. Still, you'll need to
-teach `clojure-mode` manually how to handle the docstrings of non built-in definition forms. Here's an example:
+When it comes to non built-in definitions, `clojure-mode` needs to be manually instructed how to handle the docstrings and highlighting. Here's an example:
 
 ``` emacs-lisp
 (put '>defn 'clojure-doc-string-elt 2)
+
+(font-lock-add-keywords 'clojure-mode
+                        `((,(concat "(\\(?:" clojure--sym-regexp "/\\)?"
+                                    "\\(>defn\\)\\>")
+                           1 font-lock-keyword-face)))
 ```
 
 **Note:** The `clojure-doc-string-elt` attribute is processed by the function `clojure-font-lock-syntactic-face-function`.
