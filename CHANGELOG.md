@@ -9,6 +9,7 @@
 ### Bugs fixed
 
 * [#581](https://github.com/clojure-emacs/clojure-mode/issues/581): Fix font locking not working for keywords starting with a number.
+* [#377](https://github.com/clojure-emacs/clojure-mode/issues/377): Fix everything starting with 'def' being highlighted as a def form.
 
 ## 5.15.1 (2022-07-30)
 
