@@ -776,23 +776,50 @@ DESCRIPTION is the description of the spec."
      (6 42 clojure-keyword-face)))
 
   (when-fontifying-it "should handle namespaced defs"
-    ("(_c4/defconstrainedfn bar [] nil)"
+    ("(_c4/defn bar [] nil)"
      (2 4 font-lock-type-face)
      (5 5 nil)
-     (6 18 font-lock-keyword-face)
-     (23 25 font-lock-function-name-face))
+     (6 9 font-lock-keyword-face)
+     (11 13 font-lock-function-name-face))
 
-    ("(clo/defbar foo nil)"
+    ("(clo/defrecord foo nil)"
      (2 4 font-lock-type-face)
      (5 5 nil)
-     (6 11 font-lock-keyword-face)
-     (13 15 font-lock-function-name-face))
+     (6 14 font-lock-keyword-face)
+     (16 18 font-lock-function-name-face))
 
     ("(s/def ::keyword)"
      (2 2 font-lock-type-face)
      (3 3 nil)
      (4 6 font-lock-keyword-face)
      (8 16 clojure-keyword-face)))
+
+  (when-fontifying-it "should handle any known def form"
+    ("(def a 1)" (2 4 font-lock-keyword-face))
+    ("(defonce a 1)" (2 8 font-lock-keyword-face))
+    ("(defn a [b])" (2 5 font-lock-keyword-face))
+    ("(defmacro a [b])" (2 9 font-lock-keyword-face))
+    ("(definline a [b])" (2 10 font-lock-keyword-face))
+    ("(defmulti a identity)" (2 9 font-lock-keyword-face))
+    ("(defmethod a :foo [b] (println \"bar\"))" (2 10 font-lock-keyword-face))
+    ("(defprotocol a (b [this] \"that\"))" (2 12 font-lock-keyword-face))
+    ("(definterface a (b [c]))" (2 13 font-lock-keyword-face))
+    ("(defrecord a [b c])" (2 10 font-lock-keyword-face))
+    ("(deftype a [b c])" (2 8 font-lock-keyword-face))
+    ("(defstruct a :b :c)" (2 10 font-lock-keyword-face))
+    ("(deftest a (is (= 1 1)))" (2 8 font-lock-keyword-face))
+    ("(defne [x y])" (2 6 font-lock-keyword-face))
+    ("(defnm a b)" (2 6 font-lock-keyword-face))
+    ("(defnu)" (2 6 font-lock-keyword-face))
+    ("(defnc [a])" (2 6 font-lock-keyword-face))
+    ("(defna)" (2 6 font-lock-keyword-face))
+    ("(deftask a)" (2 8 font-lock-keyword-face))
+    ("(defstate a :start \"b\" :stop \"c\")" (2 9 font-lock-keyword-face)))
+
+  (when-fontifying-it "should ignore unknown def forms"
+    ("(defbugproducer me)" (2 15 nil))
+    ("(default-user-settings {:a 1})" (2 24 nil))
+    ("(s/deftartar :foo)" (4 10 nil)))
 
   (when-fontifying-it "should handle variables defined with def"
     ("(def foo 10)"
@@ -844,23 +871,6 @@ DESCRIPTION is the description of the spec."
     ("(defn foo [x] x)"
      (2 5 font-lock-keyword-face)
      (7 9 font-lock-function-name-face)))
-
-  (when-fontifying-it "should handle a custom def with special chars 1"
-    ("(defn* foo [x] x)"
-     (2 6 font-lock-keyword-face)
-     (8 10 font-lock-function-name-face)))
-
-  (when-fontifying-it "should handle a custom def with special chars 2"
-    ("(defsomething! foo [x] x)"
-     (2 14 font-lock-keyword-face)
-     (16 18 font-lock-function-name-face)))
-
-  (when-fontifying-it "should handle a custom def with special chars 3"
-    ("(def-something foo [x] x)"
-     (2 14 font-lock-keyword-face))
-
-    ("(def-something foo [x] x)"
-     (16 18 font-lock-function-name-face)))
 
   (when-fontifying-it "should handle fn"
     ;; try to byte-recompile the clojure-mode.el when the face of 'fn' is 't'

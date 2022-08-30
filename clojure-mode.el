@@ -825,7 +825,37 @@ any number of matches of `clojure--sym-forbidden-rest-chars'."))
 
 (defconst clojure-font-lock-keywords
   (eval-when-compile
-    `( ;; Top-level variable definition
+    `(;; Any def form
+      (,(concat "(\\(?:" clojure--sym-regexp "/\\)?"
+                "\\("
+                (regexp-opt '("def"
+                              "defonce"
+                              "defn"
+                              "defn-"
+                              "defmacro"
+                              "definline"
+                              "defmulti"
+                              "defmethod"
+                              "defprotocol"
+                              "definterface"
+                              "defrecord"
+                              "deftype"
+                              "defstruct"
+                              ;; clojure.test
+                              "deftest"
+                              "deftest-"
+                              ;; clojure.logic
+                              "defne"
+                              "defnm"
+                              "defnu"
+                              "defnc"
+                              "defna"
+                              ;; Third party
+                              "deftask"
+                              "defstate"))
+                "\\)\\>")
+       (1 font-lock-keyword-face))
+      ;; Top-level variable definition
       (,(concat "(\\(?:clojure.core/\\)?\\("
                 (regexp-opt '("def" "defonce"))
                 ;; variable declarations
@@ -835,7 +865,6 @@ any number of matches of `clojure--sym-forbidden-rest-chars'."))
                 ;; Possibly type or metadata
                 "\\(?:#?^\\(?:{[^}]*}\\|\\sw+\\)[ \r\n\t]*\\)*"
                 "\\(\\sw+\\)?")
-       (1 font-lock-keyword-face)
        (2 font-lock-variable-name-face nil t))
       ;; Type definition
       (,(concat "(\\(?:clojure.core/\\)?\\("
@@ -848,7 +877,6 @@ any number of matches of `clojure--sym-forbidden-rest-chars'."))
                 ;; Possibly type or metadata
                 "\\(?:#?^\\(?:{[^}]*}\\|\\sw+\\)[ \r\n\t]*\\)*"
                 "\\(\\sw+\\)?")
-       (1 font-lock-keyword-face)
        (2 font-lock-type-face nil t))
       ;; Function definition (anything that starts with def and is not
       ;; listed above)
@@ -861,7 +889,6 @@ any number of matches of `clojure--sym-forbidden-rest-chars'."))
                 ;; Possibly type or metadata
                 "\\(?:#?^\\(?:{[^}]*}\\|\\sw+\\)[ \r\n\t]*\\)*"
                 (concat "\\(" clojure--sym-regexp "\\)?"))
-       (1 font-lock-keyword-face)
        (2 font-lock-function-name-face nil t))
       ;; (fn name? args ...)
       (,(concat "(\\(?:clojure.core/\\)?\\(fn\\)[ \t]+"
@@ -869,13 +896,12 @@ any number of matches of `clojure--sym-forbidden-rest-chars'."))
                 "\\(?:#?^\\sw+[ \t]*\\)?"
                 ;; Possibly name
                 "\\(\\sw+\\)?" )
-       (1 font-lock-keyword-face)
        (2 font-lock-function-name-face nil t))
       ;; Special forms
       (,(concat
          "("
          (regexp-opt
-          '("def" "do" "if" "let*" "var" "fn" "fn*" "loop*"
+          '("do" "if" "let*" "var" "fn" "fn*" "loop*"
             "recur" "throw" "try" "catch" "finally"
             "set!" "new" "."
             "monitor-enter" "monitor-exit" "quote") t)
@@ -957,7 +983,7 @@ any number of matches of `clojure--sym-forbidden-rest-chars'."))
             "with-redefs"
             "with-redefs-fn"
             )
-           t)
+          t)
          "\\>")
        1 font-lock-keyword-face)
       ;; Macros similar to let, when, and while
@@ -1057,7 +1083,7 @@ any number of matches of `clojure--sym-forbidden-rest-chars'."))
        (1 'font-lock-constant-face prepend))
       ;; Highlight [[var]] comments
       (,(rx "[[" (group-n 1 (optional "#'")
-                         (+ (or (syntax symbol) (syntax word)))) "]]")
+                          (+ (or (syntax symbol) (syntax word)))) "]]")
        (1 'font-lock-constant-face prepend))
       ;; Highlight escaped characters in strings.
       (clojure-font-lock-escaped-chars 0 'bold prepend)
