@@ -802,12 +802,12 @@ Called by `imenu--generic-function'."
 (eval-and-compile
   (defconst clojure--sym-forbidden-rest-chars "][\";@\\^`~\(\)\{\}\\,\s\t\n\r"
     "A list of chars that a Clojure symbol cannot contain.
-See definition of 'macros': URL `http://git.io/vRGLD'.")
+See definition of `macros': URL `http://git.io/vRGLD'.")
   (defconst clojure--sym-forbidden-1st-chars (concat clojure--sym-forbidden-rest-chars "0-9:'")
     "A list of chars that a Clojure symbol cannot start with.
 See the for-loop: URL `http://git.io/vRGTj' lines: URL
 `http://git.io/vRGIh', URL `http://git.io/vRGLE' and value
-definition of 'macros': URL `http://git.io/vRGLD'.")
+definition of `macros': URL `http://git.io/vRGLD'.")
   (defconst clojure--sym-regexp
     (concat "[^" clojure--sym-forbidden-1st-chars "][^" clojure--sym-forbidden-rest-chars "]*")
     "A regexp matching a Clojure symbol or namespace alias.
@@ -1305,7 +1305,7 @@ will align the values like this:
 
 (defcustom clojure-special-arg-indent-factor
   2
-  "Factor of the 'lisp-body-indent' used to indent special arguments."
+  "Factor of the `lisp-body-indent' used to indent special arguments."
   :package-version '(clojure-mode . "5.13")
   :type 'integer
   :safe 'integerp)
@@ -1710,7 +1710,7 @@ This function also returns nil meaning don't specify the indentation."
   (put sym 'clojure-indent-function indent))
 
 (defun clojure--maybe-quoted-symbol-p (x)
-  "Check that X is either a symbol or a quoted symbol like :foo or 'foo."
+  "Check that X is either a symbol or a quoted symbol like :foo or \\='foo."
   (or (symbolp x)
       (and (listp x)
            (= 2 (length x))
@@ -1744,7 +1744,7 @@ https://docs.cider.mx/cider/indent_spec.html e.g. (2 :form
 
 (defun clojure--valid-put-clojure-indent-call-p (exp)
   "Check that EXP is a valid `put-clojure-indent' expression.
-For example: (put-clojure-indent 'defrecord '(2 :form :form (1))."
+For example: (put-clojure-indent \\='defrecord \\='(2 :form :form (1))."
   (unless (and (listp exp)
                (= 3 (length exp))
                (eq 'put-clojure-indent (nth 0 exp))
