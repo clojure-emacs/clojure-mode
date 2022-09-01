@@ -475,7 +475,7 @@ ENDP and DELIM."
              (if (member delim clojure-omit-space-between-tag-and-delimiters)
                  "\\_<\\(?:'+\\|#.*\\)"
                "\\_<\\(?:'+\\|#\\)")
-             (point-at-bol)))))
+             (line-beginning-position)))))
 
 (defconst clojure--collection-tag-regexp "#\\(::[a-zA-Z0-9._-]*\\|:?\\([a-zA-Z0-9._-]+/\\)?[a-zA-Z0-9._-]+\\)"
   "Collection reader macro tag regexp.
