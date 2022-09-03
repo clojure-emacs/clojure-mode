@@ -776,17 +776,17 @@ DESCRIPTION is the description of the spec."
      (6 42 clojure-keyword-face)))
 
   (when-fontifying-it "should handle namespaced defs"
-    ("(_c4/defn bar [] nil)"
-     (2 4 font-lock-type-face)
-     (5 5 nil)
-     (6 9 font-lock-keyword-face)
-     (11 13 font-lock-function-name-face))
+    ("(clojure.core/defn bar [] nil)"
+     (2 13 font-lock-type-face)
+     (14 14 nil)
+     (15 18 font-lock-keyword-face)
+     (20 22 font-lock-function-name-face))
 
-    ("(clo/defrecord foo nil)"
-     (2 4 font-lock-type-face)
-     (5 5 nil)
-     (6 14 font-lock-keyword-face)
-     (16 18 font-lock-function-name-face))
+    ("(clojure.core/defrecord foo nil)"
+     (2 13 font-lock-type-face)
+     (14 14 nil)
+     (15 23 font-lock-keyword-face)
+     (25 27 font-lock-type-face))
 
     ("(s/def ::keyword)"
      (2 2 font-lock-type-face)
