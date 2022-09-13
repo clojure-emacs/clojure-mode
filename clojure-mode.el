@@ -369,6 +369,48 @@ The prefixes are used to generate the correct namespace."
 (defconst clojure--prettify-symbols-alist
   '(("fn"  . ?λ)))
 
+(defvar clojure-imenu-generic-expression
+  (list
+   (list nil
+	 (purecopy (concat "^\\s-*("
+			   (regexp-opt
+			    '("defn" "defmethod")
+                            t)
+			   "\\s-+\\(" (rx lisp-mode-symbol) "\\)"))
+	 2)
+   ;; Like the previous, but uses a quoted symbol as the name.
+   (list nil
+	 (purecopy (concat "^\\s-*("
+			   (regexp-opt
+			    '("defalias")
+                            t)
+			   "\\s-+'\\(" (rx lisp-mode-symbol) "\\)"))
+	 2)
+   (list (purecopy "Macros")
+	 (purecopy (concat "^\\s-*(" (regexp-opt '("defmacro") t) "\\s-+\\(" (rx lisp-mode-symbol) "\\)"))
+	 2)
+   (list (purecopy "Namespaces")
+	 (purecopy (concat "^\\s-*(" (regexp-opt '("ns") t) "\\s-+\\(" (rx lisp-mode-symbol) "\\)"))
+	 2)
+   (list (purecopy "Variables")
+	 (purecopy (concat "^\\s-*("
+			   (regexp-opt
+			    '("defonce" "def")
+                            t)
+			   "\\s-+\\(" (rx lisp-mode-symbol) "\\)"))
+	 2)
+   (list (purecopy "Types")
+	 (purecopy (concat "^\\s-*("
+			   (regexp-opt
+			    '("defprotocol" "deftype")
+                            t)
+			   "\\s-+\\(" (rx lisp-mode-symbol) "\\)"))
+	 2))
+  "Imenu generic expression for Clojure mode.  See `imenu-generic-expression'.")
+
+
+
+
 (defvar-local clojure-expected-ns-function nil
   "The function used to determine the expected namespace of a file.
 `clojure-mode' ships a basic function named `clojure-expected-ns'
@@ -603,6 +645,7 @@ replacement for `cljr-expand-let`."
   (clojure-mode-variables)
   (clojure-font-lock-setup)
   (add-hook 'paredit-mode-hook #'clojure-paredit-setup)
+  (setq-local imenu-generic-expression clojure-imenu-generic-expression)
   ;; `electric-layout-post-self-insert-function' prevents indentation in strings
   ;; and comments, force indentation of non-inlined docstrings:
   (add-hook 'electric-indent-functions
