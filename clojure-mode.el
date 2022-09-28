@@ -536,24 +536,24 @@ replacement for `cljr-expand-let`."
       (beginning-of-defun)
       ;; Make sure we are really inside the defun found, not after it.
       (when (and (looking-at "\\s(")
-		 (progn (end-of-defun)
-			(< location (point)))
-		 (progn (forward-sexp -1)
-			(>= location (point))))
-	(if (looking-at "\\s(")
-	    (forward-char 1))
-	;; Skip the defining construct name, e.g. "defn" or "def".
-	(forward-sexp 1)
-	;; The second element is usually a symbol being defined.  If it
-	;; is not, use the first symbol in it.
-	(skip-chars-forward " \t\n'(")
+                 (progn (end-of-defun)
+                        (< location (point)))
+                 (progn (forward-sexp -1)
+                        (>= location (point))))
+        (if (looking-at "\\s(")
+            (forward-char 1))
+        ;; Skip the defining construct name, e.g. "defn" or "def".
+        (forward-sexp 1)
+        ;; The second element is usually a symbol being defined.  If it
+        ;; is not, use the first symbol in it.
+        (skip-chars-forward " \t\n'(")
         ;; Skip metadata
         (while (looking-at "\\^")
           (forward-sexp 1)
           (skip-chars-forward " \t\n'("))
-	(buffer-substring-no-properties (point)
-					(progn (forward-sexp 1)
-					       (point)))))))
+        (buffer-substring-no-properties (point)
+                                        (progn (forward-sexp 1)
+                                               (point)))))))
 
 (defun clojure-mode-variables ()
   "Set up initial buffer-local variables for Clojure mode."
