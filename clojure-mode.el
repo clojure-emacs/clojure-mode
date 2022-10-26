@@ -777,7 +777,9 @@ Called by `imenu--generic-function'."
       (let (found?
             (deftype (match-string 2))
             (start (point)))
-        (down-list)
+        ;; ignore user-error from down-list when called from inside a string or comment
+        (ignore-errors
+          (down-list))
         (forward-sexp)
         (while (not found?)
           (ignore-errors
