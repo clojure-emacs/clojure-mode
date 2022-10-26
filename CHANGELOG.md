@@ -11,6 +11,7 @@
 
 * [#581](https://github.com/clojure-emacs/clojure-mode/issues/581): Fix font locking not working for keywords starting with a number.
 * [#377](https://github.com/clojure-emacs/clojure-mode/issues/377): Fix everything starting with the prefix 'def' being highlighted as a definition form. Now definition forms are enumerated explicitly in the font-locking code, like all other forms.
+* [#638](https://github.com/clojure-emacs/clojure-mode/pull/638): Fix imenu with Clojure code in string or comment.
 
 ## 5.15.1 (2022-07-30)
 
