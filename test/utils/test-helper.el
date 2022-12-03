@@ -96,5 +96,15 @@ DESCRIPTION is a string with the description of the spec."
          (expect (point) :to-equal expected-cursor-pos)))))
 
 
+;; https://emacs.stackexchange.com/a/55031
+(defmacro with-temp-dir (temp-dir &rest body)
+  "Create a temporary directory and bind its to TEMP-DIR while evaluating BODY.
+Removes the temp directory at the end of evaluation."
+  `(let ((,temp-dir (make-temp-file "" t)))
+    (unwind-protect
+      (progn
+        ,@body)
+      (delete-directory ,temp-dir t))))
+
 (provide 'test-helper)
 ;;; test-helper.el ends here

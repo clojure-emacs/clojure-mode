@@ -39,6 +39,16 @@
       (clj-file-ns "my-project.my-ns.my-file")
       (clojure-cache-project nil))
 
+  (describe "clojure-project-root-path"
+    (it "nbb subdir"
+      (with-temp-dir temp-dir
+        (let* ((bb-edn (expand-file-name "nbb.edn" temp-dir))
+               (bb-edn-src (expand-file-name "src" temp-dir)))
+          (write-region "{}" nil bb-edn)
+          (make-directory bb-edn-src)
+          (expect  (clojure-project-dir bb-edn-src)
+                   :to-equal (file-name-as-directory temp-dir))))))
+
   (describe "clojure-project-relative-path"
     (cl-letf (((symbol-function 'clojure-project-dir) (lambda () project-dir)))
       (expect (string= (clojure-project-relative-path clj-file-path)
