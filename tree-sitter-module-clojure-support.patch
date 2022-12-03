@@ -1,0 +1,53 @@
+From 01e5a2284befd5dcd750979d126f1ab6cf253a2f Mon Sep 17 00:00:00 2001
+From: dannyfreeman <danny@dfreeman.email>
+Date: Sat, 3 Dec 2022 18:37:17 -0500
+Subject: [PATCH] Add clojure support
+
+---
+ batch.sh | 3 ++-
+ build.sh | 7 ++++++-
+ 2 files changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/batch.sh b/batch.sh
+index d5d58fe..56b8dac 100755
+--- a/batch.sh
++++ b/batch.sh
+@@ -1,4 +1,4 @@
+-#!/bin/bash
++#!/usr/bin/env bash
+ 
+ languages=(
+     'c'
+@@ -14,6 +14,7 @@ languages=(
+     'typescript'
+     'elixir'
+     'heex'
++    'clojure'
+ )
+ 
+ for language in "${languages[@]}"
+diff --git a/build.sh b/build.sh
+index be4be7b..32e1301 100755
+--- a/build.sh
++++ b/build.sh
+@@ -1,4 +1,4 @@
+-#!/bin/bash
++#!/usr/bin/env bash
+ 
+ lang=$1
+ org="tree-sitter"
+@@ -13,6 +13,11 @@ then
+     org="phoenixframework"
+ fi
+ 
++if [ "${lang}" == "clojure" ]
++then
++    org="sogaiu"
++fi
++
+ if [ $(uname) == "Darwin" ]
+ then
+     soext="dylib"
+-- 
+2.38.1
+
