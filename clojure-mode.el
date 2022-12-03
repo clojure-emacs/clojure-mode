@@ -3220,10 +3220,9 @@ With universal argument \\[universal-argument], act on the \"top-level\" form."
   ;; boot build scripts are Clojure source files
   (add-to-list 'auto-mode-alist '("\\(?:build\\|profile\\)\\.boot\\'" . clojure-mode))
   ;; babashka scripts are Clojure source files
+  (add-to-list 'interpreter-mode-alist '("bb" . clojure-mode))
   ;; nbb scripts are ClojureScript source files
-  (add-to-list 'interpreter-mode-alist
-               '("bb" . clojure-mode)
-               '("nbb" . clojurescript-mode)))
+  (add-to-list 'interpreter-mode-alist '("nbb" . clojurescript-mode)))
 
 (provide 'clojure-mode)
 
