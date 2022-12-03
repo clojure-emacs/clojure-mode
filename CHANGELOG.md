@@ -4,6 +4,7 @@
 
 ### Changes
 
+* [#641](https://github.com/clojure-emacs/clojure-mode/issues/641) Recognize nbb projects (identified by the presence of `nbb.edn`).
 * [#629](https://github.com/clojure-emacs/clojure-mode/pull/629): Set `add-log-current-defun-function` to new function `clojure-current-defun-name` (this is used by `which-function-mode` and `easy-kill`).
 
 ### Bugs fixed

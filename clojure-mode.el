@@ -189,10 +189,11 @@ For example, \[ is allowed in :db/id[:db.part/user]."
     "deps.edn"         ; Clojure CLI (a.k.a. tools.deps)
     "shadow-cljs.edn"  ; shadow-cljs
     "bb.edn"           ; babashka
+    "nbb.edn"          ; nbb
     )
   "A list of files, which identify a Clojure project's root.
 Out-of-the box `clojure-mode' understands lein, boot, gradle,
- shadow-cljs, tools.deps and babashka."
+ shadow-cljs, tools.deps, babashka and nbb."
   :type '(repeat string)
   :package-version '(clojure-mode . "5.0.0")
   :safe (lambda (value)
@@ -3219,7 +3220,10 @@ With universal argument \\[universal-argument], act on the \"top-level\" form."
   ;; boot build scripts are Clojure source files
   (add-to-list 'auto-mode-alist '("\\(?:build\\|profile\\)\\.boot\\'" . clojure-mode))
   ;; babashka scripts are Clojure source files
-  (add-to-list 'interpreter-mode-alist '("bb" . clojure-mode)))
+  ;; nbb scripts are ClojureScript source files
+  (add-to-list 'interpreter-mode-alist
+               '("bb" . clojure-mode)
+               '("nbb" . clojurescript-mode)))
 
 (provide 'clojure-mode)
 
