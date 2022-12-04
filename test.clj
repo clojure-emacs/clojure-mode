@@ -11,6 +11,12 @@
 ;; try to byte-recompile the clojure-mode.el when the face of 'fn' is 't'
 (fn foo [x] x)
 
+(fn hello [x] y)
+
+(def x true)
+
+(clojure.core/defmacro my-mac [])
+
 #_
 ;; the myfn sexp should have a comment face
 (mysfn 101

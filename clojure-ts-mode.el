@@ -25,12 +25,19 @@
 (unless (treesit-available-p)
   (message "Tree sitter is broke"))
 
+(defface clojure-keyword-face
+  '((t (:inherit font-lock-constant-face)))
+  "Face used to font-lock Clojure keywords (:something).")
+
+(defvar clojure--declaration-regexp
+  (rx
+   (or (group line-start (or "ns" "fn") line-end)
+       (group "def"
+              (* (or alnum
+                     "-" "_" "!" "@" "#" "$" "%" "^" "&" "*" "|" "?" "<" ">" "+" "=" ":"))))))
+
 (defvar clojure--treesit-settings
   (treesit-font-lock-rules
-   :feature 'comment
-   :language 'clojure
-   '((comment) @font-lock-comment-face)
-
    :feature 'string
    :language 'clojure
    '((str_lit) @font-lock-string-face)
@@ -40,23 +47,47 @@
    :override t
    '((num_lit) @font-lock-number-face)
 
-   ;; The rest of the features are not working yet :), I'm still experimenting and have no idea how this works
-   :feature 'function-name
-   :language 'clojure
-   :override t
-   '((function_definition ;; not this easy, first detect `def` nodes and then match the correct symbols.
-      name: (sym_lit) @font-lock-function-name-face))
-
    :feature 'constant
    :language 'clojure
-   :override t
    '([(bool_lit) (nil_lit)] @font-lock-constant-face)
-   
-   :feature 'bracket
+
+   :feature 'declaration
+   :language 'clojure
+   :override t ;; need to override str_lit for font-lock-doc-face
+   `(((list_lit :anchor (sym_lit) @font-lock-keyword-face
+                :anchor (sym_lit) @font-lock-type-face)
+      (:match ,clojure--declaration-regexp
+              @font-lock-keyword-face)))
+
+   :feature 'docstring
    :language 'clojure
    :override t
-   '(["(" ")" "[" "]" "{" "}"] @font-lock-bracket-face)
+   `(((list_lit :anchor (sym_lit) @declaration
+                :anchor (sym_lit) @name
+                :anchor (str_lit) @font-lock-doc-face)
+      (:match ,clojure--declaration-regexp @declaration)))
 
+   ;; :namespace/keyword is highlighted  with the namespace as font-lock-type-face
+   ;; and the name clojure-keyword-face
+   ;; I believe in order to do this, the grammer will have to be updated to provide these "fields"
+   :feature 'keyword
+   :language 'clojure
+   '((kwd_lit) @clojure-keyword-face)
+
+   :feature 'comment
+   :language 'clojure
+   '((comment)  @font-lock-comment-face)
+
+   :feature 'expression-comment
+   :language 'clojure
+   :override t
+   '((dis_expr
+      marker: "#_" @default-face
+      value: _ @font-lock-comment-face))
+
+   :feature 'bracket
+   :language 'clojure
+   '((["(" ")" "[" "]" "{" "}"]) @font-lock-bracket-face)
    ))
 
 (define-derived-mode clojure-ts-mode prog-mode "Clojure"
@@ -64,7 +95,9 @@
     (treesit-parser-create 'clojure)
     (setq-local treesit-font-lock-settings clojure--treesit-settings)
     (setq-local treesit-font-lock-feature-list
-                '((comment string keyword builtin constant bracket number function-name)))
+                '((comment string bracket)
+                  (keyword constant symbol number)
+                  (declaration docstring expression-comment)))
     (treesit-major-mode-setup)
     (message "Clojure Treesit Mode")))
 
