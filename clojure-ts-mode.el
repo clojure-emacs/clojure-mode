@@ -99,6 +99,11 @@
    :feature 'bracket
    :language 'clojure
    '((["(" ")" "[" "]" "{" "}"]) @font-lock-bracket-face)
+
+   :feature 'deref ;; not part of clojure-mode, but a cool idea?
+   :language 'clojure
+   '((derefing_lit
+      marker: "@" @font-lock-warning-face))
    ))
 
 (define-derived-mode clojure-ts-mode prog-mode "Clojure"
