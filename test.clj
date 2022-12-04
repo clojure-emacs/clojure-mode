@@ -227,7 +227,7 @@
   )
 
 ;; metadata doesn't break docstrings
-(defn max
+(defn ^:mathy? max
   "Returns the greatest of the nums."
   {:added "1.0"
    :inline-arities >1?

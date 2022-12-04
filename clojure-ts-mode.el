@@ -71,8 +71,12 @@
    :feature 'metadata
    :language 'clojure
    :override t
-   `((meta_lit) @font-lock-property-face
-     (old_meta_lit) @font-lock-property-face)
+   `((meta_lit marker: "^" @font-lock-property-face) ;; just the ^
+     (meta_lit marker: "^" @font-lock-property-face ;; typehint, or metadata shorthand
+               value: [(sym_lit) (kwd_lit)] @font-lock-property-face)
+     (old_meta_lit marker: "#^" @font-lock-property-face) ;; just the #^
+     (old_meta_lit marker: "#^" @font-lock-property-face ;;
+                   value: [(sym_lit) (kwd_lit)] @font-lock-property-face))
 
    ;; Possible to combine this with declaration??
    ;; docstrings are optional, and not part of every definition form
@@ -109,7 +113,7 @@
    :feature 'comment
    :language 'clojure
    :override t
-   '((comment)  @font-lock-comment-face
+   '((comment) @font-lock-comment-face
      (dis_expr
       marker: "#_" @default-face
       value: _ @font-lock-comment-face)
