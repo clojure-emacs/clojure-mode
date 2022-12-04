@@ -11,11 +11,14 @@
 ;; try to byte-recompile the clojure-mode.el when the face of 'fn' is 't'
 (fn foo [x] x)
 
-(fn hello [x] y)
+(fn hello [x] @x)
 
 (def x true)
 
-(clojure.core/defmacro my-mac [])
+(clojure.core/defmacro my-mac []
+  `(let [x 1]
+     ~x
+     ~@x))
 
 #_
 ;; the myfn sexp should have a comment face
@@ -65,7 +68,7 @@
   SCREAMING_UPPER_CASE
   ve/yCom|pLex.stu-ff/.SCREAMING_UPPER_CASE
 
-  oneword
+  ^oneword
   @oneword
   #oneword
   #^oneword ;; type-hint
@@ -249,7 +252,7 @@
   (.toString (.reverse (StringBuilder. s))))
 
 ;; useful for testing docstring filling
-(defn say-hello
+(defn ^{:metadata "map"} say-hello
   "This is a long doc string to test clojure-fill-docstring. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus sed nunc luctus leo ultricies semper. Nullam id tempor mi. Cras adipiscing scelerisque purus, at semper magna tincidunt ut. Sed eget dolor vitae enim feugiat porttitor. Etiam vulputate pulvinar lacinia. Nam vitae nisl sit amet libero pulvinar pretium nec a dui. Ut luctus elit eu nulla posuere nec feugiat ipsum vehicula. Quisque eu pulvinar neque. Fusce fermentum adipiscing mauris, sit amet accumsan ante dignissim ac. Pellentesque molestie mollis condimentum.
 
 Etiam commodo nulla id risus convallis pharetra. Integer dapibus, eros vitae vehicula rhoncus, nisl lorem ornare magna, eu vehicula justo nunc ac nunc. In dolor sem, vulputate eget vulputate id, euismod eu ligula. Nullam elit augue, ultrices ut pretium vel, bibendum sit amet est. Curabitur vulputate arcu vitae neque adipiscing vel commodo ante faucibus. Cras tempor placerat erat. Sed ultrices faucibus sodales. Vestibulum sollicitudin consectetur mauris, nec mollis quam accumsan ultrices. Vestibulum tincidunt libero a lectus condimentum et fermentum diam eleifend. Nam accumsan interdum neque nec aliquet. Praesent feugiat dui at est rhoncus lacinia."

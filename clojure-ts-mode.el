@@ -68,6 +68,12 @@
       (:match ,clojure--declaration-regexp
               @font-lock-keyword-face)))
 
+   :feature 'metadata
+   :language 'clojure
+   :override t
+   `((meta_lit) @font-lock-property-face
+     (old_meta_lit) @font-lock-property-face)
+
    ;; Possible to combine this with declaration??
    ;; docstrings are optional, and not part of every definition form
    :feature 'doc
@@ -84,21 +90,31 @@
    :feature 'keyword
    :language 'clojure
    '((kwd_lit) @clojure-keyword-face)
-
-   :feature 'comment
-   :language 'clojure
-   '((comment)  @font-lock-comment-face)
-
-   :feature 'expression-comment
-   :language 'clojure
-   :override t
-   '((dis_expr
-      marker: "#_" @default-face
-      value: _ @font-lock-comment-face))
+  
+   ;; :feature 'quote
+   ;; :language 'clojure
+   ;; '((quoting-lit
+   ;;    marker: "'" @font-lock-delimiter-face)
+   ;;   (syn-quoting-lit
+   ;;    marker: "`" @font-lock-delimiter-face)
+   ;;   (unquoting-lit
+   ;;    marker: "~" @font-lock-delimiter-face)
+   ;;   (unquote-splicing-lit
+   ;;    marker "~@" @font-lock-delimiter-face))
 
    :feature 'bracket
    :language 'clojure
    '((["(" ")" "[" "]" "{" "}"]) @font-lock-bracket-face)
+
+   :feature 'comment
+   :language 'clojure
+   :override t
+   '((comment)  @font-lock-comment-face
+     (dis_expr
+      marker: "#_" @default-face
+      value: _ @font-lock-comment-face)
+     ((list_lit :anchor (sym_lit) @font-lock-comment-delimiter-face)
+      (:match "^comment$" @font-lock-comment-delimiter-face)))
 
    :feature 'deref ;; not part of clojure-mode, but a cool idea?
    :language 'clojure
@@ -113,7 +129,7 @@
     (setq-local treesit-font-lock-feature-list
                 '((comment string char bracket)
                   (keyword constant symbol number)
-                  (deref declaration doc expression-comment))))
+                  (deref quote metadata declaration doc))))
     (treesit-major-mode-setup)
     (message "Clojure Treesit Mode"))
 
