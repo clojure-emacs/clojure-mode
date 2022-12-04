@@ -29,11 +29,16 @@
   '((t (:inherit font-lock-constant-face)))
   "Face used to font-lock Clojure keywords (:something).")
 
+(defface clojure-character-face
+  '((t (:inherit font-lock-string-face)))
+  "Face used to font-lock Clojure character literals.")
+
 (defvar clojure--declaration-regexp
   (rx
    (or (group line-start (or "ns" "fn") line-end)
        (group "def"
               (* (or alnum
+                     ;; What are valid characters for symbols? is a negative match better?
                      "-" "_" "!" "@" "#" "$" "%" "^" "&" "*" "|" "?" "<" ">" "+" "=" ":"))))))
 
 (defvar clojure--treesit-settings
@@ -51,6 +56,10 @@
    :language 'clojure
    '([(bool_lit) (nil_lit)] @font-lock-constant-face)
 
+   :feature 'char
+   :language 'clojure
+   '((char_lit) @clojure-character-face)
+
    :feature 'declaration
    :language 'clojure
    :override t ;; need to override str_lit for font-lock-doc-face
@@ -59,7 +68,9 @@
       (:match ,clojure--declaration-regexp
               @font-lock-keyword-face)))
 
-   :feature 'docstring
+   ;; Possible to combine this with declaration??
+   ;; docstrings are optional, and not part of every definition form
+   :feature 'doc
    :language 'clojure
    :override t
    `(((list_lit :anchor (sym_lit) @declaration
@@ -95,10 +106,10 @@
     (treesit-parser-create 'clojure)
     (setq-local treesit-font-lock-settings clojure--treesit-settings)
     (setq-local treesit-font-lock-feature-list
-                '((comment string bracket)
+                '((comment string char bracket)
                   (keyword constant symbol number)
-                  (declaration docstring expression-comment)))
+                  (deref declaration doc expression-comment))))
     (treesit-major-mode-setup)
-    (message "Clojure Treesit Mode")))
+    (message "Clojure Treesit Mode"))
 
 (add-to-list 'auto-mode-alist '("\\.clj\\'" . clojure-ts-mode))
