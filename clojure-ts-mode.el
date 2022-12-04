@@ -33,13 +33,16 @@
   '((t (:inherit font-lock-string-face)))
   "Face used to font-lock Clojure character literals.")
 
-(defvar clojure--declaration-regexp
+(defvar clojure--definition-keyword-regexp
   (rx
    (or (group line-start (or "ns" "fn") line-end)
        (group "def"
-              (* (or alnum
+              (+ (or alnum
                      ;; What are valid characters for symbols? is a negative match better?
                      "-" "_" "!" "@" "#" "$" "%" "^" "&" "*" "|" "?" "<" ">" "+" "=" ":"))))))
+
+(defvar clojure--variable-keyword-regexp
+  (rx line-start (or "def" "defonce") line-end))
 
 (defvar clojure--treesit-settings
   (treesit-font-lock-rules
@@ -60,13 +63,20 @@
    :language 'clojure
    '((char_lit) @clojure-character-face)
 
-   :feature 'declaration
+   :feature 'definition
    :language 'clojure
    :override t ;; need to override str_lit for font-lock-doc-face
    `(((list_lit :anchor (sym_lit) @font-lock-keyword-face
                 :anchor (sym_lit) @font-lock-type-face)
-      (:match ,clojure--declaration-regexp
+      (:match ,clojure--definition-keyword-regexp
               @font-lock-keyword-face)))
+
+   :feature 'variable
+   :language 'clojure
+   :override t ;; override definition
+   `(((list_lit :anchor (sym_lit) @font-lock-keyword-face
+                :anchor (sym_lit) @font-lock-variable-name-face)
+      (:match ,clojure--variable-keyword-regexp @font-lock-keyword-face)))
 
    :feature 'metadata
    :language 'clojure
@@ -133,7 +143,7 @@
     (setq-local treesit-font-lock-feature-list
                 '((comment string char bracket)
                   (keyword constant symbol number)
-                  (deref quote metadata declaration doc))))
+                  (deref quote metadata definition variable doc))))
     (treesit-major-mode-setup)
     (message "Clojure Treesit Mode"))
 
