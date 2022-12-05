@@ -240,7 +240,11 @@
 
 ;; definitions with metadata only don't cause freezing
 (def ^String)
-
+;; clojure-mode regression: the hanging metadata doesn't cause freezing
+;; However, it does cause font locking on the top level of the next form (defmulti) to break.
+;; Font locking resumes 1 list down in the next form, or picks back up on the following form (the defmethod)
+;; There isn't much I can do to fix this, it's caused by an error thrown in the parser
+;; which makes sense because it is an invalid form.
 (defmulti multi (fn [a _] a))
 (defmethod multi :test [_ b] b)
 (defmethod multi :best [_ b] b)
@@ -259,7 +263,7 @@ Etiam commodo nulla id risus convallis pharetra. Integer dapibus, eros vitae veh
   []
   (println "Hello, World!"))
 
-
+(binding [*out* nil])
 #"regex string"
 #'name.sp-ace/var
 :name.spa-ce/keyword
