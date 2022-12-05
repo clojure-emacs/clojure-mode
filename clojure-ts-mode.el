@@ -51,18 +51,18 @@ Captures the namespaced portion of the symbol in group1."))
   "Fontify keywords, distinguishing between the namespace and name parts.
 For NODE, OVERRIDE, START, and END, see `treesit-font-lock-rules'."
   (let ((start (treesit-node-start node))
-        (end (treesit-node-end node)))
+        (end (treesit-node-end node))
+        (kw-text (treesit-node-text node t)))
     (treesit-fontify-with-override start end 'clojure-keyword-face override)
-    (let* ((kw-text (treesit-node-text node t)))
-      (when (string-match clojure--namespaced-keyword-regexp kw-text)
-        (let* ((marker (match-string 1 kw-text))
-               (namespace (match-string 2 kw-text))
-               (ns-start (+ start (length marker)))
-               (ns-end (+ ns-start (length namespace))))
-          ;; The namespace
-          (treesit-fontify-with-override ns-start ns-end 'font-lock-type-face t)
-          ;; The / delimiter
-          (treesit-fontify-with-override ns-end (+ 1 ns-end) 'default t))))))
+    (when (string-match clojure--namespaced-keyword-regexp kw-text)
+      (let* ((marker (match-string 1 kw-text))
+             (namespace (match-string 2 kw-text))
+             (ns-start (+ start (length marker)))
+             (ns-end (+ ns-start (length namespace))))
+        ;; The namespace
+        (treesit-fontify-with-override ns-start ns-end 'font-lock-type-face t)
+        ;; The / delimiter
+        (treesit-fontify-with-override ns-end (+ 1 ns-end) 'default t)))))
 
 
 (defun clojure-ts-mode--fontify-symbol  (node override start end &rest _)
@@ -71,12 +71,10 @@ For NODE, OVERRIDE, START, and END, see `treesit-font-lock-rules'."
   (let ((sym-text (treesit-node-text node t)))
     (when (string-match clojure--namespaced-symbol-regexp sym-text)
       (let* ((namespace (match-string 1 sym-text))
-             (start  (treesit-node-start node))
+             (start (treesit-node-start node))
              (ns-end (+ start (length namespace))))
-        ;; The namespace
-        (treesit-fontify-with-override start ns-end 'font-lock-type-face t)
-        ;; The / delimiter
-        (treesit-fontify-with-override ns-end (+ 1 ns-end) 'default t)))))
+        ;; The namespace only. Everything from / onward uses the default face
+        (treesit-fontify-with-override start ns-end 'font-lock-type-face t)))))
 
 (defface clojure-character-face
   '((t (:inherit font-lock-string-face)))
