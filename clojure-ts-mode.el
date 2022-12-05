@@ -25,6 +25,118 @@
 (unless (treesit-available-p)
   (message "Tree sitter is broke"))
 
+(defconst clojure-ts-mode--builtin-dynamic-var-regexp
+  (eval-and-compile
+    (concat "^"
+            (regexp-opt ;; TODO: taken from clojure-font-lock-keywords, needs refactor to share defs
+             '("*1" "*2" "*3" "*agent*"
+               "*allow-unresolved-vars*" "*assert*" "*clojure-version*"
+               "*command-line-args*" "*compile-files*"
+               "*compile-path*" "*data-readers*" "*default-data-reader-fn*"
+               "*e" "*err*" "*file*" "*flush-on-newline*"
+               "*in*" "*macro-meta*" "*math-context*" "*ns*" "*out*"
+               "*print-dup*" "*print-length*" "*print-level*"
+               "*print-meta*" "*print-readably*"
+               "*read-eval*" "*source-path*"
+               "*unchecked-math*"
+               "*use-context-classloader*" "*warn-on-reflection*"))
+            "$")))
+
+(defconst clojure-ts-mode--builtin-symbol-regexp
+  (eval-and-compile
+    (concat "^"
+            (regexp-opt ;; TODO: taken from clojure-font-lock-keywords, needs refactor to share defs
+             '("do"
+               "if"
+               "let*"
+               "var"
+               "fn"
+               "fn*"
+               "loop*"
+               "recur"
+               "throw"
+               "try"
+               "catch"
+               "finally"
+               "set!"
+               "new"
+               "."
+               "monitor-enter"
+               "monitor-exit"
+               "quote"
+
+               "->"
+               "->>"
+               ".."
+               "amap"
+               "and"
+               "areduce"
+               "as->"
+               "assert"
+               "binding"
+               "bound-fn"
+               "case"
+               "comment"
+               "cond"
+               "cond->"
+               "cond->>"
+               "condp"
+               "declare"
+               "delay"
+               "doall"
+               "dorun"
+               "doseq"
+               "dosync"
+               "dotimes"
+               "doto"
+               "extend-protocol"
+               "extend-type"
+               "for"
+               "future"
+               "gen-class"
+               "gen-interface"
+               "if-let"
+               "if-not"
+               "if-some"
+               "import"
+               "in-ns"
+               "io!"
+               "lazy-cat"
+               "lazy-seq"
+               "let"
+               "letfn"
+               "locking"
+               "loop"
+               "memfn"
+               "ns"
+               "or"
+               "proxy"
+               "proxy-super"
+               "pvalues"
+               "refer-clojure"
+               "reify"
+               "some->"
+               "some->>"
+               "sync"
+               "time"
+               "vswap!"
+               "when"
+               "when-first"
+               "when-let"
+               "when-not"
+               "when-some"
+               "while"
+               "with-bindings"
+               "with-in-str"
+               "with-loading-context"
+               "with-local-vars"
+               "with-open"
+               "with-out-str"
+               "with-precision"
+               "with-redefs"
+               "with-redefs-fn"))
+            "$")))
+
 (defface clojure-keyword-face
   '((t (:inherit font-lock-constant-face)))
   "Face used to font-lock Clojure keywords (:something).")
@@ -42,9 +154,9 @@ because it also forbids the `/' character.")
     "A regex matching namespaced keywords.
 Captures the forward `:' or `::' marker in group 1, and the namespace in group 2.")
 
-   (defconst clojure--namespaced-symbol-regexp
-     (concat "^\\([^" clojure--ts-sym-forbidden-ns-part-chars "]*\\)/")
-     "A regex matching namespaced symbols.
+  (defconst clojure--namespaced-symbol-regexp
+    (concat "^\\([^" clojure--ts-sym-forbidden-ns-part-chars "]*\\)/")
+    "A regex matching namespaced symbols.
 Captures the namespaced portion of the symbol in group1."))
 
 (defun clojure-ts-mode--fontify-keyword  (node override start end &rest _)
@@ -64,17 +176,29 @@ For NODE, OVERRIDE, START, and END, see `treesit-font-lock-rules'."
         ;; The / delimiter
         (treesit-fontify-with-override ns-end (+ 1 ns-end) 'default t)))))
 
+(defun clojure--ts-node-at-function-position-p (node)
+  "Return nil if NODE is not in the function position of its parent."
+  (treesit-node-eq node (treesit-node-child (treesit-node-parent node) 1)))
 
 (defun clojure-ts-mode--fontify-symbol  (node override start end &rest _)
   "Fontify symbols, distinguishing between the namespace and name parts.
 For NODE, OVERRIDE, START, and END, see `treesit-font-lock-rules'."
-  (let ((sym-text (treesit-node-text node t)))
-    (when (string-match clojure--namespaced-symbol-regexp sym-text)
-      (let* ((namespace (match-string 1 sym-text))
-             (start (treesit-node-start node))
-             (ns-end (+ start (length namespace))))
-        ;; The namespace only. Everything from / onward uses the default face
-        (treesit-fontify-with-override start ns-end 'font-lock-type-face t)))))
+  (let ((sym-text (treesit-node-text node t))
+        (start (treesit-node-start node)))
+    (if (string-match clojure--namespaced-symbol-regexp sym-text)
+        (let* ((namespace (match-string 1 sym-text))
+               (ns-end (+ start (length namespace))))
+          (treesit-fontify-with-override start ns-end 'font-lock-type-face override))
+      ;; TODO: consider highlighting everyting in a function position
+      ;; I don't think we normally do this actually.
+      ;; Instead, we'll highlight just specific "builtin" keywords, those defined in clojure.core
+      ;; This option still exists though, matchs any symbol in a function position basically.
+      ;; (when (and
+      ;;        (equal "list_lit" (treesit-node-type (treesit-node-parent node)))
+      ;;        (clojure--ts-node-at-function-position-p node))
+      ;;   (let ((end (treesit-node-end node)))
+      ;;     (treesit-fontify-with-override start end 'font-lock-keyword-face override)))
+      )))
 
 (defface clojure-character-face
   '((t (:inherit font-lock-string-face)))
@@ -132,26 +256,35 @@ For NODE, OVERRIDE, START, and END, see `treesit-font-lock-rules'."
    :language 'clojure
    '((kwd_lit) @clojure-ts-mode--fontify-keyword)
 
+   :feature 'builtin
+   :language 'clojure
+   `(((list_lit :anchor (sym_lit) @font-lock-keyword-face)
+      (:match ,clojure-ts-mode--builtin-symbol-regexp  @font-lock-keyword-face))
+     ((sym_lit) @font-lock-builtin-face
+      (:match ,clojure-ts-mode--builtin-dynamic-var-regexp @font-lock-builtin-face)))
+
    :feature 'symbol
    :language 'clojure
    '((sym_lit) @clojure-ts-mode--fontify-symbol)
 
-   :feature 'definition
+   :feature 'definition ;; defn and defn like macros
    :language 'clojure
    :override t ;; need to override str_lit for font-lock-doc-face
    `(((list_lit :anchor (sym_lit) @font-lock-keyword-face
                 :anchor (sym_lit) @font-lock-function-name-face)
       (:match ,clojure--definition-keyword-regexp
-              @font-lock-keyword-face)))
+              @font-lock-keyword-face))
+     ((anon_fn_lit
+       marker: "#" @font-lock-property-face)))
 
-   :feature 'variable
+   :feature 'variable ;; def, defonce
    :language 'clojure
    :override t ;; override definition
    `(((list_lit :anchor (sym_lit) @font-lock-keyword-face
                 :anchor (sym_lit) @font-lock-variable-name-face)
       (:match ,clojure--variable-keyword-regexp @font-lock-keyword-face)))
 
-   :feature 'type
+   :feature 'type ;; deftype, defmulti, defprotocol, etc
    :language 'clojure
    :override t
    `(((list_lit :anchor (sym_lit) @font-lock-keyword-face
@@ -225,7 +358,7 @@ For NODE, OVERRIDE, START, and END, see `treesit-font-lock-rules'."
     (setq-local treesit-font-lock-settings clojure--treesit-settings)
     (setq-local treesit-font-lock-feature-list
                 '((comment string char bracket)
-                  (keyword constant symbol number)
+                  (keyword constant symbol number builtin)
                   (deref quote metadata definition variable type doc regex))))
     (treesit-major-mode-setup)
     (message "Clojure Treesit Mode"))
