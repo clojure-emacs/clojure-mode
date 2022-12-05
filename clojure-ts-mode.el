@@ -29,11 +29,60 @@
   '((t (:inherit font-lock-constant-face)))
   "Face used to font-lock Clojure keywords (:something).")
 
+(eval-and-compile
+  (defconst clojure--ts-sym-forbidden-ns-part-chars "][\";@\\^`~\(\)\{\}\\,\s\t\n\r\/"
+    "A list of chars that a Clojure symbol cannot contain.
+See definition of `macros': URL `http://git.io/vRGLD'.
+
+This is distinct from `'clojure--sym-forbidden-rest-chars' in clojure-mode
+because it also forbids the `/' character.")
+
+  (defconst clojure--namespaced-keyword-regexp
+    (concat "^\\(::?\\)\\([^" clojure--ts-sym-forbidden-ns-part-chars "]*\\)/")
+    "A regex matching namespaced keywords.
+Captures the forward `:' or `::' marker in group 1, and the namespace in group 2.")
+
+   (defconst clojure--namespaced-symbol-regexp
+     (concat "^\\([^" clojure--ts-sym-forbidden-ns-part-chars "]*\\)/")
+     "A regex matching namespaced symbols.
+Captures the namespaced portion of the symbol in group1."))
+
+(defun clojure-ts-mode--fontify-keyword  (node override start end &rest _)
+  "Fontify keywords, distinguishing between the namespace and name parts.
+For NODE, OVERRIDE, START, and END, see `treesit-font-lock-rules'."
+  (let ((start (treesit-node-start node))
+        (end (treesit-node-end node)))
+    (treesit-fontify-with-override start end 'clojure-keyword-face override)
+    (let* ((kw-text (treesit-node-text node t)))
+      (when (string-match clojure--namespaced-keyword-regexp kw-text)
+        (let* ((marker (match-string 1 kw-text))
+               (namespace (match-string 2 kw-text))
+               (ns-start (+ start (length marker)))
+               (ns-end (+ ns-start (length namespace))))
+          ;; The namespace
+          (treesit-fontify-with-override ns-start ns-end 'font-lock-type-face t)
+          ;; The / delimiter
+          (treesit-fontify-with-override ns-end (+ 1 ns-end) 'default t))))))
+
+
+(defun clojure-ts-mode--fontify-symbol  (node override start end &rest _)
+  "Fontify symbols, distinguishing between the namespace and name parts.
+For NODE, OVERRIDE, START, and END, see `treesit-font-lock-rules'."
+  (let ((sym-text (treesit-node-text node t)))
+    (when (string-match clojure--namespaced-symbol-regexp sym-text)
+      (let* ((namespace (match-string 1 sym-text))
+             (start  (treesit-node-start node))
+             (ns-end (+ start (length namespace))))
+        ;; The namespace
+        (treesit-fontify-with-override start ns-end 'font-lock-type-face t)
+        ;; The / delimiter
+        (treesit-fontify-with-override ns-end (+ 1 ns-end) 'default t)))))
+
 (defface clojure-character-face
   '((t (:inherit font-lock-string-face)))
   "Face used to font-lock Clojure character literals.")
 
-(defvar clojure--definition-keyword-regexp
+(defconst clojure--definition-keyword-regexp
   (rx
    (or (group line-start (or "ns" "fn") line-end)
        (group "def"
@@ -41,10 +90,10 @@
                      ;; What are valid characters for symbols? is a negative match better?
                      "-" "_" "!" "@" "#" "$" "%" "^" "&" "*" "|" "?" "<" ">" "+" "=" ":"))))))
 
-(defvar clojure--variable-keyword-regexp
+(defconst clojure--variable-keyword-regexp
   (rx line-start (or "def" "defonce") line-end))
 
-(defvar clojure--type-keyword-regexp
+(defconst clojure--type-keyword-regexp
   (rx line-start (or "defprotocol"
                      "defmulti"
                      "deftype"
@@ -58,11 +107,16 @@
   (treesit-font-lock-rules
    :feature 'string
    :language 'clojure
-   '((str_lit) @font-lock-string-face)
+   '((str_lit) @font-lock-string-face
+     (regex_lit) @font-lock-string-face)
+
+   :feature 'regex
+   :language 'clojure
+   :override t
+   '((regex_lit marker: _ @font-lock-property-face))
 
    :feature 'number
    :language 'clojure
-   :override t
    '((num_lit) @font-lock-number-face)
 
    :feature 'constant
@@ -73,9 +127,20 @@
    :language 'clojure
    '((char_lit) @clojure-character-face)
 
+   ;; :namespace/keyword is highlighted  with the namespace as font-lock-type-face
+   ;; and the name clojure-keyword-face
+   ;; I believe in order to do this, the grammer will have to be updated to provide these "fields"
+   :feature 'keyword
+   :language 'clojure
+   '((kwd_lit) @clojure-ts-mode--fontify-keyword)
+
+   :feature 'symbol
+   :language 'clojure
+   '((sym_lit) @clojure-ts-mode--fontify-symbol)
+
    :feature 'definition
    :language 'clojure
-   ;:override t ;; need to override str_lit for font-lock-doc-face
+   :override t ;; need to override str_lit for font-lock-doc-face
    `(((list_lit :anchor (sym_lit) @font-lock-keyword-face
                 :anchor (sym_lit) @font-lock-function-name-face)
       (:match ,clojure--definition-keyword-regexp
@@ -83,14 +148,14 @@
 
    :feature 'variable
    :language 'clojure
-   ;:override t ;; override definition
+   :override t ;; override definition
    `(((list_lit :anchor (sym_lit) @font-lock-keyword-face
                 :anchor (sym_lit) @font-lock-variable-name-face)
       (:match ,clojure--variable-keyword-regexp @font-lock-keyword-face)))
 
    :feature 'type
    :language 'clojure
-   ;:override t
+   :override t
    `(((list_lit :anchor (sym_lit) @font-lock-keyword-face
                 :anchor (sym_lit) @font-lock-type-face)
       (:match ,clojure--type-keyword-regexp @font-lock-keyword-face)))
@@ -115,13 +180,6 @@
                 :anchor (str_lit) @font-lock-doc-face)
       (:match ,clojure--declaration-regexp @declaration)))
 
-   ;; :namespace/keyword is highlighted  with the namespace as font-lock-type-face
-   ;; and the name clojure-keyword-face
-   ;; I believe in order to do this, the grammer will have to be updated to provide these "fields"
-   :feature 'keyword
-   :language 'clojure
-   '((kwd_lit) @clojure-keyword-face)
-  
    ;; :feature 'quote
    ;; :language 'clojure
    ;; '((quoting-lit
@@ -142,7 +200,7 @@
    :override t
    '((comment) @font-lock-comment-face
      (dis_expr
-      marker: "#_" @default-face
+      marker: "#_" @default
       value: _ @font-lock-comment-face)
      ((list_lit :anchor (sym_lit) @font-lock-comment-delimiter-face)
       (:match "^comment$" @font-lock-comment-delimiter-face)))
@@ -160,7 +218,7 @@
     (setq-local treesit-font-lock-feature-list
                 '((comment string char bracket)
                   (keyword constant symbol number)
-                  (deref quote metadata definition variable type doc))))
+                  (deref quote metadata definition variable type doc regex))))
     (treesit-major-mode-setup)
     (message "Clojure Treesit Mode"))
 
