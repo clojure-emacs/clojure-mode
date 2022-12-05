@@ -293,23 +293,15 @@ For NODE, OVERRIDE, START, and END, see `treesit-font-lock-rules'."
 
    :feature 'metadata ;; also lumps in the var `#' reader macro
    :language 'clojure
-   :override t ;; should this just fall back to the default kw/sym highligh
-   `(;; metadata
-     (meta_lit marker: "^" @font-lock-property-face
-               value: (kwd_lit) @font-lock-property-face)
-     ;; typehint
-     (meta_lit marker: "^" @font-lock-property-face
-               value: (sym_lit) @font-type-type-face)
-     ;; just the ^, value is probably a map. Let it fontify itself
-     (meta_lit marker: "^" @font-lock-property-face)
-
-     ;; Treat metadata and type hints the same with #^ metadata
-     (old_meta_lit marker: "#^" @font-lock-property-face
-                   value: [(sym_lit) (kwd_lit)] @font-lock-property-face)
-     ;; just the #^
+   :override t ;; should this just fall back to the default kw/sym highlight?
+   `((meta_lit marker: "^" @font-lock-property-face)
+     (meta_lit value: (kwd_lit) @font-lock-property-face) ;; metadata
+     (meta_lit value: (sym_lit) @font-type-type-face) ;; typehin
+     ;; OLD metadata sugar #^
      (old_meta_lit marker: "#^" @font-lock-property-face)
-
-     (var_quoting_lit marker: "#'" @font-lock-property-face))
+     (old_meta_lit value: (kwd_lit) @font-lock-property-face) ;; metadata
+     (old_meta_lit value: (sym_lit) @font-type-type-face) ;; typehint
+     )
 
    ;; Possible to combine this with declaration??
    ;; docstrings are optional, and not part of every definition form
@@ -323,14 +315,16 @@ For NODE, OVERRIDE, START, and END, see `treesit-font-lock-rules'."
 
    ;; :feature 'quote
    ;; :language 'clojure
-   ;; '((quoting-lit
-   ;;    marker: "'" @font-lock-delimiter-face)
-   ;;   (syn-quoting-lit
-   ;;    marker: "`" @font-lock-delimiter-face)
-   ;;   (unquoting-lit
-   ;;    marker: "~" @font-lock-delimiter-face)
-   ;;   (unquote-splicing-lit
-   ;;    marker "~@" @font-lock-delimiter-face))
+   ;; '((quoting_lit
+   ;;    marker: _ @font-lock-delimiter-face)
+   ;;   (var_quoting_lit
+   ;;    marker: _ @font-lock-delimiter-face)
+   ;;   (syn_quoting_lit
+   ;;    marker: _ @font-lock-delimiter-face)
+   ;;   (unquoting_lit
+   ;;    marker: _ @font-lock-delimiter-face)
+   ;;   (unquote_splicing_lit
+   ;;    marker _ @font-lock-delimiter-face))
 
    :feature 'bracket
    :language 'clojure
@@ -364,3 +358,17 @@ For NODE, OVERRIDE, START, and END, see `treesit-font-lock-rules'."
     (message "Clojure Treesit Mode"))
 
 (add-to-list 'auto-mode-alist '("\\.clj\\'" . clojure-ts-mode))
+
+
+;; (let ((query
+;;        `((meta_lit marker: "^" @font-lock-property-face)
+;;          (meta_lit value: (kwd_lit) @font-lock-property-face) ;; metadata
+;;          (meta_lit value: (sym_lit) @font-type-type-face) ;; typehin
+;;          ;; OLD metadata sugar #^
+;;          (old_meta_lit marker: "#^" @font-lock-property-face)
+;;          (old_meta_lit value: (kwd_lit) @font-lock-property-face) ;; metadata
+;;          (old_meta_lit value: (sym_lit) @font-type-type-face) ;; typehint
+;;          )))
+
+;;   (treesit-query-string "(def #^:type sym 1 )" query 'clojure)
+;;   )

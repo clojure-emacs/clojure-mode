@@ -265,6 +265,8 @@ Etiam commodo nulla id risus convallis pharetra. Integer dapibus, eros vitae veh
 
 (binding [*out* nil])
 #"regex string"
+(def #^typehint x 1)
+(def ^typehint x 2)
 #'name.sp-ace/var
 :name.spa-ce/keyword
 ::aliased/keyword
