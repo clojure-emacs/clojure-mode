@@ -160,15 +160,25 @@ For NODE, OVERRIDE, START, and END, see `treesit-font-lock-rules'."
                 :anchor (sym_lit) @font-lock-type-face)
       (:match ,clojure--type-keyword-regexp @font-lock-keyword-face)))
 
-   :feature 'metadata
+   :feature 'metadata ;; also lumps in the var `#' reader macro
    :language 'clojure
-   :override t
-   `((meta_lit marker: "^" @font-lock-property-face) ;; just the ^
-     (meta_lit marker: "^" @font-lock-property-face ;; typehint, or metadata shorthand
-               value: [(sym_lit) (kwd_lit)] @font-lock-property-face)
-     (old_meta_lit marker: "#^" @font-lock-property-face) ;; just the #^
-     (old_meta_lit marker: "#^" @font-lock-property-face ;;
-                   value: [(sym_lit) (kwd_lit)] @font-lock-property-face))
+   :override t ;; should this just fall back to the default kw/sym highligh
+   `(;; metadata
+     (meta_lit marker: "^" @font-lock-property-face
+               value: (kwd_lit) @font-lock-property-face)
+     ;; typehint
+     (meta_lit marker: "^" @font-lock-property-face
+               value: (sym_lit) @font-type-type-face)
+     ;; just the ^, value is probably a map. Let it fontify itself
+     (meta_lit marker: "^" @font-lock-property-face)
+
+     ;; Treat metadata and type hints the same with #^ metadata
+     (old_meta_lit marker: "#^" @font-lock-property-face
+                   value: [(sym_lit) (kwd_lit)] @font-lock-property-face)
+     ;; just the #^
+     (old_meta_lit marker: "#^" @font-lock-property-face)
+
+     (var_quoting_lit marker: "#'" @font-lock-property-face))
 
    ;; Possible to combine this with declaration??
    ;; docstrings are optional, and not part of every definition form
