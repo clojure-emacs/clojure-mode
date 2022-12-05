@@ -263,21 +263,22 @@ Etiam commodo nulla id risus convallis pharetra. Integer dapibus, eros vitae veh
   []
   (println "Hello, World!"))
 
-(binding [*out* nil])
-#"regex string"
-(def #^typehint x 1)
-(def ^typehint x 2)
-#'name.sp-ace/var
-:name.spa-ce/keyword
-::aliased/keyword
-'namespace/var
-:normal-keyword
-"string"
-123
-123.456
-true
-false
-nil
-@dereference
+(binding [*out* nil]
+  #"regex string"
+  (def #^typehint x 1)
+  (def ^typehint x 2)
+  #'name.sp-ace/var
+  :name.spa-ce/keyword
+  ::aliased/keyword
+  'namespace/var
+  :normal-keyword
+  "string"
+  123
+  123.456
+  true
+  false
+  nil
+  @(atom #{1})
+)
 
 clojure.core/map
