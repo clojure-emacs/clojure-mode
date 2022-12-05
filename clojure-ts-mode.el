@@ -311,7 +311,7 @@ For NODE, OVERRIDE, START, and END, see `treesit-font-lock-rules'."
    `(((list_lit :anchor (sym_lit) @declaration
                 :anchor (sym_lit) @name
                 :anchor (str_lit) @font-lock-doc-face)
-      (:match ,clojure--declaration-regexp @declaration)))
+      (:match ,clojure--definition-keyword-regexp @declaration)))
 
    ;; :feature 'quote
    ;; :language 'clojure
