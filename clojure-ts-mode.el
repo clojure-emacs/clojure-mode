@@ -258,20 +258,20 @@ For NODE, OVERRIDE, START, and END, see `treesit-font-lock-rules'."
 
    :feature 'builtin
    :language 'clojure
-   `(((list_lit :anchor (sym_lit) @font-lock-keyword-face)
+   `(((list_lit :anchor (sym_lit (sym_name) @font-lock-keyword-face))
       (:match ,clojure-ts-mode--builtin-symbol-regexp  @font-lock-keyword-face))
-     ((sym_lit) @font-lock-builtin-face
+     ((sym_name) @font-lock-builtin-face
       (:match ,clojure-ts-mode--builtin-dynamic-var-regexp @font-lock-builtin-face)))
 
    :feature 'symbol
    :language 'clojure
-   '((sym_lit) @clojure-ts-mode--fontify-symbol)
+   '((sym_name) @clojure-ts-mode--fontify-symbol)
 
    :feature 'definition ;; defn and defn like macros
    :language 'clojure
-   :override t ;; need to override str_lit for font-lock-doc-face
-   `(((list_lit :anchor (sym_lit) @font-lock-keyword-face
-                :anchor (sym_lit) @font-lock-function-name-face)
+   ;:override t ;; need to override str_lit for font-lock-doc-face
+   `(((list_lit :anchor (sym_lit (sym_name) @font-lock-keyword-face)
+                :anchor (sym_lit (sym_name) @font-lock-function-name-face))
       (:match ,clojure--definition-keyword-regexp
               @font-lock-keyword-face))
      ((anon_fn_lit
@@ -279,29 +279,27 @@ For NODE, OVERRIDE, START, and END, see `treesit-font-lock-rules'."
 
    :feature 'variable ;; def, defonce
    :language 'clojure
-   :override t ;; override definition
-   `(((list_lit :anchor (sym_lit) @font-lock-keyword-face
-                :anchor (sym_lit) @font-lock-variable-name-face)
+   ; :override t
+   `(((list_lit :anchor (sym_lit (sym_name) @font-lock-keyword-face)
+                :anchor (sym_lit (sym_name) @font-lock-variable-name-face))
       (:match ,clojure--variable-keyword-regexp @font-lock-keyword-face)))
 
    :feature 'type ;; deftype, defmulti, defprotocol, etc
    :language 'clojure
-   :override t
-   `(((list_lit :anchor (sym_lit) @font-lock-keyword-face
-                :anchor (sym_lit) @font-lock-type-face)
+   ; :override t
+   `(((list_lit :anchor (sym_lit (sym_name) @font-lock-keyword-face)
+                :anchor (sym_lit (sym_name) @font-lock-type-face))
       (:match ,clojure--type-keyword-regexp @font-lock-keyword-face)))
 
-   :feature 'metadata ;; also lumps in the var `#' reader macro
+   :feature 'metadata
    :language 'clojure
-   :override t ;; should this just fall back to the default kw/sym highlight?
+   :override t
    `((meta_lit marker: "^" @font-lock-property-face)
      (meta_lit value: (kwd_lit) @font-lock-property-face) ;; metadata
-     (meta_lit value: (sym_lit) @font-type-type-face) ;; typehin
-     ;; OLD metadata sugar #^
+     (meta_lit value: (sym_lit (sym_name) @font-lock-type-face)) ;; typehint
      (old_meta_lit marker: "#^" @font-lock-property-face)
      (old_meta_lit value: (kwd_lit) @font-lock-property-face) ;; metadata
-     (old_meta_lit value: (sym_lit) @font-type-type-face) ;; typehint
-     )
+     (old_meta_lit value: (sym_lit (sym_name) @font-lock-type-face))) ;; typehint
 
    ;; Possible to combine this with declaration??
    ;; docstrings are optional, and not part of every definition form
@@ -324,7 +322,8 @@ For NODE, OVERRIDE, START, and END, see `treesit-font-lock-rules'."
    ;;   (unquoting_lit
    ;;    marker: _ @font-lock-delimiter-face)
    ;;   (unquote_splicing_lit
-   ;;    marker _ @font-lock-delimiter-face))
+   ;;    marker _ @font-lock-delimiter-face)
+   ;;   (var_quoting_lit marker: _ @font-lock-property-face))
 
    :feature 'bracket
    :language 'clojure
@@ -337,14 +336,13 @@ For NODE, OVERRIDE, START, and END, see `treesit-font-lock-rules'."
      (dis_expr
       marker: "#_" @default
       value: _ @font-lock-comment-face)
-     ((list_lit :anchor (sym_lit) @font-lock-comment-delimiter-face)
+     ((list_lit :anchor (sym_lit (sym_name) @font-lock-comment-delimiter-face))
       (:match "^comment$" @font-lock-comment-delimiter-face)))
 
    :feature 'deref ;; not part of clojure-mode, but a cool idea?
    :language 'clojure
    '((derefing_lit
-      marker: "@" @font-lock-warning-face))
-   ))
+      marker: "@" @font-lock-warning-face))))
 
 (define-derived-mode clojure-ts-mode prog-mode "Clojure"
   (when (treesit-ready-p 'clojure)

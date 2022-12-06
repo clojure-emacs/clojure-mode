@@ -11,9 +11,9 @@
 ;; try to byte-recompile the clojure-mode.el when the face of 'fn' is 't'
 (fn foo [x] x)
 
-(fn hello [x] @x)
+(fn ^:m hello [x] @x)
 
-(def x true)
+(def ^Boolean x true)
 
 (clojure.core/defmacro my-mac []
   `(let [x 1]
@@ -265,8 +265,10 @@ Etiam commodo nulla id risus convallis pharetra. Integer dapibus, eros vitae veh
 
 (binding [*out* nil]
   #"regex string"
-  (def #^typehint x 1)
-  (def ^typehint x 2)
+  (def #^Typehint x 1)
+  (def #^:metadata x 1)
+  (def ^Typehint x 2)
+  (def ^:metadata x 2)
   #'name.sp-ace/var
   :name.spa-ce/keyword
   ::aliased/keyword
@@ -282,3 +284,8 @@ Etiam commodo nulla id risus convallis pharetra. Integer dapibus, eros vitae veh
 )
 
 clojure.core/map
+
+(.get ^ByteBuffer test/b)
+
+(def ^Integer x 1)
+
