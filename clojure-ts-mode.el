@@ -301,40 +301,46 @@ For NODE, OVERRIDE, START, and END, see `treesit-font-lock-rules'."
      (old_meta_lit value: (kwd_lit) @font-lock-property-face) ;; metadata
      (old_meta_lit value: (sym_lit (sym_name) @font-lock-type-face))) ;; typehint
 
-   ;; Possible to combine this with declaration??
-   ;; docstrings are optional, and not part of every definition form
+   :feature 'tagged-literals
+   :language 'clojure
+   :override t
+   '((tagged_or_ctor_lit marker: "#" @font-lock-preprocessor-face
+                         tag: (sym_lit) @font-lock-preprocessor-face))
+
    :feature 'doc
    :language 'clojure
    :override t
-   `(((list_lit :anchor (sym_lit) @declaration
-                :anchor (sym_lit) @name
+   `(((list_lit :anchor (sym_lit) @def_symbol
+                :anchor (sym_lit) @function_name
                 :anchor (str_lit) @font-lock-doc-face)
-      (:match ,clojure--definition-keyword-regexp @declaration)))
+      (:match ,clojure--definition-keyword-regexp @def_symbol)))
 
-   ;; :feature 'quote
-   ;; :language 'clojure
-   ;; '((quoting_lit
-   ;;    marker: _ @font-lock-delimiter-face)
-   ;;   (var_quoting_lit
-   ;;    marker: _ @font-lock-delimiter-face)
-   ;;   (syn_quoting_lit
-   ;;    marker: _ @font-lock-delimiter-face)
-   ;;   (unquoting_lit
-   ;;    marker: _ @font-lock-delimiter-face)
-   ;;   (unquote_splicing_lit
-   ;;    marker _ @font-lock-delimiter-face)
-   ;;   (var_quoting_lit marker: _ @font-lock-property-face))
+   :feature 'quote
+   :language 'clojure
+   '((quoting_lit
+      marker: _ @font-lock-delimiter-face)
+     (var_quoting_lit
+      marker: _ @font-lock-delimiter-face)
+     (syn_quoting_lit
+      marker: _ @font-lock-delimiter-face)
+     (unquoting_lit
+      marker: _ @font-lock-delimiter-face)
+     (unquote_splicing_lit
+      marker: _ @font-lock-delimiter-face)
+     (var_quoting_lit
+      marker: _ @font-lock-delimiter-face))
 
    :feature 'bracket
    :language 'clojure
-   '((["(" ")" "[" "]" "{" "}"]) @font-lock-bracket-face)
+   '((["(" ")" "[" "]" "{" "}"]) @font-lock-bracket-face
+     (set_lit :anchor "#" @font-lock-bracket-face))
 
    :feature 'comment
    :language 'clojure
    :override t
    '((comment) @font-lock-comment-face
      (dis_expr
-      marker: "#_" @default
+      marker: "#_" @font-lock-comment-delimiter-face
       value: _ @font-lock-comment-face)
      ((list_lit :anchor (sym_lit (sym_name) @font-lock-comment-delimiter-face))
       (:match "^comment$" @font-lock-comment-delimiter-face)))
@@ -349,11 +355,10 @@ For NODE, OVERRIDE, START, and END, see `treesit-font-lock-rules'."
     (treesit-parser-create 'clojure)
     (setq-local treesit-font-lock-settings clojure--treesit-settings)
     (setq-local treesit-font-lock-feature-list
-                '((comment string char bracket)
-                  (keyword constant symbol number builtin)
-                  (deref quote metadata definition variable type doc regex))))
-    (treesit-major-mode-setup)
-    (message "Clojure Treesit Mode"))
+                '((comment string char number)
+                  (keyword constant symbol bracket builtin)
+                  (deref quote metadata definition variable type doc regex tagged-literals))))
+    (treesit-major-mode-setup))
 
 (add-to-list 'auto-mode-alist '("\\.clj\\'" . clojure-ts-mode))
 
