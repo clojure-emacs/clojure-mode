@@ -269,7 +269,6 @@ For NODE, OVERRIDE, START, and END, see `treesit-font-lock-rules'."
 
    :feature 'definition ;; defn and defn like macros
    :language 'clojure
-   ;:override t ;; need to override str_lit for font-lock-doc-face
    `(((list_lit :anchor (sym_lit (sym_name) @font-lock-keyword-face)
                 :anchor (sym_lit (sym_name) @font-lock-function-name-face))
       (:match ,clojure--definition-keyword-regexp
@@ -279,14 +278,12 @@ For NODE, OVERRIDE, START, and END, see `treesit-font-lock-rules'."
 
    :feature 'variable ;; def, defonce
    :language 'clojure
-   ; :override t
    `(((list_lit :anchor (sym_lit (sym_name) @font-lock-keyword-face)
                 :anchor (sym_lit (sym_name) @font-lock-variable-name-face))
       (:match ,clojure--variable-keyword-regexp @font-lock-keyword-face)))
 
    :feature 'type ;; deftype, defmulti, defprotocol, etc
    :language 'clojure
-   ; :override t
    `(((list_lit :anchor (sym_lit (sym_name) @font-lock-keyword-face)
                 :anchor (sym_lit (sym_name) @font-lock-type-face))
       (:match ,clojure--type-keyword-regexp @font-lock-keyword-face)))
