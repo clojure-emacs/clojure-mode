@@ -267,6 +267,10 @@ For NODE, OVERRIDE, START, and END, see `treesit-font-lock-rules'."
    :language 'clojure
    '((sym_name) @clojure-ts-mode--fontify-symbol)
 
+   ;; How does this work for defns nested in other forms, not at the top level?
+   ;; Should I match against the source node to only hit the top level? Can that be expressed?
+   ;; What about valid usages like `(let [closed 1] (defn +closed [n] (+ n closed)))'??
+   ;; No wonder the tree-sitter-clojure grammar only touches syntax, and not semantics
    :feature 'definition ;; defn and defn like macros
    :language 'clojure
    `(((list_lit :anchor (sym_lit (sym_name) @font-lock-keyword-face)
@@ -304,6 +308,8 @@ For NODE, OVERRIDE, START, and END, see `treesit-font-lock-rules'."
    '((tagged_or_ctor_lit marker: "#" @font-lock-preprocessor-face
                          tag: (sym_lit) @font-lock-preprocessor-face))
 
+   ;; TODO, also account for `def'
+   ;; Figure out how to highlight symbols in docstrings.
    :feature 'doc
    :language 'clojure
    :override t
@@ -358,7 +364,7 @@ For NODE, OVERRIDE, START, and END, see `treesit-font-lock-rules'."
     (treesit-major-mode-setup))
 
 (add-to-list 'auto-mode-alist '("\\.clj\\'" . clojure-ts-mode))
-
+(add-hook 'clojure-ts-mode-hook 'treesit-inspect-mode)
 
 ;; (let ((query
 ;;        `((meta_lit marker: "^" @font-lock-property-face)
