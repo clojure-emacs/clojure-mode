@@ -2,15 +2,17 @@
 
 ## master (unreleased)
 
+## 5.16.0 (2022-12-14)
+
 ### Changes
 
-* [#641](https://github.com/clojure-emacs/clojure-mode/issues/641) Recognize nbb projects (identified by the presence of `nbb.edn`).
+* [#641](https://github.com/clojure-emacs/clojure-mode/issues/641): Recognize nbb projects (identified by the presence of `nbb.edn`).
 * [#629](https://github.com/clojure-emacs/clojure-mode/pull/629): Set `add-log-current-defun-function` to new function `clojure-current-defun-name` (this is used by `which-function-mode` and `easy-kill`).
 
 ### Bugs fixed
 
 * [#581](https://github.com/clojure-emacs/clojure-mode/issues/581): Fix font locking not working for keywords starting with a number.
-* [#377](https://github.com/clojure-emacs/clojure-mode/issues/377): Fix everything starting with the prefix 'def' being highlighted as a definition form. Now definition forms are enumerated explicitly in the font-locking code, like all other forms.
+* [#377](https://github.com/clojure-emacs/clojure-mode/issues/377): Fix everything starting with the prefix `def` being highlighted as a definition form. Now definition forms are enumerated explicitly in the font-locking code, like all other forms.
 * [#638](https://github.com/clojure-emacs/clojure-mode/pull/638): Fix imenu with Clojure code in string or comment.
 
 ## 5.15.1 (2022-07-30)
