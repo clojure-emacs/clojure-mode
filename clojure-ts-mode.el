@@ -1,25 +1,22 @@
 ;; Clojure tree-sitter proof of concept
 ;; Clojure tree-sitter grammer used is here: git@github.com:sogaiu/tree-sitter-clojure.git
-;; Currently requires Emacs built from the master branch
-;;
+;; Currently requires Emacs built from the emacs-29 branch
 ;;
 ;; Follow the instructions found in the emacs source to build tree-sitter getting started guide
-;; to build the tree-sitter  grammers
+;;
+;; To build the tree-sitter grammers:
 ;; https://git.savannah.gnu.org/cgit/emacs.git/tree/admin/notes/tree-sitter/starter-guide
 ;;
-;; To summarize:
-;; install tree sitter (package manager, or from source) then
+;; To summarize, run:
 ;;; $ git clone git@github.com:casouri/tree-sitter-module.git
-;; Apply the ./tree-sitter-module-clojure-support.patch (found in this repo) to that repository, then run
+;; Apply the ./tree-sitter-module-clojure-support.patch (found in this repo) to that repository, then run:
 ;;; $ ./batch.sh
 ;; Change this next line to point to the newly built dist directory built from the patched `tree-sitter-module` repo
-;(setq treesit-extra-load-path '( "~/dev/tree-sitter-module/dist"))
+;; (setq treesit-extra-load-path '( "~/dev/tree-sitter-module/dist"))
 
 ;; Then evaluate the rest of this file
 ;; Open up test.clj to see it in action.
 ;; Try `M-x treesit-explore-mode` from the clojure buffer to examine the parse tree
-;;
-;; semi-colon comments, strings, and numbers working right now, nothing else
 
 (require 'clojure-mode)
 (require 'treesit)
@@ -300,28 +297,48 @@
    '((derefing_lit
       marker: "@" @font-lock-warning-face))))
 
-(define-derived-mode clojure-ts-mode prog-mode "Clojure"
+(defvar clojure-ts-mode-map
+  (let ((map (make-sparse-keymap)))
+    (set-keymap-parent map clojure-mode-map)
+    map))
+
+;;;###autoload
+(define-derived-mode clojure-ts-mode prog-mode "Clojure[TS]"
+  "Major mode for editing Clojure code.
+Requires Emacs 29 and libtree-sitter-clojure.so available somewhere in
+`treesit-extra-load-path'.
+
+\\{clojure-ts-mode-map}"
   (when (treesit-ready-p 'clojure)
     (treesit-parser-create 'clojure)
     (setq-local treesit-font-lock-settings clojure--treesit-settings)
+    ;; (setq-local treesit-defun-prefer-top-level t
+    ;;             treesit-defun-type-regexp "list_lit")
     (setq-local treesit-font-lock-feature-list
                 '((comment string char number)
                   (keyword constant symbol bracket builtin)
-                  (deref quote metadata definition variable type doc regex tagged-literals))))
-    (treesit-major-mode-setup))
+                  (deref quote metadata definition variable type doc regex tagged-literals)))
+    (treesit-major-mode-setup)
+    ;; TODO: revisit these, what can be replaced with treesiter
+    (clojure-mode-variables)
+    (add-hook 'paredit-mode-hook #'clojure-paredit-setup)
+    ;; TODO: setup treesit indentation
+    (add-hook 'electric-indent-function #'clojure-mode--electric-indent-function)))
 
-(add-to-list 'auto-mode-alist '("\\.clj\\'" . clojure-ts-mode))
-(add-hook 'clojure-ts-mode-hook 'treesit-inspect-mode)
+;; We won't autoload this, users can opt in by requiring this library or adding
+;; clojure-ts-mode to (auto|interpreter)-mode-alist
+(progn
+  (add-hook 'clojure-ts-mode-hook 'treesit-inspect-mode)
+  (add-to-list 'auto-mode-alist
+               '("\\.\\(clj\\|cljd\\|dtm\\|edn\\)\\'" . clojure-ts-mode))
+  ;; TODO: Create clojurec-ts-mode and clojurescript-ts-mode
+  (add-to-list 'auto-mode-alist '("\\.cljc\\'" . clojure-ts-mode))
+  (add-to-list 'auto-mode-alist '("\\.cljs\\'" . clojure-ts-mode))
+  ;; boot build scripts are Clojure source files
+  (add-to-list 'auto-mode-alist '("\\(?:build\\|profile\\)\\.boot\\'" . clojure-ts-mode))
+  ;; babashka scripts are Clojure source files
+  (add-to-list 'interpreter-mode-alist '("bb" . clojure-ts-mode))
+  ;; nbb scripts are ClojureScript source files
+  (add-to-list 'interpreter-mode-alist '("nbb" . clojure-ts-mode)))
 
-;; (let ((query
-;;        `((meta_lit marker: "^" @font-lock-property-face)
-;;          (meta_lit value: (kwd_lit) @font-lock-property-face) ;; metadata
-;;          (meta_lit value: (sym_lit) @font-type-type-face) ;; typehin
-;;          ;; OLD metadata sugar #^
-;;          (old_meta_lit marker: "#^" @font-lock-property-face)
-;;          (old_meta_lit value: (kwd_lit) @font-lock-property-face) ;; metadata
-;;          (old_meta_lit value: (sym_lit) @font-type-type-face) ;; typehint
-;;          )))
-
-;;   (treesit-query-string "(def #^:type sym 1 )" query 'clojure)
-;;   )
+(provide 'clojure-ts-mode)
