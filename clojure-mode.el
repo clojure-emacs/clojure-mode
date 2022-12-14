@@ -596,6 +596,17 @@ replacement for `cljr-expand-let`."
       (eq (get-text-property (nth 8 ppss) 'face)
           'font-lock-doc-face))))
 
+(defun clojure-mode--electric-indent-function (_char)
+  "Force indentation in non-inlined docstrings."
+  (if (and (clojure-in-docstring-p)
+           ;; make sure we're not dealing with an inline docstring
+           ;; e.g. (def foo "inline docstring" bar)
+           (save-excursion
+             (beginning-of-line-text)
+             (eq (get-text-property (point) 'face)
+                 'font-lock-doc-face)))
+      'do-indent))
+
 ;;;###autoload
 (define-derived-mode clojure-mode prog-mode "Clojure"
   "Major mode for editing Clojure code.
@@ -606,15 +617,7 @@ replacement for `cljr-expand-let`."
   (add-hook 'paredit-mode-hook #'clojure-paredit-setup)
   ;; `electric-layout-post-self-insert-function' prevents indentation in strings
   ;; and comments, force indentation of non-inlined docstrings:
-  (add-hook 'electric-indent-functions
-            (lambda (_char) (if (and (clojure-in-docstring-p)
-                                     ;; make sure we're not dealing with an inline docstring
-                                     ;; e.g. (def foo "inline docstring" bar)
-                                     (save-excursion
-                                       (beginning-of-line-text)
-                                       (eq (get-text-property (point) 'face)
-                                           'font-lock-doc-face)))
-                                'do-indent))))
+  (add-hook 'electric-indent-functions #'clojure-mode--electric-indent-function))
 
 (defcustom clojure-verify-major-mode t
   "If non-nil, warn when activating the wrong `major-mode'."
