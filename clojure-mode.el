@@ -778,6 +778,9 @@ Called by `imenu--generic-function'."
             (deftype (match-string 2))
             (start (point)))
         ;; ignore user-error from down-list when called from inside a string or comment
+        ;; TODO: a better workaround would be to wrap it in
+        ;; unless (ppss-comment-or-string-start (syntax-ppss)) instead of ignore-errors,
+        ;; but ppss-comment-or-string-start is only available since Emacs 27
         (ignore-errors
           (down-list))
         (forward-sexp)
