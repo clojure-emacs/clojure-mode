@@ -1,8 +1,11 @@
+;;; clojure-ts-mode.el --- Major mode for Clojure code -*- lexical-binding: t; -*-
+
+;;; Commentary:
 ;; Clojure tree-sitter proof of concept
 ;; Clojure tree-sitter grammer used is here: git@github.com:sogaiu/tree-sitter-clojure.git
 ;; Currently requires Emacs built from the emacs-29 branch
 ;;
-;; Follow the instructions found in the emacs source to build tree-sitter getting started guide
+;; Follow the instructions found in the Emacs source to build tree-sitter getting started guide
 ;;
 ;; To build the tree-sitter grammers:
 ;; https://git.savannah.gnu.org/cgit/emacs.git/tree/admin/notes/tree-sitter/starter-guide
@@ -17,6 +20,25 @@
 ;; Then evaluate the rest of this file
 ;; Open up test.clj to see it in action.
 ;; Try `M-x treesit-explore-mode` from the clojure buffer to examine the parse tree
+
+;;; License:
+
+;; This program is free software; you can redistribute it and/or
+;; modify it under the terms of the GNU General Public License
+;; as published by the Free Software Foundation; either version 3
+;; of the License, or (at your option) any later version.
+;;
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with GNU Emacs; see the file COPYING.  If not, write to the
+;; Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+;; Boston, MA 02110-1301, USA.
+
+;;; Code:
 
 (require 'clojure-mode)
 (require 'treesit)
@@ -342,3 +364,5 @@ Requires Emacs 29 and libtree-sitter-clojure.so available somewhere in
   (add-to-list 'interpreter-mode-alist '("nbb" . clojure-ts-mode)))
 
 (provide 'clojure-ts-mode)
+
+;;; clojure-ts-mode.el ends here
