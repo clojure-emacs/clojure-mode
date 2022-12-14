@@ -1,12 +1,12 @@
-From d3d8c26abb49b19f6efb6c625b760a454b5e5f09 Mon Sep 17 00:00:00 2001
+From 4bd84ca7db5c11b771f0fb306957754f67d8e819 Mon Sep 17 00:00:00 2001
 From: dannyfreeman <danny@dfreeman.email>
 Date: Sat, 3 Dec 2022 18:37:17 -0500
 Subject: [PATCH] Add clojure support
 
 ---
- batch.sh |  3 ++-
- build.sh | 14 ++++++++++++--
- 2 files changed, 14 insertions(+), 3 deletions(-)
+ batch.sh | 3 ++-
+ build.sh | 7 ++++++-
+ 2 files changed, 8 insertions(+), 2 deletions(-)
 
 diff --git a/batch.sh b/batch.sh
 index d5d58fe..56b8dac 100755
@@ -27,7 +27,7 @@ index d5d58fe..56b8dac 100755
  
  for language in "${languages[@]}"
 diff --git a/build.sh b/build.sh
-index be4be7b..810b613 100755
+index be4be7b..1854c15 100755
 --- a/build.sh
 +++ b/build.sh
 @@ -1,4 +1,4 @@
@@ -42,33 +42,12 @@ index be4be7b..810b613 100755
  
 +if [ "${lang}" == "clojure" ]
 +then
-+    org="sogaiu"
++    org="dannyfreeman"
 +fi
 +
  if [ $(uname) == "Darwin" ]
  then
      soext="dylib"
-@@ -24,7 +29,7 @@ echo "Building ${lang}"
- 
- # Retrieve sources.
- git clone "https://github.com/${org}/tree-sitter-${lang}.git" \
--    --depth 1 --quiet
-+   --quiet
- 
- if [ "${lang}" == "typescript" ]
- then
-@@ -35,6 +40,11 @@ cp emacs-module.h "tree-sitter-${lang}/src"
- cp "tree-sitter-${lang}/grammar.js" "tree-sitter-${lang}/src"
- cd "tree-sitter-${lang}/src"
- 
-+if [ "${lang}" == "clojure" ]
-+then
-+    git checkout issue-21
-+fi
-+
- if [ "${lang}" == "typescript/tsx" ]
- then
-     lang="tsx"
 -- 
 2.38.1
 
