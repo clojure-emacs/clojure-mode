@@ -13,7 +13,7 @@
 ;; Apply the ./tree-sitter-module-clojure-support.patch (found in this repo) to that repository, then run
 ;;; $ ./batch.sh
 ;; Change this next line to point to the newly built dist directory built from the patched `tree-sitter-module` repo
-(setq treesit-extra-load-path '( "~/dev/tree-sitter-module/dist"))
+;(setq treesit-extra-load-path '( "~/dev/tree-sitter-module/dist"))
 
 ;; Then evaluate the rest of this file
 ;; Open up test.clj to see it in action.
@@ -21,9 +21,8 @@
 ;;
 ;; semi-colon comments, strings, and numbers working right now, nothing else
 
+(require 'clojure-mode)
 (require 'treesit)
-(unless (treesit-available-p)
-  (message "Tree sitter is broke"))
 
 (defconst clojure-ts-mode--builtin-dynamic-var-regexp
   (eval-and-compile
@@ -141,65 +140,6 @@
   '((t (:inherit font-lock-constant-face)))
   "Face used to font-lock Clojure keywords (:something).")
 
-(eval-and-compile
-  (defconst clojure--ts-sym-forbidden-ns-part-chars "][\";@\\^`~\(\)\{\}\\,\s\t\n\r\/"
-    "A list of chars that a Clojure symbol cannot contain.
-See definition of `macros': URL `http://git.io/vRGLD'.
-
-This is distinct from `'clojure--sym-forbidden-rest-chars' in clojure-mode
-because it also forbids the `/' character.")
-
-  (defconst clojure--namespaced-keyword-regexp
-    (concat "^\\(::?\\)\\([^" clojure--ts-sym-forbidden-ns-part-chars "]*\\)/")
-    "A regex matching namespaced keywords.
-Captures the forward `:' or `::' marker in group 1, and the namespace in group 2.")
-
-  (defconst clojure--namespaced-symbol-regexp
-    (concat "^\\([^" clojure--ts-sym-forbidden-ns-part-chars "]*\\)/")
-    "A regex matching namespaced symbols.
-Captures the namespaced portion of the symbol in group1."))
-
-(defun clojure-ts-mode--fontify-keyword  (node override start end &rest _)
-  "Fontify keywords, distinguishing between the namespace and name parts.
-For NODE, OVERRIDE, START, and END, see `treesit-font-lock-rules'."
-  (let ((start (treesit-node-start node))
-        (end (treesit-node-end node))
-        (kw-text (treesit-node-text node t)))
-    (treesit-fontify-with-override start end 'clojure-keyword-face override)
-    (when (string-match clojure--namespaced-keyword-regexp kw-text)
-      (let* ((marker (match-string 1 kw-text))
-             (namespace (match-string 2 kw-text))
-             (ns-start (+ start (length marker)))
-             (ns-end (+ ns-start (length namespace))))
-        ;; The namespace
-        (treesit-fontify-with-override ns-start ns-end 'font-lock-type-face t)
-        ;; The / delimiter
-        (treesit-fontify-with-override ns-end (+ 1 ns-end) 'default t)))))
-
-(defun clojure--ts-node-at-function-position-p (node)
-  "Return nil if NODE is not in the function position of its parent."
-  (treesit-node-eq node (treesit-node-child (treesit-node-parent node) 1)))
-
-(defun clojure-ts-mode--fontify-symbol  (node override start end &rest _)
-  "Fontify symbols, distinguishing between the namespace and name parts.
-For NODE, OVERRIDE, START, and END, see `treesit-font-lock-rules'."
-  (let ((sym-text (treesit-node-text node t))
-        (start (treesit-node-start node)))
-    (if (string-match clojure--namespaced-symbol-regexp sym-text)
-        (let* ((namespace (match-string 1 sym-text))
-               (ns-end (+ start (length namespace))))
-          (treesit-fontify-with-override start ns-end 'font-lock-type-face override))
-      ;; TODO: consider highlighting everyting in a function position
-      ;; I don't think we normally do this actually.
-      ;; Instead, we'll highlight just specific "builtin" keywords, those defined in clojure.core
-      ;; This option still exists though, matchs any symbol in a function position basically.
-      ;; (when (and
-      ;;        (equal "list_lit" (treesit-node-type (treesit-node-parent node)))
-      ;;        (clojure--ts-node-at-function-position-p node))
-      ;;   (let ((end (treesit-node-end node)))
-      ;;     (treesit-fontify-with-override start end 'font-lock-keyword-face override)))
-      )))
-
 (defface clojure-character-face
   '((t (:inherit font-lock-string-face)))
   "Face used to font-lock Clojure character literals.")
@@ -254,7 +194,11 @@ For NODE, OVERRIDE, START, and END, see `treesit-font-lock-rules'."
    ;; I believe in order to do this, the grammer will have to be updated to provide these "fields"
    :feature 'keyword
    :language 'clojure
-   '((kwd_lit) @clojure-ts-mode--fontify-keyword)
+   '((kwd_ns) @font-lock-type-face
+     (kwd_name) @clojure-keyword-face
+     (kwd_lit
+       marker: _ @clojure-keyword-face
+       delimiter: _ :? @default))
 
    :feature 'builtin
    :language 'clojure
@@ -265,7 +209,10 @@ For NODE, OVERRIDE, START, and END, see `treesit-font-lock-rules'."
 
    :feature 'symbol
    :language 'clojure
-   '((sym_name) @clojure-ts-mode--fontify-symbol)
+   '((sym_ns) @font-lock-type-face
+     ;; (sym_name) @default
+     ;; (sym_lit delimiter: _ :? @default)
+     )
 
    ;; How does this work for defns nested in other forms, not at the top level?
    ;; Should I match against the source node to only hit the top level? Can that be expressed?
