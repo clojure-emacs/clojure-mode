@@ -334,8 +334,9 @@ Requires Emacs 29 and libtree-sitter-clojure.so available somewhere in
   (when (treesit-ready-p 'clojure)
     (treesit-parser-create 'clojure)
     (setq-local treesit-font-lock-settings clojure--treesit-settings)
-    ;; (setq-local treesit-defun-prefer-top-level t
-    ;;             treesit-defun-type-regexp "list_lit")
+    (setq-local treesit-defun-prefer-top-level t
+                treesit-defun-tactic 'top-level
+                treesit-defun-type-regexp (rx (or "list_lit" "vec_lit" "map_lit")))
     (setq-local treesit-font-lock-feature-list
                 '((comment string char number)
                   (keyword constant symbol bracket builtin)
