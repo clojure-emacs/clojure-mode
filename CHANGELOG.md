@@ -2,6 +2,10 @@
 
 ## master (unreleased)
 
+### Changes
+
+* Font-lock Lein's `defproject` as a keyword.
+
 ## 5.16.0 (2022-12-14)
 
 ### Changes

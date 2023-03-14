@@ -858,7 +858,8 @@ any number of matches of `clojure--sym-forbidden-rest-chars'."))
                               "defna"
                               ;; Third party
                               "deftask"
-                              "defstate"))
+                              "defstate"
+                              "defproject"))
                 "\\)\\>")
        (1 font-lock-keyword-face))
       ;; Top-level variable definition
