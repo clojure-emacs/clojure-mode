@@ -6,6 +6,10 @@
 
 * Font-lock Lein's `defproject` as a keyword.
 
+### Bugs fixed
+
+* [#586](https://github.com/clojure-emacs/clojure-mode/issues/586): Fix infinite loop when opening file containing `comment` with `clojure-toplevel-inside-comment-form` set to `t`.
+
 ## 5.16.0 (2022-12-14)
 
 ### Changes
