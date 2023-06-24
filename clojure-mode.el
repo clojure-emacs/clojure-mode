@@ -2030,7 +2030,13 @@ content) are considered part of the preceding sexp."
   (save-restriction
     (narrow-to-region (point) (save-excursion
                                 (up-list)
-                                (1- (point))))
+                                ;; Ignore any comments in the end before sorting
+                                (backward-char)
+                                (forward-sexp -1)
+                                (clojure-forward-logical-sexp)
+                                (unless (looking-at-p ")")
+                                  (search-forward-regexp "$"))
+                                (point)))
     (skip-chars-forward "\r\n[:blank:]")
     (sort-subr nil
                (lambda () (skip-chars-forward "\r\n[:blank:]"))
