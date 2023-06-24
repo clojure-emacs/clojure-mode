@@ -136,19 +136,23 @@
       (expect (buffer-string) :to-equal
               "(ns my-app.core
     (:require [my-app.views [user-page :as user-page]]
-              [rum.core :as rum] ;comment\n))")))
+              [rum.core :as rum] ;comment
+))")))
 
   (it "should sort requires in a basic ns with comments in the end"
     (with-clojure-buffer "(ns my-app.core
     (:require [rum.core :as rum] ;comment
               [my-app.views [user-page :as user-page]]
-              ;;[comment2]\n))"
+              ;;[comment2]
+))"
       (clojure-sort-ns)
       (expect (buffer-string) :to-equal
               "(ns my-app.core
     (:require [my-app.views [user-page :as user-page]]
-              [rum.core :as rum] ;comment\n
-              ;;[comment2]\n))")))
+              [rum.core :as rum] ;comment
+
+              ;;[comment2]
+))")))
   (it "should sort requires in ns with copyright disclamer and comments"
    (with-clojure-buffer ";; Copyright (c) John Doe. All rights reserved.
 ;; The use and distribution terms for this software are covered by the
@@ -171,7 +175,8 @@
    ;; Middle comment
    [bar] ;; bar comment
    ;; The first comment
-   [foo] ;; foo comment\n
+   [foo] ;; foo comment
+
    ;; A last comment
    ))")))
 
