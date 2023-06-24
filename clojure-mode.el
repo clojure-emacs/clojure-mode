@@ -1,7 +1,7 @@
 ;;; clojure-mode.el --- Major mode for Clojure code -*- lexical-binding: t; -*-
 
 ;; Copyright © 2007-2013 Jeffrey Chu, Lennart Staflin, Phil Hagelberg
-;; Copyright © 2013-2022 Bozhidar Batsov, Artur Malabarba, Magnar Sveen
+;; Copyright © 2013-2023 Bozhidar Batsov, Artur Malabarba, Magnar Sveen
 ;;
 ;; Authors: Jeffrey Chu <jochu0@gmail.com>
 ;;       Lennart Staflin <lenst@lysator.liu.se>
@@ -858,7 +858,8 @@ any number of matches of `clojure--sym-forbidden-rest-chars'."))
                               "defna"
                               ;; Third party
                               "deftask"
-                              "defstate"))
+                              "defstate"
+                              "defproject"))
                 "\\)\\>")
        (1 font-lock-keyword-face))
       ;; Top-level variable definition
@@ -2269,8 +2270,11 @@ position before the current position."
           (while (< (point) position)
             (clojure-forward-logical-sexp 1)
             (clojure-backward-logical-sexp 1)
-            (push (point) sexp-positions)
-            (clojure-forward-logical-sexp 1))
+            ;; Needed to prevent infinite recursion when there's only 1 form in buffer.
+            (if (eq (point) (car sexp-positions))
+                (goto-char position)
+              (push (point) sexp-positions)
+              (clojure-forward-logical-sexp 1)))
         (scan-error nil))
       sexp-positions)))
 

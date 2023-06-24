@@ -169,6 +169,24 @@
             (goto-char (point-max))
             (expect (clojure-find-ns) :to-equal expected)))))))
 
+(describe "clojure-sexp-starts-until-position"
+  (it "should return starting points for forms after POINT until POSITION"
+    (with-clojure-buffer "(run 1) (def b 2) (slurp \"file\")\n"
+        (goto-char (point-min))
+        (expect (not (cl-set-difference '(19 9 1)
+                                        (clojure-sexp-starts-until-position (point-max)))))))
+
+  (it "should return starting point for a single form in buffer after POINT"
+    (with-clojure-buffer "comment\n"
+        (goto-char (point-min))
+        (expect (not (cl-set-difference '(1)
+                                        (clojure-sexp-starts-until-position (point-max)))))))
+
+  (it "should return nil if POSITION is behind POINT"
+    (with-clojure-buffer "(run 1) (def b 2)\n"
+        (goto-char (point-max))
+        (expect (not (clojure-sexp-starts-until-position (- (point-max) 1)))))))
+
 (provide 'clojure-mode-sexp-test)
 
 ;;; clojure-mode-sexp-test.el ends here
