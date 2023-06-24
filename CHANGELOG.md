@@ -8,6 +8,7 @@
 
 ### Bugs fixed
 
+* [#645](https://github.com/clojure-emacs/clojure-mode/issues/645): Fix infinite loop when sorting a ns with comments in the end.
 * [#586](https://github.com/clojure-emacs/clojure-mode/issues/586): Fix infinite loop when opening file containing `comment` with `clojure-toplevel-inside-comment-form` set to `t`.
 
 ## 5.16.0 (2022-12-14)
