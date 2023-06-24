@@ -149,6 +149,31 @@
     (:require [my-app.views [user-page :as user-page]]
               [rum.core :as rum] ;comment\n
               ;;[comment2]\n))")))
+  (it "should sort requires in ns with copyright disclamer and comments"
+   (with-clojure-buffer ";; Copyright (c) John Doe. All rights reserved.
+;; The use and distribution terms for this software are covered by the
+;; Eclipse Public License 1.0 (http://opensource.org/licenses/eclipse-1.0.php)
+(ns clojure.core
+  (:require
+   ;; The first comment
+   [foo] ;; foo comment
+   ;; Middle comment
+   [bar] ;; bar comment
+   ;; A last comment
+   ))"
+      (clojure-sort-ns)
+      (expect (buffer-string) :to-equal
+              ";; Copyright (c) John Doe. All rights reserved.
+;; The use and distribution terms for this software are covered by the
+;; Eclipse Public License 1.0 (http://opensource.org/licenses/eclipse-1.0.php)
+(ns clojure.core
+  (:require
+   ;; Middle comment
+   [bar] ;; bar comment
+   ;; The first comment
+   [foo] ;; foo comment\n
+   ;; A last comment
+   ))")))
 
   (it "should also sort imports in a ns"
     (with-clojure-buffer "\n(ns my-app.core
