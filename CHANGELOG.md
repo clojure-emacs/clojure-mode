@@ -2,6 +2,8 @@
 
 ## master (unreleased)
 
+## 5.16.1 (2023-06-26)
+
 ### Changes
 
 * Font-lock Lein's `defproject` as a keyword.
