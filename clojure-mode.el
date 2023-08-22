@@ -2127,20 +2127,21 @@ the cached value will be updated automatically."
 (defun clojure--find-ns-in-direction (direction)
   "Return the nearest namespace in a specific DIRECTION.
 DIRECTION is `forward' or `backward'."
-  (let ((candidate)
-        (fn (if (eq direction 'forward)
-                #'search-forward-regexp
-              #'search-backward-regexp)))
-    (while (and (not candidate)
-                (funcall fn clojure-namespace-regexp nil t))
-      (let ((end (match-end 0)))
-        (save-excursion
-          (save-match-data
-            (goto-char end)
-            (clojure-forward-logical-sexp)
-            (unless (or (clojure--in-string-p) (clojure--in-comment-p))
-              (setq candidate (string-remove-prefix "'" (thing-at-point 'symbol))))))))
-    candidate))
+  (ignore-errors
+    (let ((candidate)
+          (fn (if (eq direction 'forward)
+                  #'search-forward-regexp
+                #'search-backward-regexp)))
+      (while (and (not candidate)
+                  (funcall fn clojure-namespace-regexp nil t))
+        (let ((end (match-end 0)))
+          (save-excursion
+            (save-match-data
+              (goto-char end)
+              (clojure-forward-logical-sexp)
+              (unless (or (clojure--in-string-p) (clojure--in-comment-p))
+                (setq candidate (string-remove-prefix "'" (thing-at-point 'symbol))))))))
+      candidate)))
 
 (defun clojure-find-ns ()
   "Return the namespace of the current Clojure buffer.

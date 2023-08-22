@@ -167,7 +167,13 @@
             (expect (clojure-find-ns) :to-equal expected)
             ;; After both namespaces
             (goto-char (point-max))
-            (expect (clojure-find-ns) :to-equal expected)))))))
+            (expect (clojure-find-ns) :to-equal expected))))))
+
+  (it "should return nil for an invalid ns form"
+      ;; we should not cache the results of `clojure-find-ns' here
+      (let ((clojure-cache-ns nil))
+        (with-clojure-buffer "(ns )"
+          (expect (equal nil (clojure-find-ns)))))))
 
 (describe "clojure-sexp-starts-until-position"
   (it "should return starting points for forms after POINT until POSITION"
