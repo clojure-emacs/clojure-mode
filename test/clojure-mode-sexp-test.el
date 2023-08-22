@@ -169,11 +169,20 @@
             (goto-char (point-max))
             (expect (clojure-find-ns) :to-equal expected))))))
 
-  (it "should return nil for an invalid ns form"
-      ;; we should not cache the results of `clojure-find-ns' here
-      (let ((clojure-cache-ns nil))
-        (with-clojure-buffer "(ns )"
-          (expect (equal nil (clojure-find-ns)))))))
+  (describe "`favor-nil' argument"
+    (let ((clojure-cache-ns nil))
+      (describe "given a faulty ns form"
+        (let ((ns-form "(ns )"))
+          (describe "when the argument is `t'"
+            (it "causes `clojure-find-ns' to return nil"
+              (with-clojure-buffer ns-form
+                                   (expect (equal nil (clojure-find-ns t))))))
+
+          (describe "when the argument is `nil'"
+            (it "causes `clojure-find-ns' to return raise an error"
+              (with-clojure-buffer ns-form
+                                   (expect (clojure-find-ns nil)
+                                           :to-throw 'error)))))))))
 
 (describe "clojure-sexp-starts-until-position"
   (it "should return starting points for forms after POINT until POSITION"

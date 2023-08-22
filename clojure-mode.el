@@ -2127,39 +2127,45 @@ the cached value will be updated automatically."
 (defun clojure--find-ns-in-direction (direction)
   "Return the nearest namespace in a specific DIRECTION.
 DIRECTION is `forward' or `backward'."
-  (ignore-errors
-    (let ((candidate)
-          (fn (if (eq direction 'forward)
-                  #'search-forward-regexp
-                #'search-backward-regexp)))
-      (while (and (not candidate)
-                  (funcall fn clojure-namespace-regexp nil t))
-        (let ((end (match-end 0)))
-          (save-excursion
-            (save-match-data
-              (goto-char end)
-              (clojure-forward-logical-sexp)
-              (unless (or (clojure--in-string-p) (clojure--in-comment-p))
-                (setq candidate (string-remove-prefix "'" (thing-at-point 'symbol))))))))
-      candidate)))
+  (let ((candidate)
+        (fn (if (eq direction 'forward)
+                #'search-forward-regexp
+              #'search-backward-regexp)))
+    (while (and (not candidate)
+                (funcall fn clojure-namespace-regexp nil t))
+      (let ((end (match-end 0)))
+        (save-excursion
+          (save-match-data
+            (goto-char end)
+            (clojure-forward-logical-sexp)
+            (unless (or (clojure--in-string-p) (clojure--in-comment-p))
+              (setq candidate (string-remove-prefix "'" (thing-at-point 'symbol))))))))
+    candidate))
 
-(defun clojure-find-ns ()
-  "Return the namespace of the current Clojure buffer.
+(defun clojure-find-ns (&optional favor-nil)
+  "Return the namespace of the current Clojure buffer, honor `FAVOR-NIL'.
 Return the namespace closest to point and above it.  If there are
 no namespaces above point, return the first one in the buffer.
+
+If `FAVOR-NIL' is t, errors during ns form parsing will be swallowed,
+and nil will be returned instead of letting this function fail.
 
 The results will be cached if `clojure-cache-ns' is set to t."
   (if (and clojure-cache-ns clojure-cached-ns)
       clojure-cached-ns
-    (let ((ns (save-excursion
-                (save-restriction
-                  (widen)
+    (let* ((f (lambda (direction)
+                (if favor-nil
+                    (ignore-errors (clojure--find-ns-in-direction direction))
+                  (clojure--find-ns-in-direction direction))))
+           (ns (save-excursion
+                 (save-restriction
+                   (widen)
 
-                  ;; Move to top-level to avoid searching from inside ns
-                  (ignore-errors (while t (up-list nil t t)))
+                   ;; Move to top-level to avoid searching from inside ns
+                   (ignore-errors (while t (up-list nil t t)))
 
-                  (or (clojure--find-ns-in-direction 'backward)
-                      (clojure--find-ns-in-direction 'forward))))))
+                   (or (funcall f 'backward)
+                       (funcall f 'forward))))))
       (setq clojure-cached-ns ns)
       ns)))
 
