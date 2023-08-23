@@ -10,7 +10,7 @@
 ;;       Artur Malabarba <bruce.connor.am@gmail.com>
 ;;       Magnar Sveen <magnars@gmail.com>
 ;; Maintainer: Bozhidar Batsov <bozhidar@batsov.dev>
-;; URL: http://github.com/clojure-emacs/clojure-mode
+;; URL: https://github.com/clojure-emacs/clojure-mode
 ;; Keywords: languages clojure clojurescript lisp
 ;; Version: 5.16.2
 ;; Package-Requires: ((emacs "25.1"))
@@ -20,7 +20,7 @@
 ;;; Commentary:
 
 ;; Provides font-lock, indentation, navigation and basic refactoring for the
-;; Clojure programming language (http://clojure.org).
+;; Clojure programming language (https://clojure.org).
 
 ;; Using clojure-mode with paredit or smartparens is highly recommended.
 
@@ -32,10 +32,10 @@
 ;;   ;; require or autoload smartparens
 ;;   (add-hook 'clojure-mode-hook #'smartparens-strict-mode)
 
-;; See inf-clojure (http://github.com/clojure-emacs/inf-clojure) for
+;; See inf-clojure (https://github.com/clojure-emacs/inf-clojure) for
 ;; basic interaction with Clojure subprocesses.
 
-;; See CIDER (http://github.com/clojure-emacs/cider) for
+;; See CIDER (https://github.com/clojure-emacs/cider) for
 ;; better interaction with subprocesses via nREPL.
 
 ;;; License:
@@ -808,12 +808,12 @@ Called by `imenu--generic-function'."
 (eval-and-compile
   (defconst clojure--sym-forbidden-rest-chars "][\";@\\^`~\(\)\{\}\\,\s\t\n\r"
     "A list of chars that a Clojure symbol cannot contain.
-See definition of `macros': URL `http://git.io/vRGLD'.")
+See definition of `macros': URL `https://git.io/vRGLD'.")
   (defconst clojure--sym-forbidden-1st-chars (concat clojure--sym-forbidden-rest-chars "0-9:'")
     "A list of chars that a Clojure symbol cannot start with.
-See the for-loop: URL `http://git.io/vRGTj' lines: URL
-`http://git.io/vRGIh', URL `http://git.io/vRGLE' and value
-definition of `macros': URL `http://git.io/vRGLD'.")
+See the for-loop: URL `https://git.io/vRGTj' lines: URL
+`https://git.io/vRGIh', URL `https://git.io/vRGLE' and value
+definition of `macros': URL `https://git.io/vRGLD'.")
   (defconst clojure--sym-regexp
     (concat "[^" clojure--sym-forbidden-1st-chars "][^" clojure--sym-forbidden-rest-chars "]*")
     "A regexp matching a Clojure symbol or namespace alias.

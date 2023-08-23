@@ -15,7 +15,7 @@
 ;; GNU General Public License for more details.
 
 ;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
 
@@ -156,7 +156,7 @@
   (it "should sort requires in ns with copyright disclamer and comments"
    (with-clojure-buffer ";; Copyright (c) John Doe. All rights reserved.
 ;; The use and distribution terms for this software are covered by the
-;; Eclipse Public License 1.0 (http://opensource.org/licenses/eclipse-1.0.php)
+;; Eclipse Public License 1.0 (https://opensource.org/license/epl-1-0/)
 (ns clojure.core
   (:require
    ;; The first comment
@@ -169,7 +169,7 @@
       (expect (buffer-string) :to-equal
               ";; Copyright (c) John Doe. All rights reserved.
 ;; The use and distribution terms for this software are covered by the
-;; Eclipse Public License 1.0 (http://opensource.org/licenses/eclipse-1.0.php)
+;; Eclipse Public License 1.0 (https://opensource.org/license/epl-1-0/)
 (ns clojure.core
   (:require
    ;; Middle comment

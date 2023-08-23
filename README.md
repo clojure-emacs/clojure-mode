@@ -9,7 +9,7 @@
 
 `clojure-mode` is an Emacs major mode that provides font-lock (syntax
 highlighting), indentation, navigation and refactoring support for the
-[Clojure(Script) programming language](http://clojure.org).
+[Clojure(Script) programming language](https://clojure.org).
 
 -----------
 
@@ -528,8 +528,8 @@ If you're into Clojure and Emacs you should definitely check it out.
 
 Tutorials,
 targeting Emacs beginners, are available at
-[clojure-doc.org](http://clojure-doc.org/articles/tutorials/emacs/) and
-[Clojure for the Brave and the True](http://www.braveclojure.com/basic-emacs/).
+[clojure-doc.org](https://clojure-doc.org/articles/tutorials/editors/) and
+[Clojure for the Brave and the True](https://www.braveclojure.com/basic-emacs/).
 Keep in mind, however, that they might be out-of-date.
 
 ## Caveats
@@ -569,22 +569,22 @@ Batsov, Artur Malabarba, Magnar Sveen and [contributors][].
 Distributed under the GNU General Public License; type <kbd>C-h C-c</kbd> to view it.
 
 [badge-license]: https://img.shields.io/badge/license-GPL_3-green.svg
-[melpa-badge]: http://melpa.org/packages/clojure-mode-badge.svg
-[melpa-stable-badge]: http://stable.melpa.org/packages/clojure-mode-badge.svg
-[melpa-package]: http://melpa.org/#/clojure-mode
-[melpa-stable-package]: http://stable.melpa.org/#/clojure-mode
-[COPYING]: http://www.gnu.org/copyleft/gpl.html
+[melpa-badge]: https://melpa.org/packages/clojure-mode-badge.svg
+[melpa-stable-badge]: https://stable.melpa.org/packages/clojure-mode-badge.svg
+[melpa-package]: https://melpa.org/#/clojure-mode
+[melpa-stable-package]: https://stable.melpa.org/#/clojure-mode
+[COPYING]: https://www.gnu.org/copyleft/gpl.html
 [badge-circleci]: https://circleci.com/gh/clojure-emacs/clojure-mode.svg?style=svg
 [circleci]: https://circleci.com/gh/clojure-emacs/clojure-mode
 [CIDER]: https://github.com/clojure-emacs/cider
 [cider-nrepl]: https://github.com/clojure-emacs/cider-nrepl
 [inf-clojure]: https://github.com/clojure-emacs/inf-clojure
 [contributors]: https://github.com/clojure-emacs/clojure-mode/contributors
-[melpa]: http://melpa.org
-[melpa stable]: http://stable.melpa.org
+[melpa]: https://melpa.org
+[melpa stable]: https://stable.melpa.org
 [clojure-mode-extra-font-locking]: https://github.com/clojure-emacs/clojure-mode/blob/master/clojure-mode-extra-font-locking.el
 [clj-refactor]: https://github.com/clojure-emacs/clj-refactor.el
-[paredit]: http://mumble.net/~campbell/emacs/paredit.html
+[paredit]: https://mumble.net/~campbell/emacs/paredit.html
 [smartparens]: https://github.com/Fuco1/smartparens
 [RainbowDelimiters]: https://github.com/Fanael/rainbow-delimiters
 [aggressive-indent-mode]: https://github.com/Malabarba/aggressive-indent-mode
