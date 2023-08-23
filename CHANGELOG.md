@@ -2,6 +2,10 @@
 
 ## master (unreleased)
 
+### Changes
+
+* `clojure-find-ns`: add an option to never raise errors, returning nil instead on unparseable ns forms.
+
 ## 5.16.1 (2023-06-26)
 
 ### Changes

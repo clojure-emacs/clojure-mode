@@ -167,7 +167,22 @@
             (expect (clojure-find-ns) :to-equal expected)
             ;; After both namespaces
             (goto-char (point-max))
-            (expect (clojure-find-ns) :to-equal expected)))))))
+            (expect (clojure-find-ns) :to-equal expected))))))
+
+  (describe "`suppress-errors' argument"
+    (let ((clojure-cache-ns nil))
+      (describe "given a faulty ns form"
+        (let ((ns-form "(ns )"))
+          (describe "when the argument is `t'"
+            (it "causes `clojure-find-ns' to return nil"
+              (with-clojure-buffer ns-form
+                                   (expect (equal nil (clojure-find-ns t))))))
+
+          (describe "when the argument is `nil'"
+            (it "causes `clojure-find-ns' to return raise an error"
+              (with-clojure-buffer ns-form
+                                   (expect (clojure-find-ns nil)
+                                           :to-throw 'error)))))))))
 
 (describe "clojure-sexp-starts-until-position"
   (it "should return starting points for forms after POINT until POSITION"
