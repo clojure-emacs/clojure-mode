@@ -2142,19 +2142,19 @@ DIRECTION is `forward' or `backward'."
               (setq candidate (string-remove-prefix "'" (thing-at-point 'symbol))))))))
     candidate))
 
-(defun clojure-find-ns (&optional favor-nil)
-  "Return the namespace of the current Clojure buffer, honor `FAVOR-NIL'.
+(defun clojure-find-ns (&optional suppress-errors)
+  "Return the namespace of the current Clojure buffer, honor `SUPPRESS-ERRORS'.
 Return the namespace closest to point and above it.  If there are
 no namespaces above point, return the first one in the buffer.
 
-If `FAVOR-NIL' is t, errors during ns form parsing will be swallowed,
+If `SUPPRESS-ERRORS' is t, errors during ns form parsing will be swallowed,
 and nil will be returned instead of letting this function fail.
 
 The results will be cached if `clojure-cache-ns' is set to t."
   (if (and clojure-cache-ns clojure-cached-ns)
       clojure-cached-ns
     (let* ((f (lambda (direction)
-                (if favor-nil
+                (if suppress-errors
                     (ignore-errors (clojure--find-ns-in-direction direction))
                   (clojure--find-ns-in-direction direction))))
            (ns (save-excursion

@@ -169,7 +169,7 @@
             (goto-char (point-max))
             (expect (clojure-find-ns) :to-equal expected))))))
 
-  (describe "`favor-nil' argument"
+  (describe "`suppress-errors' argument"
     (let ((clojure-cache-ns nil))
       (describe "given a faulty ns form"
         (let ((ns-form "(ns )"))
