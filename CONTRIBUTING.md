@@ -48,10 +48,10 @@ manually (e.g. via `homebrew`), instead of the ancient Emacs 22 that comes bundl
 See [this article][8] for more details.
 
 [1]: https://github.com/clojure-emacs/clojure-mode/issues
-[2]: http://gun.io/blog/how-to-github-fork-branch-and-pull-request
-[3]: http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html
+[2]: https://gun.io/blog/how-to-github-fork-branch-and-pull-request
+[3]: https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html
 [4]: https://help.github.com/articles/using-pull-requests
-[5]: http://gitready.com/advanced/2009/02/10/squashing-commits-with-rebase.html
+[5]: https://gitready.com/advanced/2009/02/10/squashing-commits-with-rebase.html
 [6]: https://github.com/clojure-emacs/clojure-mode/blob/master/CHANGELOG.md
 [7]: https://github.com/cask/cask
 [8]: https://emacsredux.com/blog/2015/05/09/emacs-on-os-x/
