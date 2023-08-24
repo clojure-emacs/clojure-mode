@@ -125,6 +125,23 @@
     (with-clojure-buffer "(ns foo)
 (ns-unmap *ns* 'map)
 (ns.misleading 1 2 3)"
+      (expect (clojure-find-ns) :to-equal "foo")))
+  (it "should skip leading garbage"
+    (with-clojure-buffer " (ns foo)"
+      (expect (clojure-find-ns) :to-equal "foo"))
+    (with-clojure-buffer "1(ns foo)"
+      (expect (clojure-find-ns) :to-equal "foo"))
+    (with-clojure-buffer "1 (ns foo)"
+      (expect (clojure-find-ns) :to-equal "foo"))
+    (with-clojure-buffer "1
+(ns foo)"
+      (expect (clojure-find-ns) :to-equal "foo"))
+    (with-clojure-buffer "[1]
+(ns foo)"
+      (expect (clojure-find-ns) :to-equal "foo"))
+    (with-clojure-buffer "[1] (ns foo)"
+      (expect (clojure-find-ns) :to-equal "foo"))
+    (with-clojure-buffer "[1](ns foo)"
       (expect (clojure-find-ns) :to-equal "foo"))))
 
 (describe "clojure-sort-ns"
@@ -154,7 +171,7 @@
               ;;[comment2]
 ))")))
   (it "should sort requires in ns with copyright disclamer and comments"
-   (with-clojure-buffer ";; Copyright (c) John Doe. All rights reserved.
+    (with-clojure-buffer ";; Copyright (c) John Doe. All rights reserved.
 ;; The use and distribution terms for this software are covered by the
 ;; Eclipse Public License 1.0 (https://opensource.org/license/epl-1-0/)
 (ns clojure.core
