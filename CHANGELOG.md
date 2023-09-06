@@ -2,6 +2,10 @@
 
 ## master (unreleased)
 
+### Changes
+
+* Improve support for multiple forms in the same line by replacing `beginning-of-defun` fn.
+
 ## 5.16.2 (2023-08-23)
 
 ### Changes
