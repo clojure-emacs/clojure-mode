@@ -86,6 +86,9 @@
     (with-clojure-buffer "  (ns foo)"
       (expect (clojure-find-ns) :to-equal "foo")))
   (it "should skip namespaces within any comment forms"
+    (with-clojure-buffer "(comment
+      (ns foo))"
+      (expect (clojure-find-ns) :to-equal nil))
     (with-clojure-buffer " (ns foo)
      (comment
       (ns bar))"
@@ -95,8 +98,7 @@
      (ns bar)
     (comment
       (ns baz))"
-      (expect (clojure-find-ns) :to-equal "bar"))
-    )
+      (expect (clojure-find-ns) :to-equal "bar")))
   (it "should find namespace declarations with nested metadata and docstrings"
     (with-clojure-buffer "(ns ^{:bar true} foo)"
       (expect (clojure-find-ns) :to-equal "foo"))
