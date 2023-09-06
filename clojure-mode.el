@@ -2275,11 +2275,7 @@ This will skip over sexps that don't represent objects, so that ^hints and
   (condition-case nil
       (save-excursion
         (beginning-of-defun-raw)
-        ;; Go to beginning of sexp
-        (clojure-forward-logical-sexp 1)
-        (clojure-backward-logical-sexp 1)
         (forward-char 1)
-        ;; Go to beginning of operator
         (clojure-forward-logical-sexp 1)
         (clojure-backward-logical-sexp 1)
         (looking-at-p first-form))
