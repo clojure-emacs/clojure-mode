@@ -549,7 +549,7 @@ replacement for `cljr-expand-let`."
       ;; If we are now precisely at the beginning of a defun, make sure
       ;; beginning-of-defun finds that one rather than the previous one.
       (or (eobp) (forward-char 1))
-      (beginning-of-defun)
+      (beginning-of-defun-raw)
       ;; Make sure we are really inside the defun found, not after it.
       (when (and (looking-at "\\s(")
                  (progn (end-of-defun)
@@ -1188,7 +1188,7 @@ Note that this means that there is no guarantee of proper font
 locking in def* forms that are not at top level."
   (goto-char point)
   (ignore-errors
-    (beginning-of-defun))
+    (beginning-of-defun-raw))
 
   (let ((beg-def (point)))
     (when (and (not (= point beg-def))
@@ -2217,7 +2217,7 @@ renaming a namespace."
 Returns a list pair, e.g. (\"defn\" \"abc\") or (\"deftest\" \"some-test\")."
   (save-excursion
     (unless (looking-at clojure-def-type-and-name-regex)
-      (beginning-of-defun))
+      (beginning-of-defun-raw))
     (when (search-forward-regexp clojure-def-type-and-name-regex nil t)
       (list (match-string-no-properties 1)
             (match-string-no-properties 2)))))
@@ -2274,7 +2274,7 @@ This will skip over sexps that don't represent objects, so that ^hints and
   "Return truthy if the first form matches FIRST-FORM."
   (condition-case nil
       (save-excursion
-        (beginning-of-defun)
+        (beginning-of-defun-raw)
         ;; Go to beginning of sexp
         (clojure-forward-logical-sexp 1)
         (clojure-backward-logical-sexp 1)
@@ -2336,10 +2336,10 @@ many times."
             (save-match-data
               (let ((original-position (point))
                     clojure-comment-end)
-                (beginning-of-defun)
+                (beginning-of-defun-raw)
                 (end-of-defun)
                 (setq clojure-comment-end (point))
-                (beginning-of-defun)
+                (beginning-of-defun-raw)
                 (forward-char 1)              ;; skip paren so we start at comment
                 (clojure-forward-logical-sexp) ;; skip past the comment form itself
                 (if-let ((sexp-start (clojure-find-first (lambda (beg-pos)
@@ -2347,9 +2347,9 @@ many times."
                                                          (clojure-sexp-starts-until-position
                                                           clojure-comment-end))))
                     (progn (goto-char sexp-start) t)
-                  (beginning-of-defun n))))
-          (scan-error (beginning-of-defun n)))
-      (beginning-of-defun n))))
+                  (beginning-of-defun-raw n))))
+          (scan-error (beginning-of-defun-raw n)))
+      (beginning-of-defun-raw n))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -2471,7 +2471,7 @@ With universal argument \\[universal-argument], fully unwind thread."
                 (n) (1)))
   (save-excursion
     (let ((limit (save-excursion
-                   (beginning-of-defun)
+                   (beginning-of-defun-raw)
                    (point))))
       (ignore-errors
         (when (looking-at "(")
@@ -3001,7 +3001,7 @@ END marks the end of the fn expression"
     (goto-char beg))
   (if (or (looking-at-p "#(")
           (ignore-errors (forward-char 1))
-          (re-search-backward "#(" (save-excursion (beginning-of-defun) (point)) 'noerror))
+          (re-search-backward "#(" (save-excursion (beginning-of-defun-raw) (backward-char) (point)) 'noerror))
       (let* ((end (save-excursion (clojure-forward-logical-sexp) (point-marker)))
              (argspec (clojure--gather-fn-literal-args))
              (arity (car argspec))
@@ -3225,10 +3225,10 @@ With universal argument \\[universal-argument], act on the \"top-level\" form."
   "Toggle the #_ ignore reader form for the \"top-level\" form at point."
   (interactive)
   (save-excursion
-    (beginning-of-defun)
+    (beginning-of-defun-raw)
     (clojure--toggle-ignore-next-sexp)))
 
-
+
 ;;; ClojureScript
 (defconst clojurescript-font-lock-keywords
   (eval-when-compile

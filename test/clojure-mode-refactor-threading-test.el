@@ -247,6 +247,16 @@
 
     (clojure-unwind '(4)))
 
+  (when-refactoring-it "should unwind correctly when multiple ->> are present on same line"
+    "(->> 1 inc) (->> [1 2 3 4 5]
+     (filter even?)
+     (map square))"
+
+    "(->> 1 inc) (->> (map square (filter even? [1 2 3 4 5])))"
+
+    (clojure-unwind)
+    (clojure-unwind))
+
   (when-refactoring-it "should unwind with function name"
     "(->> [1 2 3 4 5]
      sum
@@ -299,8 +309,7 @@
 
   (when-refactoring-it "should unwind some->>"
     "(some->> :b
-         (find {:a 1})
-         val
+         (find {:a 1}) val
          (+ 5))"
 
     "(some->> (+ 5 (val (find {:a 1} :b))))"

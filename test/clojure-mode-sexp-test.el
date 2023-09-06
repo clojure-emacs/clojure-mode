@@ -32,29 +32,36 @@
         ;; make this use the native beginning of defun since this is used to
         ;; determine whether to use the comment aware version or not.
         (expect (let ((beginning-of-defun-function nil))
+                  (clojure-top-level-form-p "comment")))))
+  (it "should return true when multiple forms are present"
+    (with-clojure-buffer-point
+        "(+ 1 2) (comment
+           (wrong)
+           (rig|ht)
+           (wrong))"
+        (expect (let ((beginning-of-defun-function nil))
                   (clojure-top-level-form-p "comment"))))))
 
 (describe "clojure-beginning-of-defun-function"
   (it "should go to top level form"
     (with-clojure-buffer-point
-      "(comment
+      " (comment
           (wrong)
           (wrong)
           (rig|ht)
           (wrong))"
-      (beginning-of-defun)
+      (clojure-beginning-of-defun-function)
       (expect (looking-at-p "(comment"))))
 
   (it "should eval top level forms inside comment forms when clojure-toplevel-inside-comment-form set to true"
     (with-clojure-buffer-point
-      "(comment
+      "(+ inc 1) (comment
           (wrong)
-          (wrong)
-          (rig|ht)
+          (wrong) (rig|ht)
           (wrong))"
       (let ((clojure-toplevel-inside-comment-form t))
-       (beginning-of-defun))
-      (expect (looking-at-p "[[:space:]]*(right)"))))
+       (clojure-beginning-of-defun-function))
+      (expect (looking-at-p "(right)"))))
 
   (it "should go to beginning of previous top level form"
     (with-clojure-buffer-point
