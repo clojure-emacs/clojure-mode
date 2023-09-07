@@ -2125,7 +2125,7 @@ content) are considered part of the preceding sexp."
 (make-obsolete-variable 'clojure-namespace-name-regex 'clojure-namespace-regexp "5.12.0")
 
 (defconst clojure-namespace-regexp
-  (rx line-start (zero-or-more whitespace) "(" (? "clojure.core/") (or "in-ns" "ns" "ns+") symbol-end))
+  (rx line-start "(" (? "clojure.core/") (or "in-ns" "ns" "ns+") symbol-end))
 
 (defcustom clojure-cache-ns nil
   "Whether to cache the results of `clojure-find-ns'.
@@ -2153,7 +2153,7 @@ DIRECTION is `forward' or `backward'."
           (save-match-data
             (goto-char end)
             (clojure-forward-logical-sexp)
-            (unless (or (clojure--in-string-p) (clojure--in-comment-p) (clojure-top-level-form-p "comment"))
+            (unless (or (clojure--in-string-p) (clojure--in-comment-p))
               (setq candidate (string-remove-prefix "'" (thing-at-point 'symbol))))))))
     candidate))
 
@@ -3224,7 +3224,7 @@ With universal argument \\[universal-argument], act on the \"top-level\" form."
     (beginning-of-defun-raw)
     (clojure--toggle-ignore-next-sexp)))
 
-
+
 ;;; ClojureScript
 (defconst clojurescript-font-lock-keywords
   (eval-when-compile
