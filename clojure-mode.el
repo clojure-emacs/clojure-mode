@@ -57,7 +57,6 @@
 
 ;;; Code:
 
-
 (defvar calculate-lisp-indent-last-sexp)
 (defvar delete-pair-blink-delay)
 (defvar font-lock-beg)
@@ -717,7 +716,7 @@ If JUSTIFY is non-nil, justify as well as fill the paragraph."
             (fill-prefix (clojure-adaptive-fill-function)))
         (do-auto-fill)))))
 
-
+
 ;;; #_ comments font-locking
 ;; Code heavily borrowed from Slime.
 ;; https://github.com/slime/slime/blob/master/contrib/slime-fontifying-fu.el#L186
@@ -780,7 +779,7 @@ and `(match-end 1)'."
         (scan-error  (setq result 'retry))))
     result))
 
-
+
 ;;; General font-locking
 (defun clojure-match-next-def ()
   "Scans the buffer backwards for the next \"top-level\" definition.
@@ -1889,7 +1888,7 @@ work).  To set it from Lisp code, use
   (go-loop 1)
   (thread 0))
 
-
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -1944,7 +1943,7 @@ nil."
       (delete-region begin (point))
       result)))
 
-
+
 
 (defcustom clojure-cache-project-dir t
   "Whether to cache the results of `clojure-project-dir'."
@@ -1988,7 +1987,7 @@ Return nil if not inside a project."
   "Denormalize PATH by making it relative to the project root."
   (file-relative-name path (clojure-project-dir)))
 
-
+
 ;;; ns manipulation
 (defun clojure-expected-ns (&optional path)
   "Return the namespace matching PATH.
@@ -2125,7 +2124,7 @@ content) are considered part of the preceding sexp."
 (make-obsolete-variable 'clojure-namespace-name-regex 'clojure-namespace-regexp "5.12.0")
 
 (defconst clojure-namespace-regexp
-  (rx line-start (zero-or-more whitespace) "(" (? "clojure.core/") (or "in-ns" "ns" "ns+") symbol-end))
+  (rx "(" (? "clojure.core/") (or "in-ns" "ns" "ns+") symbol-end))
 
 (defcustom clojure-cache-ns nil
   "Whether to cache the results of `clojure-find-ns'.
@@ -2148,12 +2147,13 @@ DIRECTION is `forward' or `backward'."
               #'search-backward-regexp)))
     (while (and (not candidate)
                 (funcall fn clojure-namespace-regexp nil t))
-      (let ((end (match-end 0)))
+      (let ((start (match-beginning 0))
+            (end (match-end 0)))
         (save-excursion
-          (save-match-data
-            (goto-char end)
-            (clojure-forward-logical-sexp)
-            (unless (or (clojure--in-string-p) (clojure--in-comment-p) (clojure-top-level-form-p "comment"))
+          (when (clojure--is-top-level-form-p start)
+            (save-match-data
+              (goto-char end)
+              (clojure-forward-logical-sexp)
               (setq candidate (string-remove-prefix "'" (thing-at-point 'symbol))))))))
     candidate))
 
@@ -2222,7 +2222,7 @@ Returns a list pair, e.g. (\"defn\" \"abc\") or (\"deftest\" \"some-test\")."
       (list (match-string-no-properties 1)
             (match-string-no-properties 2)))))
 
-
+
 ;;; Sexp navigation
 
 (defun clojure--looking-at-non-logical-sexp ()
@@ -2269,6 +2269,16 @@ This will skip over sexps that don't represent objects, so that ^hints and
                         (clojure--looking-at-non-logical-sexp))))
           (backward-sexp 1))
         (setq n (1- n))))))
+
+(defun clojure--is-top-level-form-p (&optional point)
+  "Return truthy if form at POINT is a top level form."
+  (save-excursion
+    (when point (goto-char point))
+    (and (looking-at-p "(")
+         (= (point)
+            (progn (forward-char)
+                   (beginning-of-defun-raw)
+                   (point))))))
 
 (defun clojure-top-level-form-p (first-form)
   "Return truthy if the first form matches FIRST-FORM."
@@ -3173,7 +3183,7 @@ Assumes cursor is at beginning of function."
         (clojure--add-arity-reify-internal)))
       (indent-region beg end-marker))))
 
-
+
 ;;; Toggle Ignore forms
 
 (defun clojure--toggle-ignore-next-sexp (&optional n)

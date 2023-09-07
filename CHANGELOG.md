@@ -8,6 +8,8 @@
 
 ### Bugs fixed
 
+* [#656](https://github.com/clojure-emacs/clojure-mode/issues/656): Fix clojure-find-ns when ns form is preceded by other forms.
+
 * [#593](https://github.com/clojure-emacs/clojure-mode/issues/593): Fix clojure-find-ns when ns form is preceded by whitespace or inside comment form.
 
 ## 5.16.2 (2023-08-23)

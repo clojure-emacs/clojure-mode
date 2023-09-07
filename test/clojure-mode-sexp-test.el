@@ -164,9 +164,9 @@
         (expect (equal "baz-quux" (clojure-find-ns))))
       (let ((data
              '(("\"\n(ns foo-bar)\"\n" "(in-ns 'baz-quux)" "baz-quux")
-               (";(ns foo-bar)\n" "(in-ns 'baz-quux)" "baz-quux")
+               (";(ns foo-bar)\n" "(in-ns 'baz-quux2)" "baz-quux2")
                ("(ns foo-bar)\n" "\"\n(in-ns 'baz-quux)\"" "foo-bar")
-               ("(ns foo-bar)\n" ";(in-ns 'baz-quux)" "foo-bar"))))
+               ("(ns foo-bar2)\n" ";(in-ns 'baz-quux)" "foo-bar2"))))
         (pcase-dolist (`(,form1 ,form2 ,expected) data)
           (with-clojure-buffer form1
             (save-excursion (insert form2))
