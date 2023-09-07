@@ -82,6 +82,23 @@
       (expect (clojure-find-ns) :to-equal "foo"))
     (with-clojure-buffer "(ns ^:bar ^:baz foo)"
       (expect (clojure-find-ns) :to-equal "foo")))
+  (it "should find namespaces with spaces before ns form"
+    (with-clojure-buffer "  (ns foo)"
+      (expect (clojure-find-ns) :to-equal "foo")))
+  (it "should skip namespaces within any comment forms"
+    (with-clojure-buffer "(comment
+      (ns foo))"
+      (expect (clojure-find-ns) :to-equal nil))
+    (with-clojure-buffer " (ns foo)
+     (comment
+      (ns bar))"
+      (expect (clojure-find-ns) :to-equal "foo"))
+    (with-clojure-buffer " (comment
+      (ns foo))
+     (ns bar)
+    (comment
+      (ns baz))"
+      (expect (clojure-find-ns) :to-equal "bar")))
   (it "should find namespace declarations with nested metadata and docstrings"
     (with-clojure-buffer "(ns ^{:bar true} foo)"
       (expect (clojure-find-ns) :to-equal "foo"))
