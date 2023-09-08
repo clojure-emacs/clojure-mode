@@ -41,26 +41,26 @@
            (wrong))"
         (expect (let ((beginning-of-defun-function nil))
                   (clojure-top-level-form-p "comment"))))))
-(describe "clojure--is-top-level-form-p"
+(describe "clojure--looking-at-top-level-form"
   (it "should return nil when point is inside a top level form"
     (with-clojure-buffer-point
      "(comment
            |(ns foo))"
-     (expect (clojure--is-top-level-form-p) :to-equal nil))
+     (expect (clojure--looking-at-top-level-form) :to-equal nil))
     (with-clojure-buffer-point
      "\"|(ns foo)\""
-     (expect (clojure--is-top-level-form-p) :to-equal nil))
+     (expect (clojure--looking-at-top-level-form) :to-equal nil))
     (with-clojure-buffer-point
      "^{:fake-ns |(ns foo)}"
-     (expect (clojure--is-top-level-form-p) :to-equal nil)))
+     (expect (clojure--looking-at-top-level-form) :to-equal nil)))
   (it "should return true when point is looking at a top level form"
     (with-clojure-buffer-point
      "(comment
            |(ns foo))"
-     (expect (clojure--is-top-level-form-p (point-min)) :to-equal t))
+     (expect (clojure--looking-at-top-level-form (point-min)) :to-equal t))
     (with-clojure-buffer-point
      "|(ns foo)"
-     (expect (clojure--is-top-level-form-p) :to-equal t))))
+     (expect (clojure--looking-at-top-level-form) :to-equal t))))
 (describe "clojure-beginning-of-defun-function"
   (it "should go to top level form"
     (with-clojure-buffer-point

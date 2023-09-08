@@ -2151,7 +2151,7 @@ DIRECTION is `forward' or `backward'."
       (let ((start (match-beginning 0))
             (end (match-end 0)))
         (save-excursion
-          (when (clojure--is-top-level-form-p start)
+          (when (clojure--looking-at-top-level-form start)
             (save-match-data
               (goto-char end)
               (clojure-forward-logical-sexp)
@@ -2271,7 +2271,7 @@ This will skip over sexps that don't represent objects, so that ^hints and
           (backward-sexp 1))
         (setq n (1- n))))))
 
-(defun clojure--is-top-level-form-p (&optional point)
+(defun clojure--looking-at-top-level-form (&optional point)
   "Return truthy if form at POINT is a top level form."
   (save-excursion
     (when point (goto-char point))
