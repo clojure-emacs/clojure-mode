@@ -57,6 +57,7 @@
 
 ;;; Code:
 
+
 (defvar calculate-lisp-indent-last-sexp)
 (defvar delete-pair-blink-delay)
 (defvar font-lock-beg)
@@ -716,7 +717,7 @@ If JUSTIFY is non-nil, justify as well as fill the paragraph."
             (fill-prefix (clojure-adaptive-fill-function)))
         (do-auto-fill)))))
 
-
+
 ;;; #_ comments font-locking
 ;; Code heavily borrowed from Slime.
 ;; https://github.com/slime/slime/blob/master/contrib/slime-fontifying-fu.el#L186
@@ -779,7 +780,7 @@ and `(match-end 1)'."
         (scan-error  (setq result 'retry))))
     result))
 
-
+
 ;;; General font-locking
 (defun clojure-match-next-def ()
   "Scans the buffer backwards for the next \"top-level\" definition.
@@ -1888,7 +1889,7 @@ work).  To set it from Lisp code, use
   (go-loop 1)
   (thread 0))
 
-
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -1943,7 +1944,7 @@ nil."
       (delete-region begin (point))
       result)))
 
-
+
 
 (defcustom clojure-cache-project-dir t
   "Whether to cache the results of `clojure-project-dir'."
@@ -1987,7 +1988,7 @@ Return nil if not inside a project."
   "Denormalize PATH by making it relative to the project root."
   (file-relative-name path (clojure-project-dir)))
 
-
+
 ;;; ns manipulation
 (defun clojure-expected-ns (&optional path)
   "Return the namespace matching PATH.
@@ -2222,7 +2223,7 @@ Returns a list pair, e.g. (\"defn\" \"abc\") or (\"deftest\" \"some-test\")."
       (list (match-string-no-properties 1)
             (match-string-no-properties 2)))))
 
-
+
 ;;; Sexp navigation
 
 (defun clojure--looking-at-non-logical-sexp ()
@@ -3183,7 +3184,7 @@ Assumes cursor is at beginning of function."
         (clojure--add-arity-reify-internal)))
       (indent-region beg end-marker))))
 
-
+
 ;;; Toggle Ignore forms
 
 (defun clojure--toggle-ignore-next-sexp (&optional n)
