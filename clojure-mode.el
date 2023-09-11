@@ -2125,7 +2125,7 @@ content) are considered part of the preceding sexp."
 (make-obsolete-variable 'clojure-namespace-name-regex 'clojure-namespace-regexp "5.12.0")
 
 (defconst clojure-namespace-regexp
-  (rx line-start (zero-or-more whitespace) "(" (? "clojure.core/") (or "in-ns" "ns" "ns+") symbol-end))
+  (rx "(" (? "clojure.core/") (or "in-ns" "ns" "ns+") symbol-end))
 
 (defcustom clojure-cache-ns nil
   "Whether to cache the results of `clojure-find-ns'.
@@ -2148,12 +2148,13 @@ DIRECTION is `forward' or `backward'."
               #'search-backward-regexp)))
     (while (and (not candidate)
                 (funcall fn clojure-namespace-regexp nil t))
-      (let ((end (match-end 0)))
+      (let ((start (match-beginning 0))
+            (end (match-end 0)))
         (save-excursion
-          (save-match-data
-            (goto-char end)
-            (clojure-forward-logical-sexp)
-            (unless (or (clojure--in-string-p) (clojure--in-comment-p) (clojure-top-level-form-p "comment"))
+          (when (clojure--looking-at-top-level-form start)
+            (save-match-data
+              (goto-char end)
+              (clojure-forward-logical-sexp)
               (setq candidate (string-remove-prefix "'" (thing-at-point 'symbol))))))))
     candidate))
 
@@ -2269,6 +2270,16 @@ This will skip over sexps that don't represent objects, so that ^hints and
                         (clojure--looking-at-non-logical-sexp))))
           (backward-sexp 1))
         (setq n (1- n))))))
+
+(defun clojure--looking-at-top-level-form (&optional point)
+  "Return truthy if form at POINT is a top level form."
+  (save-excursion
+    (when point (goto-char point))
+    (and (looking-at-p "(")
+         (= (point)
+            (progn (forward-char)
+                   (beginning-of-defun-raw)
+                   (point))))))
 
 (defun clojure-top-level-form-p (first-form)
   "Return truthy if the first form matches FIRST-FORM."

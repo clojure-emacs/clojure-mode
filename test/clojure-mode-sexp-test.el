@@ -41,7 +41,26 @@
            (wrong))"
         (expect (let ((beginning-of-defun-function nil))
                   (clojure-top-level-form-p "comment"))))))
-
+(describe "clojure--looking-at-top-level-form"
+  (it "should return nil when point is inside a top level form"
+    (with-clojure-buffer-point
+     "(comment
+           |(ns foo))"
+     (expect (clojure--looking-at-top-level-form) :to-equal nil))
+    (with-clojure-buffer-point
+     "\"|(ns foo)\""
+     (expect (clojure--looking-at-top-level-form) :to-equal nil))
+    (with-clojure-buffer-point
+     "^{:fake-ns |(ns foo)}"
+     (expect (clojure--looking-at-top-level-form) :to-equal nil)))
+  (it "should return true when point is looking at a top level form"
+    (with-clojure-buffer-point
+     "(comment
+           |(ns foo))"
+     (expect (clojure--looking-at-top-level-form (point-min)) :to-equal t))
+    (with-clojure-buffer-point
+     "|(ns foo)"
+     (expect (clojure--looking-at-top-level-form) :to-equal t))))
 (describe "clojure-beginning-of-defun-function"
   (it "should go to top level form"
     (with-clojure-buffer-point
@@ -164,9 +183,9 @@
         (expect (equal "baz-quux" (clojure-find-ns))))
       (let ((data
              '(("\"\n(ns foo-bar)\"\n" "(in-ns 'baz-quux)" "baz-quux")
-               (";(ns foo-bar)\n" "(in-ns 'baz-quux)" "baz-quux")
+               (";(ns foo-bar)\n" "(in-ns 'baz-quux2)" "baz-quux2")
                ("(ns foo-bar)\n" "\"\n(in-ns 'baz-quux)\"" "foo-bar")
-               ("(ns foo-bar)\n" ";(in-ns 'baz-quux)" "foo-bar"))))
+               ("(ns foo-bar2)\n" ";(in-ns 'baz-quux)" "foo-bar2"))))
         (pcase-dolist (`(,form1 ,form2 ,expected) data)
           (with-clojure-buffer form1
             (save-excursion (insert form2))
