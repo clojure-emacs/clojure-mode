@@ -2,6 +2,8 @@
 
 ## master (unreleased)
 
+## 5.17.1 (2023-09-12)
+
 ### Changes
 
 * Declare indentation for the `async` ClojureScript macro. 
