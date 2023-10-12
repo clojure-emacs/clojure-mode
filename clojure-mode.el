@@ -1876,6 +1876,7 @@ work).  To set it from Lisp code, use
   (deftest :defn)
   (are 2)
   (use-fixtures :defn)
+  (async 1)
 
   ;; core.logic
   (run :defn)
