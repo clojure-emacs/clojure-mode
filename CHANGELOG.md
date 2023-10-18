@@ -2,6 +2,8 @@
 
 ## master (unreleased)
 
+## 5.18.0 (2023-10-18)
+
 ### Changes
 
 * [cider#2903](https://github.com/clojure-emacs/cider/issues/2903): Avoid `No comment syntax is defined` prompts.
