@@ -1,56 +1,129 @@
 version: 2.1
 
-# Default actions to perform on each Emacs version
-default: &default-steps
-  steps:
-    - checkout
-    - run: apt-get update && apt-get install make
-    - run: make elpa
-    - run: emacs --version
-    - run: make test
-    # Make sure to run test-checks before test-bytecomp, as test-bytecomp autogenerates
-    # files which won't pass test-checks.
-    - run: make test-checks
-    - run: make test-bytecomp
+orbs:
+  win: circleci/windows@2.2.0
 
-# Enumerated list of Emacs versions
+commands:
+  setup:
+    steps:
+      - checkout
+      - run:
+          name: Install Eldev
+          command: curl -fsSL https://raw.github.com/doublep/eldev/master/webinstall/circle-eldev > x.sh && source ./x.sh
+
+  setup-macos:
+    steps:
+      - checkout
+      - run:
+          name: Install Emacs latest
+          command: |
+            brew install homebrew/cask/emacs
+      - run:
+          name: Install Eldev
+          command: curl -fsSL https://raw.github.com/doublep/eldev/master/webinstall/circle-eldev > x.sh && source ./x.sh
+
+  setup-windows:
+    steps:
+      - checkout
+      - run:
+          name: Install Eldev
+          command: |
+            # Remove expired DST Root CA X3 certificate. Workaround
+            # for https://debbugs.gnu.org/cgi/bugreport.cgi?bug=51038
+            # bug on Emacs 27.2.
+            gci cert:\LocalMachine\Root\DAC9024F54D8F6DF94935FB1732638CA6AD77C13
+            gci cert:\LocalMachine\Root\DAC9024F54D8F6DF94935FB1732638CA6AD77C13 | Remove-Item
+            (iwr https://raw.github.com/doublep/eldev/master/webinstall/circle-eldev.ps1).Content | powershell -command -
+  test:
+    steps:
+      - run:
+          name: Run regression tests
+          command: eldev -dtT -p test
+  lint:
+    steps:
+      - run:
+          name: Lint
+          command: eldev lint -c
+  compile:
+    steps:
+      - run:
+          name: Check for byte-compilation errors
+          command: eldev -dtT compile --warnings-as-errors
+
 jobs:
-  test-emacs-25:
+  test-ubuntu-emacs-26:
     docker:
-      - image: silex/emacs:25-ci-cask
+      - image: silex/emacs:26-ci
         entrypoint: bash
-    <<: *default-steps
-
-  test-emacs-26:
+    steps:
+      - setup
+      - test
+      - lint
+      - compile
+  test-ubuntu-emacs-27:
     docker:
-      - image: silex/emacs:26-ci-cask
+      - image: silex/emacs:27-ci
         entrypoint: bash
-    <<: *default-steps
-
-  test-emacs-27:
+    steps:
+      - setup
+      - test
+      - lint
+      - compile
+  test-ubuntu-emacs-28:
     docker:
-      - image: silex/emacs:27-ci-cask
+      - image: silex/emacs:28-ci
         entrypoint: bash
-    <<: *default-steps
-
-  test-emacs-28:
+    steps:
+      - setup
+      - test
+      - lint
+      - compile
+  test-ubuntu-emacs-29:
     docker:
-      - image: silex/emacs:28-ci-cask
+      - image: silex/emacs:29-ci
         entrypoint: bash
-    <<: *default-steps
-
-  test-emacs-master:
+    steps:
+      - setup
+      - test
+      - lint
+      - compile
+  test-ubuntu-emacs-master:
     docker:
-      - image: silex/emacs:master-ci-cask
+      - image: silex/emacs:master-ci
         entrypoint: bash
-    <<: *default-steps
+    steps:
+      - setup
+      - test
+      - lint
+      - compile
+  test-macos-emacs-latest:
+    macos:
+      xcode: "14.0.0"
+    steps:
+      - setup-macos
+      - test
+      - lint
+      - compile
+  test-windows-emacs-latest:
+    executor: win/default
+    steps:
+      - run:
+          name: Install Emacs latest
+          command: |
+            choco install emacs
+      - setup-windows
+      - test
+      - lint
+      - compile
 
 workflows:
-  version: 2
+  version: 2.1
   ci-test-matrix:
     jobs:
-      - test-emacs-25
-      - test-emacs-26
-      - test-emacs-27
-      - test-emacs-28
-      - test-emacs-master
+      - test-ubuntu-emacs-26
+      - test-ubuntu-emacs-27
+      - test-ubuntu-emacs-28
+      - test-ubuntu-emacs-29
+      - test-ubuntu-emacs-master
+      - test-windows-emacs-latest
+      - test-macos-emacs-latest

@@ -1,42 +1,20 @@
-CASK = cask
-export EMACS ?= emacs
-EMACSFLAGS =
-
-PKGDIR := $(shell EMACS=$(EMACS) $(CASK) package-directory)
-
-SRCS = $(wildcard *.el)
-OBJS = $(SRCS:.el=.elc)
 
 .PHONY: compile test clean elpa
 
-all: compile
-
-elpa-$(EMACS):
-	$(CASK) install
-	$(CASK) update
-	touch $@
-
-elpa: elpa-$(EMACS)
-
-elpaclean:
-	rm -f elpa*
-	rm -rf .cask # Clean packages installed for development
-
-compile: elpa
-	$(CASK) build
-
 clean:
-	rm -f $(OBJS) clojure-mode-autoloads.el
+	echo
 
-test: $(PKGDIR)
-	$(CASK) exec buttercup
+# You can find a generic `eldev` installation script in https://github.com/emacs-eldev/eldev/blob/master/webinstall/eldev
+# (Don't use the one defined for CircleCI in your local machine)
 
-test-checks:
-	$(CASK) exec $(EMACS) --no-site-file --no-site-lisp --batch \
-		-l test/test-checks.el ./
+lint: clean
+	eldev -c lint
 
-test-bytecomp: $(SRCS:.el=.elc-test)
+# Checks for byte-compilation warnings.
+compile: clean
+	 eldev -dtT compile --warnings-as-errors
 
-%.elc-test: %.el elpa
-	$(CASK) exec $(EMACS) --no-site-file --no-site-lisp --batch \
-		-l test/clojure-mode-bytecomp-warnings.el $<
+test: clean
+	eldev -dtT -p test
+
+all: compile test

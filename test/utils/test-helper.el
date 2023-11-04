@@ -26,7 +26,7 @@
 (message "Running tests on Emacs %s" emacs-version)
 
 (let* ((current-file (if load-in-progress load-file-name (buffer-file-name)))
-       (source-directory (locate-dominating-file current-file "Cask"))
+       (source-directory (locate-dominating-file current-file "Eldev"))
        ;; Do not load outdated byte code for tests
        (load-prefer-newer t))
   ;; Load the file under test
