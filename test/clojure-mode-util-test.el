@@ -46,7 +46,7 @@
                (bb-edn-src (expand-file-name "src" temp-dir)))
           (write-region "{}" nil bb-edn)
           (make-directory bb-edn-src)
-          (expect  (clojure-project-dir bb-edn-src)
+          (expect  (expand-file-name (clojure-project-dir bb-edn-src))
                    :to-equal (file-name-as-directory temp-dir))))))
 
   (describe "clojure-project-relative-path"
