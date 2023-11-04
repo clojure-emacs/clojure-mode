@@ -98,7 +98,7 @@ jobs:
       - compile
   test-macos-emacs-latest:
     macos:
-      xcode: "14.0.0"
+      xcode: "14.2.0"
     steps:
       - setup-macos
       - test

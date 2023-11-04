@@ -1,14 +1,11 @@
-
-.PHONY: compile test clean elpa
+.PHONY: clean compile lint test all
+.DEFAULT_GOAL := all
 
 clean:
-	echo
-
-# You can find a generic `eldev` installation script in https://github.com/emacs-eldev/eldev/blob/master/webinstall/eldev
-# (Don't use the one defined for CircleCI in your local machine)
+	eldev clean
 
 lint: clean
-	eldev -c lint
+	eldev lint -c
 
 # Checks for byte-compilation warnings.
 compile: clean
@@ -17,4 +14,4 @@ compile: clean
 test: clean
 	eldev -dtT -p test
 
-all: compile test
+all: clean compile lint test
