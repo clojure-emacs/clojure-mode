@@ -19,6 +19,6 @@
 (with-eval-after-load 'elisp-lint
   ;; We will byte-compile with Eldev.
   (setf elisp-lint-ignored-validators '("package-lint" "fill-column" "byte-compile" "checkdoc")
-        enable-local-variables        :safe))
-
+        enable-local-variables        :safe
+        elisp-lint-indent-specs '((define-clojure-indent . 0))))
 (setq eldev-project-main-file "clojure-mode.el")
