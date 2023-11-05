@@ -126,4 +126,6 @@ workflows:
       - test-ubuntu-emacs-29
       - test-ubuntu-emacs-master
       - test-windows-emacs-latest
-      - test-macos-emacs-latest
+      - test-macos-emacs-latest:
+          requires:
+            - test-ubuntu-emacs-29
