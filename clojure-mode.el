@@ -3129,7 +3129,7 @@ Assumes cursor is at beginning of function."
   "Add an arity to a function.
 
 Assumes cursor is at beginning of function."
-  (let ((beg-line (what-line))
+  (let ((beg-line (line-number-at-pos))
         (end (save-excursion (forward-sexp)
                              (point))))
     (down-list 2)
@@ -3141,7 +3141,7 @@ Assumes cursor is at beginning of function."
       (insert "[")
       (save-excursion (insert "])\n(")))
      ((looking-back "\\[" 1)  ;; single-arity fn
-      (let* ((same-line (string= beg-line (what-line)))
+      (let* ((same-line (= beg-line (line-number-at-pos)))
              (new-arity-text (concat (when same-line "\n") "([")))
         (save-excursion
           (goto-char end)

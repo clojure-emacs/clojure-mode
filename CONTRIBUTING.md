@@ -39,8 +39,8 @@ and description in grammatically correct, complete sentences.
 ## Development setup
 
 1. Fork and clone the repository.
-1. Install [Cask][7].
-1. Run `cask install` in the repository folder.
+1. Install [Eldev][7].
+1. Run `eldev build` in the repository folder.
 1. Run tests with `make test`.
 
 **Note:** macOS users should make sure that the `emacs` command resolves the version of Emacs they've installed
@@ -53,5 +53,5 @@ See [this article][8] for more details.
 [4]: https://help.github.com/articles/using-pull-requests
 [5]: https://gitready.com/advanced/2009/02/10/squashing-commits-with-rebase.html
 [6]: https://github.com/clojure-emacs/clojure-mode/blob/master/CHANGELOG.md
-[7]: https://github.com/cask/cask
+[7]: https://github.com/emacs-eldev/eldev
 [8]: https://emacsredux.com/blog/2015/05/09/emacs-on-os-x/

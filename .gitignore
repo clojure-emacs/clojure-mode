@@ -9,3 +9,6 @@
 elpa*
 /clojure-mode-autoloads.el
 /clojure-mode-pkg.el
+
+/.eldev
+/Eldev-local

@@ -27,6 +27,7 @@
 
 (require 'clojure-mode)
 (require 'buttercup)
+(require 'test-helper "test/utils/test-helper")
 
 (describe "clojure-convert-collection-to-map"
   (when-refactoring-it "should convert a list to a map"
