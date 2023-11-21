@@ -1072,12 +1072,13 @@ any number of matches of `clojure--sym-forbidden-rest-chars'."))
       ;; keywords: {:oneword/ve/yCom|pLex.stu-ff 0}
       (,(concat "\\(:\\{1,2\\}\\)\\(" clojure--keyword-sym-regexp "?\\)\\(/\\)"
                 "\\(" clojure--keyword-sym-regexp "\\)")
+       ;; with ns
        (1 'clojure-keyword-face)
        (2 font-lock-type-face)
-       ;; (2 'clojure-keyword-face)
        (3 'default)
        (4 'clojure-keyword-face))
-      (,(concat "\\(:\\{1,2\\}\\)\\(" clojure--keyword-sym-regexp "\\)")
+      (,(concat "\\<\\(:\\{1,2\\}\\)\\(" clojure--keyword-sym-regexp "\\)")
+       ;; without ns
        (1 'clojure-keyword-face)
        (2 'clojure-keyword-face))
 
