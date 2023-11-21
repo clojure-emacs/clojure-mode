@@ -265,6 +265,10 @@ DESCRIPTION is the description of the spec."
     ("(colons:are:okay)"
      (2 16 nil))
 
+    ("(some-ns/colons:are:okay)"
+     (2 8 font-lock-type-face)
+     (9 24 nil))
+
     ("(oneword/ve/yCom|pLex.stu-ff)"
      (2 8 font-lock-type-face)
      (9 10 nil)
