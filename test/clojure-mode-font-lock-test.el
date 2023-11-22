@@ -722,6 +722,19 @@ DESCRIPTION is the description of the spec."
      (10 10 default)
      (11 30 clojure-keyword-face)))
 
+  (when-fontifying-it "should handle keywords with colons"
+    (":a:a"
+     (1 4 clojure-keyword-face))
+
+    (":a:a/:a"
+     (1 7 clojure-keyword-face))
+
+    ("::a:a"
+     (1 5 clojure-keyword-face))
+
+    ("::a.a:a"
+     (1 7 clojure-keyword-face)))
+
   (when-fontifying-it "should handle very complex keywords"
     (" :ve/yCom|pLex.stu-ff"
      (3 4 font-lock-type-face)
