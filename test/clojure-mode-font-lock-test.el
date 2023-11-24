@@ -262,6 +262,13 @@ DESCRIPTION is the description of the spec."
      (9 10 nil)
      (11 16 nil))
 
+    ("(colons:are:okay)"
+     (2 16 nil))
+
+    ("(some-ns/colons:are:okay)"
+     (2 8 font-lock-type-face)
+     (9 24 nil))
+
     ("(oneword/ve/yCom|pLex.stu-ff)"
      (2 8 font-lock-type-face)
      (9 10 nil)
@@ -715,6 +722,19 @@ DESCRIPTION is the description of the spec."
      (10 10 default)
      (11 30 clojure-keyword-face)))
 
+  (when-fontifying-it "should handle keywords with colons"
+    (":a:a"
+     (1 4 clojure-keyword-face))
+
+    (":a:a/:a"
+     (1 7 clojure-keyword-face))
+
+    ("::a:a"
+     (1 5 clojure-keyword-face))
+
+    ("::a.a:a"
+     (1 7 clojure-keyword-face)))
+
   (when-fontifying-it "should handle very complex keywords"
     (" :ve/yCom|pLex.stu-ff"
      (3 4 font-lock-type-face)
@@ -824,7 +844,10 @@ DESCRIPTION is the description of the spec."
   (when-fontifying-it "should handle variables defined with def"
     ("(def foo 10)"
      (2 4 font-lock-keyword-face)
-     (6 8 font-lock-variable-name-face)))
+     (6 8 font-lock-variable-name-face))
+    ("(def foo:bar 10)"
+     (2 4 font-lock-keyword-face)
+     (6 12 font-lock-variable-name-face)))
 
   (when-fontifying-it "should handle variables definitions of type string"
     ("(def foo \"hello\")"
