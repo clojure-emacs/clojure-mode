@@ -901,12 +901,23 @@ DESCRIPTION is the description of the spec."
      (2 3 font-lock-keyword-face)
      ( 5 7 font-lock-function-name-face)))
 
-  (when-fontifying-it "should handle lambda-params"
+  (when-fontifying-it "should handle lambda-params %, %1, %n..."
     ("#(+ % %2 %3 %&)"
      (5 5 font-lock-variable-name-face)
      (7 8 font-lock-variable-name-face)
      (10 11 font-lock-variable-name-face)
      (13 14 font-lock-variable-name-face)))
+
+  (when-fontifying-it "should handle multi-digit lambda-params"
+    ;; % args with >1 digit are rare and unidiomatic but legal up to
+    ;; `MAX_POSITIONAL_ARITY` in Clojure's compiler, which as of today is 20
+    ("#(* %10 %15 %19 %20)"
+     ;; it would be better if this were just `font-lock-variable-name-face` but
+     ;; it seems to work as-is
+     (5 7   various-faces)
+     (9 11  font-lock-variable-name-face)
+     (13 15 font-lock-variable-name-face)
+     (17 19 various-faces)))
 
   (when-fontifying-it "should handle nils"
     ("(= nil x)"
