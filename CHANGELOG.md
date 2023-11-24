@@ -2,6 +2,12 @@
 
 ## master (unreleased)
 
+## 5.18.1 (2023-11-24)
+
+### Bugs fixed
+
+* [#653](https://github.com/clojure-emacs/clojure-mode/issues/653): Don't highlight vars with colons as keywords.
+
 ## 5.18.0 (2023-10-18)
 
 ### Changes
