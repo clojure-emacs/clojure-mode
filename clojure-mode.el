@@ -1058,7 +1058,7 @@ any number of matches of `clojure--sym-forbidden-rest-chars'."))
        1 'clojure-character-face)
       ;; lambda arguments - %, %&, %1, %2, etc
       ;; must come after character literals for \% to be handled properly
-      ("\\<%[&1-9]?" (0 font-lock-variable-name-face))
+      ("\\<%[&1-9]*" (0 font-lock-variable-name-face))
       ;; namespace definitions: (ns foo.bar)
       (,(concat "(\\<ns\\>[ \r\n\t]*"
                 ;; Possibly metadata, shorthand and/or longhand
