@@ -1469,7 +1469,7 @@ When called from lisp code align everything between BEG and END."
             (cl-incf count)))
         ;; Pre-indent the region to avoid aligning to improperly indented
         ;; contents (#551). Also fixes #360.
-        (indent-region (point) sexp-end)
+        (indent-region (point) (marker-position sexp-end))
         (dotimes (_ count)
           (align-region (point) sexp-end nil
                         `((clojure-align (regexp . clojure--search-whitespace-after-next-sexp)
