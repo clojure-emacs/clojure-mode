@@ -12,7 +12,7 @@
 ;; Maintainer: Bozhidar Batsov <bozhidar@batsov.dev>
 ;; URL: https://github.com/clojure-emacs/clojure-mode
 ;; Keywords: languages clojure clojurescript lisp
-;; Version: 5.18.1
+;; Version: 5.19.0-snapshot
 ;; Package-Requires: ((emacs "25.1"))
 
 ;; This file is not part of GNU Emacs.
@@ -192,7 +192,7 @@ to indent keyword invocation forms.
                  (const :tag "Indent like a macro body" 'always-indent)
                  (const :tag "Indent like a macro body unless first arg is on the same line"
                         'align-arguments))
-  :package-version '(clojure-mode . "5.14.0"))
+  :package-version '(clojure-mode . "5.19.0"))
 
 (defcustom clojure-use-backtracking-indent t
   "When non-nil, enable context sensitive indentation."
@@ -1851,12 +1851,13 @@ Requires the macro's NAME and a VALUE."
           value))
 
 (defcustom clojure-enable-indent-specs t
-  "Honor indent specs, either set via metadata on the
-function/macro, or via `define-clojure-indent'. Set this to `nil'
-to get uniform formatting of all forms."
+  "Control whether to honor indent specs.
+They can be either set via metadata on the function/macro, or via
+`define-clojure-indent'.  Set this to nil to get uniform
+formatting of all forms."
   :type 'boolean
   :safe #'booleanp
-  :package-version '(clojure-mode . "5.14.0"))
+  :package-version '(clojure-mode . "5.19.0"))
 
 (defcustom clojure-defun-indents nil
   "List of additional symbols with defun-style indentation in Clojure.
