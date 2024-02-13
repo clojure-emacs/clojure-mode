@@ -185,8 +185,7 @@ to indent keyword invocation forms.
                   [bar.baz])
         (:x
            location
-           0)
-        "
+           0)"
   :safe #'symbolp
   :type '(choice (const :tag "Same as `lisp-mode'" 'always-align)
                  (const :tag "Indent like a macro body" 'always-indent)
