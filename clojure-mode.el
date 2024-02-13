@@ -1700,6 +1700,15 @@ accepted by `clojure-indent-style'."
       ;; Car of form is not a symbol.
       (not (looking-at ".\\(?:\\sw\\|\\s_\\)"))))
 
+(defcustom clojure-enable-indent-specs t
+  "Control whether to honor indent specs.
+They can be either set via metadata on the function/macro, or via
+`define-clojure-indent'.  Set this to nil to get uniform
+formatting of all forms."
+  :type 'boolean
+  :safe #'booleanp
+  :package-version '(clojure-mode . "5.19.0"))
+
 ;; Check the general context, and provide indentation for data structures and
 ;; special macros. If current form is a function (or non-special macro),
 ;; delegate indentation to `clojure--normal-indent'.
@@ -1849,15 +1858,6 @@ Requires the macro's NAME and a VALUE."
   (mapcar (lambda (x)
             (put-clojure-indent x 'defun))
           value))
-
-(defcustom clojure-enable-indent-specs t
-  "Control whether to honor indent specs.
-They can be either set via metadata on the function/macro, or via
-`define-clojure-indent'.  Set this to nil to get uniform
-formatting of all forms."
-  :type 'boolean
-  :safe #'booleanp
-  :package-version '(clojure-mode . "5.19.0"))
 
 (defcustom clojure-defun-indents nil
   "List of additional symbols with defun-style indentation in Clojure.
