@@ -78,6 +78,17 @@ The default indentation rules in `clojure-mode` are derived from the
 [community Clojure Style Guide](https://guide.clojure.style).
 Please, refer to the guide for the general Clojure indentation rules.
 
+If you'd like to use the alternative "fixed/tonsky" indentation style you should
+update your configuration accordingly:
+
+``` el
+(setq clojure-indent-style 'always-indent
+      clojure-indent-keyword-style 'always-indent
+      clojure-enable-indent-specs nil)
+```
+
+Read on for more details on the available indentation-related configuration options.
+
 #### Indentation of docstrings
 
 By default multi-line docstrings are indented with 2 spaces, as this is a
@@ -128,6 +139,44 @@ The indentation of function forms is configured by the variable
 
 **Note:** Prior to clojure-mode 5.10, the configuration options for `clojure-indent-style` used to be
 keywords, but now they are symbols. Keywords will still be supported at least until clojure-mode 6.
+
+#### Indentation of keywords
+
+Similarly we have the `clojure-indent-keyword-style`, which works in the following way:
+
+* `always-align` (default) -  All
+    args are vertically aligned with the first arg in case (A),
+    and vertically aligned with the function name in case (B).
+
+``` clojure
+(:require [foo.bar]
+          [bar.baz])
+(:require
+ [foo.bar]
+ [bar.baz])
+```
+
+* `always-indent` - All args are indented like a macro body.
+
+``` clojure
+(:require [foo.bar]
+   [bar.baz])
+(:x
+   location
+   0)
+```
+
+
+* `align-arguments` - Case (A) is indented like `always-align`, and
+    case (B) is indented like a macro body.
+
+``` clojure
+(:require [foo.bar]
+          [bar.baz])
+(:x
+   location
+   0)"
+```
 
 #### Indentation of macro forms
 
@@ -216,6 +265,12 @@ Setting `clojure-special-arg-indent-factor` to 1, results in:
 ```clojure
 (defrecord MyRecord
   [my-field])
+```
+
+You can completely disable the effect of indentation specs like this:
+
+``` el
+(setq clojure-enable-indent-specs nil)
 ```
 
 #### Indentation of Comments
