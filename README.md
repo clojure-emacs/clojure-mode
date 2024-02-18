@@ -218,7 +218,7 @@ Setting `clojure-special-arg-indent-factor` to 1, results in:
   [my-field])
 ```
 
-### Indentation of Comments
+#### Indentation of Comments
 
 `clojure-mode` differentiates between comments like `;`, `;;`, etc.
 By default `clojure-mode` treats `;` as inline comments and *always* indents those.
