@@ -166,7 +166,6 @@ Similarly we have the `clojure-indent-keyword-style`, which works in the followi
    0)
 ```
 
-
 * `align-arguments` - Case (A) is indented like `always-align`, and
     case (B) is indented like a macro body.
 
@@ -175,7 +174,7 @@ Similarly we have the `clojure-indent-keyword-style`, which works in the followi
           [bar.baz])
 (:x
    location
-   0)"
+   0)
 ```
 
 #### Indentation of macro forms
