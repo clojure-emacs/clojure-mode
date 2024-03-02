@@ -10,6 +10,10 @@
 
 * [#671](https://github.com/clojure-emacs/clojure-mode/issues/671): Syntax highlighting for digits after the first in % args
 
+# Changes
+
+* [#675](https://github.com/clojure-emacs/clojure-mode/issues/675): Add `.lpy` to the list of known Clojure file extensions. 
+
 ## 5.18.1 (2023-11-24)
 
 ### Bugs fixed

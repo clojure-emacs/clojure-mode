@@ -236,6 +236,7 @@ For example, \[ is allowed in :db/id[:db.part/user]."
     "shadow-cljs.edn"  ; shadow-cljs
     "bb.edn"           ; babashka
     "nbb.edn"          ; nbb
+    "basilisp.edn"     ; Basilisp (Python)
     )
   "A list of files, which identify a Clojure project's root.
 Out-of-the box `clojure-mode' understands lein, boot, gradle,
@@ -3320,7 +3321,7 @@ With universal argument \\[universal-argument], act on the \"top-level\" form."
 ;;;###autoload
 (progn
   (add-to-list 'auto-mode-alist
-               '("\\.\\(clj\\|cljd\\|dtm\\|edn\\)\\'" . clojure-mode))
+               '("\\.\\(clj\\|cljd\\|dtm\\|edn\\|lpy\\)\\'" . clojure-mode))
   (add-to-list 'auto-mode-alist '("\\.cljc\\'" . clojurec-mode))
   (add-to-list 'auto-mode-alist '("\\.cljs\\'" . clojurescript-mode))
   ;; boot build scripts are Clojure source files
