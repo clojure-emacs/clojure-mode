@@ -4,11 +4,11 @@
 
 ### Bugs fixed
 
-* Fix `clojure-align` when called from `clojure-ts-mode` major mode buffers
+* Fix `clojure-align` when called from `clojure-ts-mode` major mode buffers.
 
 ### Bugs fixed
 
-* [#671](https://github.com/clojure-emacs/clojure-mode/issues/671): Syntax highlighting for digits after the first in % args
+* [#671](https://github.com/clojure-emacs/clojure-mode/issues/671): Syntax highlighting for digits after the first in `%` args. (e.g. `%10`)
 
 # Changes
 
@@ -30,7 +30,7 @@
 
 ### Changes
 
-* Declare indentation for the `async` ClojureScript macro. 
+* Declare indentation for the `async` ClojureScript macro.
 
 ## 5.17.0 (2023-09-11)
 
