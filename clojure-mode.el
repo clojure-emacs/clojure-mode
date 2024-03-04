@@ -187,10 +187,10 @@ to indent keyword invocation forms.
            location
            0)"
   :safe #'symbolp
-  :type '(choice (const :tag "Same as `lisp-mode'" 'always-align)
-                 (const :tag "Indent like a macro body" 'always-indent)
+  :type '(choice (const :tag "Same as `lisp-mode'" always-align)
+                 (const :tag "Indent like a macro body" always-indent)
                  (const :tag "Indent like a macro body unless first arg is on the same line"
-                        'align-arguments))
+                        align-arguments))
   :package-version '(clojure-mode . "5.19.0"))
 
 (defcustom clojure-use-backtracking-indent t
@@ -1280,7 +1280,7 @@ preceeded by a #."
                (clojure-string-start nil))))))
 
 (defun clojure-font-lock-escaped-chars (bound)
-  "Highlight \escaped chars in strings.
+  "Highlight \\escaped chars in strings.
 BOUND denotes a buffer position to limit the search."
   (let ((found nil))
     (while (and (not found)
