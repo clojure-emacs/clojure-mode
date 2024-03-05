@@ -1,5 +1,4 @@
-;;; clojure-mode-font-lock-test.el --- Clojure Mode: Font lock test suite
-;; -*- lexical-binding: t; -*-
+;;; clojure-mode-font-lock-test.el --- Clojure Mode: Font lock test suite -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2014-2021 Bozhidar Batsov <bozhidar@batsov.dev>
 
