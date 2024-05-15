@@ -373,7 +373,8 @@ The prefixes are used to generate the correct namespace."
 (defvar clojure-mode-syntax-table
   (let ((table (make-syntax-table)))
     ;; Initialize ASCII charset as symbol syntax
-    (modify-syntax-entry '(0 . 127) "_" table)
+    ;; Control characters from 0-31 default to the punctuation syntax class
+    (modify-syntax-entry '(32 . 127) "_" table)
 
     ;; Word syntax
     (modify-syntax-entry '(?0 . ?9) "w" table)
@@ -385,6 +386,7 @@ The prefixes are used to generate the correct namespace."
     (modify-syntax-entry ?\xa0 " " table) ; non-breaking space
     (modify-syntax-entry ?\t " " table)
     (modify-syntax-entry ?\f " " table)
+    (modify-syntax-entry ?\r " " table)
     ;; Setting commas as whitespace makes functions like `delete-trailing-whitespace' behave unexpectedly (#561)
     (modify-syntax-entry ?, "." table)
 
