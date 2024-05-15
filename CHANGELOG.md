@@ -6,6 +6,7 @@
 
 * Fix `clojure-align` when called from `clojure-ts-mode` major mode buffers.
 * [#671](https://github.com/clojure-emacs/clojure-mode/issues/671): Syntax highlighting for digits after the first in `%` args. (e.g. `%10`)
+- [#680](https://github.com/clojure-emacs/clojure-mode/issues/680): Change syntax class of ASCII control characters to punctuation, fixing situations where carriage returns were being interpreted as symbols
 
 # Changes
 
