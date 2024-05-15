@@ -163,6 +163,11 @@
     (with-clojure-buffer "(ns)(ns foo)"
       (expect (clojure-find-ns) :to-equal "foo"))
     (with-clojure-buffer "(ns )(ns foo)"
+      (expect (clojure-find-ns) :to-equal "foo")))
+  (it "should ignore carriage returns"
+    (with-clojure-buffer "(ns \r\n  foo)"
+      (expect (clojure-find-ns) :to-equal "foo"))
+    (with-clojure-buffer "(ns\r\n ^{:doc \"meta\r\n\"}\r\n  foo\r\n)"
       (expect (clojure-find-ns) :to-equal "foo"))))
 
 (describe "clojure-sort-ns"
