@@ -2,6 +2,8 @@
 
 ## master (unreleased)
 
+## 5.19.0 (2024-05-26)
+
 ### Bugs fixed
 
 * Fix `clojure-align` when called from `clojure-ts-mode` major mode buffers.
