@@ -7,7 +7,7 @@
 ### Bugs fixed
 
 * Fix `clojure-align` when called from `clojure-ts-mode` major mode buffers.
-* [#671](https://github.com/clojure-emacs/clojure-mode/issues/671): Syntax highlighting for digits after the first in `%` args. (e.g. `%10`).
+* [#671](https://github.com/clojure-emacs/clojure-mode/issues/671): Syntax highlighting for digits after the first in `%` args. (e.g. `%10`)
 * [#680](https://github.com/clojure-emacs/clojure-mode/issues/680): Change syntax class of ASCII control characters to punctuation, fixing situations where carriage returns were being interpreted as symbols.
 
 # Changes
@@ -40,14 +40,14 @@
 
 ### Bugs fixed
 
-* [#656](https://github.com/clojure-emacs/clojure-mode/issues/656): Fix clojure-find-ns when ns form is preceded by other forms.
-* [#593](https://github.com/clojure-emacs/clojure-mode/issues/593): Fix clojure-find-ns when ns form is preceded by whitespace or inside comment form.
+* [#656](https://github.com/clojure-emacs/clojure-mode/issues/656): Fix `clojure-find-ns` when ns form is preceded by other forms.
+* [#593](https://github.com/clojure-emacs/clojure-mode/issues/593): Fix `clojure-find-ns` when ns form is preceded by whitespace or inside comment form.
 
 ## 5.16.2 (2023-08-23)
 
 ### Changes
 
-* `clojure-find-ns`: add an option to never raise errors, returning nil instead on unparseable ns forms.
+* `clojure-find-ns`: add an option to never raise errors, returning `nil` instead on unparseable ns forms.
 
 ## 5.16.1 (2023-06-26)
 
@@ -71,7 +71,7 @@
 
 * [#581](https://github.com/clojure-emacs/clojure-mode/issues/581): Fix font locking not working for keywords starting with a number.
 * [#377](https://github.com/clojure-emacs/clojure-mode/issues/377): Fix everything starting with the prefix `def` being highlighted as a definition form. Now definition forms are enumerated explicitly in the font-locking code, like all other forms.
-* [#638](https://github.com/clojure-emacs/clojure-mode/pull/638): Fix imenu with Clojure code in string or comment.
+* [#638](https://github.com/clojure-emacs/clojure-mode/pull/638): Fix `imenu` with Clojure code in string or comment.
 
 ## 5.15.1 (2022-07-30)
 
