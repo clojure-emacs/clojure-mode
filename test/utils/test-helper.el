@@ -25,13 +25,6 @@
 
 (message "Running tests on Emacs %s" emacs-version)
 
-(let* ((current-file (if load-in-progress load-file-name (buffer-file-name)))
-       (source-directory (locate-dominating-file current-file "Eldev"))
-       ;; Do not load outdated byte code for tests
-       (load-prefer-newer t))
-  ;; Load the file under test
-  (load (expand-file-name "clojure-mode" source-directory)))
-
 (defmacro with-clojure-buffer (text &rest body)
   "Create a temporary buffer, insert TEXT, switch to clojure-mode and evaluate BODY."
   (declare (indent 1))
