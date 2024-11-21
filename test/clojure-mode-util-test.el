@@ -331,6 +331,38 @@
  {:nested (in|c x)})"
     (clojure-toggle-ignore-defun)))
 
+(describe "clojure-find-def"
+  (it "should recognize def"
+    (with-clojure-buffer-point "(def foo 1)|
+(def bar 2)"
+        (expect (clojure-find-def) :to-equal '("def" "foo"))))
+  (it "should recognize deftest, with or without metadata added to the var"
+    (with-clojure-buffer-point
+        "|(deftest ^{:a 1} simple-metadata)
+         (deftest ^{:a {}} complex-metadata)
+         (deftest no-metadata)"
+        (expect (clojure-find-def) :to-equal '("deftest" "simple-metadata")))
+    (with-clojure-buffer-point
+        "(deftest ^{:a 1} |simple-metadata)
+         (deftest ^{:a {}} complex-metadata)
+         (deftest no-metadata)"
+        (expect (clojure-find-def) :to-equal '("deftest" "simple-metadata")))
+    (with-clojure-buffer-point
+        "(deftest ^{:a 1} simple-metadata)
+         (deftest ^{:a {}} |complex-metadata)
+         (deftest no-metadata)"
+        (expect (clojure-find-def) :to-equal '("deftest" "complex-metadata")))
+    (with-clojure-buffer-point
+        "(deftest ^{:a 1} simple-metadata)
+         (deftest ^{:|a {}} complex-metadata)
+         (deftest no-metadata)"
+        (expect (clojure-find-def) :to-equal '("deftest" "complex-metadata")))
+    (with-clojure-buffer-point
+        "(deftest ^{:a 1} simple-metadata)
+         (deftest ^{:a {}} complex-metadata)
+         (deftest |no-metadata)"
+        (expect (clojure-find-def) :to-equal '("deftest" "no-metadata")))))
+
 (provide 'clojure-mode-util-test)
 
 ;;; clojure-mode-util-test.el ends here
