@@ -332,10 +332,23 @@
     (clojure-toggle-ignore-defun)))
 
 (describe "clojure-find-def"
-  (it "should recognize def"
-    (with-clojure-buffer-point "(def foo 1)|
-(def bar 2)"
-        (expect (clojure-find-def) :to-equal '("def" "foo"))))
+  (it "should recognize def and defn"
+    (with-clojure-buffer-point
+        "(def foo 1)|
+         (defn bar [x y z] z)"
+        (expect (clojure-find-def) :to-equal '("def" "foo")))
+    (with-clojure-buffer-point
+        "(def foo 1)
+         (defn bar |[x y z] z)"
+        (expect (clojure-find-def) :to-equal '("defn" "bar")))
+    (with-clojure-buffer-point
+        "(def foo 1)
+         (defn ^:private bar |[x y z] z)"
+        (expect (clojure-find-def) :to-equal '("defn" "bar")))
+    (with-clojure-buffer-point
+        "(defn |^{:doc \"A function\"} foo [] 1)
+         (defn ^:private bar 2)"
+        (expect (clojure-find-def) :to-equal '("defn" "foo"))))
   (it "should recognize deftest, with or without metadata added to the var"
     (with-clojure-buffer-point
         "|(deftest ^{:a 1} simple-metadata)
