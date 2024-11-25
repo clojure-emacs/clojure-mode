@@ -2270,7 +2270,7 @@ renaming a namespace."
           ;; Any whitespace
           "[ \r\n\t]*"
           ;; Possibly type or metadata
-          "\\(?:#?^\\(?:{[^}]*}\\|\\(?:\\sw\\|\\s_\\)+\\)[ \r\n\t]*\\)*"
+          "\\(?:#?^\\(?:{[^}]*}+\\|\\(?:\\sw\\|\\s_\\)+\\)[ \r\n\t]*\\)*"
           ;; Symbol name
           "\\(\\(?:\\sw\\|\\s_\\)+\\)"))
 
