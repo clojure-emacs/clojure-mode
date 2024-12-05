@@ -388,7 +388,11 @@
     (with-clojure-buffer-point
         "(defn- |^{:doc \"A function\"} foo [] 1)
          (defn- ^:private bar 2)"
-        (expect (clojure-find-def) :to-equal '("defn-" "foo")))))
+        (expect (clojure-find-def) :to-equal '("defn-" "foo")))
+    (with-clojure-buffer-point
+        "(def-n- |^{:doc \"A function\"} foo [] 1)
+         (defn- ^:private bar 2)"
+        (expect (clojure-find-def) :to-equal '("def-n-" "foo")))))
 
 (provide 'clojure-mode-util-test)
 
