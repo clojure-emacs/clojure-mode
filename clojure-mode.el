@@ -2266,7 +2266,7 @@ renaming a namespace."
 (defconst clojure-def-type-and-name-regex
   (concat "(\\(?:\\(?:\\sw\\|\\s_\\)+/\\)?"
           ;; Declaration
-          "\\(def\\(?:\\sw\\|\\s_\\)*\\)\\>"
+          "\\(def\\(?:\\sw\\|\\s_\\)*\\(?:-\\|\\>\\)\\)"
           ;; Any whitespace
           "[ \r\n\t]*"
           ;; Possibly type or metadata
