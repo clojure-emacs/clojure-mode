@@ -374,7 +374,21 @@
         "(deftest ^{:a 1} simple-metadata)
          (deftest ^{:a {}} complex-metadata)
          (deftest |no-metadata)"
-        (expect (clojure-find-def) :to-equal '("deftest" "no-metadata")))))
+        (expect (clojure-find-def) :to-equal '("deftest" "no-metadata"))))
+  (it "should recognize defn-"
+    (with-clojure-buffer-point
+        "(def foo 1)
+         (defn- bar |[x y z] z)
+         (def bar 2)"
+        (expect (clojure-find-def) :to-equal '("defn-" "bar")))
+    (with-clojure-buffer-point
+        "(def foo 1)
+         (defn- ^:private bar |[x y z] z)"
+        (expect (clojure-find-def) :to-equal '("defn-" "bar")))
+    (with-clojure-buffer-point
+        "(defn- |^{:doc \"A function\"} foo [] 1)
+         (defn- ^:private bar 2)"
+        (expect (clojure-find-def) :to-equal '("defn-" "foo")))))
 
 (provide 'clojure-mode-util-test)
 
