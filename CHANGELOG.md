@@ -5,6 +5,7 @@
 ### Bugs fixed
 
 * [cider#3758](https://github.com/clojure-emacs/cider/issues/3758): Improve regexp for clojure-find-def to recognize more complex metadata on vars
+* [#684](https://github.com/clojure-emacs/clojure-mode/issues/684): Restore `outline-regexp` pattern to permit outline handling of top-level forms.
 
 ## 5.19.0 (2024-05-26)
 
