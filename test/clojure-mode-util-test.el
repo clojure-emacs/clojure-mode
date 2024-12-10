@@ -391,9 +391,38 @@
         (expect (clojure-find-def) :to-equal '("defn-" "foo"))))
   (it "should recognize def...-, with or without metadata"
     (with-clojure-buffer-point
+        "(def foo 1)
+         (def- bar| 5)
+         (def baz 2)"
+        (expect (clojure-find-def) :to-equal '("def-" "bar")))
+    (with-clojure-buffer-point
+        "(def foo 1)
+         (deftest- bar |[x y z] z)
+         (def baz 2)"
+        (expect (clojure-find-def) :to-equal '("deftest-" "bar")))
+    (with-clojure-buffer-point
+        "(def foo 1)
+         (defxyz- bar| 5)
+         (def baz 2)"
+        (expect (clojure-find-def) :to-equal '("defxyz-" "bar")))
+    (with-clojure-buffer-point
+        "(def foo 1)
+         (defn-n- bar| [x y z] z)
+         (def baz 2)"
+        (expect (clojure-find-def) :to-equal '("defn-n-" "bar")))
+    (with-clojure-buffer-point
+        "(def foo 1)
+         (defn-n- ^:private bar |[x y z] z)"
+        (expect (clojure-find-def) :to-equal '("defn-n-" "bar")))
+    (with-clojure-buffer-point
         "(def-n- |^{:doc \"A function\"} foo [] 1)
-         (defn- ^:private bar 2)"
-        (expect (clojure-find-def) :to-equal '("def-n-" "foo")))))
+         (def- ^:private bar 2)"
+        (expect (clojure-find-def) :to-equal '("def-n-" "foo")))
+    (with-clojure-buffer-point
+        "(def foo 1)
+         (defn-n- ^{:|a {}} complex-metadata |[x y z] z)
+         (def bar 2)"
+        (expect (clojure-find-def) :to-equal '("defn-n-" "complex-metadata")))))
 
 (provide 'clojure-mode-util-test)
 
