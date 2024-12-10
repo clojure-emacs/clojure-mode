@@ -375,7 +375,7 @@
          (deftest ^{:a {}} complex-metadata)
          (deftest |no-metadata)"
         (expect (clojure-find-def) :to-equal '("deftest" "no-metadata"))))
-  (it "should recognize defn-"
+  (it "should recognize defn-, with or without metadata"
     (with-clojure-buffer-point
         "(def foo 1)
          (defn- bar |[x y z] z)
@@ -388,7 +388,8 @@
     (with-clojure-buffer-point
         "(defn- |^{:doc \"A function\"} foo [] 1)
          (defn- ^:private bar 2)"
-        (expect (clojure-find-def) :to-equal '("defn-" "foo")))
+        (expect (clojure-find-def) :to-equal '("defn-" "foo"))))
+  (it "should recognize def...-, with or without metadata"
     (with-clojure-buffer-point
         "(def-n- |^{:doc \"A function\"} foo [] 1)
          (defn- ^:private bar 2)"
