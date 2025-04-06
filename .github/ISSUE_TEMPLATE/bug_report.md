@@ -1,3 +1,9 @@
+---
+name: Bug Report
+about: Report an issue with clojure-mode you've discovered.
+labels: [bug]
+---
+
 *Use the template below when reporting bugs. Please, make sure that
 you're running the latest stable clojure-mode and that the problem you're reporting
 hasn't been reported (and potentially fixed) already.*
