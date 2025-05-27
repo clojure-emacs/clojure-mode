@@ -50,6 +50,9 @@ The `clojure-mode` package actually bundles together several major modes:
 * `clojure-mode` is a major mode for editing Clojure code
 * `clojurescript-mode` is a major mode for editing ClojureScript code
 * `clojurec-mode` is a major mode for editing `.cljc` source files
+* `clojuredart-mode` is a major mode for editing ClojureDart `.cljd` source files
+* `jank-mode` is a major mode for editing Jank `.jank` source files
+* `joker-mode` is a major mode for editing Joker `.joke` source files
 
 All the major modes derive from `clojure-mode` and provide more or less the same
 functionality.  Differences can be found mostly in the font-locking -
