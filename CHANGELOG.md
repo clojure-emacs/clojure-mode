@@ -8,6 +8,10 @@
 * [#684](https://github.com/clojure-emacs/clojure-mode/issues/684): Restore `outline-regexp` pattern to permit outline handling of top-level forms.
 * Improve regexp for clojure-find-def to recognize `defn-` and other declarations on the form `def...-`.
 
+### New features
+
+* Add `clojuredart-mode` and `jank-mode`, derived from `clojure-mode`.
+
 ## 5.19.0 (2024-05-26)
 
 ### Bugs fixed
