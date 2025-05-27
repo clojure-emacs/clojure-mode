@@ -11,13 +11,13 @@
 highlighting), indentation, navigation and refactoring support for the
 [Clojure(Script) programming language](https://clojure.org).
 
------------
-
-**This documentation tracks the `master` branch of `clojure-mode`. Some of
-the features and settings discussed here might not be available in
-older releases (including the current stable release). Please, consult
-the relevant git tag (e.g. [5.19.0](https://github.com/clojure-emacs/clojure-mode/tree/v5.19.0)) if you need documentation for a
-specific `clojure-mode` release.**
+> [!IMPORTANT]
+>
+> This documentation tracks the `master` branch of `clojure-mode`. Some of the
+> features and settings discussed here might not be available in older releases
+> (including the current stable release). Please, consult the relevant git tag
+> (e.g. [5.20.0](https://github.com/clojure-emacs/clojure-mode/tree/v5.20.0)) if
+> you need documentation for a specific `clojure-mode` release.
 
 ## Installation
 
@@ -47,12 +47,12 @@ If the installation doesn't work try refreshing the package list:
 
 The `clojure-mode` package actually bundles together several major modes:
 
-* `clojure-mode` is a major mode for editing Clojure code
-* `clojurescript-mode` is a major mode for editing ClojureScript code
-* `clojurec-mode` is a major mode for editing `.cljc` source files
-* `clojuredart-mode` is a major mode for editing ClojureDart `.cljd` source files
-* `jank-mode` is a major mode for editing Jank `.jank` source files
-* `joker-mode` is a major mode for editing Joker `.joke` source files
+- `clojure-mode` is a major mode for editing Clojure code
+- `clojurescript-mode` is a major mode for editing ClojureScript code
+- `clojurec-mode` is a major mode for editing `.cljc` source files
+- `clojuredart-mode` is a major mode for editing ClojureDart `.cljd` source files
+- `jank-mode` is a major mode for editing Jank `.jank` source files
+- `joker-mode` is a major mode for editing Joker `.joke` source files
 
 All the major modes derive from `clojure-mode` and provide more or less the same
 functionality.  Differences can be found mostly in the font-locking -
@@ -140,14 +140,16 @@ The indentation of function forms is configured by the variable
                2)
 ```
 
-**Note:** Prior to clojure-mode 5.10, the configuration options for `clojure-indent-style` used to be
-keywords, but now they are symbols. Keywords will still be supported at least until clojure-mode 6.
+> [!NOTE]
+>
+> Prior to clojure-mode 5.10, the configuration options for `clojure-indent-style` used to be
+> keywords, but now they are symbols. Keywords will still be supported at least until clojure-mode 6.
 
 #### Indentation of keywords
 
 Similarly we have the `clojure-indent-keyword-style`, which works in the following way:
 
-* `always-align` (default) -  All
+- `always-align` (default) -  All
     args are vertically aligned with the first arg in case (A),
     and vertically aligned with the function name in case (B).
 
@@ -159,7 +161,7 @@ Similarly we have the `clojure-indent-keyword-style`, which works in the followi
  [bar.baz])
 ```
 
-* `always-indent` - All args are indented like a macro body.
+- `always-indent` - All args are indented like a macro body.
 
 ``` clojure
 (:require [foo.bar]
@@ -169,7 +171,7 @@ Similarly we have the `clojure-indent-keyword-style`, which works in the followi
    0)
 ```
 
-* `align-arguments` - Case (A) is indented like `always-align`, and
+- `align-arguments` - Case (A) is indented like `always-align`, and
     case (B) is indented like a macro body.
 
 ``` clojure
@@ -288,7 +290,11 @@ You can change this behaviour like this:
 You might also want to change `comment-add` to 0 in that way, so that Emacs comment
 functions (e.g. `comment-region`) would use `;` by default instead of `;;`.
 
-**Note:** Check out [this section](https://guide.clojure.style/#comments) of the Clojure style guide to understand better the semantics of the different comment levels and why `clojure-mode` treats them differently by default.
+> [!TIP]
+>
+> Check out [this section](https://guide.clojure.style/#comments) of the Clojure
+> style guide to understand better the semantics of the different comment levels
+> and why `clojure-mode` treats them differently by default.
 
 ### Vertical alignment
 
@@ -315,9 +321,11 @@ happen whenever you select some code and hit `TAB`.
 
 ### Font-locking
 
-`clojure-mode` features static font-locking (syntax highlighting) that you can extend yourself
-if needed. As typical for Emacs, it's based on regular expressions. You can find
-the default font-locking rules in `clojure-font-lock-keywords`. Here's how you can add font-locking for built-in Clojure functions and vars:
+`clojure-mode` features static font-locking (syntax highlighting) that you can
+extend yourself if needed. As typical for Emacs, it's based on regular
+expressions. You can find the default font-locking rules in
+`clojure-font-lock-keywords`. Here's how you can add font-locking for built-in
+Clojure functions and vars:
 
 ``` el
 (defvar clojure-built-in-vars
@@ -360,9 +368,12 @@ var a symbol resolves to). That's why `clojure-mode`'s font-locking defaults are
 conservative and minimalistic.
 
 Precise font-locking requires additional data that can obtained from a running
-REPL (that's how CIDER's [dynamic font-locking](https://docs.cider.mx/cider/config/syntax_highlighting.html) works) or from static code analysis.
+REPL (that's how CIDER's [dynamic
+font-locking](https://docs.cider.mx/cider/config/syntax_highlighting.html)
+works) or from static code analysis.
 
-When it comes to non built-in definitions, `clojure-mode` needs to be manually instructed how to handle the docstrings and highlighting. Here's an example:
+When it comes to non built-in definitions, `clojure-mode` needs to be manually
+instructed how to handle the docstrings and highlighting. Here's an example:
 
 ``` emacs-lisp
 (put '>defn 'clojure-doc-string-elt 2)
@@ -373,7 +384,9 @@ When it comes to non built-in definitions, `clojure-mode` needs to be manually i
                            1 font-lock-keyword-face)))
 ```
 
-**Note:** The `clojure-doc-string-elt` attribute is processed by the function `clojure-font-lock-syntactic-face-function`.
+> [!NOTE]
+>
+> The `clojure-doc-string-elt` attribute is processed by the function `clojure-font-lock-syntactic-face-function`.
 
 ## Refactoring support
 
@@ -481,7 +494,7 @@ without affecting the namespace declaration.
 
 ## Related packages
 
-* [clojure-mode-extra-font-locking][] provides additional font-locking
+- [clojure-mode-extra-font-locking][] provides additional font-locking
 for built-in methods and macros.  The font-locking is pretty
 imprecise, because it doesn't take namespaces into account and it
 won't font-lock a function at all possible positions in a sexp, but
@@ -502,9 +515,9 @@ plenty of incorrect font-locking. CIDER users should avoid this package,
 as CIDER does its own dynamic font-locking, which is namespace-aware
 and doesn't produce almost any false positives.
 
-* [clj-refactor][] provides refactoring support.
+- [clj-refactor][] provides additional refactoring support.
 
-* Enabling `CamelCase` support for editing commands(like
+- Enabling `CamelCase` support for editing commands (like
 `forward-word`, `backward-word`, etc) in `clojure-mode` is quite
 useful since we often have to deal with Java class and method
 names. The built-in Emacs minor mode `subword-mode` provides such
@@ -514,7 +527,7 @@ functionality:
 (add-hook 'clojure-mode-hook #'subword-mode)
 ```
 
-* The use of [paredit][] when editing Clojure (or any other Lisp) code
+- The use of [paredit][] when editing Clojure (or any other Lisp) code
 is highly recommended. It helps ensure the structure of your forms is
 not compromised and offers a number of operations that work on code
 structure at a higher level than just characters and words. To enable
@@ -524,7 +537,7 @@ it for Clojure buffers:
 (add-hook 'clojure-mode-hook #'paredit-mode)
 ```
 
-* [smartparens][] is an excellent
+- [smartparens][] is an excellent
   (newer) alternative to paredit. Many Clojure hackers have adopted it
   recently and you might want to give it a try as well. To enable
   `smartparens` use the following code:
@@ -533,7 +546,7 @@ it for Clojure buffers:
 (add-hook 'clojure-mode-hook #'smartparens-strict-mode)
 ```
 
-* [RainbowDelimiters][] is a
+- [RainbowDelimiters][] is a
   minor mode which highlights parentheses, brackets, and braces
   according to their depth. Each successive level is highlighted in a
   different color. This makes it easy to spot matching delimiters,
@@ -545,7 +558,7 @@ it for Clojure buffers:
 (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
 ```
 
-* [aggressive-indent-mode][] automatically adjust the indentation of your code,
+- [aggressive-indent-mode][] automatically adjust the indentation of your code,
 while you're writing it. Using it together with `clojure-mode` is highly
 recommended. Provided you've already installed `aggressive-indent-mode` you can
 enable it like this:
@@ -553,6 +566,9 @@ enable it like this:
 ```el
 (add-hook 'clojure-mode-hook #'aggressive-indent-mode)
 ```
+
+Note that it might cause performance issues if you're dealing with large
+Clojure source files.
 
 ## REPL Interaction
 
