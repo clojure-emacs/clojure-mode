@@ -4,9 +4,9 @@
 
 ### Bugs fixed
 
-* [cider#3758](https://github.com/clojure-emacs/cider/issues/3758): Improve regexp for clojure-find-def to recognize more complex metadata on vars
+* [cider#3758](https://github.com/clojure-emacs/cider/issues/3758): Improve regexp for `clojure-find-def` to recognize more complex metadata on vars.
 * [#684](https://github.com/clojure-emacs/clojure-mode/issues/684): Restore `outline-regexp` pattern to permit outline handling of top-level forms.
-* Improve regexp for clojure-find-def to recognize `defn-` and other declarations on the form `def...-`.
+* Improve regexp for `clojure-find-def` to recognize `defn-` and other declarations on the form `def...-`.
 
 ### New features
 
