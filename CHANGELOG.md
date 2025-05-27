@@ -10,7 +10,7 @@
 
 ### New features
 
-* Add `clojuredart-mode` and `jank-mode`, derived from `clojure-mode`.
+* Add `clojuredart-mode`, `joker-mode` and `jank-mode`, derived from `clojure-mode`.
 
 ## 5.19.0 (2024-05-26)
 

@@ -3311,16 +3311,22 @@ With universal argument \\[universal-argument], act on the \"top-level\" form."
 \\{clojurec-mode-map}")
 
 ;;;###autoload
-(define-derived-mode clojuredart-mode clojure-mode "ClojureDart[TS]"
+(define-derived-mode clojuredart-mode clojure-mode "ClojureDart"
   "Major mode for editing Clojure Dart code.
 
 \\{clojuredart-mode-map}")
 
 ;;;###autoload
-(define-derived-mode jank-mode clojure-mode "Jank[TS]"
+(define-derived-mode jank-mode clojure-mode "Jank"
   "Major mode for editing Jank code.
 
 \\{jank-mode-map}")
+
+;;;###autoload
+(define-derived-mode joker-mode clojure-mode "Joker"
+  "Major mode for editing Joker code.
+
+\\{joker-mode-map}")
 
 ;;;###autoload
 (progn
@@ -3330,6 +3336,7 @@ With universal argument \\[universal-argument], act on the \"top-level\" form."
   (add-to-list 'auto-mode-alist '("\\.cljs\\'" . clojurescript-mode))
   (add-to-list 'auto-mode-alist '("\\.cljd\\'" . clojuredart-mode))
   (add-to-list 'auto-mode-alist '("\\.jank\\'" . jank-mode))
+  (add-to-list 'auto-mode-alist '("\\.joke\\'" . joker-mode))
   ;; boot build scripts are Clojure source files
   (add-to-list 'auto-mode-alist '("\\(?:build\\|profile\\)\\.boot\\'" . clojure-mode))
   ;; babashka scripts are Clojure source files
