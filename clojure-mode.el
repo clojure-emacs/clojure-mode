@@ -542,16 +542,6 @@ ENDP and DELIM."
                "\\_<\\(?:'+\\|#\\)")
              (line-beginning-position)))))
 
-(defconst clojure--collection-tag-regexp "#\\(::[a-zA-Z0-9._-]*\\|:?\\([a-zA-Z0-9._-]+/\\)?[a-zA-Z0-9._-]+\\)"
-  "Collection reader macro tag regexp.
-It is intended to check for allowed strings that can come before a
-collection literal (e.g. '[]' or '{}'), as reader macro tags.
-This includes #fully.qualified/my-ns[:kw val] and #::my-ns{:kw
-val} as of Clojure 1.9.")
-
-(make-obsolete-variable 'clojure--collection-tag-regexp nil "5.12.0")
-(make-obsolete 'clojure-no-space-after-tag 'clojure-space-for-delimiter-p "5.12.0")
-
 (declare-function paredit-open-curly "ext:paredit" t t)
 (declare-function paredit-close-curly "ext:paredit" t t)
 (declare-function paredit-convolute-sexp "ext:paredit")
