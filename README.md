@@ -388,6 +388,34 @@ instructed how to handle the docstrings and highlighting. Here's an example:
 >
 > The `clojure-doc-string-elt` attribute is processed by the function `clojure-font-lock-syntactic-face-function`.
 
+### Custom Faces
+
+`clojure-mode` defines several custom faces that you can customize to adjust the
+appearance of Clojure-specific syntax elements:
+
+- `clojure-keyword-face` - Used to highlight Clojure keywords (e.g.,
+  `:something`, `:keyword-name`). By default, this face inherits from
+  `font-lock-constant-face`.
+
+- `clojure-character-face` - Used to highlight Clojure character literals (e.g.,
+  `\a`, `\newline`, `\u00ff`). By default, this face inherits from
+  `font-lock-string-face`.
+
+- `clojure-discard-face` - Used to highlight forms that are discarded by
+  Clojure's `#_` reader macro. By default, this face inherits from
+  `font-lock-comment-face`, which visually indicates that the discarded form is
+  ignored by the reader.
+
+You can customize these faces using Emacs's customization interface
+(<kbd>M-x</kbd> `customize-face`) or by setting face attributes directly in your
+configuration. For example, to make keywords stand out with a bold blue color:
+
+```el
+(set-face-attribute 'clojure-keyword-face nil
+                    :foreground "blue"
+                    :weight 'bold)
+```
+
 ## Refactoring support
 
 The available refactorings were originally created and maintained by the
