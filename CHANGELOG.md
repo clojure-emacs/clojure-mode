@@ -2,6 +2,8 @@
 
 ## master (unreleased)
 
+* [#688](https://github.com/clojure-emacs/clojure-mode/issues/688): Add `clojure-discard-face` to allow for font-locking expressions discarded with the #_ form differently than comments. Maintains default by inheriting from `font-lock-comment-face`.
+
 ## 5.20.0 (2025-05-27)
 
 ### New features

@@ -138,19 +138,19 @@ DESCRIPTION is the description of the spec."
      (1 2 nil))
 
     ("#_#_"
-     (3 2 font-lock-comment-face))
+     (3 2 clojure-discard-face))
 
     ("#_ #_"
      (1 3 nil))
 
     ("#_ #_"
-     (4 2 font-lock-comment-face))
+     (4 2 clojure-discard-face))
 
     ("#_ \n;; some crap\n (lala 0101\n lao\n\n 0 0i)"
      (1 2 nil))
 
     ("#_ \n;; some crap\n (lala 0101\n lao\n\n 0 0i)"
-     (5 41 font-lock-comment-face))
+     (5 41 clojure-discard-face))
 
     ("#_#_ \n;; some crap\n (lala 0101\n lao\n\n 0 0i)\n;; more crap\n (foobar tnseriao)"
      (1 4 nil))
@@ -159,10 +159,10 @@ DESCRIPTION is the description of the spec."
      (1 5 nil))
 
     ("#_#_ \n;; some crap\n (lala 0101\n lao\n\n 0 0i)\n;; more crap\n (foobar tnseriao)"
-     (7 75 font-lock-comment-face))
+     (7 75 clojure-discard-face))
 
     ("#_ #_ \n;; some crap\n (lala 0101\n lao\n\n 0 0i)\n;; more crap\n (foobar tnseriao)"
-     (8 75 font-lock-comment-face)))
+     (8 75 clojure-discard-face)))
 
   (when-fontifying-it "should handle namespace declarations"
     ("(ns .validns)"
