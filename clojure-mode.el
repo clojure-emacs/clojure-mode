@@ -3326,9 +3326,22 @@ With universal argument \\[universal-argument], act on the \"top-level\" form."
 \\{joker-mode-map}")
 
 ;;;###autoload
+(define-derived-mode edn-mode clojure-mode "EDN"
+  "Major mode for editing EDN data files.
+
+EDN (Extensible Data Notation) is a subset of Clojure used as a data format.
+This mode inherits Clojure syntax and navigation but uses simplified
+indentation appropriate for data structures rather than code.
+
+\\{edn-mode-map}"
+  (setq-local clojure-indent-style 'always-align)
+  (setq-local clojure-enable-indent-specs nil))
+
+;;;###autoload
 (progn
   (add-to-list 'auto-mode-alist
-               '("\\.\\(clj\\|cljd\\|dtm\\|edn\\|lpy\\)\\'" . clojure-mode))
+               '("\\.\\(clj\\|cljd\\|dtm\\|lpy\\)\\'" . clojure-mode))
+  (add-to-list 'auto-mode-alist '("\\.edn\\'" . edn-mode))
   (add-to-list 'auto-mode-alist '("\\.cljc\\'" . clojurec-mode))
   (add-to-list 'auto-mode-alist '("\\.cljs\\'" . clojurescript-mode))
   (add-to-list 'auto-mode-alist '("\\.cljd\\'" . clojuredart-mode))
