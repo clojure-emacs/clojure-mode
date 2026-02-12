@@ -3334,10 +3334,14 @@ With universal argument \\[universal-argument], act on the \"top-level\" form."
   (add-to-list 'auto-mode-alist '("\\.joke\\'" . joker-mode))
   ;; boot build scripts are Clojure source files
   (add-to-list 'auto-mode-alist '("\\(?:build\\|profile\\)\\.boot\\'" . clojure-mode))
-  ;; babashka scripts are Clojure source files
+  ;; interpreter-mode-alist entries for Clojure scripting tools
   (add-to-list 'interpreter-mode-alist '("bb" . clojure-mode))
-  ;; nbb scripts are ClojureScript source files
-  (add-to-list 'interpreter-mode-alist '("nbb" . clojurescript-mode)))
+  (add-to-list 'interpreter-mode-alist '("clojure" . clojure-mode))
+  (add-to-list 'interpreter-mode-alist '("clj" . clojure-mode))
+  (add-to-list 'interpreter-mode-alist '("nbb" . clojurescript-mode))
+  (add-to-list 'interpreter-mode-alist '("planck" . clojurescript-mode))
+  (add-to-list 'interpreter-mode-alist '("joker" . joker-mode))
+  (add-to-list 'interpreter-mode-alist '("jank" . jank-mode)))
 
 (provide 'clojure-mode)
 

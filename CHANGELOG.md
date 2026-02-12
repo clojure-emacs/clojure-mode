@@ -8,6 +8,10 @@
 * [#686](https://github.com/clojure-emacs/clojure-mode/issues/686): Fix `clojure-find-def` failing when comments appear between the `def` form and the symbol name.
 * [#637](https://github.com/clojure-emacs/clojure-mode/issues/637): Fix `clojure-find-def` failing on symbols containing special characters (e.g. `defn+`).
 
+### New features
+
+* [#439](https://github.com/clojure-emacs/clojure-mode/issues/439): Add `interpreter-mode-alist` entries for `clojure`, `clj`, `planck`, `joker`, and `jank`, so that scripts with shebang lines are recognized automatically.
+
 ### Changes
 
 * Bump the minimum required Emacs version to 27.1.
