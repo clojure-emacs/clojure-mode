@@ -2251,7 +2251,7 @@ renaming a namespace."
   (let ((ws-or-comment "\\(?:[ \r\n\t]\\|;[^\n]*\n\\)*"))
     (concat "(\\(?:\\(?:\\sw\\|\\s_\\)+/\\)?"
             ;; Declaration
-            "\\(def\\(?:\\sw\\|\\s_\\)*\\(?:-\\|\\>\\)\\)"
+            "\\(def\\(?:\\sw\\|\\s_\\)*\\(?:-\\|\\_>\\)\\)"
             ;; Any whitespace or comments
             ws-or-comment
             ;; Possibly type or metadata

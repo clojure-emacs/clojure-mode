@@ -6,6 +6,7 @@
 
 * [#658](https://github.com/clojure-emacs/clojure-mode/issues/658): Fix `clojure-mode-version` returning `nil`.
 * [#686](https://github.com/clojure-emacs/clojure-mode/issues/686): Fix `clojure-find-def` failing when comments appear between the `def` form and the symbol name.
+* [#637](https://github.com/clojure-emacs/clojure-mode/issues/637): Fix `clojure-find-def` failing on symbols containing special characters (e.g. `defn+`).
 
 ### Changes
 

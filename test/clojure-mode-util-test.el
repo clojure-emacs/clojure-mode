@@ -359,7 +359,11 @@
     (with-clojure-buffer-point
         "(defn |^{:doc \"A function\"} foo [] 1)
          (defn ^:private bar 2)"
-        (expect (clojure-find-def) :to-equal '("defn" "foo"))))
+        (expect (clojure-find-def) :to-equal '("defn" "foo")))
+    (with-clojure-buffer-point
+        "(defn+ |my-special-fn []
+   (body))"
+        (expect (clojure-find-def) :to-equal '("defn+" "my-special-fn"))))
   (it "should recognize deftest, with or without metadata added to the var"
     (with-clojure-buffer-point
         "|(deftest ^{:a 1} simple-metadata)
