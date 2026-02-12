@@ -342,6 +342,17 @@
          (defn bar |[x y z] z)"
         (expect (clojure-find-def) :to-equal '("defn" "bar")))
     (with-clojure-buffer-point
+        "(defn
+   ;; comment
+   |foo [a b]
+   (+ a b))"
+        (expect (clojure-find-def) :to-equal '("defn" "foo")))
+    (with-clojure-buffer-point
+        "(defn ;; inline comment
+   |foo [a b]
+   (+ a b))"
+        (expect (clojure-find-def) :to-equal '("defn" "foo")))
+    (with-clojure-buffer-point
         "(def foo 1)
          (defn ^:private bar |[x y z] z)"
         (expect (clojure-find-def) :to-equal '("defn" "bar")))
