@@ -14,6 +14,7 @@
 
 ### Changes
 
+* [#482](https://github.com/clojure-emacs/clojure-mode/issues/482): Bind `clojure-align` to `C-c C-a` (following Emacs keybinding conventions). The old `C-c SPC` binding is deprecated and will be removed in a future release.
 * Bump the minimum required Emacs version to 27.1.
 
 ## 5.20.0 (2025-05-27)

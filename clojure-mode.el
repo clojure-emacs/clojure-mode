@@ -319,6 +319,8 @@ The prefixes are used to generate the correct namespace."
   (let ((map (make-sparse-keymap)))
     (set-keymap-parent map prog-mode-map)
     (define-key map (kbd "C-:") #'clojure-toggle-keyword-string)
+    (define-key map (kbd "C-c C-a") #'clojure-align)
+    ;; Deprecated in favor of C-c C-a, will be removed in a future release.
     (define-key map (kbd "C-c SPC") #'clojure-align)
     (define-key map clojure-refactor-map-prefix 'clojure-refactor-map)
     (easy-menu-define clojure-mode-menu map "Clojure Mode Menu"
