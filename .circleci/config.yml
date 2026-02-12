@@ -87,6 +87,15 @@ jobs:
       - test
       - lint
       - compile
+  test-ubuntu-emacs-30:
+    docker:
+      - image: silex/emacs:30-ci
+        entrypoint: bash
+    steps:
+      - setup
+      - test
+      - lint
+      - compile
   test-ubuntu-emacs-master:
     docker:
       - image: silex/emacs:master-ci
@@ -124,6 +133,7 @@ workflows:
       - test-ubuntu-emacs-27
       - test-ubuntu-emacs-28
       - test-ubuntu-emacs-29
+      - test-ubuntu-emacs-30
       - test-ubuntu-emacs-master
       - test-windows-emacs-latest
       - test-macos-emacs-latest:
