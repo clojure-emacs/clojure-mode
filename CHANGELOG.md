@@ -2,6 +2,11 @@
 
 ## master (unreleased)
 
+### Bugs fixed
+
+* [#658](https://github.com/clojure-emacs/clojure-mode/issues/658): Fix `clojure-mode-version` returning `nil`.
+* [#686](https://github.com/clojure-emacs/clojure-mode/issues/686): Fix `clojure-find-def` failing when comments appear between the `def` form and the symbol name.
+
 ### Changes
 
 * Bump the minimum required Emacs version to 27.1.
