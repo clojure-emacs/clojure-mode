@@ -51,15 +51,6 @@ commands:
           command: eldev -dtT compile --warnings-as-errors
 
 jobs:
-  test-ubuntu-emacs-26:
-    docker:
-      - image: silex/emacs:26-ci
-        entrypoint: bash
-    steps:
-      - setup
-      - test
-      - lint
-      - compile
   test-ubuntu-emacs-27:
     docker:
       - image: silex/emacs:27-ci
@@ -129,7 +120,6 @@ workflows:
   version: 2.1
   ci-test-matrix:
     jobs:
-      - test-ubuntu-emacs-26
       - test-ubuntu-emacs-27
       - test-ubuntu-emacs-28
       - test-ubuntu-emacs-29

@@ -2,6 +2,10 @@
 
 ## master (unreleased)
 
+### Changes
+
+* Bump the minimum required Emacs version to 27.1.
+
 ## 5.20.0 (2025-05-27)
 
 ### New features
