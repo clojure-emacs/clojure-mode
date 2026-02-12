@@ -1,6 +1,6 @@
 ;;; clojure-mode-syntax-test.el --- Clojure Mode: syntax related tests  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2015-2021 Bozhidar Batsov <bozhidar@batsov.dev>
+;; Copyright (C) 2015-2026 Bozhidar Batsov <bozhidar@batsov.dev>
 
 ;; This file is not part of GNU Emacs.
 
