@@ -83,9 +83,7 @@
   :link '(url-link :tag "GitHub" "https://github.com/clojure-emacs/clojure-mode")
   :link '(emacs-commentary-link :tag "Commentary" "clojure-mode"))
 
-(defconst clojure-mode-version
-  (eval-when-compile
-    (lm-version (or load-file-name buffer-file-name)))
+(defconst clojure-mode-version "5.20.0"
   "The current version of `clojure-mode'.")
 
 (defface clojure-keyword-face
@@ -2250,15 +2248,16 @@ renaming a namespace."
   (message "Buffer-local clojure-mode cache cleared"))
 
 (defconst clojure-def-type-and-name-regex
-  (concat "(\\(?:\\(?:\\sw\\|\\s_\\)+/\\)?"
-          ;; Declaration
-          "\\(def\\(?:\\sw\\|\\s_\\)*\\(?:-\\|\\>\\)\\)"
-          ;; Any whitespace
-          "[ \r\n\t]*"
-          ;; Possibly type or metadata
-          "\\(?:#?^\\(?:{[^}]*}+\\|\\(?:\\sw\\|\\s_\\)+\\)[ \r\n\t]*\\)*"
-          ;; Symbol name
-          "\\(\\(?:\\sw\\|\\s_\\)+\\)"))
+  (let ((ws-or-comment "\\(?:[ \r\n\t]\\|;[^\n]*\n\\)*"))
+    (concat "(\\(?:\\(?:\\sw\\|\\s_\\)+/\\)?"
+            ;; Declaration
+            "\\(def\\(?:\\sw\\|\\s_\\)*\\(?:-\\|\\>\\)\\)"
+            ;; Any whitespace or comments
+            ws-or-comment
+            ;; Possibly type or metadata
+            "\\(?:#?^\\(?:{[^}]*}+\\|\\(?:\\sw\\|\\s_\\)+\\)" ws-or-comment "\\)*"
+            ;; Symbol name
+            "\\(\\(?:\\sw\\|\\s_\\)+\\)")))
 
 (defun clojure-find-def ()
   "Find the var declaration macro and symbol name of the current form.
