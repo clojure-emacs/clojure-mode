@@ -298,7 +298,7 @@ functions (e.g. `comment-region`) would use `;` by default instead of `;;`.
 
 ### Vertical alignment
 
-You can vertically align sexps with `C-c SPC`. For instance, typing
+You can vertically align sexps with `C-c C-a`. For instance, typing
 this combo on the following form:
 
 ```clj
