@@ -302,6 +302,17 @@ functions (e.g. `comment-region`) would use `;` by default instead of `;;`.
 > style guide to understand better the semantics of the different comment levels
 > and why `clojure-mode` treats them differently by default.
 
+#### Top-level forms inside `(comment ...)`
+
+By default, `beginning-of-defun` and related navigation treat the entire
+`(comment ...)` form as one top-level form. If you'd prefer the forms *inside*
+`comment` to be treated as top-level (e.g. for evaluation with CIDER), you
+can enable this:
+
+```el
+(setq clojure-toplevel-inside-comment-form t)
+```
+
 ### Vertical alignment
 
 You can vertically align sexps with `C-c C-a`. For instance, typing
