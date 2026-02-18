@@ -325,6 +325,14 @@ This can also be done automatically (as part of indentation) by
 turning on `clojure-align-forms-automatically`. This way it will
 happen whenever you select some code and hit `TAB`.
 
+Several customization options control alignment behavior:
+
+- `clojure-align-forms-automatically` - enable automatic alignment during indentation
+- `clojure-align-binding-forms` - list of forms with binding pairs to align (e.g. `let`, `loop`, `for`)
+- `clojure-align-cond-forms` - list of cond-like forms to align (e.g. `cond`, `condp`, `case`)
+- `clojure-align-separator` - controls whether blank lines prevent alignment within an expression
+- `clojure-align-reader-conditionals` - when non-nil, align reader conditionals as if they were maps
+
 ### Font-locking
 
 `clojure-mode` features static font-locking (syntax highlighting) that you can
