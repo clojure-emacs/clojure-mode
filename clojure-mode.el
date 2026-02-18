@@ -235,6 +235,7 @@ For example, \[ is allowed in :db/id[:db.part/user]."
     "bb.edn"           ; babashka
     "nbb.edn"          ; nbb
     "basilisp.edn"     ; Basilisp (Python)
+    "deps-clr.edn"     ; ClojureCLR
     )
   "A list of files, which identify a Clojure project's root.
 Out-of-the box `clojure-mode' understands lein, boot, gradle,

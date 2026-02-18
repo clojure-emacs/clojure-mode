@@ -12,6 +12,7 @@
 
 * [#650](https://github.com/clojure-emacs/clojure-mode/issues/650): Add `edn-mode`, a lightweight mode derived from `clojure-mode` with data-appropriate indentation for `.edn` files.
 * [#439](https://github.com/clojure-emacs/clojure-mode/issues/439): Add `interpreter-mode-alist` entries for `clojure`, `clj`, `planck`, `joker`, and `jank`, so that scripts with shebang lines are recognized automatically.
+* Add project root detection for ClojureCLR project.
 
 ### Changes
 
