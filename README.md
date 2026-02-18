@@ -11,6 +11,8 @@
 highlighting), indentation, navigation and refactoring support for the
 [Clojure(Script) programming language](https://clojure.org).
 
+`clojure-mode` requires Emacs 27.1+.
+
 > [!IMPORTANT]
 >
 > This documentation tracks the `master` branch of `clojure-mode`. Some of the
