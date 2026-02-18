@@ -449,6 +449,41 @@ the same as before.
 
 <img width="512" src="/doc/clojure-cycle-if.gif">
 
+### Toggle ignore forms
+
+`clojure-toggle-ignore`: Toggle `#_` on the form at point, commenting it out for
+the reader. With a numeric prefix argument, toggle N `#_` forms at the same
+point (e.g. `#_#_` to ignore two forms).
+
+`clojure-toggle-ignore-surrounding-form`: Toggle `#_` on the surrounding form.
+With a numeric prefix argument, go up N levels first. With `C-u`, act on the
+top-level form.
+
+`clojure-toggle-ignore-defun`: Toggle `#_` on the top-level form at point.
+
+### Promote function literal
+
+`clojure-promote-fn-literal`: Convert a `#(...)` function literal into a
+`(fn [...] ...)` form, prompting for argument names.
+
+### Toggle keyword/string
+
+`clojure-toggle-keyword-string`: Convert the keyword or string at point to the
+other type (e.g. `:foo` becomes `"foo"` and vice versa).
+
+### Namespace manipulation
+
+`clojure-insert-ns-form`: Insert a namespace form at the beginning of the
+buffer, inferred from the file path.
+
+`clojure-insert-ns-form-at-point`: Insert a namespace form at point.
+
+`clojure-update-ns`: Update the namespace name to match the file path. Useful
+after renaming a file.
+
+`clojure-sort-ns`: Sort the contents of the `ns` form (e.g. `:require`,
+`:import`).
+
 ### Convert collection
 
 Convert any given collection at point to list, quoted list, map, vector or set.
