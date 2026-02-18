@@ -394,6 +394,43 @@ instructed how to handle the docstrings and highlighting. Here's an example:
 >
 > The `clojure-doc-string-elt` attribute is processed by the function `clojure-font-lock-syntactic-face-function`.
 
+## Keybindings
+
+Here's a summary of the keybindings available in `clojure-mode`:
+
+| Keybinding | Command |
+|---|---|
+| `C-c C-a` | `clojure-align` |
+| `C-:` | `clojure-toggle-keyword-string` |
+| `C-c C-r t` | `clojure-thread` |
+| `C-c C-r u` | `clojure-unwind` |
+| `C-c C-r f` | `clojure-thread-first-all` |
+| `C-c C-r l` | `clojure-thread-last-all` |
+| `C-c C-r p` | `clojure-cycle-privacy` |
+| `C-c C-r i` | `clojure-cycle-if` |
+| `C-c C-r w` | `clojure-cycle-when` |
+| `C-c C-r o` | `clojure-cycle-not` |
+| `C-c C-r -` | `clojure-toggle-ignore` |
+| `C-c C-r _` | `clojure-toggle-ignore-surrounding-form` |
+| `C-c C-r P` | `clojure-promote-fn-literal` |
+| `C-c C-r a` | `clojure-add-arity` |
+| `C-c C-r (` | `clojure-convert-collection-to-list` |
+| `C-c C-r '` | `clojure-convert-collection-to-quoted-list` |
+| `C-c C-r {` | `clojure-convert-collection-to-map` |
+| `C-c C-r [` | `clojure-convert-collection-to-vector` |
+| `C-c C-r #` | `clojure-convert-collection-to-set` |
+| `C-c C-r n i` | `clojure-insert-ns-form` |
+| `C-c C-r n h` | `clojure-insert-ns-form-at-point` |
+| `C-c C-r n u` | `clojure-update-ns` |
+| `C-c C-r n s` | `clojure-sort-ns` |
+| `C-c C-r n r` | `clojure-rename-ns-alias` |
+| `C-c C-r s i` | `clojure-introduce-let` |
+| `C-c C-r s m` | `clojure-move-to-let` |
+| `C-c C-r s f` | `clojure-let-forward-slurp-sexp` |
+| `C-c C-r s b` | `clojure-let-backward-slurp-sexp` |
+
+The refactoring prefix `C-c C-r` is customizable via `clojure-refactor-map-prefix`.
+
 ## Refactoring support
 
 The available refactorings were originally created and maintained by the
