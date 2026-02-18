@@ -53,10 +53,16 @@ The `clojure-mode` package actually bundles together several major modes:
 - `clojuredart-mode` is a major mode for editing ClojureDart `.cljd` source files
 - `jank-mode` is a major mode for editing Jank `.jank` source files
 - `joker-mode` is a major mode for editing Joker `.joke` source files
+- `edn-mode` is a major mode for editing EDN `.edn` data files
 
 All the major modes derive from `clojure-mode` and provide more or less the same
 functionality.  Differences can be found mostly in the font-locking -
 e.g. ClojureScript has some built-in constructs that are not present in Clojure.
+
+`edn-mode` is a bit different from the other derived modes -- it's tailored for
+data files rather than code. It disables indent specs and forces the
+`always-align` indent style, resulting in simpler indentation appropriate for
+data structures.
 
 The proper major mode is selected automatically based on the extension of the
 file you're editing.
