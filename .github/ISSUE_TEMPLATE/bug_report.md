@@ -27,12 +27,12 @@ a problem will expedite its solution.*
 clojure-mode-display-version`. Here's an example:*
 
 ```
-clojure-mode (version 5.2.0)
+clojure-mode (version 5.20.0)
 ```
 
 ### Emacs version
 
-*E.g. 24.5* (use <kbd>C-h C-a</kbd> to see it)
+*E.g. 29.1* (use <kbd>C-h C-a</kbd> to see it)
 
 ### Operating system
 
