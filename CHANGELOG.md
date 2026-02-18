@@ -134,14 +134,14 @@
 
 ### Bugs fixed
 
-* [#608](https://github.com/clojure-emacs/clojure-mode/issues/608) Fix alignment issue involving margin comments at the end of nested forms.
+* [#608](https://github.com/clojure-emacs/clojure-mode/issues/608): Fix alignment issue involving margin comments at the end of nested forms.
 
 ## 5.13.0 (2021-05-05)
 
 ### New features
 
 * [#590](https://github.com/clojure-emacs/clojure-mode/pull/590): Extend `clojure-rename-ns-alias` to work on selected regions.
-* [#567](https://github.com/clojure-emacs/clojure-mode/issues/567): Add new commands `clojure-toggle-ignore`, `clojure-toggle-ignore-surrounding-form`, and `clojure-toggle-defun` for inserting/deleting `#_` ignore forms.
+* [#567](https://github.com/clojure-emacs/clojure-mode/issues/567): Add new commands `clojure-toggle-ignore`, `clojure-toggle-ignore-surrounding-form`, and `clojure-toggle-ignore-defun` for inserting/deleting `#_` ignore forms.
 * [#582](https://github.com/clojure-emacs/clojure-mode/pull/582): Add `clojure-special-arg-indent-factor` to control special argument indentation.
 
 ### Bugs fixed
@@ -171,8 +171,8 @@
 * [#555](https://github.com/clojure-emacs/clojure-mode/issues/555): Fix ns detection for ns forms with complex metadata.
 * [#550](https://github.com/clojure-emacs/clojure-mode/issues/550): Fix `outline-regexp` so `outline-insert-heading` behaves correctly.
 * [#551](https://github.com/clojure-emacs/clojure-mode/issues/551): Indent `clojure-align` region before aligning.
-* [#520](https://github.com/clojure-emacs/clojure-mode/issues/508): Fix allow `clojure-align-cond-forms` to recognize qualified forms.
-* [#404](https://github.com/clojure-emacs/clojure-mode/issues/404)/[#528]((https://github.com/clojure-emacs/clojure-mode/issues/528)): Fix syntax highlighting for multiple consecutive comment reader macros (`#_#_`).
+* [#520](https://github.com/clojure-emacs/clojure-mode/issues/520): Fix allow `clojure-align-cond-forms` to recognize qualified forms.
+* [#404](https://github.com/clojure-emacs/clojure-mode/issues/404)/[#528](https://github.com/clojure-emacs/clojure-mode/issues/528): Fix syntax highlighting for multiple consecutive comment reader macros (`#_#_`).
 
 ### Changes
 
@@ -201,7 +201,7 @@
 ### Changes
 
 * [#524](https://github.com/clojure-emacs/clojure-mode/issues/524): Add proper indentation rule for `delay` (same as for `future`).
-* [#538](https://github.com/clojure-emacs/clojure-mode/pull/538): Refactor `clojure-unwind` to take numeric prefix argument for unwinding N steps, and universal argument for unwinding completely. The dedicated `C-c C-r a` binding for `clojure-unwind-all`is now removed and replaced with the universal arg convention `C-u C-c C-r u`.
+* [#538](https://github.com/clojure-emacs/clojure-mode/pull/538): Refactor `clojure-unwind` to take numeric prefix argument for unwinding N steps, and universal argument for unwinding completely. The dedicated `C-c C-r a` binding for `clojure-unwind-all` is now removed and replaced with the universal arg convention `C-u C-c C-r u`.
 
 ## 5.10.0 (2019-01-05)
 
@@ -224,6 +224,8 @@
 * [#503](https://github.com/clojure-emacs/clojure-mode/pull/503): Fix Makefile so that we can compile again.
 
 ## 5.9.1 (2018-08-27)
+
+### Bugs fixed
 
 * [#485](https://github.com/clojure-emacs/clojure-mode/issues/485): Fix a regression in `end-f-defun`.
 
@@ -282,7 +284,7 @@
 ### Bugs fixed
 
 * [#458](https://github.com/clojure-emacs/clojure-mode/pull/458): Get correct ns when in middle of ns form with `clojure-find-ns`
-* [#447](https://github.com/clojure-emacs/clojure-mode/issues/241): When `electric-indent-mode` is on, force indentation from within docstrings.
+* [#447](https://github.com/clojure-emacs/clojure-mode/issues/447): When `electric-indent-mode` is on, force indentation from within docstrings.
 * [#438](https://github.com/clojure-emacs/clojure-mode/issues/438): Filling within a doc-string doesn't affect surrounding code.
 * Fix fill-paragraph in multi-line comments.
 * [#443](https://github.com/clojure-emacs/clojure-mode/issues/443): Fix behavior of `clojure-forward-logical-sexp` and `clojure-backward-logical-sexp` with conditional macros.
@@ -328,7 +330,7 @@
 * [#394](https://github.com/clojure-emacs/clojure-mode/issues/394): `?` character is now treated as prefix when outside symbols.
 * [#394](https://github.com/clojure-emacs/clojure-mode/issues/394): `#` character now has prefix syntax class.
 * Fixed indentation of `definterface` to match that of `defprotocol`.
-* [#389](https://github.com/clojure-emacs/clojure-mode/issues/389): Fixed the indentation of `defrecord` and `deftype` multiple airity protocol forms.
+* [#389](https://github.com/clojure-emacs/clojure-mode/issues/389): Fixed the indentation of `defrecord` and `deftype` multiple arity protocol forms.
 * [#393](https://github.com/clojure-emacs/clojure-mode/issues/393): `imenu-generic-expression` is no longer hard-coded and its global value is respected.
 
 ## 5.5.0 (2016-06-25)
