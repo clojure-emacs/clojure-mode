@@ -38,7 +38,7 @@
 * [#671](https://github.com/clojure-emacs/clojure-mode/issues/671): Syntax highlighting for digits after the first in `%` args. (e.g. `%10`)
 * [#680](https://github.com/clojure-emacs/clojure-mode/issues/680): Change syntax class of ASCII control characters to punctuation, fixing situations where carriage returns were being interpreted as symbols.
 
-# Changes
+### Changes
 
 * [#675](https://github.com/clojure-emacs/clojure-mode/issues/675): Add `.lpy` to the list of known Clojure file extensions.
 
