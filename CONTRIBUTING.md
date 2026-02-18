@@ -43,8 +43,8 @@ and description in grammatically correct, complete sentences.
 1. Run `eldev build` in the repository folder.
 1. Run tests with `make test`.
 
-**Note:** macOS users should make sure that the `emacs` command resolves the version of Emacs they've installed
-manually (e.g. via `homebrew`), instead of the ancient Emacs 22 that comes bundled with macOS.
+**Note:** macOS no longer ships with Emacs (it was removed in Catalina).
+macOS users will need to install Emacs manually (e.g. via `homebrew`).
 See [this article][8] for more details.
 
 [1]: https://github.com/clojure-emacs/clojure-mode/issues
