@@ -40,8 +40,7 @@ and description in grammatically correct, complete sentences.
 
 1. Fork and clone the repository.
 1. Install [Eldev][7].
-1. Run `eldev build` in the repository folder.
-1. Run tests with `make test`.
+1. Run `make all` to compile, lint and run the tests.
 
 **Note:** macOS no longer ships with Emacs (it was removed in Catalina).
 macOS users will need to install Emacs manually (e.g. via `homebrew`).
