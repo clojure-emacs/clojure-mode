@@ -21,12 +21,15 @@ highlighting), indentation, navigation and refactoring support for the
 
 ## Installation
 
-Available on the major `package.el` community maintained repos -
-[MELPA Stable][] and [MELPA][] repos.
+Available on [NonGNU ELPA][], [MELPA Stable][] and [MELPA][].
 
-MELPA Stable is the recommended repo as it has the latest stable
-version.  MELPA has a development snapshot for users who don't mind
-(infrequent) breakage but don't want to run from a git checkout.
+NonGNU ELPA is configured by default in Emacs 28+, so `package-install`
+will work out of the box without adding any package archives. MELPA
+Stable is another good option as it has the latest stable version.
+MELPA has a development snapshot for users who don't mind (infrequent)
+breakage but don't want to run from a git checkout.
+
+[NonGNU ELPA]: https://elpa.nongnu.org/nongnu/clojure-mode.html
 
 You can install `clojure-mode` using the following command:
 
