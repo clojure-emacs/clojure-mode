@@ -2,16 +2,18 @@
 
 ## master (unreleased)
 
-### Bugs fixed
-
-* [#658](https://github.com/clojure-emacs/clojure-mode/issues/658): Fix `clojure-mode-version` returning `nil`.
-* [#686](https://github.com/clojure-emacs/clojure-mode/issues/686): Fix `clojure-find-def` failing when comments appear between the `def` form and the symbol name.
-* [#637](https://github.com/clojure-emacs/clojure-mode/issues/637): Fix `clojure-find-def` failing on symbols containing special characters (e.g. `defn+`).
+## 5.21.0 (2026-02-18)
 
 ### New features
 
 * [#650](https://github.com/clojure-emacs/clojure-mode/issues/650): Add `edn-mode`, a lightweight mode derived from `clojure-mode` with data-appropriate indentation for `.edn` files.
 * [#439](https://github.com/clojure-emacs/clojure-mode/issues/439): Add `interpreter-mode-alist` entries for `clojure`, `clj`, `planck`, `joker`, and `jank`, so that scripts with shebang lines are recognized automatically.
+
+### Bugs fixed
+
+* [#658](https://github.com/clojure-emacs/clojure-mode/issues/658): Fix `clojure-mode-version` returning `nil`.
+* [#686](https://github.com/clojure-emacs/clojure-mode/issues/686): Fix `clojure-find-def` failing when comments appear between the `def` form and the symbol name.
+* [#637](https://github.com/clojure-emacs/clojure-mode/issues/637): Fix `clojure-find-def` failing on symbols containing special characters (e.g. `defn+`).
 
 ### Changes
 
