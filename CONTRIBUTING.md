@@ -42,10 +42,6 @@ and description in grammatically correct, complete sentences.
 1. Install [Eldev][7].
 1. Run `make all` to compile, lint and run the tests.
 
-**Note:** macOS no longer ships with Emacs (it was removed in Catalina).
-macOS users will need to install Emacs manually (e.g. via `homebrew`).
-See [this article][8] for more details.
-
 [1]: https://github.com/clojure-emacs/clojure-mode/issues
 [2]: https://gun.io/blog/how-to-github-fork-branch-and-pull-request
 [3]: https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html
@@ -53,4 +49,3 @@ See [this article][8] for more details.
 [5]: https://gitready.com/advanced/2009/02/10/squashing-commits-with-rebase.html
 [6]: https://github.com/clojure-emacs/clojure-mode/blob/master/CHANGELOG.md
 [7]: https://github.com/emacs-eldev/eldev
-[8]: https://emacsredux.com/blog/2015/05/09/emacs-on-os-x/
