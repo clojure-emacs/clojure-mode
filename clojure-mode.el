@@ -1647,9 +1647,9 @@ accepted by `clojure-indent-style'."
     (if (ignore-errors
           ;; `backward-sexp' until we reach the start of a sexp that is the
           ;; first of its line (the start of the enclosing sexp).
-          (while (string-match
-                  "[^[:blank:]]"
-                  (buffer-substring (line-beginning-position) (point)))
+          (while (save-excursion
+                   (skip-chars-backward " \t")
+                   (not (bolp)))
             (setq last-sexp-start (prog1 (point)
                                     (forward-sexp -1))))
           t)
