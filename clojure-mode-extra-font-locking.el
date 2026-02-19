@@ -562,17 +562,30 @@
     "is-leaf"
     "list-model"
     "list-provider"
+    "old-table-model"
+    "table-model"
+    "tree-model"
 
     ;; clojure.main
+    "demunge"
+    "err->msg"
+    "ex-str"
+    "ex-triage"
     "load-script"
     "main"
+    "renumbering-read"
     "repl"
     "repl-caught"
     "repl-exception"
     "repl-prompt"
     "repl-read"
+    "repl-requires"
+    "report-error"
+    "root-cause"
     "skip-if-eol"
     "skip-whitespace"
+    "stack-element-str"
+    "with-read-known"
 
     ;; clojure.set
     "difference"
@@ -584,6 +597,8 @@
     "rename"
     "rename-keys"
     "select"
+    "subset?"
+    "superset?"
     "union"
 
     ;; clojure.stacktrace
@@ -592,6 +607,7 @@
     "print-stack-trace"
     "print-throwable"
     "print-trace-element"
+    "root-cause"
 
     ;; clojure.template
     "do-template"
@@ -605,14 +621,21 @@
     "compose-fixtures"
     "deftest"
     "deftest-"
+    "do-report"
     "file-position"
     "function?"
     "get-possibly-unbound-var"
     "inc-report-counter"
     "is"
     "join-fixtures"
+    "print-tap-diagnostic"
+    "print-tap-fail"
+    "print-tap-pass"
+    "print-tap-plan"
     "report"
     "run-all-tests"
+    "run-test"
+    "run-test-var"
     "run-tests"
     "set-test"
     "successful?"
@@ -625,6 +648,8 @@
     "testing-vars-str"
     "try-expr"
     "use-fixtures"
+    "with-junit-output"
+    "with-tap-output"
     "with-test"
     "with-test-out"
 
@@ -644,9 +669,15 @@
     "attrs"
     "content"
     "content-handler"
+    "disable-external-entities"
     "element"
     "emit"
     "emit-element"
+    "parse"
+    "sax-parser"
+    "startparse-sax"
+    "startparse-sax-safe"
+    "tag"
 
     ;; clojure.zip
     "append-child"
@@ -674,6 +705,9 @@
     "root"
     "seq-zip"
     "up"
+    "vector-zip"
+    "xml-zip"
+    "zipper"
     )
   )
 
