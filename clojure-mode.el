@@ -788,6 +788,9 @@ what is considered a comment (affecting font locking).
 
 (defun clojure--search-comment-macro-internal (limit)
   "Search for a comment forward stopping at LIMIT."
+  ;; Iterative search: find the next comment macro (`#_` or `(comment ...)`)
+  ;; that isn't inside a string or comment, then extend match-data group 1
+  ;; to cover the commented-out sexp(s).
   (let ((result nil))
     (while (and (not result)
                 (search-forward-regexp clojure-comment-regexp limit t))
@@ -798,12 +801,16 @@ what is considered a comment (affecting font locking).
         (unless (or (nth 3 state)
                     (nth 4 state))
           (goto-char start)
-          ;; Count how many #_ we got and step by that many sexps
-          ;; For (comment ...), step at least 1 sexp
+          ;; For #_#_expr, each #_ discards one sexp, so count them.
+          ;; For (comment ...), the regexp matches but has zero #_,
+          ;; so max with 1 ensures we skip the comment body.
           (clojure-forward-logical-sexp
            (max (count-matches (rx "#_") (elt md 0) (elt md 1))
                 1))
-          ;; Data for (match-end 1).
+          ;; match-data is a flat list [beg0 end0 beg1 end1 ...],
+          ;; so index 3 = end of group 1.  Set it to point (after
+          ;; stepping over the commented sexps) so that group 1 spans
+          ;; from the macro to the end of the discarded code.
           (setf (elt md 3) (point))
           (set-match-data md)
           (setq result t))))
@@ -1264,16 +1271,23 @@ locking in def* forms that are not at top level."
   "Non-nil if the char before point is font-locked as a string.
 If REGEXP is non-nil, also check whether current string is
 preceded by a #."
+  ;; Check font-lock-string-face specifically (not font-lock-doc-face)
+  ;; so that docstrings are excluded from matching.
   (let ((face (get-text-property (1- (point)) 'face)))
     (when (or (and (listp face)
                    (memq 'font-lock-string-face face))
               (eq 'font-lock-string-face face))
+      ;; Single syntax-ppss call: nth 3 = in-string flag,
+      ;; nth 8 = start position of the string.
       (let* ((ppss (syntax-ppss))
              (string-beg (nth 8 ppss)))
         (when (and (nth 3 ppss) string-beg)
           (if regexp
+              ;; Regex strings are preceded by # (e.g. #"pattern").
+              ;; Return position including the # prefix.
               (when (eq ?# (char-before string-beg))
                 (1- string-beg))
+            ;; When regexp is nil, match any string (both #"..." and "...").
             string-beg))))))
 
 (defun clojure-font-lock-escaped-chars (bound)
