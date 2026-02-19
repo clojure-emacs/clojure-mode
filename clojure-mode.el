@@ -1423,29 +1423,31 @@ construct."
         ;; Are we in a reader conditional?
         (and clojure-align-reader-conditionals
              (looking-back clojure--beginning-of-reader-conditional-regexp (- (point) 4)))
-        ;; Are we in a cond form?
-        (let* ((fun    (car (member (thing-at-point 'symbol) clojure-align-cond-forms)))
-               (method (and fun (clojure--get-indent-method fun)))
-               ;; The number of special arguments in the cond form is
-               ;; the number of sexps we skip before aligning.
-               (skip   (cond ((numberp method) method)
-                             ((null method) 0)
-                             ((sequencep method) (elt method 0)))))
-          (when (and fun (numberp skip))
-            (clojure-forward-logical-sexp skip)
-            (comment-forward (point-max))
-            fun)) ; Return non-nil (the var name).
-        ;; Are we in a let-like form?
-        (when (member (thing-at-point 'symbol)
-                      clojure-align-binding-forms)
-          ;; Position inside the binding vector.
-          (clojure-forward-logical-sexp)
-          (backward-sexp)
-          (when (eq (char-after) ?\[)
-            (forward-char 1)
-            (comment-forward (point-max))
-            ;; Return non-nil.
-            t)))))
+        ;; Check cond forms and let-like forms, computing the symbol once.
+        (let ((sym (thing-at-point 'symbol)))
+          (or
+           ;; Are we in a cond form?
+           (let* ((fun    (car (member sym clojure-align-cond-forms)))
+                  (method (and fun (clojure--get-indent-method fun)))
+                  ;; The number of special arguments in the cond form is
+                  ;; the number of sexps we skip before aligning.
+                  (skip   (cond ((numberp method) method)
+                                ((null method) 0)
+                                ((sequencep method) (elt method 0)))))
+             (when (and fun (numberp skip))
+               (clojure-forward-logical-sexp skip)
+               (comment-forward (point-max))
+               fun)) ; Return non-nil (the var name).
+           ;; Are we in a let-like form?
+           (when (member sym clojure-align-binding-forms)
+             ;; Position inside the binding vector.
+             (clojure-forward-logical-sexp)
+             (backward-sexp)
+             (when (eq (char-after) ?\[)
+               (forward-char 1)
+               (comment-forward (point-max))
+               ;; Return non-nil.
+               t)))))))
 
 (defvar clojure--align-search-regexp-cache nil
   "Cached regexp for `clojure--find-sexp-to-align'.
