@@ -1263,14 +1263,18 @@ locking in def* forms that are not at top level."
 (defun clojure--font-locked-as-string-p (&optional regexp)
   "Non-nil if the char before point is font-locked as a string.
 If REGEXP is non-nil, also check whether current string is
-preceeded by a #."
+preceded by a #."
   (let ((face (get-text-property (1- (point)) 'face)))
-    (and (or (and (listp face)
-                  (memq 'font-lock-string-face face))
-             (eq 'font-lock-string-face face))
-         (or (clojure-string-start t)
-             (unless regexp
-               (clojure-string-start nil))))))
+    (when (or (and (listp face)
+                   (memq 'font-lock-string-face face))
+              (eq 'font-lock-string-face face))
+      (let* ((ppss (syntax-ppss))
+             (string-beg (nth 8 ppss)))
+        (when (and (nth 3 ppss) string-beg)
+          (if regexp
+              (when (eq ?# (char-before string-beg))
+                (1- string-beg))
+            string-beg))))))
 
 (defun clojure-font-lock-escaped-chars (bound)
   "Highlight \\escaped chars in strings.
