@@ -581,8 +581,16 @@
     "with-read-known"
 
     ;; clojure.repl
+    "apropos"
+    "dir"
+    "dir-fn"
     "doc"
     "find-doc"
+    "pst"
+    "set-break-handler!"
+    "source"
+    "source-fn"
+    "thread-stopper"
 
     ;; clojure.set
     "difference"
