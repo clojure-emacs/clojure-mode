@@ -6,10 +6,13 @@
 
 * Update font-locking of built-in dynamic vars for Clojure 1.12.
 * Update `clojure-mode-extra-font-locking` for Clojure 1.10-1.12 (new functions in `clojure.core` and other bundled namespaces).
+* Add `clojure.repl` section to `clojure-mode-extra-font-locking`.
+* Remove non-existent entries from `clojure-mode-extra-font-locking` (`specify`, `specify!`, `special-form-anchor`, `syntax-symbol-anchor`, `stream?`).
 
 ### Bugs fixed
 
 * Fix typos in `clojure-mode-extra-font-locking`: `halt-when?` -> `halt-when`, `simple-indent?` -> `simple-ident?`.
+* Fix `doc` and `find-doc` misplaced under `clojure.core` instead of `clojure.repl` in extra font-locking.
 
 ## 5.21.0 (2026-02-18)
 
