@@ -1990,12 +1990,13 @@ work).  To set it from Lisp code, use
 If REGEX is non-nil, return the position of the # that begins the
 regex at point.  If point is not inside a string or regex, return
 nil."
-  (when (nth 3 (syntax-ppss)) ;; Are we really in a string?
-    (let* ((beg (nth 8 (syntax-ppss)))
-           (hash (eq ?# (char-before beg))))
-      (if regex
-          (and hash (1- beg))
-        (and (not hash) beg)))))
+  (let ((ppss (syntax-ppss)))
+    (when (nth 3 ppss) ;; Are we really in a string?
+      (let* ((beg (nth 8 ppss))
+             (hash (eq ?# (char-before beg))))
+        (if regex
+            (and hash (1- beg))
+          (and (not hash) beg))))))
 
 (defun clojure-char-at-point ()
   "Return the char at point or nil if at buffer end."
