@@ -624,8 +624,6 @@
     "assert-expr"
     "assert-predicate"
     "compose-fixtures"
-    "deftest"
-    "deftest-"
     "do-report"
     "file-position"
     "function?"
