@@ -2,6 +2,15 @@
 
 ## master (unreleased)
 
+### Changes
+
+* Update font-locking of built-in dynamic vars for Clojure 1.12.
+* Update `clojure-mode-extra-font-locking` for Clojure 1.10-1.12 (new functions in `clojure.core` and other bundled namespaces).
+
+### Bugs fixed
+
+* Fix typos in `clojure-mode-extra-font-locking`: `halt-when?` -> `halt-when`, `simple-indent?` -> `simple-ident?`.
+
 ## 5.21.0 (2026-02-18)
 
 ### New features
