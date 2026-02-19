@@ -1360,6 +1360,29 @@ will align the values like this:
   :safe #'booleanp
   :type 'boolean)
 
+(defvar clojure--align-search-regexp-cache nil
+  "Cached regexp for `clojure--find-sexp-to-align'.
+A cons of (KEY . REGEXP) where KEY captures the inputs used to build it.")
+
+(defun clojure--align-search-regexp ()
+  "Return the cached regexp for alignment search.
+Rebuilds the regexp only when the inputs change."
+  (let ((key (list clojure-align-reader-conditionals
+                   clojure-align-binding-forms
+                   clojure-align-cond-forms)))
+    (unless (equal key (car clojure--align-search-regexp-cache))
+      (setq clojure--align-search-regexp-cache
+            (cons key
+                  (concat (when clojure-align-reader-conditionals
+                            (concat clojure--beginning-of-reader-conditional-regexp
+                                    "\\|"))
+                          "{\\|("
+                          (regexp-opt
+                           (append clojure-align-binding-forms
+                                   clojure-align-cond-forms)
+                           'symbols)))))
+    (cdr clojure--align-search-regexp-cache)))
+
 (defcustom clojure-align-binding-forms
   '("let" "when-let" "when-some" "if-let" "if-some" "binding" "loop"
     "doseq" "for" "with-open" "with-local-vars" "with-redefs")
@@ -1440,14 +1463,7 @@ Place point as in `clojure--position-for-alignment'."
   (let ((found))
     (while (and (not found)
                 (search-forward-regexp
-                 (concat (when clojure-align-reader-conditionals
-                           (concat clojure--beginning-of-reader-conditional-regexp
-                                   "\\|"))
-                         "{\\|("
-                         (regexp-opt
-                          (append clojure-align-binding-forms
-                                  clojure-align-cond-forms)
-                          'symbols))
+                 (clojure--align-search-regexp)
                  end 'noerror))
 
       (let ((ppss (syntax-ppss)))
