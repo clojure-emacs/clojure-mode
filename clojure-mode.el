@@ -788,24 +788,26 @@ what is considered a comment (affecting font locking).
 
 (defun clojure--search-comment-macro-internal (limit)
   "Search for a comment forward stopping at LIMIT."
-  (when (search-forward-regexp clojure-comment-regexp limit t)
-    (let* ((md (match-data))
-           (start (match-beginning 1))
-           (state (syntax-ppss start)))
-      ;; inside string or comment?
-      (if (or (nth 3 state)
-              (nth 4 state))
-          (clojure--search-comment-macro-internal limit)
-        (goto-char start)
-        ;; Count how many #_ we got and step by that many sexps
-        ;; For (comment ...), step at least 1 sexp
-        (clojure-forward-logical-sexp
-         (max (count-matches (rx "#_") (elt md 0) (elt md 1))
-              1))
-        ;; Data for (match-end 1).
-        (setf (elt md 3) (point))
-        (set-match-data md)
-        t))))
+  (let ((result nil))
+    (while (and (not result)
+                (search-forward-regexp clojure-comment-regexp limit t))
+      (let* ((md (match-data))
+             (start (match-beginning 1))
+             (state (syntax-ppss start)))
+        ;; Skip matches inside strings or comments.
+        (unless (or (nth 3 state)
+                    (nth 4 state))
+          (goto-char start)
+          ;; Count how many #_ we got and step by that many sexps
+          ;; For (comment ...), step at least 1 sexp
+          (clojure-forward-logical-sexp
+           (max (count-matches (rx "#_") (elt md 0) (elt md 1))
+                1))
+          ;; Data for (match-end 1).
+          (setf (elt md 3) (point))
+          (set-match-data md)
+          (setq result t))))
+    result))
 
 (defun clojure--search-comment-macro (limit)
   "Find comment macros and set the match data.
