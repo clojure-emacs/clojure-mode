@@ -639,7 +639,8 @@ replacement for `cljr-expand-let`."
   (setq-local prettify-symbols-alist clojure--prettify-symbols-alist)
   (setq-local open-paren-in-column-0-is-defun-start nil)
   (setq-local add-log-current-defun-function #'clojure-current-defun-name)
-  (setq-local beginning-of-defun-function #'clojure-beginning-of-defun-function))
+  (setq-local beginning-of-defun-function #'clojure-beginning-of-defun-function)
+  (comment-normalize-vars))
 
 (defsubst clojure-in-docstring-p ()
   "Check whether point is in a docstring."
@@ -2279,7 +2280,6 @@ Returns a list pair, e.g. (\"defn\" \"abc\") or (\"deftest\" \"some-test\")."
 (defun clojure--looking-at-non-logical-sexp ()
   "Return non-nil if text after point is \"non-logical\" sexp.
 \"Non-logical\" sexp are ^metadata and #reader.macros."
-  (comment-normalize-vars t) ;; `t`: avoid prompts
   (comment-forward (point-max))
   (looking-at-p "\\(?:#?\\^\\)\\|#:?:?[[:alpha:]]"))
 
