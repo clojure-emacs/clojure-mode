@@ -1360,29 +1360,6 @@ will align the values like this:
   :safe #'booleanp
   :type 'boolean)
 
-(defvar clojure--align-search-regexp-cache nil
-  "Cached regexp for `clojure--find-sexp-to-align'.
-A cons of (KEY . REGEXP) where KEY captures the inputs used to build it.")
-
-(defun clojure--align-search-regexp ()
-  "Return the cached regexp for alignment search.
-Rebuilds the regexp only when the inputs change."
-  (let ((key (list clojure-align-reader-conditionals
-                   clojure-align-binding-forms
-                   clojure-align-cond-forms)))
-    (unless (equal key (car clojure--align-search-regexp-cache))
-      (setq clojure--align-search-regexp-cache
-            (cons key
-                  (concat (when clojure-align-reader-conditionals
-                            (concat clojure--beginning-of-reader-conditional-regexp
-                                    "\\|"))
-                          "{\\|("
-                          (regexp-opt
-                           (append clojure-align-binding-forms
-                                   clojure-align-cond-forms)
-                           'symbols)))))
-    (cdr clojure--align-search-regexp-cache)))
-
 (defcustom clojure-align-binding-forms
   '("let" "when-let" "when-some" "if-let" "if-some" "binding" "loop"
     "doseq" "for" "with-open" "with-local-vars" "with-redefs")
@@ -1455,6 +1432,29 @@ construct."
             (comment-forward (point-max))
             ;; Return non-nil.
             t)))))
+
+(defvar clojure--align-search-regexp-cache nil
+  "Cached regexp for `clojure--find-sexp-to-align'.
+A cons of (KEY . REGEXP) where KEY captures the inputs used to build it.")
+
+(defun clojure--align-search-regexp ()
+  "Return the cached regexp for alignment search.
+Rebuilds the regexp only when the inputs change."
+  (let ((key (list clojure-align-reader-conditionals
+                   clojure-align-binding-forms
+                   clojure-align-cond-forms)))
+    (unless (equal key (car clojure--align-search-regexp-cache))
+      (setq clojure--align-search-regexp-cache
+            (cons key
+                  (concat (when clojure-align-reader-conditionals
+                            (concat clojure--beginning-of-reader-conditional-regexp
+                                    "\\|"))
+                          "{\\|("
+                          (regexp-opt
+                           (append clojure-align-binding-forms
+                                   clojure-align-cond-forms)
+                           'symbols)))))
+    (cdr clojure--align-search-regexp-cache)))
 
 (defun clojure--find-sexp-to-align (end)
   "Non-nil if there's a sexp ahead to be aligned before END.
@@ -1641,16 +1641,18 @@ Implementation function for `clojure--find-indent-spec'."
            (message "Invalid indent spec for `%s': %s" function method)
            nil))))))
 
-(defun clojure--find-indent-spec ()
+(defun clojure--find-indent-spec (&optional function-name)
   "Return the indent spec that applies to current sexp.
 If `clojure-use-backtracking-indent' is non-nil, also do
 backtracking up to a higher-level sexp in order to find the
-spec."
+spec.  FUNCTION-NAME, if provided, is used instead of computing
+the symbol at point."
   (if clojure-use-backtracking-indent
       (save-excursion
         (clojure--find-indent-spec-backtracking))
-    (let ((function (thing-at-point 'symbol)))
-      (clojure--get-indent-method function))))
+    (let ((function (or function-name (thing-at-point 'symbol))))
+      (when function
+        (clojure--get-indent-method function)))))
 
 (defun clojure--keyword-to-symbol (keyword)
   "Convert KEYWORD to symbol."
@@ -1755,10 +1757,11 @@ This function also returns nil meaning don't specify the indentation."
       (1+ (current-column))
     ;; Function or macro call.
     (forward-char 1)
-    (let ((method (and clojure-enable-indent-specs
-                       (clojure--find-indent-spec)))
-          (last-sexp calculate-lisp-indent-last-sexp)
-          (containing-form-column (1- (current-column))))
+    (let* ((function (thing-at-point 'symbol))
+           (method (and clojure-enable-indent-specs
+                        (clojure--find-indent-spec function)))
+           (last-sexp calculate-lisp-indent-last-sexp)
+           (containing-form-column (1- (current-column))))
       (pcase method
         ((or (and (pred integerp) method) `(,method))
          (let ((pos -1))
@@ -1789,20 +1792,19 @@ This function also returns nil meaning don't specify the indentation."
          (funcall method indent-point state))
         ;; No indent spec, do the default.
         (`nil
-         (let ((function (thing-at-point 'symbol)))
-           (cond
-            ;; Preserve useful alignment of :require (and friends) in `ns' forms.
-            ((and function (string-match "^:" function))
-             (clojure--normal-indent last-sexp clojure-indent-keyword-style))
-            ;; This should be identical to the :defn above.
-            ((and function
-                  (string-match "\\`\\(?:\\S +/\\)?\\(def[a-z]*\\|with-\\)"
-                                function)
-                  (not (string-match "\\`default" (match-string 1 function))))
-             (+ lisp-body-indent containing-form-column))
-            ;; Finally, nothing special here, just respect the user's
-            ;; preference.
-            (t (clojure--normal-indent last-sexp clojure-indent-style)))))))))
+         (cond
+          ;; Preserve useful alignment of :require (and friends) in `ns' forms.
+          ((and function (string-match "^:" function))
+           (clojure--normal-indent last-sexp clojure-indent-keyword-style))
+          ;; This should be identical to the :defn above.
+          ((and function
+                (string-match "\\`\\(?:\\S +/\\)?\\(def[a-z]*\\|with-\\)"
+                              function)
+                (not (string-match "\\`default" (match-string 1 function))))
+           (+ lisp-body-indent containing-form-column))
+          ;; Finally, nothing special here, just respect the user's
+          ;; preference.
+          (t (clojure--normal-indent last-sexp clojure-indent-style))))))))
 
 ;;; Setting indentation
 (defun put-clojure-indent (sym indent)
