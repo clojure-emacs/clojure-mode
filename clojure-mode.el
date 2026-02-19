@@ -1062,12 +1062,14 @@ any number of matches of `clojure--sym-forbidden-rest-chars'."))
           '("*1" "*2" "*3" "*agent*"
             "*allow-unresolved-vars*" "*assert*" "*clojure-version*"
             "*command-line-args*" "*compile-files*"
-            "*compile-path*" "*data-readers*" "*default-data-reader-fn*"
+            "*compile-path*" "*compiler-options*"
+            "*data-readers*" "*default-data-reader-fn*"
             "*e" "*err*" "*file*" "*flush-on-newline*"
-            "*in*" "*macro-meta*" "*math-context*" "*ns*" "*out*"
+            "*fn-loader*"
+            "*in*" "*math-context*" "*ns*" "*out*"
             "*print-dup*" "*print-length*" "*print-level*"
-            "*print-meta*" "*print-readably*"
-            "*read-eval*" "*source-path*"
+            "*print-meta*" "*print-namespace-maps*" "*print-readably*"
+            "*read-eval*" "*reader-resolver*" "*repl*" "*source-path*"
             "*unchecked-math*"
             "*use-context-classloader*" "*warn-on-reflection*")
           t)
