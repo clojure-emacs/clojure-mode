@@ -158,7 +158,6 @@
     "dissoc!"
     "distinct"
     "distinct?"
-    "doc"
     "double"
     "double?"
     "double-array"
@@ -187,7 +186,6 @@
     "filter"
     "filterv"
     "find"
-    "find-doc"
     "find-ns"
     "find-keyword"
     "find-var"
@@ -581,6 +579,10 @@
     "skip-whitespace"
     "stack-element-str"
     "with-read-known"
+
+    ;; clojure.repl
+    "doc"
+    "find-doc"
 
     ;; clojure.set
     "difference"
