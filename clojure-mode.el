@@ -2168,7 +2168,6 @@ content) are considered part of the preceding sexp."
 (defun clojure-sort-ns ()
   "Internally sort each sexp inside the ns form."
   (interactive)
-  (comment-normalize-vars t) ;; `t`: avoid prompts
   (if (clojure-find-ns)
       (save-excursion
         (goto-char (match-beginning 0))
