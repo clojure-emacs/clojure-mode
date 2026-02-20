@@ -72,9 +72,47 @@
   body)"
 
     "(defn foo
-  ^{:bla \"meta\"}
   ([|])
-  ([arg]
+  (^{:bla \"meta\"} [arg]
+   body))"
+
+    (clojure-add-arity))
+
+  (when-refactoring-with-point-it "should handle a single-arity defn with ^Type metadata"
+    "(defn string
+  ^String
+  |[x]
+  (str x))"
+
+    "(defn string
+  ([|])
+  (^String [x]
+   (str x)))"
+
+    (clojure-add-arity))
+
+  (when-refactoring-with-point-it "should handle a single-arity defn with ^:keyword metadata"
+    "(defn fo|o
+  ^:private
+  [arg]
+  body)"
+
+    "(defn foo
+  ([|])
+  (^:private [arg]
+   body))"
+
+    (clojure-add-arity))
+
+  (when-refactoring-with-point-it "should handle a single-arity defn with multiple metadata"
+    "(defn fo|o
+  ^:private ^String
+  [arg]
+  body)"
+
+    "(defn foo
+  ([|])
+  (^:private ^String [arg]
    body))"
 
     (clojure-add-arity))

@@ -3211,6 +3211,19 @@ Assumes cursor is at beginning of function."
   (insert "[")
   (save-excursion (insert "])\n(" (match-string 0))))
 
+(defun clojure--find-arglist-metadata-start (bracket-pos)
+  "Return the start of metadata annotations before BRACKET-POS.
+If no metadata is found, return BRACKET-POS."
+  (save-excursion
+    (goto-char bracket-pos)
+    (let ((result bracket-pos))
+      (ignore-errors
+        (while (progn
+                 (backward-sexp)
+                 (eq (char-after) ?^))
+          (setq result (point))))
+      result)))
+
 (defun clojure--add-arity-internal ()
   "Add an arity to a function.
 
@@ -3228,14 +3241,28 @@ Assumes cursor is at beginning of function."
       (save-excursion (insert "])\n(")))
      ((looking-back "\\[" 1)  ;; single-arity fn
       (let* ((same-line (= beg-line (line-number-at-pos)))
-             (new-arity-text (concat (when same-line "\n") "([")))
+             (bracket-pos (1- (point)))
+             (meta-start (clojure--find-arglist-metadata-start bracket-pos)))
         (save-excursion
           (goto-char end)
           (insert ")"))
-
-        (re-search-backward " +\\[")
-        (replace-match new-arity-text)
-        (save-excursion (insert "])\n([")))))))
+        (if (< meta-start bracket-pos)
+            ;; Has metadata before arglist — include it in the arity wrapper
+            (let ((meta-text (replace-regexp-in-string
+                              "[ \t\n\r]+" " "
+                              (string-trim
+                               (buffer-substring meta-start bracket-pos)))))
+              (goto-char meta-start)
+              (skip-chars-backward " \t\n")
+              (delete-region (point) (1+ bracket-pos))
+              (insert "\n([")
+              (save-excursion
+                (insert "])\n(" meta-text " [")))
+          ;; No metadata — original behavior
+          (let ((new-arity-text (concat (when same-line "\n") "([")))
+            (re-search-backward " +\\[")
+            (replace-match new-arity-text)
+            (save-excursion (insert "])\n([")))))))))
 
 ;;;###autoload
 (defun clojure-add-arity ()
