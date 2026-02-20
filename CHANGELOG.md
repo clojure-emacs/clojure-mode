@@ -17,6 +17,7 @@
 
 ### Bugs fixed
 
+* [#365](https://github.com/clojure-emacs/clojure-mode/issues/365): Font-lock function names in `letfn` bindings with `font-lock-function-name-face`.
 * Fix typos in `clojure-mode-extra-font-locking`: `halt-when?` -> `halt-when`, `simple-indent?` -> `simple-ident?`.
 * Fix `doc` and `find-doc` misplaced under `clojure.core` instead of `clojure.repl` in extra font-locking.
 
