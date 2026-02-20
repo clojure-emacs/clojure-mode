@@ -91,6 +91,11 @@
   "Face used to font-lock Clojure keywords (:something)."
   :package-version '(clojure-mode . "3.0.0"))
 
+(defface clojure-discard-face
+  '((t (:inherit font-lock-comment-face)))
+  "Face used to font-lock forms discarded by Clojure's #_ reader macro."
+  :package-version '(clojure-mode . "5.22.0"))
+
 (defface clojure-character-face
   '((t (:inherit font-lock-string-face)))
   "Face used to font-lock Clojure character literals."
@@ -1153,7 +1158,10 @@ any number of matches of `clojure--sym-forbidden-rest-chars'."))
        (1 nil))
 
       ;; #_ and (comment ...) macros.
-      (clojure--search-comment-macro 1 font-lock-comment-face t)
+      (clojure--search-comment-macro
+       1 (if (eq (char-after (match-beginning 0)) ?#)
+             'clojure-discard-face font-lock-comment-face)
+       t)
       ;; Highlight `code` marks, just like `elisp'.
       (,(rx "`" (group-n 1 (optional "#'")
                          (+ (or (syntax symbol) (syntax word)))) "`")
