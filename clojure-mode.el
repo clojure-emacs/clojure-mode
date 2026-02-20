@@ -2384,17 +2384,6 @@ testing, give an easy way to turn this new behavior off."
   :safe #'booleanp
   :package-version '(clojure-mode . "5.9.0"))
 
-(defun clojure-find-first (pred coll)
-  "Find first element of COLL for which PRED return truthy."
-  (let ((found)
-        (haystack coll))
-    (while (and (not found)
-                haystack)
-      (if (funcall pred (car haystack))
-          (setq found (car haystack))
-        (setq haystack (cdr haystack))))
-    found))
-
 (defun clojure-beginning-of-defun-function (&optional n)
   "Go to top level form.
 Set as `beginning-of-defun-function' so that these generic
@@ -2413,10 +2402,10 @@ many times."
                 (beginning-of-defun-raw)
                 (forward-char 1)              ;; skip paren so we start at comment
                 (clojure-forward-logical-sexp) ;; skip past the comment form itself
-                (if-let ((sexp-start (clojure-find-first (lambda (beg-pos)
-                                                           (< beg-pos original-position))
-                                                         (clojure-sexp-starts-until-position
-                                                          clojure-comment-end))))
+                (if-let ((sexp-start (seq-find (lambda (beg-pos)
+                                                        (< beg-pos original-position))
+                                                      (clojure-sexp-starts-until-position
+                                                       clojure-comment-end))))
                     (progn (goto-char sexp-start) t)
                   (beginning-of-defun-raw n))))
           (scan-error (beginning-of-defun-raw n)))
