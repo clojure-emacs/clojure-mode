@@ -17,6 +17,7 @@
 
 ### Bugs fixed
 
+* [#619](https://github.com/clojure-emacs/clojure-mode/issues/619): Fix `clojure-thread-last-all` breaking forms containing line comments by absorbing closing parens into comments.
 * Fix typos in `clojure-mode-extra-font-locking`: `halt-when?` -> `halt-when`, `simple-indent?` -> `simple-ident?`.
 * Fix `doc` and `find-doc` misplaced under `clojure.core` instead of `clojure.repl` in extra font-locking.
 
