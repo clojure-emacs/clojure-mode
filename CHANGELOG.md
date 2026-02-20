@@ -18,6 +18,7 @@
 ### Bugs fixed
 
 * [#402](https://github.com/clojure-emacs/clojure-mode/issues/402): Font-lock protocol method docstrings with `font-lock-doc-face`.
+* [#649](https://github.com/clojure-emacs/clojure-mode/issues/649): Fix `clojure-add-arity` severing arglist metadata (`^String`, `^:keyword`, `^{...}`) when converting single-arity to multi-arity.
 * Fix typos in `clojure-mode-extra-font-locking`: `halt-when?` -> `halt-when`, `simple-indent?` -> `simple-ident?`.
 * Fix `doc` and `find-doc` misplaced under `clojure.core` instead of `clojure.repl` in extra font-locking.
 
