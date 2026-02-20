@@ -2116,7 +2116,16 @@ Useful if a file has been renamed."
         (save-match-data
           (if (clojure-find-ns)
               (progn
-                (replace-match nsname nil nil nil 4)
+                ;; Move to end of the ns/in-ns keyword, then forward
+                ;; to the namespace name sexp and replace it.
+                (goto-char (match-end 0))
+                (clojure-forward-logical-sexp)
+                (let ((end (point)))
+                  (backward-sexp)
+                  ;; Skip past quote in (in-ns 'foo)
+                  (skip-chars-forward "'")
+                  (delete-region (point) end)
+                  (insert nsname))
                 (message "ns form updated to `%s'" nsname)
                 (setq clojure-cached-ns nsname))
             (user-error "Can't find ns form")))))))
