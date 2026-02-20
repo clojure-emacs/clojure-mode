@@ -2760,16 +2760,18 @@ by unwrapping it an wrapping it between COLL-OPEN and COLL-CLOSE."
   "Check whether the point is currently in a comment."
   (nth 4 (syntax-ppss)))
 
-(defun clojure--goto-if ()
-  "Find the first surrounding if or if-not expression."
+(defun clojure--goto-form (name)
+  "Find the first surrounding form matching NAME or NAME-not.
+NAME is a string like \"if\" or \"when\"."
   (when (clojure--in-string-p)
     (while (or (not (looking-at "("))
                (clojure--in-string-p))
       (backward-char)))
-  (while (not (looking-at "\\((if \\)\\|\\((if-not \\)"))
-    (condition-case nil
-        (backward-up-list)
-      (scan-error (user-error "No if or if-not found")))))
+  (let ((regexp (concat "\\((" name " \\)\\|\\((" name "-not \\)")))
+    (while (not (looking-at regexp))
+      (condition-case nil
+          (backward-up-list)
+        (scan-error (user-error "No %s or %s-not found" name name))))))
 
 ;;;###autoload
 (defun clojure-cycle-if ()
@@ -2778,7 +2780,7 @@ by unwrapping it an wrapping it between COLL-OPEN and COLL-CLOSE."
 See: https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-cycle-if"
   (interactive)
   (save-excursion
-    (clojure--goto-if)
+    (clojure--goto-form "if")
     (cond
      ((looking-at "(if-not")
       (forward-char 3)
@@ -2791,24 +2793,12 @@ See: https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-cycle-if"
       (forward-sexp 2)
       (transpose-sexps 1)))))
 
-;; TODO: Remove code duplication with `clojure--goto-if'.
-(defun clojure--goto-when ()
-  "Find the first surrounding when or when-not expression."
-  (when (clojure--in-string-p)
-    (while (or (not (looking-at "("))
-               (clojure--in-string-p))
-      (backward-char)))
-  (while (not (looking-at "\\((when \\)\\|\\((when-not \\)"))
-    (condition-case nil
-        (backward-up-list)
-      (scan-error (user-error "No when or when-not found")))))
-
 ;;;###autoload
 (defun clojure-cycle-when ()
   "Change a surrounding when to when-not, or vice-versa."
   (interactive)
   (save-excursion
-    (clojure--goto-when)
+    (clojure--goto-form "when")
     (cond
      ((looking-at "(when-not")
       (forward-char 9)
