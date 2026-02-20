@@ -1213,30 +1213,44 @@ highlighted region)."
              (docelt (and firstsym
                           (function-get (intern-soft firstsym)
                                         lisp-doc-string-elt-property))))
-        (if (and docelt
-                 ;; It's a string in a form that can have a docstring.
-                 ;; Check whether it's in docstring position.
-                 (save-excursion
-                   (when (functionp docelt)
-                     (goto-char (match-end 1))
-                     (setq docelt (funcall docelt)))
-                   (goto-char listbeg)
-                   (forward-char 1)
-                   (ignore-errors
-                     (while (and (> docelt 0) (< (point) startpos)
-                                 (progn (forward-sexp 1) t))
-                       ;; ignore metadata and type hints
-                       (unless (looking-at "[ \n\t]*\\(\\^[A-Z:].+\\|\\^?{.+\\)")
-                         (setq docelt (1- docelt)))))
-                   (and (zerop docelt) (<= (point) startpos)
-                        (progn (forward-comment (point-max)) t)
-                        (= (point) (nth 8 state))))
-                 ;; In a def, at last position is not a docstring
-                 (not (and (string= "def" firstsym)
-                           (save-excursion
-                             (goto-char startpos)
-                             (goto-char (end-of-thing 'sexp))
-                             (looking-at "[ \r\n\t]*\)")))))
+        (if (or (and docelt
+                     ;; It's a string in a form that can have a docstring.
+                     ;; Check whether it's in docstring position.
+                     (save-excursion
+                       (when (functionp docelt)
+                         (goto-char (match-end 1))
+                         (setq docelt (funcall docelt)))
+                       (goto-char listbeg)
+                       (forward-char 1)
+                       (ignore-errors
+                         (while (and (> docelt 0) (< (point) startpos)
+                                     (progn (forward-sexp 1) t))
+                           ;; ignore metadata and type hints
+                           (unless (looking-at "[ \n\t]*\\(\\^[A-Z:].+\\|\\^?{.+\\)")
+                             (setq docelt (1- docelt)))))
+                       (and (zerop docelt) (<= (point) startpos)
+                            (progn (forward-comment (point-max)) t)
+                            (= (point) (nth 8 state))))
+                     ;; In a def, at last position is not a docstring
+                     (not (and (string= "def" firstsym)
+                               (save-excursion
+                                 (goto-char startpos)
+                                 (goto-char (end-of-thing 'sexp))
+                                 (looking-at "[ \r\n\t]*\)")))))
+                ;; Protocol method docstring: string is last in the
+                ;; method form and parent form is defprotocol.
+                (and listbeg
+                     (save-excursion
+                       (goto-char startpos)
+                       (ignore-errors (forward-sexp))
+                       (skip-chars-forward " \t\n\r")
+                       (eq (char-after) ?\)))
+                     (save-excursion
+                       (let ((parent-beg (nth 1 (parse-partial-sexp
+                                                 (point-min) listbeg))))
+                         (and parent-beg
+                              (goto-char parent-beg)
+                              (looking-at "([ \t\n]*defprotocol\\>"))))))
             font-lock-doc-face
           font-lock-string-face))
     font-lock-comment-face))

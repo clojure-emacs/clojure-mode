@@ -1043,6 +1043,23 @@ DESCRIPTION is the description of the spec."
     ("*some-var?*"
      (1 11 font-lock-variable-name-face))))
 
+(describe "docstring font-locking"
+  (it "should font-lock defn docstrings"
+    (expect-face-at "(defn foo\n  \"docstring\"\n  [x] x)" 14 22 font-lock-doc-face))
+
+  (it "should font-lock defprotocol docstrings"
+    (expect-face-at "(defprotocol Foo\n  \"protocol doc\")" 21 32 font-lock-doc-face))
+
+  (it "should font-lock protocol method docstrings"
+    (expect-face-at "(defprotocol Foo\n  (bar [this]\n    \"method doc\"))" 37 46 font-lock-doc-face))
+
+  (it "should font-lock protocol method docstrings with multiple arities"
+    (expect-face-at "(defprotocol Foo\n  (bar [this] [this x]\n    \"method doc\"))" 46 55 font-lock-doc-face))
+
+  (it "should not font-lock regular strings in protocol methods as docstrings"
+    (expect-face-at "(defprotocol Foo\n  (bar [this]\n    \"not a doc\" \"method doc\"))"
+                    37 45 font-lock-string-face)))
+
 (provide 'clojure-mode-font-lock-test)
 
 ;;; clojure-mode-font-lock-test.el ends here
