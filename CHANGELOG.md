@@ -22,6 +22,7 @@
 * [#600](https://github.com/clojure-emacs/clojure-mode/issues/600): Fix `clojure--valid-put-clojure-indent-call-p` rejecting valid indent specs with nested lists (e.g. `letfn`'s `(1 ((:defn)) nil)`).
 * [#365](https://github.com/clojure-emacs/clojure-mode/issues/365): Font-lock function names in `letfn` bindings with `font-lock-function-name-face`.
 * [#527](https://github.com/clojure-emacs/clojure-mode/issues/527): Fix `clojure-sort-ns` mangling `:gen-class` and other non-sortable ns forms.
+* [#619](https://github.com/clojure-emacs/clojure-mode/issues/619): Fix `clojure-thread-last-all` breaking forms containing line comments by absorbing closing parens into comments.
 * Fix typos in `clojure-mode-extra-font-locking`: `halt-when?` -> `halt-when`, `simple-indent?` -> `simple-ident?`.
 * Fix `doc` and `find-doc` misplaced under `clojure.core` instead of `clojure.repl` in extra font-locking.
 
