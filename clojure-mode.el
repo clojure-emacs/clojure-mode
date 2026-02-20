@@ -2262,12 +2262,17 @@ content) are considered part of the preceding sexp."
           (forward-sexp 1)
           (setq ns (buffer-substring beg (point)))
           (forward-char -1)
+          ;; Walk backwards through keyword forms.  The `while' loop
+          ;; uses a broad match so it steps over ALL keyword forms
+          ;; (including non-sortable ones like :gen-class), while
+          ;; `when' only sorts forms with known sortable contents.
           (while (progn (forward-sexp -1)
                         (looking-at "(:[a-z]"))
-            (save-excursion
-              (forward-char 1)
-              (forward-sexp 1)
-              (clojure--sort-following-sexps)))
+            (when (looking-at "(:\\(?:require\\|import\\|use\\|refer-clojure\\|require-macros\\)\\>")
+              (save-excursion
+                (forward-char 1)
+                (forward-sexp 1)
+                (clojure--sort-following-sexps))))
           (goto-char beg)
           (if (looking-at (regexp-quote ns))
               (message "ns form is already sorted")
