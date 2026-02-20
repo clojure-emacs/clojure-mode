@@ -1503,16 +1503,20 @@ return point.
 BOUND is bounds the whitespace search."
   (unwind-protect
       (ignore-errors
-        (clojure-forward-logical-sexp 1)
-        ;; Move past any whitespace or comment.
-        (search-forward-regexp "\\([,\s\t]*\\)\\(;+.*\\)?" bound)
-        (pcase (syntax-after (point))
-          ;; End-of-line, try again on next line.
-          (`(12) (clojure--search-whitespace-after-next-sexp bound))
-          ;; Closing paren, stop here.
-          (`(5 . ,_) nil)
-          ;; Anything else is something to align.
-          (_ (point))))
+        (let ((result 'continue))
+          (while (eq result 'continue)
+            (clojure-forward-logical-sexp 1)
+            ;; Move past any whitespace or comment.
+            (search-forward-regexp "\\([,\s\t]*\\)\\(;+.*\\)?" bound)
+            (setq result
+                  (pcase (syntax-after (point))
+                    ;; End-of-line, try again on next line.
+                    (`(12) 'continue)
+                    ;; Closing paren, stop here.
+                    (`(5 . ,_) nil)
+                    ;; Anything else is something to align.
+                    (_ (point)))))
+          result))
     (when (and bound (> (point) bound))
       (goto-char bound))))
 
