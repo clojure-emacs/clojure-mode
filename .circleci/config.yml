@@ -111,6 +111,17 @@ jobs:
           name: Install Emacs latest
           command: |
             choco install emacs -y
+            # Ensure Emacs is on the machine PATH for subsequent steps
+            $emacsDir = (Get-ChildItem "C:\ProgramData\chocolatey\lib\Emacs*" -Recurse -Filter "emacs.exe" -ErrorAction SilentlyContinue | Select-Object -First 1).DirectoryName
+            if ($emacsDir) {
+              $machinePath = [Environment]::GetEnvironmentVariable("PATH", "Machine")
+              if ($machinePath -notlike "*$emacsDir*") {
+                [Environment]::SetEnvironmentVariable("PATH", "$emacsDir;$machinePath", "Machine")
+              }
+            }
+            # Refresh current session PATH and verify
+            $env:Path = [Environment]::GetEnvironmentVariable("PATH", "Machine") + ";" + [Environment]::GetEnvironmentVariable("PATH", "User")
+            emacs --version
       - setup-windows
       - test
       - lint
