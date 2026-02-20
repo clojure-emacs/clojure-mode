@@ -1725,7 +1725,8 @@ accepted by `clojure-indent-style'."
 
 (defun clojure--not-function-form-p ()
   "Non-nil if form at point doesn't represent a function call."
-  (or (member (char-after) '(?\[ ?\{))
+  (or (derived-mode-p 'edn-mode)
+      (member (char-after) '(?\[ ?\{))
       (save-excursion ;; Catch #?@ (:cljs ...)
         (skip-chars-backward "\r\n[:blank:]")
         (when (eq (char-before) ?@)
