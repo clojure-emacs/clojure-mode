@@ -2188,26 +2188,6 @@ content) are considered part of the preceding sexp."
             (message "ns form has been sorted"))))
     (user-error "Can't find ns form")))
 
-(defconst clojure-namespace-name-regex
-  (rx line-start
-      "("
-      (zero-or-one (group (regexp "clojure.core/")))
-      (zero-or-one (submatch "in-"))
-      "ns"
-      (zero-or-one "+")
-      (one-or-more (any whitespace "\n"))
-      (zero-or-more (or (submatch (zero-or-one "#")
-                                  "^{"
-                                  (zero-or-more (not (any "}")))
-                                  "}")
-                        (zero-or-more "^:"
-                                      (one-or-more (not (any whitespace)))))
-                    (one-or-more (any whitespace "\n")))
-      (zero-or-one (any ":'")) ;; (in-ns 'foo) or (ns+ :user)
-      (group (one-or-more (not (any "()\"" whitespace))) symbol-end)))
-
-(make-obsolete-variable 'clojure-namespace-name-regex 'clojure-namespace-regexp "5.12.0")
-
 (defconst clojure-namespace-regexp
   (rx "(" (? "clojure.core/") (or "in-ns" "ns" "ns+") symbol-end))
 
