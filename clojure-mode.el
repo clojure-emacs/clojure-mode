@@ -2411,10 +2411,11 @@ many times."
                 (beginning-of-defun-raw)
                 (forward-char 1)              ;; skip paren so we start at comment
                 (clojure-forward-logical-sexp) ;; skip past the comment form itself
-                (if-let ((sexp-start (seq-find (lambda (beg-pos)
-                                                        (< beg-pos original-position))
-                                                      (clojure-sexp-starts-until-position
-                                                       clojure-comment-end))))
+                (if-let ((sexp-start (seq-find
+                                      (lambda (beg-pos)
+                                        (< beg-pos original-position))
+                                      (clojure-sexp-starts-until-position
+                                       clojure-comment-end))))
                     (progn (goto-char sexp-start) t)
                   (beginning-of-defun-raw n))))
           (scan-error (beginning-of-defun-raw n)))
