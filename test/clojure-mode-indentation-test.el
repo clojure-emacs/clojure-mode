@@ -834,6 +834,45 @@ x
       (call-interactively #'clojure-align)
       (expect (string= (buffer-string) "{:a 2, :c 4}")))))
 
+(describe "clojure--valid-indent-spec-p"
+  (it "should accept integers"
+    (expect (clojure--valid-indent-spec-p '1) :to-be-truthy))
+
+  (it "should accept :defn and :form keywords"
+    (expect (clojure--valid-indent-spec-p ':defn) :to-be-truthy)
+    (expect (clojure--valid-indent-spec-p ':form) :to-be-truthy))
+
+  (it "should accept quoted list specs"
+    (expect (clojure--valid-indent-spec-p '(quote (2 :form :form (1)))) :to-be-truthy))
+
+  (it "should accept nested specs like letfn's ((:defn))"
+    (expect (clojure--valid-indent-spec-p '(quote (1 ((:defn)) nil))) :to-be-truthy))
+
+  (it "should accept nil as a valid spec element"
+    (expect (clojure--valid-indent-spec-p '(quote (1))) :to-be-truthy)
+    (expect (clojure--valid-indent-spec-p '(quote (:defn))) :to-be-truthy)))
+
+(describe "clojure--valid-put-clojure-indent-call-p"
+  (it "should accept letfn-style indent spec"
+    (expect (clojure--valid-put-clojure-indent-call-p
+             '(put-clojure-indent 'letfn '(1 ((:defn)) nil)))
+            :to-be-truthy))
+
+  (it "should accept simple indent specs"
+    (expect (clojure--valid-put-clojure-indent-call-p
+             '(put-clojure-indent 'defrecord '(2 :form :form (1))))
+            :to-be-truthy))
+
+  (it "should accept keyword indent specs"
+    (expect (clojure--valid-put-clojure-indent-call-p
+             '(put-clojure-indent 'fn :defn))
+            :to-be-truthy))
+
+  (it "should reject invalid specs"
+    (expect (clojure--valid-put-clojure-indent-call-p
+             '(put-clojure-indent 'foo "bar"))
+            :to-throw)))
+
 (provide 'clojure-mode-indentation-test)
 
 ;;; clojure-mode-indentation-test.el ends here
