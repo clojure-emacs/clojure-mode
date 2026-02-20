@@ -2000,16 +2000,6 @@ nil."
             (and hash (1- beg))
           (and (not hash) beg))))))
 
-(defun clojure-char-at-point ()
-  "Return the char at point or nil if at buffer end."
-  (when (not (= (point) (point-max)))
-    (buffer-substring-no-properties (point) (1+ (point)))))
-
-(defun clojure-char-before-point ()
-  "Return the char before point or nil if at buffer beginning."
-  (when (not (= (point) (point-min)))
-    (buffer-substring-no-properties (point) (1- (point)))))
-
 (defun clojure-toggle-keyword-string ()
   "Convert the string or keyword at point to keyword or string."
   (interactive)
