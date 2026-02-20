@@ -380,6 +380,18 @@
      (deftask dev []))"
 
     (beginning-of-buffer)
+    (clojure-thread-last-all nil))
+
+  (when-refactoring-it "should preserve line comments"
+    "(foo x ;; grobble
+  (bar y))"
+
+    "(->> y
+     bar
+     (foo x ;; grobble
+          ))"
+
+    (beginning-of-buffer)
     (clojure-thread-last-all nil)))
 
 (describe "clojure-unwind-all"
