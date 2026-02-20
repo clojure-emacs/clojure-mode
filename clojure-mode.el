@@ -267,6 +267,22 @@ The prefixes are used to generate the correct namespace."
   :risky t
   :package-version '(clojure-mode . "5.7.0"))
 
+(defcustom clojure-preferred-build-tool nil
+  "Preferred build tool file to identify the project root.
+When multiple build tool files are found in the directory hierarchy,
+this setting controls which one takes precedence.
+
+When nil (the default), prefer directories that also contain a
+version-control marker (`.git').  If that doesn't break the tie,
+fall back to the most nested match.
+
+When set to a string (e.g., \"deps.edn\"), prefer the directory
+containing that specific file."
+  :type '(choice (const :tag "Auto-detect" nil)
+                 (string :tag "Build tool filename"))
+  :safe (lambda (value) (or (null value) (stringp value)))
+  :package-version '(clojure-mode . "5.22.0"))
+
 (defcustom clojure-refactor-map-prefix (kbd "C-c C-r")
   "Clojure refactor keymap prefix."
   :type 'string
@@ -2076,8 +2092,16 @@ Return nil if not inside a project."
                         (mapcar (lambda (fname)
                                   (locate-dominating-file dir-name fname))
                                 clojure-build-tool-files))))
-    (when (> (length choices) 0)
-      (car (sort choices #'file-in-directory-p)))))
+    (when choices
+      (if clojure-preferred-build-tool
+          ;; When a preferred build tool is set, look for it specifically.
+          (or (locate-dominating-file dir-name clojure-preferred-build-tool)
+              (car (sort choices #'file-in-directory-p)))
+        ;; Otherwise, prefer candidates that contain a .git directory.
+        (or (car (seq-filter (lambda (dir)
+                               (file-directory-p (expand-file-name ".git" dir)))
+                             (sort choices #'file-in-directory-p)))
+            (car choices))))))
 
 (defun clojure-project-relative-path (path)
   "Denormalize PATH by making it relative to the project root."

@@ -47,7 +47,42 @@
           (write-region "{}" nil bb-edn)
           (make-directory bb-edn-src)
           (expect  (expand-file-name (clojure-project-dir bb-edn-src))
-                   :to-equal (file-name-as-directory temp-dir))))))
+                   :to-equal (file-name-as-directory temp-dir)))))
+
+    (it "preferred build tool selects matching directory"
+      (with-temp-dir temp-dir
+        (let* ((root (file-name-as-directory temp-dir))
+               (subdir (expand-file-name "src/project.clj" temp-dir))
+               (clojure-preferred-build-tool "deps.edn"))
+          (write-region "{}" nil (expand-file-name "deps.edn" temp-dir))
+          (make-directory (expand-file-name "src" temp-dir))
+          (write-region "" nil subdir)
+          (expect (expand-file-name
+                   (clojure-project-root-path (expand-file-name "src/" temp-dir)))
+                  :to-equal root))))
+
+    (it "VCS tiebreaker prefers directory with .git"
+      (with-temp-dir temp-dir
+        (let* ((root (file-name-as-directory temp-dir))
+               (clojure-preferred-build-tool nil))
+          (write-region "{}" nil (expand-file-name "deps.edn" temp-dir))
+          (make-directory (expand-file-name ".git" temp-dir))
+          (make-directory (expand-file-name "src" temp-dir))
+          (write-region "" nil (expand-file-name "src/project.clj" temp-dir))
+          (expect (expand-file-name
+                   (clojure-project-root-path (expand-file-name "src/" temp-dir)))
+                  :to-equal root))))
+
+    (it "no preference and no VCS falls back to most nested"
+      (with-temp-dir temp-dir
+        (let* ((subdir (file-name-as-directory (expand-file-name "src" temp-dir)))
+               (clojure-preferred-build-tool nil))
+          (write-region "{}" nil (expand-file-name "deps.edn" temp-dir))
+          (make-directory (expand-file-name "src" temp-dir))
+          (write-region "" nil (expand-file-name "src/project.clj" temp-dir))
+          (expect (expand-file-name
+                   (clojure-project-root-path (expand-file-name "src/" temp-dir)))
+                  :to-equal subdir)))))
 
   (describe "clojure-project-relative-path"
     (cl-letf (((symbol-function 'clojure-project-dir) (lambda () project-dir)))

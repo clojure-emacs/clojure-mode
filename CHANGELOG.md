@@ -4,6 +4,7 @@
 
 ### New features
 
+* [#687](https://github.com/clojure-emacs/clojure-mode/issues/687): Add `clojure-preferred-build-tool` to control project root detection when multiple build tool files exist. When unset, prefer directories containing `.git` as a tiebreaker.
 * [#688](https://github.com/clojure-emacs/clojure-mode/issues/688): Add `clojure-discard-face` for `#_` reader discard forms, allowing them to be styled differently from comments. Inherits from `font-lock-comment-face` by default.
 * Add project root detection for ClojureCLR (`deps-clr.edn`).
 
