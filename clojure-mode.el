@@ -2034,12 +2034,12 @@ nil."
   "Convert the string or keyword at point to keyword or string."
   (interactive)
   (let ((original-point (point)))
-    (while (and (> (point) 1)
-                (not (eq ?\" (char-after)))
-                (not (eq ?: (char-after))))
-      (backward-char))
+    (unless (memq (char-after) '(?\" ?:))
+      (skip-chars-backward "^:\"")
+      (unless (bobp)
+        (backward-char)))
     (cond
-     ((= 1 (point))
+     ((bobp)
       (error "Beginning of file reached, this was probably a mistake"))
      ((eq ?\" (char-after))
       (insert ":" (substring (clojure-delete-and-extract-sexp) 1 -1)))
