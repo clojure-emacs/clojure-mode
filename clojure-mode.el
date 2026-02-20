@@ -2221,10 +2221,11 @@ content) are considered part of the preceding sexp."
           (forward-char -1)
           (while (progn (forward-sexp -1)
                         (looking-at "(:[a-z]"))
-            (save-excursion
-              (forward-char 1)
-              (forward-sexp 1)
-              (clojure--sort-following-sexps)))
+            (when (looking-at "(:\\(?:require\\|import\\|use\\|refer-clojure\\|require-macros\\)\\>")
+              (save-excursion
+                (forward-char 1)
+                (forward-sexp 1)
+                (clojure--sort-following-sexps))))
           (goto-char beg)
           (if (looking-at (regexp-quote ns))
               (message "ns form is already sorted")
