@@ -17,6 +17,7 @@
 
 ### Bugs fixed
 
+* [#527](https://github.com/clojure-emacs/clojure-mode/issues/527): Fix `clojure-sort-ns` mangling `:gen-class` and other non-sortable ns forms.
 * Fix typos in `clojure-mode-extra-font-locking`: `halt-when?` -> `halt-when`, `simple-indent?` -> `simple-ident?`.
 * Fix `doc` and `find-doc` misplaced under `clojure.core` instead of `clojure.repl` in extra font-locking.
 
