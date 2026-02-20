@@ -56,22 +56,27 @@
     (it "should align let arguments instead of using body indentation"
       (with-edn-buffer "\n(let [x 1]\nx)"
         (indent-region (point-min) (point-max))
-        (expect (buffer-string) :to-equal "\n(let [x 1]\n     x)")))
+        (expect (buffer-string) :to-equal "\n(let [x 1]\n x)")))
 
     (it "should align if arguments instead of using body indentation"
       (with-edn-buffer "\n(if true\n1\n2)"
         (indent-region (point-min) (point-max))
-        (expect (buffer-string) :to-equal "\n(if true\n    1\n    2)")))
+        (expect (buffer-string) :to-equal "\n(if true\n 1\n 2)")))
 
     (it "should align cond arguments instead of using body indentation"
       (with-edn-buffer "\n(cond a\nb)"
         (indent-region (point-min) (point-max))
-        (expect (buffer-string) :to-equal "\n(cond a\n      b)")))
+        (expect (buffer-string) :to-equal "\n(cond a\n b)")))
 
     (it "should align do arguments instead of using body indentation"
       (with-edn-buffer "\n(do a\nb)"
         (indent-region (point-min) (point-max))
-        (expect (buffer-string) :to-equal "\n(do a\n    b)"))))
+        (expect (buffer-string) :to-equal "\n(do a\n b)")))
+
+    (it "should align keyword lists as data (issue #610)"
+      (with-edn-buffer "\n(:key1 :value1\n:key2 :value2)"
+        (indent-region (point-min) (point-max))
+        (expect (buffer-string) :to-equal "\n(:key1 :value1\n :key2 :value2)"))))
 
   (describe "maps, vectors, and sets indent normally"
 
