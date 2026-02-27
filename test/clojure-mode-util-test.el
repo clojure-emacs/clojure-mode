@@ -279,7 +279,27 @@
               ;; Some comments.
               [rum.core :as rum])
     (:import [clojure.lang AFunction Atom MultiFn Namespace]
-             java.io.Writer))"))))
+             java.io.Writer))")))
+
+  (it "should not mangle :gen-class"
+    (with-clojure-buffer "(ns foo
+  (:require [c]
+            [a]
+            [b])
+  (:gen-class
+   :methods [[methodOne [] String]
+             [methodTwo [] String]]
+   :init init))"
+      (clojure-sort-ns)
+      (expect (buffer-string) :to-equal
+              "(ns foo
+  (:require [a]
+            [b]
+            [c])
+  (:gen-class
+   :methods [[methodOne [] String]
+             [methodTwo [] String]]
+   :init init))"))))
 
 (describe "clojure-toggle-ignore"
   (when-refactoring-with-point-it "should add #_ to literals"
