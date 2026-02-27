@@ -1884,13 +1884,14 @@ This function also returns nil meaning don't specify the indentation."
 Validate it with respect to
 https://docs.cider.mx/cider/indent_spec.html e.g. (2 :form
 :form (1)))."
-  (or (integerp spec)
+  (or (null spec)
+      (integerp spec)
       (memq spec '(:form :defn))
       (and (listp spec)
-           (not (null spec))
            (or (integerp (car spec))
-               (memq (car spec) '(:form :defn)))
-           (cl-every 'clojure--valid-unquoted-indent-spec-p (cdr spec)))))
+               (memq (car spec) '(:form :defn))
+               (listp (car spec)))
+           (cl-every 'clojure--valid-unquoted-indent-spec-p spec))))
 
 (defun clojure--valid-indent-spec-p (spec)
   "Check that the indentation SPEC (quoted if a list) is valid.
