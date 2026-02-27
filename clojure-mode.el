@@ -1274,8 +1274,7 @@ highlighted region)."
                        (skip-chars-forward " \t\n\r")
                        (eq (char-after) ?\)))
                      (save-excursion
-                       (let ((parent-beg (nth 1 (parse-partial-sexp
-                                                 (point-min) listbeg))))
+                       (let ((parent-beg (nth 1 (syntax-ppss listbeg))))
                          (and parent-beg
                               (goto-char parent-beg)
                               (looking-at "([ \t\n]*defprotocol\\>"))))))
