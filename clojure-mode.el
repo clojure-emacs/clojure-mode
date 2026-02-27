@@ -2685,7 +2685,13 @@ With universal argument \\[universal-argument], fully unwind thread."
       (clojure--remove-superfluous-parens)
       ;; cljr #255 Fix dangling parens
       (forward-sexp)
-      (when (looking-back "^\\s-*\\()+\\)\\s-*" (line-beginning-position))
+      (when (and (looking-back "^\\s-*\\()+\\)\\s-*" (line-beginning-position))
+                 ;; Don't join if previous line ends in a comment,
+                 ;; as that would absorb the parens into the comment.
+                 (not (save-excursion
+                        (forward-line -1)
+                        (end-of-line)
+                        (nth 4 (syntax-ppss)))))
         (let ((pos (match-beginning 1)))
           (put-text-property pos (1+ pos) 'clojure-thread-line-joined t))
         (join-line))
