@@ -1041,7 +1041,19 @@ DESCRIPTION is the description of the spec."
      (9 13 font-lock-variable-name-face))
 
     ("*some-var?*"
-     (1 11 font-lock-variable-name-face))))
+     (1 11 font-lock-variable-name-face)))
+
+  (when-fontifying-it "should handle letfn binding names"
+    ("(letfn [(twice [x] (* x 2))])"
+     (2 6 font-lock-keyword-face)
+     (10 14 font-lock-function-name-face))
+
+    ("(letfn [(twice [x] (* x 2)) (six-times [y] (* (twice y) 3))])"
+     (10 14 font-lock-function-name-face)
+     (30 38 font-lock-function-name-face))
+
+    ("(clojure.core/letfn [(twice [x] (* x 2))])"
+     (23 27 font-lock-function-name-face))))
 
 (describe "docstring font-locking"
   (it "should font-lock defn docstrings"

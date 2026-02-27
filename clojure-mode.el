@@ -911,6 +911,31 @@ any number of matches of `clojure--sym-forbidden-rest-chars'.")
 Matches the rule `clojure--keyword-sym-forbidden-1st-chars' followed by
 any number of matches of `clojure--sym-forbidden-rest-chars'."))
 
+(defun clojure--search-letfn-name (limit)
+  "Search for function names in letfn bindings up to LIMIT.
+This is a font-lock MATCHER function that finds each binding name
+in a `letfn' binding vector.  For each `(symbol' match, it checks
+whether the paren is a direct child of a letfn binding vector."
+  (let ((binding-re (concat "(\\(" clojure--sym-regexp "\\)"))
+        found)
+    (while (and (not found)
+                (re-search-forward binding-re limit t))
+      ;; `save-match-data' is critical: the verification below uses
+      ;; `looking-back' which would overwrite the match data from
+      ;; `re-search-forward' that font-lock needs for the highlight.
+      (save-match-data
+        (let ((paren-pos (match-beginning 0)))
+          (save-excursion
+            (goto-char paren-pos)
+            (when (ignore-errors (backward-up-list) t)
+              (when (eq (char-after) ?\[)
+                (skip-chars-backward " \t\n\r")
+                (when (looking-back
+                       "(\\(?:clojure\\.core/\\)?letfn"
+                       (- (point) 25))
+                  (setq found t))))))))
+    found))
+
 (defconst clojure-font-lock-keywords
   (eval-when-compile
     `(;; Any def form
@@ -993,6 +1018,9 @@ any number of matches of `clojure--sym-forbidden-rest-chars'."))
                 ;; Possibly name
                 "\\(\\sw+\\)?" )
        (2 font-lock-function-name-face nil t))
+      ;; Function names in letfn bindings
+      (clojure--search-letfn-name
+       (1 font-lock-function-name-face))
       ;; Special forms
       (,(concat
          "("
