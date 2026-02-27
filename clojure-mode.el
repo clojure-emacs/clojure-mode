@@ -3225,6 +3225,22 @@ Assumes cursor is at beginning of function."
   (insert "[")
   (save-excursion (insert "])\n(" (match-string 0))))
 
+(defun clojure--find-arglist-metadata-start (bracket-pos)
+  "Return the start of metadata annotations before BRACKET-POS.
+If no metadata is found, return BRACKET-POS.
+Handles ^Type, ^:keyword, ^{:key val}, and chains like ^:private ^String.
+Relies on ^ having prefix syntax (\\=') in the Clojure syntax table,
+which makes `backward-sexp' from `[' treat `^String [' as two sexps."
+  (save-excursion
+    (goto-char bracket-pos)
+    (let ((result bracket-pos))
+      (ignore-errors
+        (while (progn
+                 (backward-sexp)
+                 (eq (char-after) ?^))
+          (setq result (point))))
+      result)))
+
 (defun clojure--add-arity-internal ()
   "Add an arity to a function.
 
@@ -3242,14 +3258,31 @@ Assumes cursor is at beginning of function."
       (save-excursion (insert "])\n(")))
      ((looking-back "\\[" 1)  ;; single-arity fn
       (let* ((same-line (= beg-line (line-number-at-pos)))
-             (new-arity-text (concat (when same-line "\n") "([")))
+             (bracket-pos (1- (point)))
+             (meta-start (clojure--find-arglist-metadata-start bracket-pos)))
         (save-excursion
           (goto-char end)
           (insert ")"))
-
-        (re-search-backward " +\\[")
-        (replace-match new-arity-text)
-        (save-excursion (insert "])\n([")))))))
+        (if (< meta-start bracket-pos)
+            ;; Has metadata before arglist — move it inside the arity
+            ;; wrapper so it stays associated with the original arglist.
+            ;; E.g. (defn foo ^String [x] ...) becomes:
+            ;;   (defn foo ([]) (^String [x] ...))
+            (let ((meta-text (replace-regexp-in-string
+                              "[ \t\n\r]+" " "
+                              (string-trim
+                               (buffer-substring meta-start bracket-pos)))))
+              (goto-char meta-start)
+              (skip-chars-backward " \t\n")
+              (delete-region (point) (1+ bracket-pos))
+              (insert "\n([")
+              (save-excursion
+                (insert "])\n(" meta-text " [")))
+          ;; No metadata — original behavior
+          (let ((new-arity-text (concat (when same-line "\n") "([")))
+            (re-search-backward " +\\[")
+            (replace-match new-arity-text)
+            (save-excursion (insert "])\n([")))))))))
 
 ;;;###autoload
 (defun clojure-add-arity ()
