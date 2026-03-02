@@ -3458,6 +3458,35 @@ With universal argument \\[universal-argument], act on the \"top-level\" form."
 
 \\{joker-mode-map}")
 
+(defvar edn-mode-map
+  (let ((map (make-sparse-keymap))
+        (prefix (make-sparse-keymap)))
+    (set-keymap-parent map prog-mode-map)
+    ;; Keep data-appropriate bindings from clojure-mode-map.
+    (define-key map (kbd "C-:") #'clojure-toggle-keyword-string)
+    (define-key map (kbd "C-c C-a") #'clojure-align)
+    ;; Only expose data-appropriate refactoring commands:
+    ;; collection conversion and #_ toggle.
+    (define-key prefix (kbd "C-(") #'clojure-convert-collection-to-list)
+    (define-key prefix (kbd "(") #'clojure-convert-collection-to-list)
+    (define-key prefix (kbd "C-'") #'clojure-convert-collection-to-quoted-list)
+    (define-key prefix (kbd "'") #'clojure-convert-collection-to-quoted-list)
+    (define-key prefix (kbd "C-{") #'clojure-convert-collection-to-map)
+    (define-key prefix (kbd "{") #'clojure-convert-collection-to-map)
+    (define-key prefix (kbd "C-[") #'clojure-convert-collection-to-vector)
+    (define-key prefix (kbd "[") #'clojure-convert-collection-to-vector)
+    (define-key prefix (kbd "C-#") #'clojure-convert-collection-to-set)
+    (define-key prefix (kbd "#") #'clojure-convert-collection-to-set)
+    (define-key prefix (kbd "-") #'clojure-toggle-ignore)
+    (define-key prefix (kbd "C--") #'clojure-toggle-ignore)
+    (define-key prefix (kbd "_") #'clojure-toggle-ignore-surrounding-form)
+    (define-key prefix (kbd "C-_") #'clojure-toggle-ignore-surrounding-form)
+    (define-key map clojure-refactor-map-prefix prefix)
+    map)
+  "Keymap for EDN mode.
+Only exposes data-appropriate commands: alignment, keyword-string
+toggle, collection conversion, and #_ toggle.")
+
 ;;;###autoload
 (define-derived-mode edn-mode clojure-mode "EDN"
   "Major mode for editing EDN data files.
