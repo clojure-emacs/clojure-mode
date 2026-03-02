@@ -699,6 +699,18 @@ replacement for `cljr-expand-let`."
   :safe #'booleanp
   :package-version '(clojure-mode "5.3.0"))
 
+(defconst clojure--extension-mode-alist
+  '(("\\.cljs\\'"  . clojurescript-mode)
+    ("\\.cljc\\'"  . clojurec-mode)
+    ("\\.cljd\\'"  . clojuredart-mode)
+    ("\\.jank\\'"  . jank-mode)
+    ("\\.joke\\'"  . joker-mode)
+    ("\\.edn\\'"   . edn-mode)
+    ;; .clj must be last since its regex also matches .cljs, .cljc, .cljd
+    ("\\.clj\\'"   . clojure-mode))
+  "Alist mapping file-name regexes to their expected Clojure major mode.
+More specific extensions must appear before less specific ones.")
+
 (defun clojure--check-wrong-major-mode ()
   "Check if the current `major-mode' matches the file extension.
 
@@ -707,15 +719,11 @@ non-nil."
   (when (and clojure-verify-major-mode
              (stringp (buffer-file-name)))
     (let* ((case-fold-search t)
-           (problem (cond ((and (string-match "\\.clj\\'" (buffer-file-name))
-                                (not (eq major-mode 'clojure-mode)))
-                           'clojure-mode)
-                          ((and (string-match "\\.cljs\\'" (buffer-file-name))
-                                (not (eq major-mode 'clojurescript-mode)))
-                           'clojurescript-mode)
-                          ((and (string-match "\\.cljc\\'" (buffer-file-name))
-                                (not (eq major-mode 'clojurec-mode)))
-                           'clojurec-mode))))
+           (file (buffer-file-name))
+           (expected (assoc-default file clojure--extension-mode-alist
+                                    #'string-match-p))
+           (problem (when (and expected (not (eq major-mode expected)))
+                      expected)))
       (when problem
         (message "[WARNING] %s activated `%s' instead of `%s' in this buffer.
 This could cause problems.
