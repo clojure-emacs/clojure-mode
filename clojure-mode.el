@@ -3465,7 +3465,7 @@ indentation appropriate for data structures rather than code.
 ;;;###autoload
 (progn
   (add-to-list 'auto-mode-alist
-               '("\\.\\(clj\\|cljd\\|dtm\\|lpy\\)\\'" . clojure-mode))
+               '("\\.\\(clj\\|dtm\\|lpy\\)\\'" . clojure-mode))
   (add-to-list 'auto-mode-alist '("\\.edn\\'" . edn-mode))
   (add-to-list 'auto-mode-alist '("\\.cljc\\'" . clojurec-mode))
   (add-to-list 'auto-mode-alist '("\\.cljs\\'" . clojurescript-mode))
