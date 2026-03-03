@@ -254,7 +254,6 @@ DESCRIPTION is a string with the description of the spec."
           |top
         one)"))
   (describe "should respect special argument indentation"
-    :var (clojure-special-arg-indent-factor)
     (before-each
      (setq clojure-special-arg-indent-factor 1))
     (after-each
