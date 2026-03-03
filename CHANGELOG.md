@@ -2,11 +2,14 @@
 
 ## master (unreleased)
 
+## 5.22.0 (2026-03-03)
+
 ### New features
 
 * [#687](https://github.com/clojure-emacs/clojure-mode/issues/687): Add `clojure-preferred-build-tool` to control project root detection when multiple build tool files exist. When unset, prefer directories containing `.git` as a tiebreaker.
 * [#688](https://github.com/clojure-emacs/clojure-mode/issues/688): Add `clojure-discard-face` for `#_` reader discard forms, allowing them to be styled differently from comments. Inherits from `font-lock-comment-face` by default.
 * Add project root detection for ClojureCLR (`deps-clr.edn`).
+* Give `edn-mode` its own keymap with data-appropriate bindings, excluding code-oriented refactoring commands.
 
 ### Changes
 
@@ -14,6 +17,8 @@
 * Update `clojure-mode-extra-font-locking` for Clojure 1.10-1.12 (new functions in `clojure.core` and other bundled namespaces).
 * Add `clojure.repl` section to `clojure-mode-extra-font-locking`.
 * Remove non-existent entries from `clojure-mode-extra-font-locking` (`specify`, `specify!`, `special-form-anchor`, `syntax-symbol-anchor`, `stream?`).
+* Extend `clojure--check-wrong-major-mode` to cover all derived modes (`.cljd`, `.jank`, `.joke`, `.edn`).
+* Remove dead `.cljd` entry from `clojure-mode` `auto-mode-alist`.
 
 ### Bugs fixed
 
@@ -23,6 +28,8 @@
 * [#365](https://github.com/clojure-emacs/clojure-mode/issues/365): Font-lock function names in `letfn` bindings with `font-lock-function-name-face`.
 * [#527](https://github.com/clojure-emacs/clojure-mode/issues/527): Fix `clojure-sort-ns` mangling `:gen-class` and other non-sortable ns forms.
 * [#619](https://github.com/clojure-emacs/clojure-mode/issues/619): Fix `clojure-thread-last-all` breaking forms containing line comments by absorbing closing parens into comments.
+* [#610](https://github.com/clojure-emacs/clojure-mode/issues/610): Fix `edn-mode` indentation to treat all paren lists as data rather than function calls.
+* Fix `clojure-update-ns` broken by the removal of `clojure-namespace-name-regex`.
 * Fix typos in `clojure-mode-extra-font-locking`: `halt-when?` -> `halt-when`, `simple-indent?` -> `simple-ident?`.
 * Fix `doc` and `find-doc` misplaced under `clojure.core` instead of `clojure.repl` in extra font-locking.
 
