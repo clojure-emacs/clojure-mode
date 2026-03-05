@@ -1,0 +1,73 @@
+name: Bug Report
+description: Report an issue with clojure-mode you've discovered.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please make sure you're running the latest stable clojure-mode and that the problem hasn't been reported already.
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Affected mode
+      options:
+        - clojure-mode
+        - clojurescript-mode
+        - clojurec-mode
+        - clojuredart-mode
+        - edn-mode
+        - jank-mode
+        - joker-mode
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Providing a reliable way to reproduce the problem will expedite its solution.
+    validations:
+      required: true
+  - type: checkboxes
+    id: emacs-q
+    attributes:
+      label: Reproducible with emacs -Q
+      description: Start Emacs with `emacs -Q`, install clojure-mode, and try to reproduce. This rules out interference from your personal config.
+      options:
+        - label: I've reproduced this with `emacs -Q`
+  - type: input
+    id: clojure-mode-version
+    attributes:
+      label: clojure-mode version
+      description: Run `M-x clojure-mode-display-version` to find this.
+      placeholder: "e.g. 5.22.0"
+    validations:
+      required: true
+  - type: input
+    id: emacs-version
+    attributes:
+      label: Emacs version
+      description: Use `C-h C-a` to find this.
+      placeholder: "e.g. 30.1"
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: Operating system
+      placeholder: "e.g. macOS 15, Ubuntu 24.04, Windows 11"
+    validations:
+      required: true
