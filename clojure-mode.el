@@ -2148,10 +2148,12 @@ Return nil if not inside a project."
           (or (locate-dominating-file dir-name clojure-preferred-build-tool)
               (car (sort choices #'file-in-directory-p)))
         ;; Otherwise, prefer candidates that contain a .git directory.
-        (or (car (seq-filter (lambda (dir)
-                               (file-directory-p (expand-file-name ".git" dir)))
-                             (sort choices #'file-in-directory-p)))
-            (car choices))))))
+        ;; Note: `sort' is destructive, so we must capture its return value.
+        (let ((sorted (sort choices #'file-in-directory-p)))
+          (or (car (seq-filter (lambda (dir)
+                                 (file-directory-p (expand-file-name ".git" dir)))
+                               sorted))
+              (car sorted)))))))
 
 (defun clojure-project-relative-path (path)
   "Denormalize PATH by making it relative to the project root."
