@@ -1324,21 +1324,21 @@ locking in def* forms that are not at top level."
 
 (defun clojure-font-lock-extend-region-def ()
   "Set region boundaries to include the first four elements of def* forms."
-  (let ((changed nil))
-    (let ((def (clojure-font-lock-def-at-point font-lock-beg)))
-      (when def
-        (cl-destructuring-bind (def-beg . def-end) def
-          (when (and (< def-beg font-lock-beg)
-                     (< font-lock-beg def-end))
-            (setq font-lock-beg def-beg
-                  changed t)))))
-    (let ((def (clojure-font-lock-def-at-point font-lock-end)))
-      (when def
-        (cl-destructuring-bind (def-beg . def-end) def
-          (when (and (< def-beg font-lock-end)
-                     (< font-lock-end def-end))
-            (setq font-lock-end def-end
-                  changed t)))))
+  (let* ((changed nil)
+         (def-beg-region (clojure-font-lock-def-at-point font-lock-beg))
+         (def-end-region (clojure-font-lock-def-at-point font-lock-end)))
+    (when def-beg-region
+      (cl-destructuring-bind (def-beg . def-end) def-beg-region
+        (when (and (< def-beg font-lock-beg)
+                   (< font-lock-beg def-end))
+          (setq font-lock-beg def-beg
+                changed t))))
+    (when def-end-region
+      (cl-destructuring-bind (def-beg . def-end) def-end-region
+        (when (and (< def-beg font-lock-end)
+                   (< font-lock-end def-end))
+          (setq font-lock-end def-end
+                changed t))))
     changed))
 
 (defun clojure--font-locked-as-string-p (&optional regexp)
@@ -1408,8 +1408,15 @@ point) to check."
     found))
 
 ;; Docstring positions
-(dolist (sym '(ns def defn defn- defmulti defmacro definline defprotocol
-              deftask)) ;; deftask is a common Boot macro
+(defconst clojure--docstring-def-forms
+  '(ns def defn defn- defmulti defmacro definline defprotocol
+    deftask) ;; deftask is a common Boot macro
+  "Forms whose second argument position is a docstring.
+The `clojure-doc-string-elt' property is set for each of these
+so that `font-lock-syntactic-face-function' can recognize
+docstrings and apply `font-lock-doc-face'.")
+
+(dolist (sym clojure--docstring-def-forms)
   (put sym 'clojure-doc-string-elt 2))
 
 ;;; Vertical alignment
