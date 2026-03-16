@@ -1408,15 +1408,9 @@ point) to check."
     found))
 
 ;; Docstring positions
-(put 'ns 'clojure-doc-string-elt 2)
-(put 'def 'clojure-doc-string-elt 2)
-(put 'defn 'clojure-doc-string-elt 2)
-(put 'defn- 'clojure-doc-string-elt 2)
-(put 'defmulti 'clojure-doc-string-elt 2)
-(put 'defmacro 'clojure-doc-string-elt 2)
-(put 'definline 'clojure-doc-string-elt 2)
-(put 'defprotocol 'clojure-doc-string-elt 2)
-(put 'deftask 'clojure-doc-string-elt 2) ;; common Boot macro
+(dolist (sym '(ns def defn defn- defmulti defmacro definline defprotocol
+              deftask)) ;; deftask is a common Boot macro
+  (put sym 'clojure-doc-string-elt 2))
 
 ;;; Vertical alignment
 (defcustom clojure-align-forms-automatically nil
