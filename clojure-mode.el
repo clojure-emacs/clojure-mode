@@ -1410,7 +1410,7 @@ point) to check."
 ;; Docstring positions
 (defconst clojure--docstring-def-forms
   '(ns def defn defn- defmulti defmacro definline defprotocol
-    deftask) ;; deftask is a common Boot macro
+       deftask) ;; deftask is a common Boot macro
   "Forms whose second argument position is a docstring.
 The `clojure-doc-string-elt' property is set for each of these
 so that `font-lock-syntactic-face-function' can recognize
