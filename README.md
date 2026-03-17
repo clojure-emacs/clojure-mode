@@ -1,4 +1,4 @@
-[![circleci][badge-circleci]][circleci]
+[![CI](https://github.com/clojure-emacs/clojure-mode/actions/workflows/ci.yml/badge.svg)](https://github.com/clojure-emacs/clojure-mode/actions/workflows/ci.yml)
 [![MELPA][melpa-badge]][melpa-package]
 [![MELPA Stable][melpa-stable-badge]][melpa-stable-package]
 [![NonGNU ELPA](https://elpa.nongnu.org/nongnu/clojure-mode.svg)](https://elpa.nongnu.org/nongnu/clojure-mode.html)
@@ -757,8 +757,6 @@ Distributed under the GNU General Public License; type <kbd>C-h C-c</kbd> to vie
 [melpa-package]: https://melpa.org/#/clojure-mode
 [melpa-stable-package]: https://stable.melpa.org/#/clojure-mode
 [COPYING]: https://www.gnu.org/copyleft/gpl.html
-[badge-circleci]: https://circleci.com/gh/clojure-emacs/clojure-mode.svg?style=svg
-[circleci]: https://circleci.com/gh/clojure-emacs/clojure-mode
 [CIDER]: https://github.com/clojure-emacs/cider
 [cider-nrepl]: https://github.com/clojure-emacs/cider-nrepl
 [inf-clojure]: https://github.com/clojure-emacs/inf-clojure
