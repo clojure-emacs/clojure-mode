@@ -2,6 +2,10 @@
 
 ## master (unreleased)
 
+### Bugs fixed
+
+* Fix `clojure-paredent-setup` to apply to `edn-mode-map` as well as `clojure-mode-map`.
+
 ## 5.22.0 (2026-03-03)
 
 ### New features
