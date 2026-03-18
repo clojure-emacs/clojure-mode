@@ -586,14 +586,14 @@ bracket.")
       (clojure--replace-sexps-with-bindings-and-indent))))
 
 (defun clojure-paredit-setup (&optional keymap)
-  "Make \"paredit-mode\" play nice with `clojure-mode'.
+  "Make \"paredit-mode\" play nice with `clojure-mode and `edn-mode'.
 
 If an optional KEYMAP is passed the changes are applied to it,
 instead of to `clojure-mode-map'.
 Also advice `paredit-convolute-sexp' when used on a let form as drop in
 replacement for `cljr-expand-let`."
   (when (>= paredit-version 21)
-    (let ((keymap (or keymap clojure-mode-map)))
+    (let ((keymap (or keymap (current-local-map))))
       (define-key keymap "{" #'paredit-open-curly)
       (define-key keymap "}" #'paredit-close-curly))
     (make-local-variable 'paredit-space-for-delimiter-predicates)
