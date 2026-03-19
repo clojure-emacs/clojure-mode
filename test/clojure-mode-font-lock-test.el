@@ -28,7 +28,7 @@
 (require 'buttercup)
 (require 'test-helper "test/utils/test-helper")
 
-
+
 ;;;; Utilities
 
 (defmacro with-fontified-clojure-buffer (content &rest body)
@@ -40,26 +40,53 @@
      (goto-char (point-min))
      ,@body))
 
+(defun clojure-test--uniform-face (start end)
+  "Return the face from START to END if uniform, else `various-faces'.
+Assumes the current buffer is already fontified."
+  (let ((start-face (get-text-property start 'face))
+        (all-faces (cl-loop for i from start to end
+                            collect (get-text-property i 'face))))
+    (if (cl-every (lambda (face) (equal face start-face)) all-faces)
+        start-face
+      'various-faces)))
+
 (defun clojure-get-face-at (start end content)
   "Get the face between START and END in CONTENT."
   (with-fontified-clojure-buffer content
-    (let ((start-face (get-text-property start 'face))
-          (all-faces (cl-loop for i from start to end collect (get-text-property
-                                                               i 'face))))
-      (if (cl-every (lambda (face) (eq face start-face)) all-faces)
-          start-face
-        'various-faces))))
+    (clojure-test--uniform-face start end)))
 
 (defun expect-face-at (content start end face)
   "Expect face in CONTENT between START and END to be equal to FACE."
   (expect (clojure-get-face-at start end content) :to-equal face))
 
-(defun expect-faces-at (content &rest faces)
-  "Expect FACES in CONTENT.
+(defun expect-face-of (content substring face &optional nth)
+  "Expect FACE on the NTH occurrence of SUBSTRING in fontified CONTENT.
+NTH defaults to 1."
+  (with-fontified-clojure-buffer content
+    (goto-char (point-min))
+    (dotimes (_ (or nth 1))
+      (search-forward substring))
+    (let* ((end (1- (point)))
+           (start (- (point) (length substring))))
+      (expect (clojure-test--uniform-face start end) :to-equal face))))
 
-FACES is a list of the form (content (start end expected-face)*)"
-  (dolist (face faces)
-    (apply (apply-partially #'expect-face-at content) face)))
+(defun clojure-test--check-faces (content face-specs)
+  "Fontify CONTENT and check all FACE-SPECS.
+Each spec is either (START END FACE) for positional checks or
+\(SUBSTRING FACE) or (SUBSTRING FACE :nth N) for substring-based checks."
+  (with-fontified-clojure-buffer content
+    (dolist (spec face-specs)
+      (pcase spec
+        (`(,(and (pred stringp) substr) ,face . ,rest)
+         (let ((nth (or (plist-get rest :nth) 1)))
+           (goto-char (point-min))
+           (dotimes (_ nth)
+             (search-forward substr))
+           (let* ((end (1- (point)))
+                  (start (- (point) (length substr))))
+             (expect (clojure-test--uniform-face start end) :to-equal face))))
+        (`(,(and (pred numberp) start) ,end ,face)
+         (expect (clojure-test--uniform-face start end) :to-equal face))))))
 
 (defconst clojure-test-syntax-classes
   [whitespace punctuation word symbol open-paren close-paren expression-prefix
@@ -73,14 +100,15 @@ its index.")
 (defmacro when-fontifying-it (description &rest tests)
   "Return a buttercup spec.
 
-TESTS are lists of the form (content (start end expected-face)*).  For each test
-check that each `expected-face` is found in `content` between `start` and `end`.
+TESTS are lists of the form (content face-spec*) where each face-spec is either
+\(start end expected-face) for positional checks or (substring expected-face) or
+\(substring expected-face :nth N) for substring-based checks.
 
 DESCRIPTION is the description of the spec."
   (declare (indent 1))
   `(it ,description
      (dolist (test (quote ,tests))
-       (apply #'expect-faces-at test))))
+       (clojure-test--check-faces (car test) (cdr test)))))
 
 ;;;; Font locking
 
@@ -122,13 +150,13 @@ DESCRIPTION is the description of the spec."
 
   (when-fontifying-it "should fontify let, when, and while type forms"
     ("(when-alist [x 1]\n  ())"
-     (2 11 font-lock-keyword-face))
+     ("when-alist" font-lock-keyword-face))
 
     ("(while-alist [x 1]\n  ())"
-     (2 12 font-lock-keyword-face))
+     ("while-alist" font-lock-keyword-face))
 
     ("(let-alist [x 1]\n  ())"
-     (2 10 font-lock-keyword-face)))
+     ("let-alist" font-lock-keyword-face)))
 
   (when-fontifying-it "should handle comment macros"
     ("#_"
@@ -166,379 +194,376 @@ DESCRIPTION is the description of the spec."
 
   (when-fontifying-it "should handle namespace declarations"
     ("(ns .validns)"
-     (5 12 font-lock-type-face))
+     (".validns" font-lock-type-face))
 
     ("(ns =validns)"
-     (5 12 font-lock-type-face))
+     ("=validns" font-lock-type-face))
 
     ("(ns .ValidNs=<>?+|?*.)"
-     (5 21 font-lock-type-face))
+     (".ValidNs=<>?+|?*." font-lock-type-face))
 
     ("(ns ValidNs<>?+|?*.b*ar.ba*z)"
-     (5 28 font-lock-type-face))
+     ("ValidNs<>?+|?*.b*ar.ba*z" font-lock-type-face))
 
     ("(ns other.valid.ns)"
-     (5 18 font-lock-type-face))
+     ("other.valid.ns" font-lock-type-face))
 
     ("(ns oneword)"
-     (5 11 font-lock-type-face))
+     ("oneword" font-lock-type-face))
 
     ("(ns foo.bar)"
-     (5 11 font-lock-type-face))
+     ("foo.bar" font-lock-type-face))
 
     ("(ns Foo.bar)"
-     (5 11 font-lock-type-face)
-     (5 11 font-lock-type-face)
-     (5 11 font-lock-type-face))
+     ("Foo.bar" font-lock-type-face))
 
     ("(ns Foo-bar)"
-     (5 11 font-lock-type-face)
-     (5 11 font-lock-type-face))
+     ("Foo-bar" font-lock-type-face))
 
     ("(ns foo-Bar)"
-     (5 11 font-lock-type-face))
+     ("foo-Bar" font-lock-type-face))
 
     ("(ns one.X)"
-     (5 9 font-lock-type-face))
+     ("one.X" font-lock-type-face))
 
     ("(ns ^:md ns-name)"
-     (10 16 font-lock-type-face))
+     ("ns-name" font-lock-type-face))
 
     ("(ns ^:md \n  ns-name)"
-     (13 19 font-lock-type-face))
+     ("ns-name" font-lock-type-face))
 
     ("(ns ^:md1 ^:md2 ns-name)"
-     (17 23 font-lock-type-face))
+     ("ns-name" font-lock-type-face))
 
     ("(ns ^:md1 ^{:md2 true} ns-name)"
-     (24 30 font-lock-type-face))
+     ("ns-name" font-lock-type-face))
 
     ("(ns ^{:md2 true} ^:md1 ns-name)"
-     (24 30 font-lock-type-face))
+     ("ns-name" font-lock-type-face))
 
     ("(ns ^:md1 ^{:md2 true} \n  ns-name)"
-     (27 33 font-lock-type-face))
+     ("ns-name" font-lock-type-face))
 
     ("(ns ^{:md2 true} ^:md1 \n  ns-name)"
-     (27 33 font-lock-type-face)))
+     ("ns-name" font-lock-type-face)))
 
   (when-fontifying-it "should handle one word"
     (" oneword"
-     (2 8 nil))
+     ("oneword" nil))
 
     ("@oneword"
-     (2 8 nil))
+     ("oneword" nil))
 
     ("#oneword"
-     (2 8 nil))
+     ("oneword" nil))
 
     (".oneword"
-     (2 8 nil))
+     ("oneword" nil))
 
     ("#^oneword"
-     (3 9 font-lock-type-face)) ;; type-hint
+     ("oneword" font-lock-type-face)) ;; type-hint
 
     ("(oneword)"
-     (2 8 nil))
+     ("oneword" nil))
 
     ("(oneword/oneword)"
-     (2 8 font-lock-type-face)
-     (9 10 nil)
-     (11 16 nil))
+     ("oneword" font-lock-type-face)
+     ("/" nil)
+     ("oneword" nil :nth 2))
 
     ("(oneword/seg.mnt)"
-     (2 8 font-lock-type-face)
-     (9 10 nil)
-     (11 16 nil))
+     ("oneword" font-lock-type-face)
+     ("/" nil)
+     ("seg.mnt" nil))
 
     ("(oneword/mxdCase)"
-     (2 8 font-lock-type-face)
-     (9 10 nil)
-     (11 16 nil))
+     ("oneword" font-lock-type-face)
+     ("/" nil)
+     ("mxdCase" nil))
 
     ("(oneword/CmlCase)"
-     (2 8 font-lock-type-face)
-     (9 10 nil)
-     (11 16 nil))
+     ("oneword" font-lock-type-face)
+     ("/" nil)
+     ("CmlCase" nil))
 
     ("(colons:are:okay)"
-     (2 16 nil))
+     ("colons:are:okay" nil))
 
     ("(some-ns/colons:are:okay)"
-     (2 8 font-lock-type-face)
-     (9 24 nil))
+     ("some-ns" font-lock-type-face)
+     ("/colons:are:okay" nil))
 
     ("(oneword/ve/yCom|pLex.stu-ff)"
-     (2 8 font-lock-type-face)
-     (9 10 nil)
-     (11 28 nil))
+     ("oneword" font-lock-type-face)
+     ("/" nil)
+     ("ve/yCom|pLex.stu-ff" nil))
 
     ("(oneword/.ve/yCom|pLex.stu-ff)"
-     (2 8 font-lock-type-face)
-     (9 10 nil)
-     (12 29 nil)))
+     ("oneword" font-lock-type-face)
+     ("/." nil)
+     ("ve/yCom|pLex.stu-ff" nil)))
 
   (when-fontifying-it "should handle a segment"
     (" seg.mnt"
-     (2 8 nil))
+     ("seg.mnt" nil))
 
     ("@seg.mnt"
-     (2 8 nil))
+     ("seg.mnt" nil))
 
     ("#seg.mnt"
-     (2 8 nil))
+     ("seg.mnt" nil))
 
     (".seg.mnt"
-     (2 8 nil))
+     ("seg.mnt" nil))
 
     ("#^seg.mnt"
-     (3 9 font-lock-type-face)) ;; type-hint
+     ("seg.mnt" font-lock-type-face)) ;; type-hint
 
     ("(seg.mnt)"
-     (2 8 nil))
+     ("seg.mnt" nil))
 
     ("(seg.mnt/oneword)"
-     (2 8 font-lock-type-face)
-     (9 10 nil)
-     (11 16 nil))
+     ("seg.mnt" font-lock-type-face)
+     ("/" nil)
+     ("oneword" nil))
 
     ("(seg.mnt/seg.mnt)"
-     (2 8 font-lock-type-face)
-     (9 10 nil)
-     (11 16 nil))
+     ("seg.mnt" font-lock-type-face)
+     ("/" nil)
+     ("seg.mnt" nil :nth 2))
 
     ("(seg.mnt/mxdCase)"
-     (2 8 font-lock-type-face)
-     (9 10 nil)
-     (11 16 nil))
+     ("seg.mnt" font-lock-type-face)
+     ("/" nil)
+     ("mxdCase" nil))
 
     ("(seg.mnt/CmlCase)"
-     (2 8 font-lock-type-face)
-     (9 10 nil)
-     (11 16 nil))
+     ("seg.mnt" font-lock-type-face)
+     ("/" nil)
+     ("CmlCase" nil))
 
     ("(seg.mnt/ve/yCom|pLex.stu-ff)"
-     (2 8 font-lock-type-face)
-     (9 10 nil)
-     (11 28 nil))
+     ("seg.mnt" font-lock-type-face)
+     ("/" nil)
+     ("ve/yCom|pLex.stu-ff" nil))
 
     ("(seg.mnt/.ve/yCom|pLex.stu-ff)"
-     (2 8 font-lock-type-face)
-     (9 10 nil)
-     (12 29 nil)))
+     ("seg.mnt" font-lock-type-face)
+     ("/." nil)
+     ("ve/yCom|pLex.stu-ff" nil)))
 
   (when-fontifying-it "should handle camelcase"
     (" CmlCase"
-     (2 8 nil))
+     ("CmlCase" nil))
 
     ("@CmlCase"
-     (2 8 nil))
+     ("CmlCase" nil))
 
     ("#CmlCase"
-     (2 8 nil))
+     ("CmlCase" nil))
 
     (".CmlCase"
-     (2 8 nil))
+     ("CmlCase" nil))
 
     ("#^CmlCase"
-     (3 9 font-lock-type-face)) ;; type-hint
+     ("CmlCase" font-lock-type-face)) ;; type-hint
 
     ("(CmlCase)"
-     (2 8 nil))
+     ("CmlCase" nil))
 
     ("(CmlCase/oneword)"
-     (2 8 font-lock-type-face)
-     (9 10 nil)
-     (11 16 nil))
+     ("CmlCase" font-lock-type-face)
+     ("/" nil)
+     ("oneword" nil))
 
     ("(CmlCase/seg.mnt)"
-     (2 8 font-lock-type-face)
-     (9 10 nil)
-     (11 16 nil))
+     ("CmlCase" font-lock-type-face)
+     ("/" nil)
+     ("seg.mnt" nil))
 
     ("(CmlCase/mxdCase)"
-     (2 8 font-lock-type-face)
-     (9 10 nil)
-     (11 16 nil))
+     ("CmlCase" font-lock-type-face)
+     ("/" nil)
+     ("mxdCase" nil))
 
     ("(CmlCase/CmlCase)"
-     (2 8 font-lock-type-face)
-     (9 10 nil)
-     (11 16 nil))
+     ("CmlCase" font-lock-type-face)
+     ("/" nil)
+     ("CmlCase" nil :nth 2))
 
     ("(CmlCase/ve/yCom|pLex.stu-ff)"
-     (2 8 font-lock-type-face)
-     (9 10 nil)
-     (11 28 nil))
+     ("CmlCase" font-lock-type-face)
+     ("/" nil)
+     ("ve/yCom|pLex.stu-ff" nil))
 
     ("(CmlCase/.ve/yCom|pLex.stu-ff)"
-     (2 8 font-lock-type-face)
-     (9 10 nil)
-     (12 29 nil)))
+     ("CmlCase" font-lock-type-face)
+     ("/." nil)
+     ("ve/yCom|pLex.stu-ff" nil)))
 
   (when-fontifying-it "should handle mixed case"
     (" mxdCase"
-     (2 8 nil))
+     ("mxdCase" nil))
 
     ("@mxdCase"
-     (2 8 nil))
+     ("mxdCase" nil))
 
     ("#mxdCase"
-     (2 8 nil))
+     ("mxdCase" nil))
 
     (".mxdCase"
-     (2 8 nil))
+     ("mxdCase" nil))
 
     ("#^mxdCase"
-     (3 9 font-lock-type-face)) ;; type-hint
+     ("mxdCase" font-lock-type-face)) ;; type-hint
 
     ("(mxdCase)"
-     (2 8 nil))
+     ("mxdCase" nil))
 
     ("(mxdCase/oneword)"
-     (2 8 font-lock-type-face)
-     (9 10 nil)
-     (11 16 nil))
+     ("mxdCase" font-lock-type-face)
+     ("/" nil)
+     ("oneword" nil))
 
     ("(mxdCase/seg.mnt)"
-     (2 8 font-lock-type-face)
-     (9 10 nil)
-     (11 16 nil))
+     ("mxdCase" font-lock-type-face)
+     ("/" nil)
+     ("seg.mnt" nil))
 
     ("(mxdCase/mxdCase)"
-     (2 8 font-lock-type-face)
-     (9 10 nil)
-     (11 16 nil))
+     ("mxdCase" font-lock-type-face)
+     ("/" nil)
+     ("mxdCase" nil :nth 2))
 
     ("(mxdCase/CmlCase)"
-     (2 8 font-lock-type-face)
-     (9 10 nil)
-     (11 16 nil))
+     ("mxdCase" font-lock-type-face)
+     ("/" nil)
+     ("CmlCase" nil))
 
     ("(mxdCase/ve/yCom|pLex.stu-ff)"
-     (2 8 font-lock-type-face)
-     (9 10 nil)
-     (11 28 nil))
+     ("mxdCase" font-lock-type-face)
+     ("/" nil)
+     ("ve/yCom|pLex.stu-ff" nil))
 
     ("(mxdCase/.ve/yCom|pLex.stu-ff)"
-     (2 8 font-lock-type-face)
-     (9 10 nil)
-     (12 29 nil)))
+     ("mxdCase" font-lock-type-face)
+     ("/." nil)
+     ("ve/yCom|pLex.stu-ff" nil)))
 
   (when-fontifying-it "should handle quotes in tail of symbols and keywords"
     ("'quot'ed'/sy'm'bol''"
-     (2 9 font-lock-type-face)
-     (10 20 nil))
+     ("quot'ed'" font-lock-type-face)
+     ("/sy'm'bol''" nil))
 
     (":qu'ote'd''/key'word'"
-     (2 11 font-lock-type-face)
-     (12 12 default)
-     (13 21 clojure-keyword-face)))
+     ("qu'ote'd''" font-lock-type-face)
+     ("/" default)
+     ("key'word'" clojure-keyword-face)))
 
   (when-fontifying-it "should handle very complex stuff"
     ("  ve/yCom|pLex.stu-ff"
-     (3 4 font-lock-type-face)
-     (5 21 nil))
+     ("ve" font-lock-type-face)
+     ("/yCom|pLex.stu-ff" nil))
 
     (" @ve/yCom|pLex.stu-ff"
-     (2 2 nil)
-     (3 4 font-lock-type-face)
-     (5 21 nil))
+     ("@" nil)
+     ("ve" font-lock-type-face)
+     ("/yCom|pLex.stu-ff" nil))
 
     (" #ve/yCom|pLex.stu-ff"
-     (2 4 font-lock-type-face)
-     (5 21 nil))
+     ("#ve" font-lock-type-face)
+     ("/yCom|pLex.stu-ff" nil))
 
     (" .ve/yCom|pLex.stu-ff"
-     (2 4 font-lock-type-face)
-     (5 21 nil))
+     (".ve" font-lock-type-face)
+     ("/yCom|pLex.stu-ff" nil))
 
     ;; type-hint
     ("#^ve/yCom|pLex.stu-ff"
-     (1 2 default)
-     (3 4 font-lock-type-face)
-     (5 21 default))
+     ("#^" default)
+     ("ve" font-lock-type-face)
+     ("/yCom|pLex.stu-ff" default))
 
     ("^ve/yCom|pLex.stu-ff"
-     (2 3 font-lock-type-face)
-     (5 20 default))
+     ("ve" font-lock-type-face)
+     ("yCom|pLex.stu-ff" default))
 
     (" (ve/yCom|pLex.stu-ff)"
-     (3 4 font-lock-type-face)
-     (5 21 nil))
+     ("ve" font-lock-type-face)
+     ("/yCom|pLex.stu-ff" nil))
 
     (" (ve/yCom|pLex.stu-ff/oneword)"
-     (3 4 font-lock-type-face)
-     (5 29 nil))
+     ("ve" font-lock-type-face)
+     ("/yCom|pLex.stu-ff/oneword" nil))
 
     (" (ve/yCom|pLex.stu-ff/seg.mnt)"
-     (3 4 font-lock-type-face)
-     (5 29 nil))
+     ("ve" font-lock-type-face)
+     ("/yCom|pLex.stu-ff/seg.mnt" nil))
 
     (" (ve/yCom|pLex.stu-ff/mxdCase)"
-     (3 4 font-lock-type-face)
-     (5 29 nil))
+     ("ve" font-lock-type-face)
+     ("/yCom|pLex.stu-ff/mxdCase" nil))
 
     (" (ve/yCom|pLex.stu-ff/CmlCase)"
-     (3 4 font-lock-type-face)
-     (5 29 nil))
+     ("ve" font-lock-type-face)
+     ("/yCom|pLex.stu-ff/CmlCase" nil))
 
     (" (ve/yCom|pLex.stu-ff/ve/yCom|pLex.stu-ff)"
-     (3 4 font-lock-type-face)
-     (5 41 nil))
+     ("ve" font-lock-type-face)
+     ("/yCom|pLex.stu-ff/ve/yCom|pLex.stu-ff" nil))
 
     (" (ve/yCom|pLex.stu-ff/.ve/yCom|pLex.stu-ff)"
-     (3 4 font-lock-type-face)
-     (5 42 nil)))
+     ("ve" font-lock-type-face)
+     ("/yCom|pLex.stu-ff/.ve/yCom|pLex.stu-ff" nil)))
 
   (when-fontifying-it "should handle oneword keywords"
     (" :oneword"
-     (3 9 clojure-keyword-face))
+     ("oneword" clojure-keyword-face))
 
     (" :1oneword"
-     (3 10 clojure-keyword-face))
+     ("1oneword" clojure-keyword-face))
 
     ("{:oneword 0}"
-     (3 9 clojure-keyword-face))
+     ("oneword" clojure-keyword-face))
 
     ("{:1oneword 0}"
-     (3 10 clojure-keyword-face))
+     ("1oneword" clojure-keyword-face))
 
     ("{:#oneword 0}"
-     (3 10 clojure-keyword-face))
+     ("#oneword" clojure-keyword-face))
 
     ("{:.oneword 0}"
-     (3 10 clojure-keyword-face))
+     (".oneword" clojure-keyword-face))
 
     ("{:oneword/oneword 0}"
-     (3 9 font-lock-type-face)
-     (10 10 default)
-     (11 17 clojure-keyword-face))
+     ("oneword" font-lock-type-face)
+     ("/" default)
+     ("oneword" clojure-keyword-face :nth 2))
 
     ("{:oneword/seg.mnt 0}"
-     (3 9 font-lock-type-face)
-     (10 10 default)
-     (11 17 clojure-keyword-face))
+     ("oneword" font-lock-type-face)
+     ("/" default)
+     ("seg.mnt" clojure-keyword-face))
 
     ("{:oneword/CmlCase 0}"
-     (3 9 font-lock-type-face)
-     (10 10 default)
-     (11 17 clojure-keyword-face))
+     ("oneword" font-lock-type-face)
+     ("/" default)
+     ("CmlCase" clojure-keyword-face))
 
     ("{:oneword/mxdCase 0}"
-     (3 9 font-lock-type-face)
-     (10 10 default)
-     (11 17 clojure-keyword-face))
+     ("oneword" font-lock-type-face)
+     ("/" default)
+     ("mxdCase" clojure-keyword-face))
 
     ("{:oneword/ve/yCom|pLex.stu-ff 0}"
-     (3 9 font-lock-type-face)
-     (10 10 default)
-     (11 29 clojure-keyword-face))
+     ("oneword" font-lock-type-face)
+     ("/" default)
+     ("ve/yCom|pLex.stu-ff" clojure-keyword-face))
 
     ("{:oneword/.ve/yCom|pLex.stu-ff 0}"
-     (3 9 font-lock-type-face)
-     (10 10 default)
-     (11 30 clojure-keyword-face)))
+     ("oneword" font-lock-type-face)
+     ("/" default)
+     (".ve/yCom|pLex.stu-ff" clojure-keyword-face)))
 
   (when-fontifying-it "should handle namespaced keywords"
     ("::foo"
@@ -594,132 +619,132 @@ DESCRIPTION is the description of the spec."
 
   (when-fontifying-it "should handle segment keywords"
     (" :seg.mnt"
-     (3 9 clojure-keyword-face))
+     ("seg.mnt" clojure-keyword-face))
 
     ("{:seg.mnt 0}"
-     (3 9 clojure-keyword-face))
+     ("seg.mnt" clojure-keyword-face))
 
     ("{:#seg.mnt 0}"
-     (3 10 clojure-keyword-face))
+     ("#seg.mnt" clojure-keyword-face))
 
     ("{:.seg.mnt 0}"
-     (3 10 clojure-keyword-face))
+     (".seg.mnt" clojure-keyword-face))
 
     ("{:seg.mnt/oneword 0}"
-     (3 9 font-lock-type-face)
-     (10 10 default)
-     (11 17 clojure-keyword-face))
+     ("seg.mnt" font-lock-type-face)
+     ("/" default)
+     ("oneword" clojure-keyword-face))
 
     ("{:seg.mnt/seg.mnt 0}"
-     (3 9 font-lock-type-face )
-     (10 10 default)
-     (11 17 clojure-keyword-face))
+     ("seg.mnt" font-lock-type-face)
+     ("/" default)
+     ("seg.mnt" clojure-keyword-face :nth 2))
 
     ("{:seg.mnt/CmlCase 0}"
-     (3 9 font-lock-type-face)
-     (10 10 default)
-     (11 17 clojure-keyword-face))
+     ("seg.mnt" font-lock-type-face)
+     ("/" default)
+     ("CmlCase" clojure-keyword-face))
 
     ("{:seg.mnt/mxdCase 0}"
-     (3 9 font-lock-type-face)
-     (10 10 default)
-     (11 17 clojure-keyword-face))
+     ("seg.mnt" font-lock-type-face)
+     ("/" default)
+     ("mxdCase" clojure-keyword-face))
 
     ("{:seg.mnt/ve/yCom|pLex.stu-ff 0}"
-     (3 9 font-lock-type-face)
-     (10 10 default)
-     (11 29 clojure-keyword-face))
+     ("seg.mnt" font-lock-type-face)
+     ("/" default)
+     ("ve/yCom|pLex.stu-ff" clojure-keyword-face))
 
     ("{:seg.mnt/.ve/yCom|pLex.stu-ff 0}"
-     (3 9 font-lock-type-face)
-     (10 10 default)
-     (11 30 clojure-keyword-face)))
+     ("seg.mnt" font-lock-type-face)
+     ("/" default)
+     (".ve/yCom|pLex.stu-ff" clojure-keyword-face)))
 
   (when-fontifying-it "should handle camel case keywords"
     (" :CmlCase"
-     (3 9 clojure-keyword-face))
+     ("CmlCase" clojure-keyword-face))
 
     ("{:CmlCase 0}"
-     (3 9 clojure-keyword-face))
+     ("CmlCase" clojure-keyword-face))
 
     ("{:#CmlCase 0}"
-     (3 10 clojure-keyword-face))
+     ("#CmlCase" clojure-keyword-face))
 
     ("{:.CmlCase 0}"
-     (3 10 clojure-keyword-face))
+     (".CmlCase" clojure-keyword-face))
 
     ("{:CmlCase/oneword 0}"
-     (3 9 font-lock-type-face)
-     (10 10 default)
-     (11 17 clojure-keyword-face))
+     ("CmlCase" font-lock-type-face)
+     ("/" default)
+     ("oneword" clojure-keyword-face))
 
     ("{:CmlCase/seg.mnt 0}"
-     (3 9 font-lock-type-face)
-     (10 10 default)
-     (11 17 clojure-keyword-face))
+     ("CmlCase" font-lock-type-face)
+     ("/" default)
+     ("seg.mnt" clojure-keyword-face))
 
     ("{:CmlCase/CmlCase 0}"
-     (3 9 font-lock-type-face)
-     (10 10 default)
-     (11 17 clojure-keyword-face))
+     ("CmlCase" font-lock-type-face)
+     ("/" default)
+     ("CmlCase" clojure-keyword-face :nth 2))
 
     ("{:CmlCase/mxdCase 0}"
-     (3 9 font-lock-type-face)
-     (10 10 default)
-     (11 17 clojure-keyword-face))
+     ("CmlCase" font-lock-type-face)
+     ("/" default)
+     ("mxdCase" clojure-keyword-face))
 
     ("{:CmlCase/ve/yCom|pLex.stu-ff 0}"
-     (3 9 font-lock-type-face)
-     (10 10 default)
-     (11 29 clojure-keyword-face))
+     ("CmlCase" font-lock-type-face)
+     ("/" default)
+     ("ve/yCom|pLex.stu-ff" clojure-keyword-face))
 
     ("{:CmlCase/.ve/yCom|pLex.stu-ff 0}"
-     (3 9 font-lock-type-face)
-     (10 10 default)
-     (11 30 clojure-keyword-face)))
+     ("CmlCase" font-lock-type-face)
+     ("/" default)
+     (".ve/yCom|pLex.stu-ff" clojure-keyword-face)))
 
   (when-fontifying-it "should handle mixed case keywords"
     (" :mxdCase"
-     (3 9 clojure-keyword-face))
+     ("mxdCase" clojure-keyword-face))
 
     ("{:mxdCase 0}"
-     (3 9 clojure-keyword-face))
+     ("mxdCase" clojure-keyword-face))
 
     ("{:#mxdCase 0}"
-     (3 10 clojure-keyword-face))
+     ("#mxdCase" clojure-keyword-face))
 
     ("{:.mxdCase 0}"
-     (3 10 clojure-keyword-face))
+     (".mxdCase" clojure-keyword-face))
 
     ("{:mxdCase/oneword 0}"
-     (3 9 font-lock-type-face)
-     (10 10 default)
-     (11 17 clojure-keyword-face))
+     ("mxdCase" font-lock-type-face)
+     ("/" default)
+     ("oneword" clojure-keyword-face))
 
     ("{:mxdCase/seg.mnt 0}"
-     (3 9 font-lock-type-face)
-     (10 10 default)
-     (11 17 clojure-keyword-face))
+     ("mxdCase" font-lock-type-face)
+     ("/" default)
+     ("seg.mnt" clojure-keyword-face))
 
     ("{:mxdCase/CmlCase 0}"
-     (3 9 font-lock-type-face)
-     (10 10 default)
-     (11 17 clojure-keyword-face))
+     ("mxdCase" font-lock-type-face)
+     ("/" default)
+     ("CmlCase" clojure-keyword-face))
 
     ("{:mxdCase/mxdCase 0}"
-     (3 9 font-lock-type-face)
-     (10 10 default)
-     (11 17 clojure-keyword-face))
+     ("mxdCase" font-lock-type-face)
+     ("/" default)
+     ("mxdCase" clojure-keyword-face :nth 2))
 
     ("{:mxdCase/ve/yCom|pLex.stu-ff 0}"
-     (3 9 font-lock-type-face)
-     (10 10 default)
-     (11 29 clojure-keyword-face))
+     ("mxdCase" font-lock-type-face)
+     ("/" default)
+     ("ve/yCom|pLex.stu-ff" clojure-keyword-face))
 
     ("{:mxdCase/.ve/yCom|pLex.stu-ff 0}"
-     (3 9 font-lock-type-face)
-     (10 10 default)
-     (11 30 clojure-keyword-face)))
+     ("mxdCase" font-lock-type-face)
+     ("/" default)
+     (".ve/yCom|pLex.stu-ff" clojure-keyword-face)))
 
   (when-fontifying-it "should handle keywords with colons"
     (":a:a"
@@ -736,117 +761,117 @@ DESCRIPTION is the description of the spec."
 
   (when-fontifying-it "should handle very complex keywords"
     (" :ve/yCom|pLex.stu-ff"
-     (3 4 font-lock-type-face)
-     (5 5 default)
-     (6 21 clojure-keyword-face))
+     ("ve" font-lock-type-face)
+     ("/" default)
+     ("yCom|pLex.stu-ff" clojure-keyword-face))
 
     ("{:ve/yCom|pLex.stu-ff 0}"
-     (2 2 clojure-keyword-face)
-     (3 4 font-lock-type-face)
-     (5 5 default)
-     (6 21 clojure-keyword-face))
+     (":" clojure-keyword-face)
+     ("ve" font-lock-type-face)
+     ("/" default)
+     ("yCom|pLex.stu-ff" clojure-keyword-face))
 
     ("{:#ve/yCom|pLex.stu-ff 0}"
-     (2 2 clojure-keyword-face)
-     (3 5 font-lock-type-face)
-     (6 6 default)
-     (7 22 clojure-keyword-face))
+     (":" clojure-keyword-face)
+     ("#ve" font-lock-type-face)
+     ("/" default)
+     ("yCom|pLex.stu-ff" clojure-keyword-face))
 
     ("{:.ve/yCom|pLex.stu-ff 0}"
-     (2 2 clojure-keyword-face)
-     (3 5 font-lock-type-face)
-     (6 6 default)
-     (7 22 clojure-keyword-face))
+     (":" clojure-keyword-face)
+     (".ve" font-lock-type-face)
+     ("/" default)
+     ("yCom|pLex.stu-ff" clojure-keyword-face))
 
     ("{:ve/yCom|pLex.stu-ff/oneword 0}"
-     (2 2 clojure-keyword-face)
-     (3 4 font-lock-type-face)
-     (5 5 default)
-     (6 29 clojure-keyword-face))
+     (":" clojure-keyword-face)
+     ("ve" font-lock-type-face)
+     ("/" default)
+     ("yCom|pLex.stu-ff/oneword" clojure-keyword-face))
 
     ("{:ve/yCom|pLex.stu-ff/seg.mnt 0}"
-     (2 2 clojure-keyword-face)
-     (3 4 font-lock-type-face)
-     (5 5 default)
-     (6 29 clojure-keyword-face))
+     (":" clojure-keyword-face)
+     ("ve" font-lock-type-face)
+     ("/" default)
+     ("yCom|pLex.stu-ff/seg.mnt" clojure-keyword-face))
 
     ("{:ve/yCom|pLex.stu-ff/ClmCase 0}"
-     (2 2 clojure-keyword-face)
-     (3 4 font-lock-type-face)
-     (5 5 default)
-     (6 29 clojure-keyword-face))
+     (":" clojure-keyword-face)
+     ("ve" font-lock-type-face)
+     ("/" default)
+     ("yCom|pLex.stu-ff/ClmCase" clojure-keyword-face))
 
     ("{:ve/yCom|pLex.stu-ff/mxdCase 0}"
-     (2 2 clojure-keyword-face)
-     (3 4 font-lock-type-face)
-     (5 5 default)
-     (6 29 clojure-keyword-face))
+     (":" clojure-keyword-face)
+     ("ve" font-lock-type-face)
+     ("/" default)
+     ("yCom|pLex.stu-ff/mxdCase" clojure-keyword-face))
 
     ("{:ve/yCom|pLex.stu-ff/ve/yCom|pLex.stu-ff 0}"
-     (2 2 clojure-keyword-face)
-     (3 4 font-lock-type-face)
-     (5 5 default)
-     (6 41 clojure-keyword-face))
+     (":" clojure-keyword-face)
+     ("ve" font-lock-type-face)
+     ("/" default)
+     ("yCom|pLex.stu-ff/ve/yCom|pLex.stu-ff" clojure-keyword-face))
 
     ("{:ve/yCom|pLex.stu-ff/.ve/yCom|pLex.stu-ff 0}"
-     (2 2 clojure-keyword-face)
-     (3 4 font-lock-type-face)
-     (5 5 default)
-     (6 42 clojure-keyword-face)))
+     (":" clojure-keyword-face)
+     ("ve" font-lock-type-face)
+     ("/" default)
+     ("yCom|pLex.stu-ff/.ve/yCom|pLex.stu-ff" clojure-keyword-face)))
 
   (when-fontifying-it "should handle namespaced defs"
     ("(clojure.core/defn bar [] nil)"
-     (2 13 font-lock-type-face)
-     (14 14 nil)
-     (15 18 font-lock-keyword-face)
-     (20 22 font-lock-function-name-face))
+     ("clojure.core" font-lock-type-face)
+     ("/" nil)
+     ("defn" font-lock-keyword-face)
+     ("bar" font-lock-function-name-face))
 
     ("(clojure.core/defrecord foo nil)"
-     (2 13 font-lock-type-face)
-     (14 14 nil)
-     (15 23 font-lock-keyword-face)
-     (25 27 font-lock-type-face))
+     ("clojure.core" font-lock-type-face)
+     ("/" nil)
+     ("defrecord" font-lock-keyword-face)
+     ("foo" font-lock-type-face))
 
     ("(s/def ::keyword)"
-     (2 2 font-lock-type-face)
-     (3 3 nil)
-     (4 6 font-lock-keyword-face)
-     (8 16 clojure-keyword-face)))
+     ("s" font-lock-type-face)
+     ("/" nil)
+     ("def" font-lock-keyword-face)
+     ("::keyword" clojure-keyword-face)))
 
   (when-fontifying-it "should handle any known def form"
-    ("(def a 1)" (2 4 font-lock-keyword-face))
-    ("(defonce a 1)" (2 8 font-lock-keyword-face))
-    ("(defn a [b])" (2 5 font-lock-keyword-face))
-    ("(defmacro a [b])" (2 9 font-lock-keyword-face))
-    ("(definline a [b])" (2 10 font-lock-keyword-face))
-    ("(defmulti a identity)" (2 9 font-lock-keyword-face))
-    ("(defmethod a :foo [b] (println \"bar\"))" (2 10 font-lock-keyword-face))
-    ("(defprotocol a (b [this] \"that\"))" (2 12 font-lock-keyword-face))
-    ("(definterface a (b [c]))" (2 13 font-lock-keyword-face))
-    ("(defrecord a [b c])" (2 10 font-lock-keyword-face))
-    ("(deftype a [b c])" (2 8 font-lock-keyword-face))
-    ("(defstruct a :b :c)" (2 10 font-lock-keyword-face))
-    ("(deftest a (is (= 1 1)))" (2 8 font-lock-keyword-face))
-    ("(defne [x y])" (2 6 font-lock-keyword-face))
-    ("(defnm a b)" (2 6 font-lock-keyword-face))
-    ("(defnu)" (2 6 font-lock-keyword-face))
-    ("(defnc [a])" (2 6 font-lock-keyword-face))
-    ("(defna)" (2 6 font-lock-keyword-face))
-    ("(deftask a)" (2 8 font-lock-keyword-face))
-    ("(defstate a :start \"b\" :stop \"c\")" (2 9 font-lock-keyword-face)))
+    ("(def a 1)" ("def" font-lock-keyword-face))
+    ("(defonce a 1)" ("defonce" font-lock-keyword-face))
+    ("(defn a [b])" ("defn" font-lock-keyword-face))
+    ("(defmacro a [b])" ("defmacro" font-lock-keyword-face))
+    ("(definline a [b])" ("definline" font-lock-keyword-face))
+    ("(defmulti a identity)" ("defmulti" font-lock-keyword-face))
+    ("(defmethod a :foo [b] (println \"bar\"))" ("defmethod" font-lock-keyword-face))
+    ("(defprotocol a (b [this] \"that\"))" ("defprotocol" font-lock-keyword-face))
+    ("(definterface a (b [c]))" ("definterface" font-lock-keyword-face))
+    ("(defrecord a [b c])" ("defrecord" font-lock-keyword-face))
+    ("(deftype a [b c])" ("deftype" font-lock-keyword-face))
+    ("(defstruct a :b :c)" ("defstruct" font-lock-keyword-face))
+    ("(deftest a (is (= 1 1)))" ("deftest" font-lock-keyword-face))
+    ("(defne [x y])" ("defne" font-lock-keyword-face))
+    ("(defnm a b)" ("defnm" font-lock-keyword-face))
+    ("(defnu)" ("defnu" font-lock-keyword-face))
+    ("(defnc [a])" ("defnc" font-lock-keyword-face))
+    ("(defna)" ("defna" font-lock-keyword-face))
+    ("(deftask a)" ("deftask" font-lock-keyword-face))
+    ("(defstate a :start \"b\" :stop \"c\")" ("defstate" font-lock-keyword-face)))
 
   (when-fontifying-it "should ignore unknown def forms"
-    ("(defbugproducer me)" (2 15 nil))
-    ("(default-user-settings {:a 1})" (2 24 nil))
-    ("(s/deftartar :foo)" (4 10 nil)))
+    ("(defbugproducer me)" ("defbugproducer" nil))
+    ("(default-user-settings {:a 1})" ("default-user-settings" nil))
+    ("(s/deftartar :foo)" ("deftartar" nil)))
 
   (when-fontifying-it "should handle variables defined with def"
     ("(def foo 10)"
-     (2 4 font-lock-keyword-face)
-     (6 8 font-lock-variable-name-face))
+     ("def" font-lock-keyword-face)
+     ("foo" font-lock-variable-name-face))
     ("(def foo:bar 10)"
-     (2 4 font-lock-keyword-face)
-     (6 12 font-lock-variable-name-face)))
+     ("def" font-lock-keyword-face)
+     ("foo:bar" font-lock-variable-name-face)))
 
   (when-fontifying-it "should handle variables definitions of type string"
     ("(def foo \"hello\")"
@@ -886,26 +911,26 @@ DESCRIPTION is the description of the spec."
 
   (when-fontifying-it "should handle deftype"
     ("(deftype Foo)"
-     (2 8 font-lock-keyword-face)
-     (10 12 font-lock-type-face)))
+     ("deftype" font-lock-keyword-face)
+     ("Foo" font-lock-type-face)))
 
   (when-fontifying-it "should handle defn"
     ("(defn foo [x] x)"
-     (2 5 font-lock-keyword-face)
-     (7 9 font-lock-function-name-face)))
+     ("defn" font-lock-keyword-face)
+     ("foo" font-lock-function-name-face)))
 
   (when-fontifying-it "should handle fn"
     ;; try to byte-recompile the clojure-mode.el when the face of 'fn' is 't'
     ("(fn foo [x] x)"
-     (2 3 font-lock-keyword-face)
-     ( 5 7 font-lock-function-name-face)))
+     ("fn" font-lock-keyword-face)
+     ("foo" font-lock-function-name-face)))
 
   (when-fontifying-it "should handle lambda-params %, %1, %n..."
     ("#(+ % %2 %3 %&)"
-     (5 5 font-lock-variable-name-face)
-     (7 8 font-lock-variable-name-face)
-     (10 11 font-lock-variable-name-face)
-     (13 14 font-lock-variable-name-face)))
+     ("%" font-lock-variable-name-face)
+     ("%2" font-lock-variable-name-face)
+     ("%3" font-lock-variable-name-face)
+     ("%&" font-lock-variable-name-face)))
 
   (when-fontifying-it "should handle multi-digit lambda-params"
     ;; % args with >1 digit are rare and unidiomatic but legal up to
@@ -920,18 +945,18 @@ DESCRIPTION is the description of the spec."
 
   (when-fontifying-it "should handle nils"
     ("(= nil x)"
-     (4 6 font-lock-constant-face))
+     ("nil" font-lock-constant-face))
 
     ("(fnil x)"
-     (3 5 nil)))
+     ("nil" nil)))
 
   (when-fontifying-it "should handle true"
     ("(= true x)"
-     (4 7 font-lock-constant-face)))
+     ("true" font-lock-constant-face)))
 
   (when-fontifying-it "should handle false"
     ("(= false x)"
-     (4 8 font-lock-constant-face)))
+     ("false" font-lock-constant-face)))
 
   (when-fontifying-it "should handle keyword-meta"
     ("^:meta-data"
@@ -1025,52 +1050,52 @@ DESCRIPTION is the description of the spec."
 
   (when-fontifying-it "should handle referred vars"
     ("foo/var"
-     (1 3 font-lock-type-face))
+     ("foo" font-lock-type-face))
 
     ("@foo/var"
-     (2 4 font-lock-type-face)))
+     ("foo" font-lock-type-face)))
 
   (when-fontifying-it "should handle dynamic vars"
     ("*some-var*"
-     (1 10 font-lock-variable-name-face))
+     ("*some-var*" font-lock-variable-name-face))
 
     ("@*some-var*"
-     (2 11 font-lock-variable-name-face))
+     ("*some-var*" font-lock-variable-name-face))
 
     ("some.ns/*var*"
-     (9 13 font-lock-variable-name-face))
+     ("*var*" font-lock-variable-name-face))
 
     ("*some-var?*"
-     (1 11 font-lock-variable-name-face)))
+     ("*some-var?*" font-lock-variable-name-face)))
 
   (when-fontifying-it "should handle letfn binding names"
     ("(letfn [(twice [x] (* x 2))])"
-     (2 6 font-lock-keyword-face)
-     (10 14 font-lock-function-name-face))
+     ("letfn" font-lock-keyword-face)
+     ("twice" font-lock-function-name-face))
 
     ("(letfn [(twice [x] (* x 2)) (six-times [y] (* (twice y) 3))])"
-     (10 14 font-lock-function-name-face)
-     (30 38 font-lock-function-name-face))
+     ("twice" font-lock-function-name-face)
+     ("six-times" font-lock-function-name-face))
 
     ("(clojure.core/letfn [(twice [x] (* x 2))])"
-     (23 27 font-lock-function-name-face))))
+     ("twice" font-lock-function-name-face))))
 
 (describe "docstring font-locking"
   (it "should font-lock defn docstrings"
-    (expect-face-at "(defn foo\n  \"docstring\"\n  [x] x)" 14 22 font-lock-doc-face))
+    (expect-face-of "(defn foo\n  \"docstring\"\n  [x] x)" "docstring" font-lock-doc-face))
 
   (it "should font-lock defprotocol docstrings"
-    (expect-face-at "(defprotocol Foo\n  \"protocol doc\")" 21 32 font-lock-doc-face))
+    (expect-face-of "(defprotocol Foo\n  \"protocol doc\")" "protocol doc" font-lock-doc-face))
 
   (it "should font-lock protocol method docstrings"
-    (expect-face-at "(defprotocol Foo\n  (bar [this]\n    \"method doc\"))" 37 46 font-lock-doc-face))
+    (expect-face-of "(defprotocol Foo\n  (bar [this]\n    \"method doc\"))" "method doc" font-lock-doc-face))
 
   (it "should font-lock protocol method docstrings with multiple arities"
-    (expect-face-at "(defprotocol Foo\n  (bar [this] [this x]\n    \"method doc\"))" 46 55 font-lock-doc-face))
+    (expect-face-of "(defprotocol Foo\n  (bar [this] [this x]\n    \"method doc\"))" "method doc" font-lock-doc-face))
 
   (it "should not font-lock regular strings in protocol methods as docstrings"
-    (expect-face-at "(defprotocol Foo\n  (bar [this]\n    \"not a doc\" \"method doc\"))"
-                    37 45 font-lock-string-face)))
+    (expect-face-of "(defprotocol Foo\n  (bar [this]\n    \"not a doc\" \"method doc\"))"
+                    "not a doc" font-lock-string-face)))
 
 (provide 'clojure-mode-font-lock-test)
 
