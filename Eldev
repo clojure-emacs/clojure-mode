@@ -8,7 +8,12 @@
 
 (eldev-use-plugin 'autoloads)
 
-(eldev-add-extra-dependencies 'test 'paredit 's 'buttercup)
+(eldev-add-extra-dependencies 'test 'paredit 'buttercup)
+
+;; Disable GPG signature verification for package installation in CI.
+;; Emacs 29 on Windows fails to verify signatures from the nongnu ELPA archive.
+(when (getenv "CI")
+  (setq package-check-signature nil))
 
 (setq byte-compile-docstring-max-column 240)
 (setq checkdoc-force-docstrings-flag nil)
