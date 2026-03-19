@@ -73,18 +73,22 @@ NTH defaults to 1."
 (defun clojure-test--check-faces (content face-specs)
   "Fontify CONTENT and check all FACE-SPECS.
 Each spec is either (START END FACE) for positional checks or
-\(SUBSTRING FACE) or (SUBSTRING FACE :nth N) for substring-based checks."
+\(SUBSTRING FACE) for substring-based checks.
+
+Substring specs are matched sequentially through the buffer so
+that repeated substrings resolve naturally in document order
+without any special annotation."
   (with-fontified-clojure-buffer content
     (dolist (spec face-specs)
       (pcase spec
-        (`(,(and (pred stringp) substr) ,face . ,rest)
-         (let ((nth (or (plist-get rest :nth) 1)))
-           (goto-char (point-min))
-           (dotimes (_ nth)
-             (search-forward substr))
-           (let* ((end (1- (point)))
-                  (start (- (point) (length substr))))
-             (expect (clojure-test--uniform-face start end) :to-equal face))))
+        (`(,(and (pred stringp) substr) ,face)
+         (let ((found (search-forward substr nil t)))
+           (expect found :not :to-be nil)
+           (when found
+             (let* ((end (1- (point)))
+                    (start (- (point) (length substr))))
+               (expect (clojure-test--uniform-face start end)
+                       :to-equal face)))))
         (`(,(and (pred numberp) start) ,end ,face)
          (expect (clojure-test--uniform-face start end) :to-equal face))))))
 
@@ -101,8 +105,9 @@ its index.")
   "Return a buttercup spec.
 
 TESTS are lists of the form (content face-spec*) where each face-spec is either
-\(start end expected-face) for positional checks or (substring expected-face) or
-\(substring expected-face :nth N) for substring-based checks.
+\(start end expected-face) for positional checks or (substring expected-face)
+for substring-based checks.  Substring specs are matched sequentially
+through the buffer so repeated substrings resolve in document order.
 
 DESCRIPTION is the description of the spec."
   (declare (indent 1))
@@ -269,7 +274,7 @@ DESCRIPTION is the description of the spec."
     ("(oneword/oneword)"
      ("oneword" font-lock-type-face)
      ("/" nil)
-     ("oneword" nil :nth 2))
+     ("oneword" nil))
 
     ("(oneword/seg.mnt)"
      ("oneword" font-lock-type-face)
@@ -330,7 +335,7 @@ DESCRIPTION is the description of the spec."
     ("(seg.mnt/seg.mnt)"
      ("seg.mnt" font-lock-type-face)
      ("/" nil)
-     ("seg.mnt" nil :nth 2))
+     ("seg.mnt" nil))
 
     ("(seg.mnt/mxdCase)"
      ("seg.mnt" font-lock-type-face)
@@ -389,7 +394,7 @@ DESCRIPTION is the description of the spec."
     ("(CmlCase/CmlCase)"
      ("CmlCase" font-lock-type-face)
      ("/" nil)
-     ("CmlCase" nil :nth 2))
+     ("CmlCase" nil))
 
     ("(CmlCase/ve/yCom|pLex.stu-ff)"
      ("CmlCase" font-lock-type-face)
@@ -433,7 +438,7 @@ DESCRIPTION is the description of the spec."
     ("(mxdCase/mxdCase)"
      ("mxdCase" font-lock-type-face)
      ("/" nil)
-     ("mxdCase" nil :nth 2))
+     ("mxdCase" nil))
 
     ("(mxdCase/CmlCase)"
      ("mxdCase" font-lock-type-face)
@@ -538,7 +543,7 @@ DESCRIPTION is the description of the spec."
     ("{:oneword/oneword 0}"
      ("oneword" font-lock-type-face)
      ("/" default)
-     ("oneword" clojure-keyword-face :nth 2))
+     ("oneword" clojure-keyword-face))
 
     ("{:oneword/seg.mnt 0}"
      ("oneword" font-lock-type-face)
@@ -638,7 +643,7 @@ DESCRIPTION is the description of the spec."
     ("{:seg.mnt/seg.mnt 0}"
      ("seg.mnt" font-lock-type-face)
      ("/" default)
-     ("seg.mnt" clojure-keyword-face :nth 2))
+     ("seg.mnt" clojure-keyword-face))
 
     ("{:seg.mnt/CmlCase 0}"
      ("seg.mnt" font-lock-type-face)
@@ -686,7 +691,7 @@ DESCRIPTION is the description of the spec."
     ("{:CmlCase/CmlCase 0}"
      ("CmlCase" font-lock-type-face)
      ("/" default)
-     ("CmlCase" clojure-keyword-face :nth 2))
+     ("CmlCase" clojure-keyword-face))
 
     ("{:CmlCase/mxdCase 0}"
      ("CmlCase" font-lock-type-face)
@@ -734,7 +739,7 @@ DESCRIPTION is the description of the spec."
     ("{:mxdCase/mxdCase 0}"
      ("mxdCase" font-lock-type-face)
      ("/" default)
-     ("mxdCase" clojure-keyword-face :nth 2))
+     ("mxdCase" clojure-keyword-face))
 
     ("{:mxdCase/ve/yCom|pLex.stu-ff 0}"
      ("mxdCase" font-lock-type-face)
