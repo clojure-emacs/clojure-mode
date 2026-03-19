@@ -23,6 +23,8 @@
 
 ;;; Code:
 
+(require 'cl-lib)
+
 (message "Running tests on Emacs %s" emacs-version)
 
 (defmacro with-clojure-buffer (text &rest body)
@@ -78,7 +80,7 @@ DESCRIPTION is a string with the description of the spec."
   (declare (indent 1))
   `(it ,description
      (let* ((after ,after)
-            (expected-cursor-pos (1+ (s-index-of "|" after)))
+            (expected-cursor-pos (1+ (cl-position ?| after)))
             (expected-state (delete ?| after)))
        (with-clojure-buffer ,before
          (goto-char (point-min))

@@ -26,7 +26,6 @@
 (require 'clojure-mode)
 (require 'cl-lib)
 (require 'buttercup)
-(require 's nil t)               ;Don't burp if it's missing during compilation.
 (require 'test-helper "test/utils/test-helper")
 
 (defmacro when-indenting-with-point-it (description before after)
@@ -46,7 +45,7 @@ DESCRIPTION is a string with the description of the spec."
   `(it ,description
     (let* ((after ,after)
            (clojure-indent-style 'always-align)
-           (expected-cursor-pos (1+ (s-index-of "|" after)))
+           (expected-cursor-pos (1+ (cl-position ?| after)))
            (expected-state (delete ?| after)))
       (with-clojure-buffer ,before
         (goto-char (point-min))
