@@ -17,9 +17,9 @@ jobs:
         emacs-version: ['27.1', '28.2', '29.4', '30.1', 'snapshot']
         include:
           - os: macos-latest
-            emacs-version: '29.4'
+            emacs-version: '30.1'
           - os: windows-latest
-            emacs-version: '29.4'
+            emacs-version: '30.1'
 
     steps:
       - uses: actions/checkout@v5
