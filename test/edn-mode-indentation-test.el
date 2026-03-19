@@ -37,68 +37,63 @@
      (edn-mode)
      ,@body))
 
+(defmacro when-indenting-edn-it (description &rest forms)
+  "Return a buttercup spec.
+
+Check that all FORMS correspond to properly indented sexps in `edn-mode'.
+
+DESCRIPTION is a string with the description of the spec."
+  (declare (indent 1))
+  `(it ,description
+     (progn
+       ,@(mapcar (lambda (form)
+                   `(with-temp-buffer
+                      (edn-mode)
+                      (insert "\n" ,form)
+                      (indent-region (point-min) (point-max))
+                      (expect (buffer-string) :to-equal ,(concat "\n" form))))
+                 forms))))
+
 (describe "edn-mode indentation"
 
   (describe "lists use aligned indentation (not function-call style)"
 
-    (it "should align list elements uniformly"
-      (with-edn-buffer "\n(foo\nbar\nbaz)"
-        (indent-region (point-min) (point-max))
-        (expect (buffer-string) :to-equal "\n(foo\n bar\n baz)")))
+    (when-indenting-edn-it "should align list elements uniformly"
+      "(foo\n bar\n baz)")
 
-    (it "should align nested lists uniformly"
-      (with-edn-buffer "\n(foo\n(bar\nbaz))"
-        (indent-region (point-min) (point-max))
-        (expect (buffer-string) :to-equal "\n(foo\n (bar\n  baz))"))))
+    (when-indenting-edn-it "should align nested lists uniformly"
+      "(foo\n (bar\n  baz))"))
 
   (describe "forms that normally get special indentation are treated as plain data"
 
-    (it "should align let arguments instead of using body indentation"
-      (with-edn-buffer "\n(let [x 1]\nx)"
-        (indent-region (point-min) (point-max))
-        (expect (buffer-string) :to-equal "\n(let [x 1]\n x)")))
+    (when-indenting-edn-it "should align let arguments instead of using body indentation"
+      "(let [x 1]\n x)")
 
-    (it "should align if arguments instead of using body indentation"
-      (with-edn-buffer "\n(if true\n1\n2)"
-        (indent-region (point-min) (point-max))
-        (expect (buffer-string) :to-equal "\n(if true\n 1\n 2)")))
+    (when-indenting-edn-it "should align if arguments instead of using body indentation"
+      "(if true\n 1\n 2)")
 
-    (it "should align cond arguments instead of using body indentation"
-      (with-edn-buffer "\n(cond a\nb)"
-        (indent-region (point-min) (point-max))
-        (expect (buffer-string) :to-equal "\n(cond a\n b)")))
+    (when-indenting-edn-it "should align cond arguments instead of using body indentation"
+      "(cond a\n b)")
 
-    (it "should align do arguments instead of using body indentation"
-      (with-edn-buffer "\n(do a\nb)"
-        (indent-region (point-min) (point-max))
-        (expect (buffer-string) :to-equal "\n(do a\n b)")))
+    (when-indenting-edn-it "should align do arguments instead of using body indentation"
+      "(do a\n b)")
 
-    (it "should align keyword lists as data (issue #610)"
-      (with-edn-buffer "\n(:key1 :value1\n:key2 :value2)"
-        (indent-region (point-min) (point-max))
-        (expect (buffer-string) :to-equal "\n(:key1 :value1\n :key2 :value2)"))))
+    (when-indenting-edn-it "should align keyword lists as data (issue #610)"
+      "(:key1 :value1\n :key2 :value2)"))
 
   (describe "maps, vectors, and sets indent normally"
 
-    (it "should indent map values"
-      (with-edn-buffer "\n{:a 1\n:b 2}"
-        (indent-region (point-min) (point-max))
-        (expect (buffer-string) :to-equal "\n{:a 1\n :b 2}")))
+    (when-indenting-edn-it "should indent map values"
+      "{:a 1\n :b 2}")
 
-    (it "should indent vectors"
-      (with-edn-buffer "\n[1\n2\n3]"
-        (indent-region (point-min) (point-max))
-        (expect (buffer-string) :to-equal "\n[1\n 2\n 3]")))
+    (when-indenting-edn-it "should indent vectors"
+      "[1\n 2\n 3]")
 
-    (it "should indent sets"
-      (with-edn-buffer "\n#{:a\n:b\n:c}"
-        (indent-region (point-min) (point-max))
-        (expect (buffer-string) :to-equal "\n#{:a\n  :b\n  :c}")))
+    (when-indenting-edn-it "should indent sets"
+      "#{:a\n  :b\n  :c}")
 
-    (it "should indent nested data structures"
-      (with-edn-buffer "\n{:deps\n{org.clojure/clojure\n{:mvn/version \"1.11.1\"}}}"
-        (indent-region (point-min) (point-max))
-        (expect (buffer-string) :to-equal "\n{:deps\n {org.clojure/clojure\n  {:mvn/version \"1.11.1\"}}}"))))
+    (when-indenting-edn-it "should indent nested data structures"
+      "{:deps\n {org.clojure/clojure\n  {:mvn/version \"1.11.1\"}}}"))
 
   (describe "mode configuration"
 
