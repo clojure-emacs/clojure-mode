@@ -1248,6 +1248,31 @@ x
         (indent-region (point-min) (point-max))
         (expect (buffer-string) :to-equal "\n(ns foo\n  (:require\n    [bar]))")))))
 
+(describe "clojure-use-backtracking-indent"
+  (it "should still indent simple specs correctly when disabled"
+    (let ((clojure-use-backtracking-indent nil))
+      ;; Integer spec (when has spec 1)
+      (with-clojure-buffer "\n(when true\nbody)"
+        (indent-region (point-min) (point-max))
+        (expect (buffer-string) :to-equal "\n(when true\n  body)"))
+      ;; :defn spec
+      (with-clojure-buffer "\n(defn foo\n[x]\nx)"
+        (indent-region (point-min) (point-max))
+        (expect (buffer-string) :to-equal "\n(defn foo\n  [x]\n  x)"))))
+
+  (it "should lose context for complex specs when disabled"
+    (let ((clojure-use-backtracking-indent nil))
+      ;; Without backtracking, the body of a letfn binding won't get
+      ;; :defn-style indentation because the backtracking that walks
+      ;; up to letfn's spec (1 ((:defn)) nil) is disabled.
+      (with-clojure-buffer "\n(letfn [(foo [x]\n(+ x 1))]\n(foo 1))"
+        (indent-region (point-min) (point-max))
+        ;; The body of foo should NOT get :defn-style (2-space) indent
+        ;; relative to foo — instead it gets default alignment.
+        (let ((result (buffer-string)))
+          ;; Just verify it differs from the backtracking result
+          (expect result :not :to-equal "\n(letfn [(foo [x]\n          (+ x 1))]\n  (foo 1))"))))))
+
 (provide 'clojure-mode-indentation-test)
 
 ;;; clojure-mode-indentation-test.el ends here
