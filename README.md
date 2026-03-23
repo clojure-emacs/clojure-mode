@@ -239,27 +239,74 @@ prefixed with some ns (or ns alias):
 (put-clojure-indent 'my-ns/do 1)
 ```
 
-The bodies of certain more complicated macros and special forms
-(e.g. `letfn`, `deftype`, `extend-protocol`, etc) are indented using
-a contextual backtracking indentation method, require more sophisticated
-indent specifications. Here are a few examples:
+##### Backtracking (contextual) indentation
+
+Certain macros and special forms (e.g. `letfn`, `deftype`,
+`extend-protocol`) contain *nested* sub-forms that each need their
+own indentation style.  For these, `clojure-mode` uses **backtracking
+indentation**: when indenting a line, it walks up the sexp tree to
+find a parent form with an indent spec, then uses the current
+position within that spec to decide how to indent.
+
+A backtracking indent spec is a **quoted list** where each element
+controls indentation at the corresponding argument position
+(0-indexed).  The allowed elements are:
+
+| Element | Meaning |
+|---------|---------|
+| An integer N | First N args are "special" (indented further); rest are body |
+| `:defn` | Indent like a function/macro body |
+| `:form` | Indent like a regular form |
+| `nil` | Use default indentation rules |
+| A list `(SPEC)` | This position holds a **list of forms**, each indented according to SPEC |
+
+For example, `letfn` uses `'(1 ((:defn)) nil)`:
+
+```clojure
+(letfn [(twice [x]        ;; pos 0 → spec 1 (1 special arg = the binding vector)
+          (* x 2))        ;; inside binding → spec ((:defn)) applies:
+        (thrice [x]       ;;   each binding is a list of :defn-style forms
+          (* x 3))]       ;;   so function bodies get :defn indentation
+  (+ (twice 5)            ;; pos 1+ → spec nil (default → body indentation)
+     (thrice 5)))
+```
+
+And `defrecord` uses `'(2 nil nil (:defn))`:
+
+```clojure
+(defrecord MyRecord       ;; pos 0 → spec 2 (2 special args: name + fields)
+    [field1 field2]       ;; pos 1 → spec nil (within special args zone)
+  SomeProtocol            ;; pos 2 → spec nil
+  (some-method [this]     ;; pos 3+ → spec (:defn) — each method gets :defn-style
+    (do-stuff this)))
+```
+
+Here are the built-in backtracking specs:
 
 ```el
 (define-clojure-indent
-  (implement '(1 (1)))
-  (letfn     '(1 ((:defn)) nil))
-  (proxy     '(2 nil nil (1)))
-  (reify     '(:defn (1)))
-  (deftype   '(2 nil nil (1)))
-  (defrecord '(2 nil nil (1)))
-  (specify   '(1 (1)))
-  (specify   '(1 (1))))
+  (letfn          '(1 ((:defn)) nil))
+  (deftype        '(2 nil nil (:defn)))
+  (defrecord      '(2 nil nil (:defn)))
+  (defprotocol    '(1 (:defn)))
+  (definterface   '(1 (:defn)))
+  (reify          '(:defn (1)))
+  (proxy          '(2 nil nil (:defn)))
+  (extend-protocol '(1 :defn))
+  (extend-type    '(1 :defn))
+  (specify        '(1 :defn))
+  (specify!       '(1 :defn)))
 ```
 
 These follow the same rules as the `:style/indent` metadata specified by [cider-nrepl][].
-For instructions on how to write these specifications, see
+For more details on writing indent specifications, see
 [this document](https://docs.cider.mx/cider/indent_spec.html).
 The only difference is that you're allowed to use lists instead of vectors.
+
+Backtracking is controlled by `clojure-use-backtracking-indent`
+(default `t`) and limited to `clojure-max-backtracking` levels
+(default 3).  Disabling backtracking will break indentation for
+all forms with list-based specs.
 
 The indentation of [special arguments](https://docs.cider.mx/cider/indent_spec.html#special-arguments) is controlled by
 `clojure-special-arg-indent-factor`, which by default indents special arguments
@@ -724,13 +771,16 @@ See [this ticket](https://github.com/clojure-emacs/clojure-mode/issues/270) for 
 
 ### Indentation Performance
 
-`clojure-mode`'s indentation engine is a bit slow. You can speed things up
-significantly by disabling `clojure-use-backtracking-indent`, but this will
-break the indentation of complex forms like `deftype`, `defprotocol`, `reify`,
-`letfn`, etc.
+`clojure-mode`'s indentation engine is a bit slow due to the
+[backtracking indentation](#backtracking-contextual-indentation) logic
+that walks up the sexp tree for context. You can speed things up
+significantly by setting `clojure-use-backtracking-indent` to `nil`,
+but this will break the indentation of forms with list-based specs
+(`deftype`, `defrecord`, `defprotocol`, `definterface`, `reify`,
+`proxy`, `letfn`, `extend-type`, `extend-protocol`, `specify`,
+`specify!`). Simple integer and `:defn` specs will continue to work.
 
-We should look into ways to optimize the performance of the backtracking
-indentation logic. See [this ticket](https://github.com/clojure-emacs/clojure-mode/issues/606) for more
+See [this ticket](https://github.com/clojure-emacs/clojure-mode/issues/606) for more
 details.
 
 ### Font-locking Implementation

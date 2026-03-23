@@ -512,6 +512,349 @@ DESCRIPTION is a string with the description of the spec."
     (with-out-binding [out messages]
       (.flush out))))")
 
+  (when-indenting-it "should handle defmethod"
+    "
+(defmethod foo :bar
+  [x]
+  (println x))"
+
+    "
+(defmethod foo :default
+  [x y]
+  (+ x y))")
+
+  (when-indenting-it "should handle multi-arity defn"
+    "
+(defn foo
+  ([x]
+   (foo x 1))
+  ([x y]
+   (+ x y)))"
+
+    "
+(defn foo
+  \"docstring\"
+  ([x]
+   (foo x 1))
+  ([x y]
+   (+ x y)))"
+
+    "
+(defn ^:private foo
+  ([x]
+   (foo x 1))
+  ([x y]
+   (+ x y)))")
+
+  (when-indenting-it "should handle nested letfn"
+    "
+(letfn [(foo [x]
+          (let [y (inc x)]
+            (* y y)))
+        (bar [a]
+          (letfn [(baz [b]
+                    (+ a b))]
+            (baz 1)))]
+  (foo (bar 10)))")
+
+  (when-indenting-it "should handle try/catch/finally"
+    "
+(try
+  (dangerous)
+  (catch Exception e
+    (println e))
+  (finally
+    (cleanup)))")
+
+  (when-indenting-it "should handle as->"
+    "
+(as-> x $
+  (inc $)
+  (* $ 2))")
+
+  (when-indenting-it "should indent with-* forms like body even without explicit specs"
+    "
+(with-open [f (io/reader \"x\")]
+  (slurp f))"
+
+    "
+(with-redefs [foo bar]
+  (test-stuff))"
+
+    "
+(with-custom-thing [x y]
+  (body x y))")
+
+  (when-indenting-it "should handle condp"
+    "
+(condp = x
+  1 \"one\"
+  2 \"two\"
+  \"other\")")
+
+  (when-indenting-it "should handle namespace-qualified special forms"
+    "
+(clojure.core/let [x 1]
+  (inc x))"
+
+    "
+(clojure.core/when true
+  (do-stuff))"
+
+    "
+(clojure.core/defn foo
+  [x]
+  (inc x))")
+
+  (when-indenting-it "should indent unknown def forms like body"
+    "
+(defwhatever my-thing
+  :some-option true
+  :another false)"
+
+    "
+(my.ns/defwhatever my-thing
+  :some-option true
+  :another false)")
+
+  (when-indenting-it "should handle fn"
+    "
+(fn [x]
+  (inc x))"
+
+    "
+(fn my-fn [x]
+  (inc x))"
+
+    "
+(fn
+  ([x]
+   (inc x))
+  ([x y]
+   (+ x y)))")
+
+  (when-indenting-it "should handle def"
+    "
+(def x
+  (+ 1 2))"
+
+    "
+(def ^:dynamic *x*
+  42)")
+
+  (when-indenting-it "should handle bound-fn"
+    "
+(bound-fn [x]
+  (inc x))")
+
+  (when-indenting-it "should handle if"
+    "
+(if (even? x)
+  (inc x)
+  (dec x))")
+
+  (when-indenting-it "should handle if-not"
+    "
+(if-not (nil? x)
+  (use x)
+  (default))")
+
+  (when-indenting-it "should handle case"
+    "
+(case x
+  :a 1
+  :b 2
+  3)")
+
+  (when-indenting-it "should handle when"
+    "
+(when (pos? x)
+  (println x)
+  (inc x))")
+
+  (when-indenting-it "should handle when-not"
+    "
+(when-not (nil? x)
+  (println x))")
+
+  (when-indenting-it "should handle when-first"
+    "
+(when-first [x xs]
+  (println x))")
+
+  (when-indenting-it "should handle while"
+    "
+(while (pos? @counter)
+  (swap! counter dec))")
+
+  (when-indenting-it "should handle do"
+    "
+(do
+  (println 1)
+  (println 2))")
+
+  (when-indenting-it "should handle delay"
+    "
+(delay
+  (expensive-computation))")
+
+  (when-indenting-it "should handle future"
+    "
+(future
+  (long-running-task))")
+
+  (when-indenting-it "should handle comment"
+    "
+(comment
+  (foo 1 2)
+  (bar 3 4))")
+
+  (when-indenting-it "should handle binding"
+    "
+(binding [*out* writer]
+  (println \"hello\"))")
+
+  (when-indenting-it "should handle loop"
+    "
+(loop [i 0]
+  (when (< i 10)
+    (recur (inc i))))")
+
+  (when-indenting-it "should handle for"
+    "
+(for [x (range 10)
+      :when (even? x)]
+  (* x x))")
+
+  (when-indenting-it "should handle doseq"
+    "
+(doseq [x xs]
+  (println x))")
+
+  (when-indenting-it "should handle dotimes"
+    "
+(dotimes [i 10]
+  (println i))")
+
+  (when-indenting-it "should handle when-let"
+    "
+(when-let [x (foo)]
+  (bar x))")
+
+  (when-indenting-it "should handle if-let"
+    "
+(if-let [x (foo)]
+  (bar x)
+  (baz))")
+
+  (when-indenting-it "should handle when-some"
+    "
+(when-some [x (foo)]
+  (bar x))")
+
+  (when-indenting-it "should handle if-some"
+    "
+(if-some [x (foo)]
+  (bar x)
+  (baz))")
+
+  (when-indenting-it "should handle doto"
+    "
+(doto (java.util.HashMap.)
+  (.put \"a\" 1)
+  (.put \"b\" 2))")
+
+  (when-indenting-it "should handle locking"
+    "
+(locking obj
+  (alter-state! obj))")
+
+  (when-indenting-it "should handle fdef"
+    "
+(fdef my-fn
+  :args (s/cat :x int?)
+  :ret int?)")
+
+  (when-indenting-it "should handle this-as"
+    "
+(this-as self
+  (.method self))")
+
+  ;; clojure.test
+  (when-indenting-it "should handle testing"
+    "
+(testing \"some feature\"
+  (is (= 1 1)))")
+
+  (when-indenting-it "should handle deftest"
+    "
+(deftest my-test
+  (is (= 1 1)))")
+
+  (when-indenting-it "should handle are"
+    "
+(are [x y] (= x y)
+  1 1
+  2 2)")
+
+  (when-indenting-it "should handle use-fixtures"
+    "
+(use-fixtures :each
+  my-fixture)")
+
+  (when-indenting-it "should handle async"
+    "
+(async done
+  (do-stuff)
+  (done))")
+
+  ;; core.logic
+  (when-indenting-it "should handle run"
+    "
+(run [q]
+  (== q 1))")
+
+  (when-indenting-it "should handle run*"
+    "
+(run* [q]
+  (== q 1))")
+
+  (when-indenting-it "should handle fresh"
+    "
+(fresh [a b]
+  (== a 1)
+  (== b 2))")
+
+  ;; core.async
+  (when-indenting-it "should handle go"
+    "
+(go
+  (<! ch)
+  (println \"done\"))")
+
+  (when-indenting-it "should handle go-loop"
+    "
+(go-loop [x 0]
+  (>! ch x)
+  (recur (inc x)))")
+
+  (when-indenting-it "should handle thread"
+    "
+(thread
+  (blocking-op))")
+
+  (when-indenting-it "should handle alt!"
+    "
+(alt!
+  ch1 ([v] (println v))
+  ch2 ([v] (println v)))")
+
+  (when-indenting-it "should handle alt!!"
+    "
+(alt!!
+  ch1 ([v] (println v))
+  ch2 ([v] (println v)))")
+
   (when-indenting-it "should handle reader conditionals"
     "#?@ (:clj []
      :cljs [])")
@@ -870,6 +1213,124 @@ x
     (expect (clojure--valid-put-clojure-indent-call-p
              '(put-clojure-indent 'foo "bar"))
             :to-throw)))
+
+(describe "clojure-indent-keyword-style"
+  (it "should align keyword forms with always-align (default)"
+    (let ((clojure-indent-keyword-style 'always-align))
+      ;; Case A: arg on same line → align with it
+      (with-clojure-buffer "\n(ns foo\n(:require\n[bar]))"
+        (indent-region (point-min) (point-max))
+        (expect (buffer-string) :to-equal "\n(ns foo\n  (:require\n   [bar]))"))
+      ;; Case B: no arg on same line → align with keyword
+      (with-clojure-buffer "\n(ns foo\n(:require [bar]\n[baz]))"
+        (indent-region (point-min) (point-max))
+        (expect (buffer-string) :to-equal "\n(ns foo\n  (:require [bar]\n            [baz]))"))))
+
+  (it "should indent keyword forms with always-indent"
+    (let ((clojure-indent-keyword-style 'always-indent))
+      ;; Case A: arg on same line → still indented like body
+      (with-clojure-buffer "\n(ns foo\n(:require [bar]\n[baz]))"
+        (indent-region (point-min) (point-max))
+        (expect (buffer-string) :to-equal "\n(ns foo\n  (:require [bar]\n    [baz]))"))
+      ;; Case B: no arg on same line → indented like body
+      (with-clojure-buffer "\n(ns foo\n(:require\n[bar]))"
+        (indent-region (point-min) (point-max))
+        (expect (buffer-string) :to-equal "\n(ns foo\n  (:require\n    [bar]))"))))
+
+  (it "should indent keyword forms with align-arguments"
+    (let ((clojure-indent-keyword-style 'align-arguments))
+      ;; Case A: arg on same line → align with first arg
+      (with-clojure-buffer "\n(ns foo\n(:require [bar]\n[baz]))"
+        (indent-region (point-min) (point-max))
+        (expect (buffer-string) :to-equal "\n(ns foo\n  (:require [bar]\n            [baz]))"))
+      ;; Case B: no arg on same line → indented like body
+      (with-clojure-buffer "\n(ns foo\n(:require\n[bar]))"
+        (indent-region (point-min) (point-max))
+        (expect (buffer-string) :to-equal "\n(ns foo\n  (:require\n    [bar]))")))))
+
+(describe "clojure-use-backtracking-indent"
+  (it "should still indent simple specs correctly when disabled"
+    (let ((clojure-use-backtracking-indent nil))
+      ;; Integer spec (when has spec 1)
+      (with-clojure-buffer "\n(when true\nbody)"
+        (indent-region (point-min) (point-max))
+        (expect (buffer-string) :to-equal "\n(when true\n  body)"))
+      ;; :defn spec
+      (with-clojure-buffer "\n(defn foo\n[x]\nx)"
+        (indent-region (point-min) (point-max))
+        (expect (buffer-string) :to-equal "\n(defn foo\n  [x]\n  x)"))))
+
+  (it "should lose context for complex specs when disabled"
+    (let ((clojure-use-backtracking-indent nil))
+      ;; Without backtracking, the body of a letfn binding won't get
+      ;; :defn-style indentation because the backtracking that walks
+      ;; up to letfn's spec (1 ((:defn)) nil) is disabled.
+      (with-clojure-buffer "\n(letfn [(foo [x]\n(+ x 1))]\n(foo 1))"
+        (indent-region (point-min) (point-max))
+        ;; The body of foo should NOT get :defn-style (2-space) indent
+        ;; relative to foo — instead it gets default alignment.
+        (let ((result (buffer-string)))
+          ;; Just verify it differs from the backtracking result
+          (expect result :not :to-equal "\n(letfn [(foo [x]\n          (+ x 1))]\n  (foo 1))"))))))
+
+(describe "clojure-max-backtracking"
+  (it "should limit how far up the sexp tree backtracking goes"
+    ;; With max-backtracking = 0, even one level of backtracking is
+    ;; disabled, so letfn bindings lose :defn-style indentation.
+    (let ((clojure-max-backtracking 0))
+      (with-clojure-buffer "\n(letfn [(foo [x]\n(+ x 1))]\n(foo 1))"
+        (indent-region (point-min) (point-max))
+        (let ((result (buffer-string)))
+          (expect result :not :to-equal "\n(letfn [(foo [x]\n          (+ x 1))]\n  (foo 1))")))))
+
+  (it "should indent correctly with sufficient backtracking depth"
+    ;; With the default depth (3), letfn works fine.
+    (let ((clojure-max-backtracking 3))
+      (with-clojure-buffer "\n(letfn [(foo [x]\n(+ x 1))]\n(foo 1))"
+        (indent-region (point-min) (point-max))
+        (expect (buffer-string) :to-equal "\n(letfn [(foo [x]\n          (+ x 1))]\n  (foo 1))")))))
+
+(describe "clojure-enable-indent-specs"
+  (it "should use uniform indentation when disabled"
+    (let ((clojure-enable-indent-specs nil))
+      ;; let normally gets spec 1, but with specs disabled it should
+      ;; indent like a regular function call.
+      (with-clojure-buffer "\n(let [x 1]\nx)"
+        (indent-region (point-min) (point-max))
+        (expect (buffer-string) :to-equal "\n(let [x 1]\n     x)"))
+      ;; when normally gets spec 1
+      (with-clojure-buffer "\n(when true\nbody)"
+        (indent-region (point-min) (point-max))
+        (expect (buffer-string) :to-equal "\n(when true\n      body)"))))
+
+  (it "should still indent def*/with-* forms like body when specs are disabled"
+    ;; The def*/with-* fallback in clojure-indent-function fires
+    ;; regardless of clojure-enable-indent-specs.
+    (let ((clojure-enable-indent-specs nil))
+      (with-clojure-buffer "\n(defn foo\n[x]\nx)"
+        (indent-region (point-min) (point-max))
+        (expect (buffer-string) :to-equal "\n(defn foo\n  [x]\n  x)")))))
+
+(describe "clojure-get-indent-function"
+  (it "should use custom function to look up indent specs"
+    (let ((clojure-get-indent-function
+           (lambda (name)
+             (when (string= name "my-custom-macro")
+               1))))
+      ;; my-custom-macro has no built-in spec, but our custom function
+      ;; provides spec 1 (one special arg, then body).
+      (with-clojure-buffer "\n(my-custom-macro binding\nbody)"
+        (indent-region (point-min) (point-max))
+        (expect (buffer-string) :to-equal "\n(my-custom-macro binding\n  body)"))))
+
+  (it "should fall back to built-in specs when custom function returns nil"
+    (let ((clojure-get-indent-function
+           (lambda (_name) nil)))
+      ;; let has a built-in spec, and the custom function returns nil,
+      ;; so the built-in spec should still apply.
+      (with-clojure-buffer "\n(let [x 1]\nx)"
+        (indent-region (point-min) (point-max))
+        (expect (buffer-string) :to-equal "\n(let [x 1]\n  x)")))))
 
 (provide 'clojure-mode-indentation-test)
 

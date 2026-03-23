@@ -197,12 +197,19 @@ to indent keyword invocation forms.
   :package-version '(clojure-mode . "5.19.0"))
 
 (defcustom clojure-use-backtracking-indent t
-  "When non-nil, enable context sensitive indentation."
+  "When non-nil, enable context-sensitive indentation.
+When indenting a line, walk up the sexp tree to find a parent
+form with an indent spec, then use the current position within
+that spec to determine indentation.  This is required for forms
+with list-based indent specs like `letfn', `deftype', `defrecord',
+`reify', `proxy', etc.  Disabling this speeds up indentation but
+breaks those forms."
   :type 'boolean
   :safe 'booleanp)
 
 (defcustom clojure-max-backtracking 3
-  "Maximum amount to backtrack up a list to check for context."
+  "Maximum number of levels to walk up the sexp tree for indent context.
+Only relevant when `clojure-use-backtracking-indent' is non-nil."
   :type 'integer
   :safe 'integerp)
 
@@ -1694,8 +1701,15 @@ symbol properties."
 (defvar clojure--current-backtracking-depth 0)
 
 (defun clojure--find-indent-spec-backtracking ()
-  "Return the indent sexp that applies to the sexp at point.
-Implementation function for `clojure--find-indent-spec'."
+  "Return the indent spec that applies to the sexp at point.
+Walk up the sexp tree (up to `clojure-max-backtracking' levels)
+to find a parent form with an indent spec, then use the current
+position within that parent to index into its spec.
+
+For a list spec like (1 ((:defn)) nil), position 0 yields 1,
+position 1 yields ((:defn)), and position 2+ yields nil.  A
+sub-spec wrapped in a list like ((:defn)) means \"this position
+holds a list of forms, each indented with :defn style\"."
   (when (and (>= clojure-max-backtracking clojure--current-backtracking-depth)
              (not (looking-at "^")))
     (let ((clojure--current-backtracking-depth (1+ clojure--current-backtracking-depth))
@@ -1836,14 +1850,23 @@ the indentation.
 
 The property value can be
 
-- `:defn', meaning indent `defn'-style;
+- `:defn', meaning indent `defn'-style (body indentation);
 - an integer N, meaning indent the first N arguments specially
-  like ordinary function arguments and then indent any further
-  arguments like a body;
+  (further indented) and then indent any further arguments like
+  a body;
 - a function to call just as this function was called.
   If that function returns nil, that means it doesn't specify
-  the indentation.
-- a list, which is used by `clojure-backtracking-indent'.
+  the indentation;
+- a list, used for backtracking indentation of complex forms.
+  Each element controls indentation at the corresponding argument
+  position.  Elements can be integers, `:defn', `:form', nil, or
+  a nested list like ((:defn)) meaning \"a list of :defn-style
+  forms\".  See `clojure--find-indent-spec-backtracking' for
+  details.
+
+When no indent spec is found, forms starting with `def' or `with-'
+get body-style indentation, and forms starting with `:' use
+`clojure-indent-keyword-style'.
 
 This function also returns nil meaning don't specify the indentation."
   ;; Goto to the open-paren.
@@ -1904,7 +1927,19 @@ This function also returns nil meaning don't specify the indentation."
 
 ;;; Setting indentation
 (defun put-clojure-indent (sym indent)
-  "Instruct `clojure-indent-function' to indent the body of SYM by INDENT."
+  "Set the indentation spec of SYM to INDENT.
+
+INDENT can be:
+- `:defn' — indent like a function/macro body
+- an integer N — N special args, then body
+- a function — custom indentation function
+- a quoted list — positional backtracking spec (see
+  `clojure--find-indent-spec-backtracking')
+
+Examples:
+  (put-clojure-indent \\='when 1)
+  (put-clojure-indent \\='>defn :defn)
+  (put-clojure-indent \\='letfn \\='(1 ((:defn)) nil))"
   (put sym 'clojure-indent-function indent))
 
 (defun clojure--maybe-quoted-symbol-p (x)
