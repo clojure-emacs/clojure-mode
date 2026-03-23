@@ -1290,6 +1290,27 @@ x
         (indent-region (point-min) (point-max))
         (expect (buffer-string) :to-equal "\n(letfn [(foo [x]\n          (+ x 1))]\n  (foo 1))")))))
 
+(describe "clojure-enable-indent-specs"
+  (it "should use uniform indentation when disabled"
+    (let ((clojure-enable-indent-specs nil))
+      ;; let normally gets spec 1, but with specs disabled it should
+      ;; indent like a regular function call.
+      (with-clojure-buffer "\n(let [x 1]\nx)"
+        (indent-region (point-min) (point-max))
+        (expect (buffer-string) :to-equal "\n(let [x 1]\n     x)"))
+      ;; when normally gets spec 1
+      (with-clojure-buffer "\n(when true\nbody)"
+        (indent-region (point-min) (point-max))
+        (expect (buffer-string) :to-equal "\n(when true\n      body)"))))
+
+  (it "should still indent def*/with-* forms like body when specs are disabled"
+    ;; The def*/with-* fallback in clojure-indent-function fires
+    ;; regardless of clojure-enable-indent-specs.
+    (let ((clojure-enable-indent-specs nil))
+      (with-clojure-buffer "\n(defn foo\n[x]\nx)"
+        (indent-region (point-min) (point-max))
+        (expect (buffer-string) :to-equal "\n(defn foo\n  [x]\n  x)")))))
+
 (provide 'clojure-mode-indentation-test)
 
 ;;; clojure-mode-indentation-test.el ends here
