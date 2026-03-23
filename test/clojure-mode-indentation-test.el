@@ -566,6 +566,36 @@ DESCRIPTION is a string with the description of the spec."
   (finally
     (cleanup)))")
 
+  (when-indenting-it "should handle as->"
+    "
+(as-> x $
+  (inc $)
+  (* $ 2))")
+
+  (when-indenting-it "should indent with-* forms like body even without explicit specs"
+    "
+(with-open [f (io/reader \"x\")]
+  (slurp f))"
+
+    "
+(with-redefs [foo bar]
+  (test-stuff))"
+
+    "
+(with-custom-thing [x y]
+  (body x y))")
+
+  (when-indenting-it "should indent unknown def forms like body"
+    "
+(defwhatever my-thing
+  :some-option true
+  :another false)"
+
+    "
+(my.ns/defwhatever my-thing
+  :some-option true
+  :another false)")
+
   (when-indenting-it "should handle reader conditionals"
     "#?@ (:clj []
      :cljs [])")
