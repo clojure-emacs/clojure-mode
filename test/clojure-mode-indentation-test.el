@@ -780,6 +780,81 @@ DESCRIPTION is a string with the description of the spec."
 (this-as self
   (.method self))")
 
+  ;; clojure.test
+  (when-indenting-it "should handle testing"
+    "
+(testing \"some feature\"
+  (is (= 1 1)))")
+
+  (when-indenting-it "should handle deftest"
+    "
+(deftest my-test
+  (is (= 1 1)))")
+
+  (when-indenting-it "should handle are"
+    "
+(are [x y] (= x y)
+  1 1
+  2 2)")
+
+  (when-indenting-it "should handle use-fixtures"
+    "
+(use-fixtures :each
+  my-fixture)")
+
+  (when-indenting-it "should handle async"
+    "
+(async done
+  (do-stuff)
+  (done))")
+
+  ;; core.logic
+  (when-indenting-it "should handle run"
+    "
+(run [q]
+  (== q 1))")
+
+  (when-indenting-it "should handle run*"
+    "
+(run* [q]
+  (== q 1))")
+
+  (when-indenting-it "should handle fresh"
+    "
+(fresh [a b]
+  (== a 1)
+  (== b 2))")
+
+  ;; core.async
+  (when-indenting-it "should handle go"
+    "
+(go
+  (<! ch)
+  (println \"done\"))")
+
+  (when-indenting-it "should handle go-loop"
+    "
+(go-loop [x 0]
+  (>! ch x)
+  (recur (inc x)))")
+
+  (when-indenting-it "should handle thread"
+    "
+(thread
+  (blocking-op))")
+
+  (when-indenting-it "should handle alt!"
+    "
+(alt!
+  ch1 ([v] (println v))
+  ch2 ([v] (println v)))")
+
+  (when-indenting-it "should handle alt!!"
+    "
+(alt!!
+  ch1 ([v] (println v))
+  ch2 ([v] (println v)))")
+
   (when-indenting-it "should handle reader conditionals"
     "#?@ (:clj []
      :cljs [])")
