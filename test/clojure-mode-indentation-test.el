@@ -585,6 +585,27 @@ DESCRIPTION is a string with the description of the spec."
 (with-custom-thing [x y]
   (body x y))")
 
+  (when-indenting-it "should handle condp"
+    "
+(condp = x
+  1 \"one\"
+  2 \"two\"
+  \"other\")")
+
+  (when-indenting-it "should handle namespace-qualified special forms"
+    "
+(clojure.core/let [x 1]
+  (inc x))"
+
+    "
+(clojure.core/when true
+  (do-stuff))"
+
+    "
+(clojure.core/defn foo
+  [x]
+  (inc x))")
+
   (when-indenting-it "should indent unknown def forms like body"
     "
 (defwhatever my-thing
