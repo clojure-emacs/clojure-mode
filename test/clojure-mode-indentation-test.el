@@ -709,6 +709,77 @@ DESCRIPTION is a string with the description of the spec."
   (foo 1 2)
   (bar 3 4))")
 
+  (when-indenting-it "should handle binding"
+    "
+(binding [*out* writer]
+  (println \"hello\"))")
+
+  (when-indenting-it "should handle loop"
+    "
+(loop [i 0]
+  (when (< i 10)
+    (recur (inc i))))")
+
+  (when-indenting-it "should handle for"
+    "
+(for [x (range 10)
+      :when (even? x)]
+  (* x x))")
+
+  (when-indenting-it "should handle doseq"
+    "
+(doseq [x xs]
+  (println x))")
+
+  (when-indenting-it "should handle dotimes"
+    "
+(dotimes [i 10]
+  (println i))")
+
+  (when-indenting-it "should handle when-let"
+    "
+(when-let [x (foo)]
+  (bar x))")
+
+  (when-indenting-it "should handle if-let"
+    "
+(if-let [x (foo)]
+  (bar x)
+  (baz))")
+
+  (when-indenting-it "should handle when-some"
+    "
+(when-some [x (foo)]
+  (bar x))")
+
+  (when-indenting-it "should handle if-some"
+    "
+(if-some [x (foo)]
+  (bar x)
+  (baz))")
+
+  (when-indenting-it "should handle doto"
+    "
+(doto (java.util.HashMap.)
+  (.put \"a\" 1)
+  (.put \"b\" 2))")
+
+  (when-indenting-it "should handle locking"
+    "
+(locking obj
+  (alter-state! obj))")
+
+  (when-indenting-it "should handle fdef"
+    "
+(fdef my-fn
+  :args (s/cat :x int?)
+  :ret int?)")
+
+  (when-indenting-it "should handle this-as"
+    "
+(this-as self
+  (.method self))")
+
   (when-indenting-it "should handle reader conditionals"
     "#?@ (:clj []
      :cljs [])")
