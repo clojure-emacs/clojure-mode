@@ -512,6 +512,60 @@ DESCRIPTION is a string with the description of the spec."
     (with-out-binding [out messages]
       (.flush out))))")
 
+  (when-indenting-it "should handle defmethod"
+    "
+(defmethod foo :bar
+  [x]
+  (println x))"
+
+    "
+(defmethod foo :default
+  [x y]
+  (+ x y))")
+
+  (when-indenting-it "should handle multi-arity defn"
+    "
+(defn foo
+  ([x]
+   (foo x 1))
+  ([x y]
+   (+ x y)))"
+
+    "
+(defn foo
+  \"docstring\"
+  ([x]
+   (foo x 1))
+  ([x y]
+   (+ x y)))"
+
+    "
+(defn ^:private foo
+  ([x]
+   (foo x 1))
+  ([x y]
+   (+ x y)))")
+
+  (when-indenting-it "should handle nested letfn"
+    "
+(letfn [(foo [x]
+          (let [y (inc x)]
+            (* y y)))
+        (bar [a]
+          (letfn [(baz [b]
+                    (+ a b))]
+            (baz 1)))]
+  (foo (bar 10)))")
+
+  (when-indenting-it "should handle try/catch/finally"
+    "
+(try
+  (dangerous)
+  (catch Exception e
+    (println e))
+  (finally
+    (cleanup)))")
+
   (when-indenting-it "should handle reader conditionals"
     "#?@ (:clj []
      :cljs [])")
