@@ -1311,6 +1311,27 @@ x
         (indent-region (point-min) (point-max))
         (expect (buffer-string) :to-equal "\n(defn foo\n  [x]\n  x)")))))
 
+(describe "clojure-get-indent-function"
+  (it "should use custom function to look up indent specs"
+    (let ((clojure-get-indent-function
+           (lambda (name)
+             (when (string= name "my-custom-macro")
+               1))))
+      ;; my-custom-macro has no built-in spec, but our custom function
+      ;; provides spec 1 (one special arg, then body).
+      (with-clojure-buffer "\n(my-custom-macro binding\nbody)"
+        (indent-region (point-min) (point-max))
+        (expect (buffer-string) :to-equal "\n(my-custom-macro binding\n  body)"))))
+
+  (it "should fall back to built-in specs when custom function returns nil"
+    (let ((clojure-get-indent-function
+           (lambda (_name) nil)))
+      ;; let has a built-in spec, and the custom function returns nil,
+      ;; so the built-in spec should still apply.
+      (with-clojure-buffer "\n(let [x 1]\nx)"
+        (indent-region (point-min) (point-max))
+        (expect (buffer-string) :to-equal "\n(let [x 1]\n  x)")))))
+
 (provide 'clojure-mode-indentation-test)
 
 ;;; clojure-mode-indentation-test.el ends here
