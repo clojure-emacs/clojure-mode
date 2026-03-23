@@ -617,6 +617,36 @@ DESCRIPTION is a string with the description of the spec."
   :some-option true
   :another false)")
 
+  (when-indenting-it "should handle fn"
+    "
+(fn [x]
+  (inc x))"
+
+    "
+(fn my-fn [x]
+  (inc x))"
+
+    "
+(fn
+  ([x]
+   (inc x))
+  ([x y]
+   (+ x y)))")
+
+  (when-indenting-it "should handle def"
+    "
+(def x
+  (+ 1 2))"
+
+    "
+(def ^:dynamic *x*
+  42)")
+
+  (when-indenting-it "should handle bound-fn"
+    "
+(bound-fn [x]
+  (inc x))")
+
   (when-indenting-it "should handle reader conditionals"
     "#?@ (:clj []
      :cljs [])")
