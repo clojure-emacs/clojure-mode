@@ -647,6 +647,68 @@ DESCRIPTION is a string with the description of the spec."
 (bound-fn [x]
   (inc x))")
 
+  (when-indenting-it "should handle if"
+    "
+(if (even? x)
+  (inc x)
+  (dec x))")
+
+  (when-indenting-it "should handle if-not"
+    "
+(if-not (nil? x)
+  (use x)
+  (default))")
+
+  (when-indenting-it "should handle case"
+    "
+(case x
+  :a 1
+  :b 2
+  3)")
+
+  (when-indenting-it "should handle when"
+    "
+(when (pos? x)
+  (println x)
+  (inc x))")
+
+  (when-indenting-it "should handle when-not"
+    "
+(when-not (nil? x)
+  (println x))")
+
+  (when-indenting-it "should handle when-first"
+    "
+(when-first [x xs]
+  (println x))")
+
+  (when-indenting-it "should handle while"
+    "
+(while (pos? @counter)
+  (swap! counter dec))")
+
+  (when-indenting-it "should handle do"
+    "
+(do
+  (println 1)
+  (println 2))")
+
+  (when-indenting-it "should handle delay"
+    "
+(delay
+  (expensive-computation))")
+
+  (when-indenting-it "should handle future"
+    "
+(future
+  (long-running-task))")
+
+  (when-indenting-it "should handle comment"
+    "
+(comment
+  (foo 1 2)
+  (bar 3 4))")
+
   (when-indenting-it "should handle reader conditionals"
     "#?@ (:clj []
      :cljs [])")
