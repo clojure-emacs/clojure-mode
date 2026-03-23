@@ -1214,6 +1214,40 @@ x
              '(put-clojure-indent 'foo "bar"))
             :to-throw)))
 
+(describe "clojure-indent-keyword-style"
+  (it "should align keyword forms with always-align (default)"
+    (let ((clojure-indent-keyword-style 'always-align))
+      ;; Case A: arg on same line → align with it
+      (with-clojure-buffer "\n(ns foo\n(:require\n[bar]))"
+        (indent-region (point-min) (point-max))
+        (expect (buffer-string) :to-equal "\n(ns foo\n  (:require\n   [bar]))"))
+      ;; Case B: no arg on same line → align with keyword
+      (with-clojure-buffer "\n(ns foo\n(:require [bar]\n[baz]))"
+        (indent-region (point-min) (point-max))
+        (expect (buffer-string) :to-equal "\n(ns foo\n  (:require [bar]\n            [baz]))"))))
+
+  (it "should indent keyword forms with always-indent"
+    (let ((clojure-indent-keyword-style 'always-indent))
+      ;; Case A: arg on same line → still indented like body
+      (with-clojure-buffer "\n(ns foo\n(:require [bar]\n[baz]))"
+        (indent-region (point-min) (point-max))
+        (expect (buffer-string) :to-equal "\n(ns foo\n  (:require [bar]\n    [baz]))"))
+      ;; Case B: no arg on same line → indented like body
+      (with-clojure-buffer "\n(ns foo\n(:require\n[bar]))"
+        (indent-region (point-min) (point-max))
+        (expect (buffer-string) :to-equal "\n(ns foo\n  (:require\n    [bar]))"))))
+
+  (it "should indent keyword forms with align-arguments"
+    (let ((clojure-indent-keyword-style 'align-arguments))
+      ;; Case A: arg on same line → align with first arg
+      (with-clojure-buffer "\n(ns foo\n(:require [bar]\n[baz]))"
+        (indent-region (point-min) (point-max))
+        (expect (buffer-string) :to-equal "\n(ns foo\n  (:require [bar]\n            [baz]))"))
+      ;; Case B: no arg on same line → indented like body
+      (with-clojure-buffer "\n(ns foo\n(:require\n[bar]))"
+        (indent-region (point-min) (point-max))
+        (expect (buffer-string) :to-equal "\n(ns foo\n  (:require\n    [bar]))")))))
+
 (provide 'clojure-mode-indentation-test)
 
 ;;; clojure-mode-indentation-test.el ends here
