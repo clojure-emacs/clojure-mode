@@ -1273,6 +1273,23 @@ x
           ;; Just verify it differs from the backtracking result
           (expect result :not :to-equal "\n(letfn [(foo [x]\n          (+ x 1))]\n  (foo 1))"))))))
 
+(describe "clojure-max-backtracking"
+  (it "should limit how far up the sexp tree backtracking goes"
+    ;; With max-backtracking = 0, even one level of backtracking is
+    ;; disabled, so letfn bindings lose :defn-style indentation.
+    (let ((clojure-max-backtracking 0))
+      (with-clojure-buffer "\n(letfn [(foo [x]\n(+ x 1))]\n(foo 1))"
+        (indent-region (point-min) (point-max))
+        (let ((result (buffer-string)))
+          (expect result :not :to-equal "\n(letfn [(foo [x]\n          (+ x 1))]\n  (foo 1))")))))
+
+  (it "should indent correctly with sufficient backtracking depth"
+    ;; With the default depth (3), letfn works fine.
+    (let ((clojure-max-backtracking 3))
+      (with-clojure-buffer "\n(letfn [(foo [x]\n(+ x 1))]\n(foo 1))"
+        (indent-region (point-min) (point-max))
+        (expect (buffer-string) :to-equal "\n(letfn [(foo [x]\n          (+ x 1))]\n  (foo 1))")))))
+
 (provide 'clojure-mode-indentation-test)
 
 ;;; clojure-mode-indentation-test.el ends here
