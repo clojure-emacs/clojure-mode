@@ -2102,6 +2102,18 @@ Examples:
            (clojure--indent-spec-to-legacy indent)
          indent)))
 
+(defun clojure-get-indent-spec (sym)
+  "Return the modern-format indent spec for the symbol SYM.
+SYM is a symbol or a string.  Returns nil if no spec is found.
+
+If only a legacy-format spec exists, it is converted to modern format."
+  (let* ((sym-name (if (stringp sym) sym (symbol-name sym)))
+         (sym-obj (intern-soft sym-name)))
+    (or (and sym-obj (get sym-obj 'clojure-indent-spec))
+        (let ((legacy (and sym-obj (get sym-obj 'clojure-indent-function))))
+          (when (and legacy (not (functionp legacy)))
+            (clojure--indent-spec-to-modern legacy))))))
+
 (defun clojure--maybe-quoted-symbol-p (x)
   "Check that X is either a symbol or a quoted symbol like :foo or \\='foo."
   (or (symbolp x)
