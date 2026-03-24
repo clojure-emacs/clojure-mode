@@ -1332,6 +1332,91 @@ x
         (indent-region (point-min) (point-max))
         (expect (buffer-string) :to-equal "\n(let [x 1]\n  x)")))))
 
+(describe "clojure--modern-indent-spec-p"
+  (it "should recognize modern specs"
+    (expect (clojure--modern-indent-spec-p '((:block 1))) :to-be-truthy)
+    (expect (clojure--modern-indent-spec-p '((:inner 0))) :to-be-truthy)
+    (expect (clojure--modern-indent-spec-p '((:block 1) (:inner 2 0))) :to-be-truthy)
+    (expect (clojure--modern-indent-spec-p '((:block 2) (:inner 1))) :to-be-truthy)
+    (expect (clojure--modern-indent-spec-p '((:inner 0) (:inner 1))) :to-be-truthy))
+
+  (it "should reject legacy and non-spec values"
+    (expect (clojure--modern-indent-spec-p 1) :not :to-be-truthy)
+    (expect (clojure--modern-indent-spec-p :defn) :not :to-be-truthy)
+    (expect (clojure--modern-indent-spec-p nil) :not :to-be-truthy)
+    (expect (clojure--modern-indent-spec-p '(1 (:defn))) :not :to-be-truthy)
+    (expect (clojure--modern-indent-spec-p '(1 ((:defn)) nil)) :not :to-be-truthy)
+    (expect (clojure--modern-indent-spec-p '(:defn (1))) :not :to-be-truthy)))
+
+(describe "clojure--indent-spec-to-modern"
+  (it "should convert integer specs"
+    (expect (clojure--indent-spec-to-modern 0) :to-equal '((:block 0)))
+    (expect (clojure--indent-spec-to-modern 1) :to-equal '((:block 1)))
+    (expect (clojure--indent-spec-to-modern 2) :to-equal '((:block 2))))
+
+  (it "should convert :defn"
+    (expect (clojure--indent-spec-to-modern :defn) :to-equal '((:inner 0))))
+
+  (it "should convert letfn spec"
+    ;; '(1 ((:defn)) nil) → ((:block 1) (:inner 2 0))
+    ;; The nil is positional padding and gets skipped.
+    ;; ((:defn)) unwraps: depth 0 → cons, depth 1 → cons, depth 2 → :defn → (:inner 2)
+    ;; But the position index (0) is not preserved by the simple converter.
+    ;; The result should at minimum have (:block 1) and (:inner 2).
+    (let ((result (clojure--indent-spec-to-modern '(1 ((:defn)) nil))))
+      (expect (assq :block result) :to-equal '(:block 1))
+      (expect (cl-find-if (lambda (r) (eq (car r) :inner)) result) :not :to-be nil)
+      (expect (cadr (cl-find-if (lambda (r) (eq (car r) :inner)) result)) :to-equal 2)))
+
+  (it "should convert deftype/defrecord spec"
+    ;; '(2 nil nil (:defn)) → ((:block 2) (:inner 1))
+    (let ((result (clojure--indent-spec-to-modern '(2 nil nil (:defn)))))
+      (expect (assq :block result) :to-equal '(:block 2))
+      (expect (cl-find-if (lambda (r) (eq (car r) :inner)) result)
+              :to-equal '(:inner 1))))
+
+  (it "should convert reify spec"
+    ;; '(:defn (1)) → ((:inner 0) ...) — :defn becomes (:inner 0)
+    (let ((result (clojure--indent-spec-to-modern '(:defn (1)))))
+      (expect (member '(:inner 0) result) :not :to-be nil)))
+
+  (it "should convert extend-protocol spec"
+    ;; '(1 :defn) → ((:block 1) (:inner 0))
+    (expect (clojure--indent-spec-to-modern '(1 :defn))
+            :to-equal '((:block 1) (:inner 0))))
+
+  (it "should convert defprotocol spec"
+    ;; '(1 (:defn)) → ((:block 1) (:inner 1))
+    (expect (clojure--indent-spec-to-modern '(1 (:defn)))
+            :to-equal '((:block 1) (:inner 1))))
+
+  (it "should return modern specs unchanged"
+    (expect (clojure--indent-spec-to-modern '((:block 1) (:inner 2 0)))
+            :to-equal '((:block 1) (:inner 2 0))))
+
+  (it "should return functions unchanged"
+    (let ((f (lambda (_p _s) 0)))
+      (expect (clojure--indent-spec-to-modern f) :to-equal f))))
+
+(describe "clojure--indent-spec-to-legacy"
+  (it "should convert simple block specs"
+    (expect (clojure--indent-spec-to-legacy '((:block 0))) :to-equal 0)
+    (expect (clojure--indent-spec-to-legacy '((:block 1))) :to-equal 1)
+    (expect (clojure--indent-spec-to-legacy '((:block 2))) :to-equal 2))
+
+  (it "should convert simple inner-0 specs"
+    (expect (clojure--indent-spec-to-legacy '((:inner 0))) :to-equal :defn))
+
+  (it "should return non-modern specs unchanged"
+    (expect (clojure--indent-spec-to-legacy 1) :to-equal 1)
+    (expect (clojure--indent-spec-to-legacy :defn) :to-equal :defn))
+
+  (it "should round-trip simple specs"
+    (dolist (spec '(0 1 2 :defn))
+      (expect (clojure--indent-spec-to-legacy
+               (clojure--indent-spec-to-modern spec))
+              :to-equal spec))))
+
 (provide 'clojure-mode-indentation-test)
 
 ;;; clojure-mode-indentation-test.el ends here

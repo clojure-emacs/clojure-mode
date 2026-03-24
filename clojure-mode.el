@@ -1925,6 +1925,147 @@ This function also returns nil meaning don't specify the indentation."
           ;; preference.
           (t (clojure--normal-indent last-sexp clojure-indent-style))))))))
 
+;;; Indent spec format conversion
+;;
+;; clojure-mode supports two indent spec formats:
+;;
+;; Legacy format (to be removed in clojure-mode 6):
+;;   - Integer N: N special args, then body
+;;   - :defn: body-style indentation
+;;   - Quoted positional list: '(1 ((:defn)) nil) where each element
+;;     controls a specific argument position
+;;
+;; Modern format (shared with clojure-ts-mode):
+;;   - ((:block N)): N special args, then body
+;;   - ((:inner D)): body-style at nesting depth D
+;;   - ((:inner D I)): body-style at depth D, only at position I
+;;   - Multiple rules: ((:block 1) (:inner 2 0))
+
+(defun clojure--modern-indent-spec-p (spec)
+  "Return non-nil if SPEC uses the modern tuple-based indent format.
+A modern spec is a list of rules like ((:block N)) or
+\((:inner D) (:inner D I))."
+  (and (listp spec)
+       spec ; not nil
+       (cl-every (lambda (rule)
+                   (and (listp rule)
+                        (memq (car rule) '(:block :inner))))
+                 spec)))
+
+(defun clojure--unwrap-legacy-spec (spec depth)
+  "Recursively unwrap legacy SPEC at DEPTH to produce an :inner rule.
+For example, ((:defn)) at depth 0 produces (:inner 2),
+and (:defn) at depth 0 produces (:inner 1)."
+  (if (consp spec)
+      (clojure--unwrap-legacy-spec (car spec) (1+ depth))
+    (when (eq spec :defn)
+      (list :inner depth))))
+
+(defun clojure--indent-spec-to-modern (spec)
+  "Convert a legacy indent SPEC to modern tuple format.
+Returns SPEC unchanged if it is already in modern format or is a
+function.
+
+Integer N becomes ((:block N)).
+:defn becomes ((:inner 0)).
+A positional list is converted element by element.
+
+The legacy format will be removed in clojure-mode 6."
+  (cond
+   ((clojure--modern-indent-spec-p spec) spec)
+   ((functionp spec) spec)
+   ((integerp spec) (list (list :block spec)))
+   ((eq spec :defn) '((:inner 0)))
+   ((listp spec)
+    (let (rules)
+      (dolist (el spec)
+        (cond
+         ((integerp el) (push (list :block el) rules))
+         ((eq el :defn) (push (list :inner 0) rules))
+         ((consp el)
+          (let ((rule (clojure--unwrap-legacy-spec el 0)))
+            (when rule (push rule rules))))
+         ;; nil elements are positional padding — skip
+         (t nil)))
+      ;; Put :block rules first, matching clojure-ts-mode convention
+      (sort (nreverse rules)
+            (lambda (a _b) (eq (car a) :block)))))
+   (t spec)))
+
+(defun clojure--indent-spec-to-legacy (spec)
+  "Convert a modern indent SPEC to legacy positional format.
+Returns SPEC unchanged if it is not in modern format.
+
+\((:block N)) becomes N.
+\((:inner 0)) becomes :defn.
+Complex multi-rule specs are converted to positional lists.
+
+The legacy format will be removed in clojure-mode 6."
+  (cond
+   ((not (clojure--modern-indent-spec-p spec)) spec)
+   ;; Simple cases
+   ((equal spec '((:inner 0))) :defn)
+   ((and (= 1 (length spec))
+         (eq :block (caar spec)))
+    (cadar spec))
+   ;; Complex multi-rule specs
+   (t
+    (let ((block-n nil)
+          (inner-rules nil))
+      (dolist (rule spec)
+        (pcase rule
+          (`(:block ,n) (setq block-n n))
+          (`(:inner ,d) (push (cons d nil) inner-rules))
+          (`(:inner ,d ,i) (push (cons d i) inner-rules))))
+      ;; Build a positional list.
+      ;; The :block N determines how many special args there are.
+      ;; :inner rules become nested (:defn) wrappers at appropriate positions.
+      (let* ((result nil)
+             ;; Find max position we need to fill
+             (inner-with-idx (cl-remove-if-not #'cdr inner-rules))
+             (inner-no-idx (cl-remove-if #'cdr inner-rules))
+             ;; An :inner D without index goes in the last position
+             ;; (applies to all remaining args at that depth)
+             (tail-spec (when inner-no-idx
+                          (let ((depth (caar inner-no-idx)))
+                            ;; Wrap :defn in depth-1 layers of parens
+                            (let ((s :defn))
+                              (dotimes (_ (max 0 (1- depth)))
+                                (setq s (list s)))
+                              s)))))
+        ;; Start with block-n or first element
+        (when block-n
+          (push block-n result))
+        ;; Add indexed :inner rules at their positions
+        (dolist (ir inner-with-idx)
+          (let* ((depth (car ir))
+                 (idx (cdr ir))
+                 ;; Pad result to reach position idx+1 (accounting for block-n at pos 0)
+                 (target-len (+ (if block-n 1 0) idx 1))
+                 (s :defn))
+            ;; Wrap :defn in depth-1 layers of parens
+            (dotimes (_ (max 0 (1- depth)))
+              (setq s (list s)))
+            ;; Pad with nil
+            (while (< (length result) target-len)
+              (push nil (cdr (last result))))
+            (setf (nth (+ (if block-n 1 0) idx) result) s)))
+        ;; Append tail spec (non-indexed :inner) or nil padding
+        (when tail-spec
+          (let ((current-len (length result)))
+            ;; Ensure tail goes after block positions
+            (when block-n
+              (while (< (length result) (+ block-n 1))
+                (push nil (cdr (last result)))))
+            ;; Only append if not already covered
+            (when (or (null result)
+                      (>= (length result) current-len))
+              (nconc result (list tail-spec)))))
+        ;; Add trailing nil for specs that need it (like letfn)
+        (when (and inner-with-idx tail-spec)
+          (nconc result (list nil)))
+        result)))))
+
 ;;; Setting indentation
 (defun put-clojure-indent (sym indent)
   "Set the indentation spec of SYM to INDENT.
