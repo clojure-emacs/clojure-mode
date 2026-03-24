@@ -1681,9 +1681,16 @@ the part after the `/'.
 
 Look for a spec using `clojure-get-indent-function', then try the
 `clojure-indent-function' and `clojure-backtracking-indent'
-symbol properties."
-  (or (when (functionp clojure-get-indent-function)
-        (funcall clojure-get-indent-function function-name))
+symbol properties.
+
+The return value is always in legacy format for consumption by the
+backtracking indent engine.  Modern-format specs from
+`clojure-get-indent-function' are converted automatically."
+  (or (let ((spec (when (functionp clojure-get-indent-function)
+                    (funcall clojure-get-indent-function function-name))))
+        (if (clojure--modern-indent-spec-p spec)
+            (clojure--indent-spec-to-legacy spec)
+          spec))
       (get (intern-soft function-name) 'clojure-indent-function)
       (get (intern-soft function-name) 'clojure-backtracking-indent)
       (when (string-match "/\\([^/]+\\)\\'" function-name)
@@ -2070,18 +2077,36 @@ The legacy format will be removed in clojure-mode 6."
 (defun put-clojure-indent (sym indent)
   "Set the indentation spec of SYM to INDENT.
 
-INDENT can be:
+INDENT can be in either the modern or legacy format.
+
+Modern format (preferred, shared with clojure-ts-mode):
+- \\='((:block N)) — N special args, then body
+- \\='((:inner D)) — body-style at nesting depth D
+- \\='((:inner D I)) — depth D, only at position I
+- \\='((:block N) (:inner D)) — combination
+
+Legacy format (to be removed in clojure-mode 6):
 - `:defn' — indent like a function/macro body
 - an integer N — N special args, then body
-- a function — custom indentation function
-- a quoted list — positional backtracking spec (see
-  `clojure--find-indent-spec-backtracking')
+- a quoted positional list — see `clojure--find-indent-spec-backtracking'
+
+A function can also be used as a custom indentation function.
 
 Examples:
+  (put-clojure-indent \\='when \\='((:block 1)))
+  (put-clojure-indent \\='defn \\='((:inner 0)))
+  (put-clojure-indent \\='letfn \\='((:block 1) (:inner 2 0)))
+  ;; Legacy forms also accepted:
   (put-clojure-indent \\='when 1)
-  (put-clojure-indent \\='>defn :defn)
-  (put-clojure-indent \\='letfn \\='(1 ((:defn)) nil))"
-  (put sym 'clojure-indent-function indent))
+  (put-clojure-indent \\='>defn :defn)"
+  ;; Store the modern format canonically.
+  (put sym 'clojure-indent-spec
+       (clojure--indent-spec-to-modern indent))
+  ;; Store the legacy format for the backtracking engine.
+  (put sym 'clojure-indent-function
+       (if (clojure--modern-indent-spec-p indent)
+           (clojure--indent-spec-to-legacy indent)
+         indent)))
 
 (defun clojure--maybe-quoted-symbol-p (x)
   "Check that X is either a symbol or a quoted symbol like :foo or \\='foo."
@@ -2091,14 +2116,26 @@ Examples:
            (eq 'quote (car x))
            (symbolp (cadr x)))))
 
+(defun clojure--valid-modern-indent-rule-p (rule)
+  "Check that RULE is a valid modern indent rule.
+A valid rule is (:block N), (:inner D), or (:inner D I) where
+N, D, and I are non-negative integers."
+  (pcase rule
+    (`(:block ,(pred integerp)) t)
+    (`(:inner ,(pred integerp)) t)
+    (`(:inner ,(pred integerp) ,(pred integerp)) t)
+    (_ nil)))
+
 (defun clojure--valid-unquoted-indent-spec-p (spec)
   "Check that the indentation SPEC is valid.
-Validate it with respect to
-https://docs.cider.mx/cider/indent_spec.html e.g. (2 :form
-:form (1)))."
+Accepts both modern tuple format and legacy positional format."
   (or (null spec)
       (integerp spec)
       (memq spec '(:form :defn))
+      ;; Modern tuple format
+      (and (clojure--modern-indent-spec-p spec)
+           (cl-every #'clojure--valid-modern-indent-rule-p spec))
+      ;; Legacy positional format
       (and (listp spec)
            (or (integerp (car spec))
                (memq (car spec) '(:form :defn))
@@ -2107,9 +2144,7 @@ https://docs.cider.mx/cider/indent_spec.html e.g. (2 :form
 
 (defun clojure--valid-indent-spec-p (spec)
   "Check that the indentation SPEC (quoted if a list) is valid.
-Validate it with respect to
-https://docs.cider.mx/cider/indent_spec.html e.g. (2 :form
-:form (1)))."
+Accepts both modern tuple format and legacy positional format."
   (or (integerp spec)
       (and (keywordp spec) (memq spec '(:form :defn)))
       (and (listp spec)
