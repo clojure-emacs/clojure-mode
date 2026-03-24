@@ -1669,10 +1669,13 @@ This function should take one argument, the name of the symbol as
 a string.  This name will be exactly as it appears in the buffer,
 so it might start with a namespace alias.
 
-This function is analogous to the `clojure-indent-function'
-symbol property, and its return value should match one of the
-allowed values of this property.  See `clojure-indent-function'
-for more information.")
+Return values can be in either the modern format (e.g.,
+\\='((:block 1) (:inner 0))) or the legacy format (e.g., 1 or
+:defn).  Modern-format specs are automatically converted to
+legacy format for the backtracking indent engine.
+
+This is typically set by CIDER to provide runtime-aware
+indentation specs.")
 
 (defun clojure--get-indent-method (function-name)
   "Return the indent spec for the symbol named FUNCTION-NAME.

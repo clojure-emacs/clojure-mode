@@ -196,10 +196,21 @@ Similarly we have the `clojure-indent-keyword-style`, which works in the followi
 #### Indentation of macro forms
 
 The indentation of special forms and macros with bodies is controlled via
-`put-clojure-indent`, `define-clojure-indent` and `clojure-backtracking-indent`.
+`put-clojure-indent` and `define-clojure-indent`.
 Nearly all special forms and built-in macros with bodies have special indentation
 settings in `clojure-mode`. You can add/alter the indentation settings in your
-personal config. Let's assume you want to indent `->>` and `->` like this:
+personal config.
+
+Indent specs use a **modern tuple format** shared with `clojure-ts-mode`:
+
+| Spec | Meaning |
+|------|---------|
+| `'((:block N))` | First N args are special, rest indented as body |
+| `'((:inner 0))` | All args indented as body (like `defn`) |
+| `'((:inner D))` | Body-style indent at nesting depth D |
+| `'((:inner D I))` | Body-style at depth D, only at position I |
+
+You can combine multiple rules. For example, let's say you want to indent `->>` and `->` like this:
 
 ```clojure
 (->> something
@@ -211,8 +222,8 @@ personal config. Let's assume you want to indent `->>` and `->` like this:
 You can do so by putting the following in your config:
 
 ```el
-(put-clojure-indent '-> 1)
-(put-clojure-indent '->> 1)
+(put-clojure-indent '-> '((:block 1)))
+(put-clojure-indent '->> '((:block 1)))
 ```
 
 This means that the body of the `->/->>` is after the first argument.
@@ -221,23 +232,27 @@ A more compact way to do the same thing is:
 
 ```el
 (define-clojure-indent
-  (-> 1)
-  (->> 1))
+  (-> '((:block 1)))
+  (->> '((:block 1))))
 ```
 
 To indent something like a definition (`defn`) you can do something like:
 
 ``` el
-(put-clojure-indent '>defn :defn)
+(put-clojure-indent '>defn '((:inner 0)))
 ```
 
 You can also specify different indentation settings for symbols
 prefixed with some ns (or ns alias):
 
 ```el
-(put-clojure-indent 'do 0)
-(put-clojure-indent 'my-ns/do 1)
+(put-clojure-indent 'do '((:block 0)))
+(put-clojure-indent 'my-ns/do '((:block 1)))
 ```
+
+**Note:** A legacy format using integers (e.g., `1`), keywords (`:defn`), and
+positional lists (e.g., `'(1 ((:defn)) nil)`) is also accepted for backward
+compatibility. It will be removed in clojure-mode 6.
 
 ##### Backtracking (contextual) indentation
 
@@ -248,65 +263,54 @@ indentation**: when indenting a line, it walks up the sexp tree to
 find a parent form with an indent spec, then uses the current
 position within that spec to decide how to indent.
 
-A backtracking indent spec is a **quoted list** where each element
-controls indentation at the corresponding argument position
-(0-indexed).  The allowed elements are:
-
-| Element | Meaning |
-|---------|---------|
-| An integer N | First N args are "special" (indented further); rest are body |
-| `:defn` | Indent like a function/macro body |
-| `:form` | Indent like a regular form |
-| `nil` | Use default indentation rules |
-| A list `(SPEC)` | This position holds a **list of forms**, each indented according to SPEC |
-
-For example, `letfn` uses `'(1 ((:defn)) nil)`:
+Multi-rule specs combine `:block` and `:inner` rules to control
+nested indentation. For example, `letfn` uses `'((:block 1) (:inner 2 0))`:
 
 ```clojure
-(letfn [(twice [x]        ;; pos 0 → spec 1 (1 special arg = the binding vector)
-          (* x 2))        ;; inside binding → spec ((:defn)) applies:
-        (thrice [x]       ;;   each binding is a list of :defn-style forms
-          (* x 3))]       ;;   so function bodies get :defn indentation
-  (+ (twice 5)            ;; pos 1+ → spec nil (default → body indentation)
+(letfn [(twice [x]        ;; (:block 1) → 1 special arg (the binding vector)
+          (* x 2))        ;; (:inner 2 0) → at depth 2, position 0 in the binding
+        (thrice [x]       ;;   vector, use body-style indentation
+          (* x 3))]
+  (+ (twice 5)            ;; after the block arg → body indentation
      (thrice 5)))
 ```
 
-And `defrecord` uses `'(2 nil nil (:defn))`:
+And `defrecord` uses `'((:block 2) (:inner 1))`:
 
 ```clojure
-(defrecord MyRecord       ;; pos 0 → spec 2 (2 special args: name + fields)
-    [field1 field2]       ;; pos 1 → spec nil (within special args zone)
-  SomeProtocol            ;; pos 2 → spec nil
-  (some-method [this]     ;; pos 3+ → spec (:defn) — each method gets :defn-style
+(defrecord MyRecord       ;; (:block 2) → 2 special args (name + fields)
+    [field1 field2]
+  SomeProtocol            ;; (:inner 1) → nested sub-forms at depth 1
+  (some-method [this]     ;;   get body-style indentation
     (do-stuff this)))
 ```
 
-Here are the built-in backtracking specs:
+Here are the built-in multi-rule specs:
 
 ```el
 (define-clojure-indent
-  (letfn          '(1 ((:defn)) nil))
-  (deftype        '(2 nil nil (:defn)))
-  (defrecord      '(2 nil nil (:defn)))
-  (defprotocol    '(1 (:defn)))
-  (definterface   '(1 (:defn)))
-  (reify          '(:defn (1)))
-  (proxy          '(2 nil nil (:defn)))
-  (extend-protocol '(1 :defn))
-  (extend-type    '(1 :defn))
-  (specify        '(1 :defn))
-  (specify!       '(1 :defn)))
+  (letfn          '((:block 1) (:inner 2 0)))
+  (deftype        '((:block 2) (:inner 1)))
+  (defrecord      '((:block 2) (:inner 1)))
+  (defprotocol    '((:block 1) (:inner 1)))
+  (definterface   '((:block 1) (:inner 1)))
+  (reify          '((:inner 0) (:inner 1)))
+  (proxy          '((:block 2) (:inner 1)))
+  (extend-protocol '((:block 1) (:inner 0)))
+  (extend-type    '((:block 1) (:inner 0)))
+  (specify        '((:block 1) (:inner 0)))
+  (specify!       '((:block 1) (:inner 0))))
 ```
 
-These follow the same rules as the `:style/indent` metadata specified by [cider-nrepl][].
+This format is shared with `clojure-ts-mode`. It also follows the same
+rules as the `:style/indent` metadata specified by [cider-nrepl][].
 For more details on writing indent specifications, see
 [this document](https://docs.cider.mx/cider/indent_spec.html).
-The only difference is that you're allowed to use lists instead of vectors.
 
 Backtracking is controlled by `clojure-use-backtracking-indent`
 (default `t`) and limited to `clojure-max-backtracking` levels
 (default 3).  Disabling backtracking will break indentation for
-all forms with list-based specs.
+all forms with multi-rule specs.
 
 The indentation of [special arguments](https://docs.cider.mx/cider/indent_spec.html#special-arguments) is controlled by
 `clojure-special-arg-indent-factor`, which by default indents special arguments
