@@ -1415,7 +1415,31 @@ x
     (dolist (spec '(0 1 2 :defn))
       (expect (clojure--indent-spec-to-legacy
                (clojure--indent-spec-to-modern spec))
-              :to-equal spec))))
+              :to-equal spec)))
+
+  (it "should convert complex multi-rule specs"
+    ;; letfn: ((:block 1) (:inner 2 0)) → (1 ((:defn)) nil)
+    (expect (clojure--indent-spec-to-legacy '((:block 1) (:inner 2 0)))
+            :to-equal '(1 ((:defn)) nil))
+    ;; deftype: ((:block 2) (:inner 1)) → (2 (:defn))
+    (expect (clojure--indent-spec-to-legacy '((:block 2) (:inner 1)))
+            :to-equal '(2 (:defn)))
+    ;; defprotocol: ((:block 1) (:inner 1)) → (1 (:defn))
+    (expect (clojure--indent-spec-to-legacy '((:block 1) (:inner 1)))
+            :to-equal '(1 (:defn)))
+    ;; extend-protocol: ((:block 1) (:inner 0)) → (1 :defn)
+    (expect (clojure--indent-spec-to-legacy '((:block 1) (:inner 0)))
+            :to-equal '(1 :defn))
+    ;; reify: ((:inner 0) (:inner 1)) → (:defn (:defn))
+    (expect (clojure--indent-spec-to-legacy '((:inner 0) (:inner 1)))
+            :to-equal '(:defn (:defn))))
+
+  (it "should produce working specs for put-clojure-indent with modern format"
+    ;; Verify that a form set with modern format indents correctly.
+    (put-clojure-indent 'test-modern-let '((:block 1)))
+    (with-clojure-buffer "\n(test-modern-let [x 1]\nbody)"
+      (indent-region (point-min) (point-max))
+      (expect (buffer-string) :to-equal "\n(test-modern-let [x 1]\n  body)"))))
 
 (provide 'clojure-mode-indentation-test)
 

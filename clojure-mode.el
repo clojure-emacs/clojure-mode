@@ -1999,6 +1999,15 @@ The legacy format will be removed in clojure-mode 6."
             (lambda (a _b) (eq (car a) :block)))))
    (t spec)))
 
+(defun clojure--wrap-defn (depth)
+  "Wrap :defn in DEPTH layers of lists.
+Depth 0 produces :defn, depth 1 produces (:defn), depth 2
+produces ((:defn)), etc."
+  (let ((s :defn))
+    (dotimes (_ depth)
+      (setq s (list s)))
+    s))
+
 (defun clojure--indent-spec-to-legacy (spec)
   "Convert a modern indent SPEC to legacy positional format.
 Returns SPEC unchanged if it is not in modern format.
@@ -2008,70 +2017,52 @@ Returns SPEC unchanged if it is not in modern format.
 Complex multi-rule specs are converted to positional lists.
 
 The legacy format will be removed in clojure-mode 6."
-  (cond
-   ((not (clojure--modern-indent-spec-p spec)) spec)
-   ;; Simple cases
-   ((equal spec '((:inner 0))) :defn)
-   ((and (= 1 (length spec))
-         (eq :block (caar spec)))
-    (cadar spec))
-   ;; Complex multi-rule specs
-   (t
+  (if (not (clojure--modern-indent-spec-p spec))
+      spec
+    ;; Extract components
     (let ((block-n nil)
-          (inner-rules nil))
+          (inner-no-idx nil)   ; list of depths without position index
+          (inner-with-idx nil)) ; list of (depth . index) with position index
       (dolist (rule spec)
         (pcase rule
           (`(:block ,n) (setq block-n n))
-          (`(:inner ,d) (push (cons d nil) inner-rules))
-          (`(:inner ,d ,i) (push (cons d i) inner-rules))))
-      ;; Build a positional list.
-      ;; The :block N determines how many special args there are.
-      ;; :inner rules become nested (:defn) wrappers at appropriate positions.
-      (let* ((result nil)
-             ;; Find max position we need to fill
-             (inner-with-idx (cl-remove-if-not #'cdr inner-rules))
-             (inner-no-idx (cl-remove-if #'cdr inner-rules))
-             ;; An :inner D without index goes in the last position
-             ;; (applies to all remaining args at that depth)
-             (tail-spec (when inner-no-idx
-                          (let ((depth (caar inner-no-idx)))
-                            ;; Wrap :defn in depth-1 layers of parens
-                            (let ((s :defn))
-                              (dotimes (_ (max 0 (1- depth)))
-                                (setq s (list s)))
-                              s)))))
-        ;; Start with block-n or first element
-        (when block-n
-          (push block-n result))
-        ;; Add indexed :inner rules at their positions
-        (dolist (ir inner-with-idx)
-          (let* ((depth (car ir))
-                 (idx (cdr ir))
-                 ;; Pad result to reach position idx+1 (accounting for block-n at pos 0)
-                 (target-len (+ (if block-n 1 0) idx 1))
-                 (s :defn))
-            ;; Wrap :defn in depth-1 layers of parens
-            (dotimes (_ (max 0 (1- depth)))
-              (setq s (list s)))
-            ;; Pad with nil
-            (while (< (length result) target-len)
-              (push nil (cdr (last result))))
-            (setf (nth (+ (if block-n 1 0) idx) result) s)))
-        ;; Append tail spec (non-indexed :inner) or nil padding
-        (when tail-spec
-          (let ((current-len (length result)))
-            ;; Ensure tail goes after block positions
-            (when block-n
-              (while (< (length result) (+ block-n 1))
-                (push nil (cdr (last result)))))
-            ;; Only append if not already covered
-            (when (or (null result)
-                      (>= (length result) current-len))
-              (nconc result (list tail-spec)))))
-        ;; Add trailing nil for specs that need it (like letfn)
-        (when (and inner-with-idx tail-spec)
-          (nconc result (list nil)))
-        result)))))
+          (`(:inner ,d) (push d inner-no-idx))
+          (`(:inner ,d ,i) (push (cons d i) inner-with-idx))))
+      (cond
+       ;; Simple: only (:block N)
+       ((and block-n (null inner-no-idx) (null inner-with-idx))
+        block-n)
+       ;; Simple: only (:inner 0)
+       ((and (null block-n) (null inner-with-idx)
+             (equal inner-no-idx '(0)))
+        :defn)
+       ;; Complex: build positional list
+       (t
+        (let ((result (list)))
+          ;; Position 0: block-n or first non-indexed inner
+          (when block-n
+            (setq result (list block-n)))
+          ;; Place indexed :inner rules at their positions
+          (dolist (ir inner-with-idx)
+            (let* ((depth (car ir))
+                   (idx (cdr ir))
+                   (pos (+ (if block-n 1 0) idx))
+                   (wrapped (clojure--wrap-defn depth)))
+              ;; Pad with nil to reach position
+              (while (<= (length result) pos)
+                (setq result (append result (list nil))))
+              (setf (nth pos result) wrapped)))
+          ;; Append non-indexed :inner rules as tail
+          ;; (applies to all remaining positions)
+          ;; Sort ascending so shallower depths come first.
+          (dolist (depth (sort inner-no-idx #'<))
+            (let ((wrapped (clojure--wrap-defn depth)))
+              (setq result (append result (list wrapped)))))
+          ;; Append trailing nil if there are indexed rules
+          ;; (so the backtracking engine sees the end of the spec)
+          (when inner-with-idx
+            (setq result (append result (list nil))))
+          result))))))
 
 ;;; Setting indentation
 (defun put-clojure-indent (sym indent)
@@ -2195,81 +2186,81 @@ work).  To set it from Lisp code, use
 
 (define-clojure-indent
   ;; built-ins
-  (ns 1)
-  (fn :defn)
-  (def :defn)
-  (defn :defn)
-  (bound-fn :defn)
-  (if 1)
-  (if-not 1)
-  (case 1)
-  (cond 0)
-  (condp 2)
-  (cond-> 1)
-  (cond->> 1)
-  (when 1)
-  (while 1)
-  (when-not 1)
-  (when-first 1)
-  (do 0)
-  (delay 0)
-  (future 0)
-  (comment 0)
-  (doto 1)
-  (locking 1)
-  (proxy '(2 nil nil (:defn)))
-  (as-> 2)
-  (fdef 1)
+  (ns '((:block 1)))
+  (fn '((:inner 0)))
+  (def '((:inner 0)))
+  (defn '((:inner 0)))
+  (bound-fn '((:inner 0)))
+  (if '((:block 1)))
+  (if-not '((:block 1)))
+  (case '((:block 1)))
+  (cond '((:block 0)))
+  (condp '((:block 2)))
+  (cond-> '((:block 1)))
+  (cond->> '((:block 1)))
+  (when '((:block 1)))
+  (while '((:block 1)))
+  (when-not '((:block 1)))
+  (when-first '((:block 1)))
+  (do '((:block 0)))
+  (delay '((:block 0)))
+  (future '((:block 0)))
+  (comment '((:block 0)))
+  (doto '((:block 1)))
+  (locking '((:block 1)))
+  (proxy '((:block 2) (:inner 1)))
+  (as-> '((:block 2)))
+  (fdef '((:block 1)))
 
-  (reify '(:defn (1)))
-  (deftype '(2 nil nil (:defn)))
-  (defrecord '(2 nil nil (:defn)))
-  (defprotocol '(1 (:defn)))
-  (definterface '(1 (:defn)))
-  (extend 1)
-  (extend-protocol '(1 :defn))
-  (extend-type '(1 :defn))
+  (reify '((:inner 0) (:inner 1)))
+  (deftype '((:block 2) (:inner 1)))
+  (defrecord '((:block 2) (:inner 1)))
+  (defprotocol '((:block 1) (:inner 1)))
+  (definterface '((:block 1) (:inner 1)))
+  (extend '((:block 1)))
+  (extend-protocol '((:block 1) (:inner 0)))
+  (extend-type '((:block 1) (:inner 0)))
   ;; specify and specify! are from ClojureScript
-  (specify '(1 :defn))
-  (specify! '(1 :defn))
-  (try 0)
-  (catch 2)
-  (finally 0)
+  (specify '((:block 1) (:inner 0)))
+  (specify! '((:block 1) (:inner 0)))
+  (try '((:block 0)))
+  (catch '((:block 2)))
+  (finally '((:block 0)))
 
   ;; binding forms
-  (let 1)
-  (letfn '(1 ((:defn)) nil))
-  (binding 1)
-  (loop 1)
-  (for 1)
-  (doseq 1)
-  (dotimes 1)
-  (when-let 1)
-  (if-let 1)
-  (when-some 1)
-  (if-some 1)
-  (this-as 1) ; ClojureScript
+  (let '((:block 1)))
+  (letfn '((:block 1) (:inner 2 0)))
+  (binding '((:block 1)))
+  (loop '((:block 1)))
+  (for '((:block 1)))
+  (doseq '((:block 1)))
+  (dotimes '((:block 1)))
+  (when-let '((:block 1)))
+  (if-let '((:block 1)))
+  (when-some '((:block 1)))
+  (if-some '((:block 1)))
+  (this-as '((:block 1))) ; ClojureScript
 
-  (defmethod :defn)
+  (defmethod '((:inner 0)))
 
   ;; clojure.test
-  (testing 1)
-  (deftest :defn)
-  (are 2)
-  (use-fixtures :defn)
-  (async 1)
+  (testing '((:block 1)))
+  (deftest '((:inner 0)))
+  (are '((:block 2)))
+  (use-fixtures '((:inner 0)))
+  (async '((:block 1)))
 
   ;; core.logic
-  (run :defn)
-  (run* :defn)
-  (fresh :defn)
+  (run '((:inner 0)))
+  (run* '((:inner 0)))
+  (fresh '((:inner 0)))
 
   ;; core.async
-  (alt! 0)
-  (alt!! 0)
-  (go 0)
-  (go-loop 1)
-  (thread 0))
+  (alt! '((:block 0)))
+  (alt!! '((:block 0)))
+  (go '((:block 0)))
+  (go-loop '((:block 1)))
+  (thread '((:block 0))))
 
 
 
