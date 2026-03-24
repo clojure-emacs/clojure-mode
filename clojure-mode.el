@@ -1669,10 +1669,13 @@ This function should take one argument, the name of the symbol as
 a string.  This name will be exactly as it appears in the buffer,
 so it might start with a namespace alias.
 
-This function is analogous to the `clojure-indent-function'
-symbol property, and its return value should match one of the
-allowed values of this property.  See `clojure-indent-function'
-for more information.")
+Return values can be in either the modern format (e.g.,
+\\='((:block 1) (:inner 0))) or the legacy format (e.g., 1 or
+:defn).  Modern-format specs are automatically converted to
+legacy format for the backtracking indent engine.
+
+This is typically set by CIDER to provide runtime-aware
+indentation specs.")
 
 (defun clojure--get-indent-method (function-name)
   "Return the indent spec for the symbol named FUNCTION-NAME.
@@ -1681,9 +1684,16 @@ the part after the `/'.
 
 Look for a spec using `clojure-get-indent-function', then try the
 `clojure-indent-function' and `clojure-backtracking-indent'
-symbol properties."
-  (or (when (functionp clojure-get-indent-function)
-        (funcall clojure-get-indent-function function-name))
+symbol properties.
+
+The return value is always in legacy format for consumption by the
+backtracking indent engine.  Modern-format specs from
+`clojure-get-indent-function' are converted automatically."
+  (or (let ((spec (when (functionp clojure-get-indent-function)
+                    (funcall clojure-get-indent-function function-name))))
+        (if (clojure--modern-indent-spec-p spec)
+            (clojure--indent-spec-to-legacy spec)
+          spec))
       (get (intern-soft function-name) 'clojure-indent-function)
       (get (intern-soft function-name) 'clojure-backtracking-indent)
       (when (string-match "/\\([^/]+\\)\\'" function-name)
@@ -1925,22 +1935,184 @@ This function also returns nil meaning don't specify the indentation."
           ;; preference.
           (t (clojure--normal-indent last-sexp clojure-indent-style))))))))
 
+;;; Indent spec format conversion
+;;
+;; clojure-mode supports two indent spec formats:
+;;
+;; Legacy format (to be removed in clojure-mode 6):
+;;   - Integer N: N special args, then body
+;;   - :defn: body-style indentation
+;;   - Quoted positional list: '(1 ((:defn)) nil) where each element
+;;     controls a specific argument position
+;;
+;; Modern format (shared with clojure-ts-mode):
+;;   - ((:block N)): N special args, then body
+;;   - ((:inner D)): body-style at nesting depth D
+;;   - ((:inner D I)): body-style at depth D, only at position I
+;;   - Multiple rules: ((:block 1) (:inner 2 0))
+
+(defun clojure--modern-indent-spec-p (spec)
+  "Return non-nil if SPEC uses the modern tuple-based indent format.
+A modern spec is a list of rules like ((:block N)) or
+\((:inner D) (:inner D I))."
+  (and (listp spec)
+       spec ; not nil
+       (cl-every (lambda (rule)
+                   (and (listp rule)
+                        (memq (car rule) '(:block :inner))))
+                 spec)))
+
+(defun clojure--unwrap-legacy-spec (spec depth)
+  "Recursively unwrap legacy SPEC at DEPTH to produce an :inner rule.
+For example, ((:defn)) at depth 0 produces (:inner 2),
+and (:defn) at depth 0 produces (:inner 1)."
+  (if (consp spec)
+      (clojure--unwrap-legacy-spec (car spec) (1+ depth))
+    (when (eq spec :defn)
+      (list :inner depth))))
+
+(defun clojure--indent-spec-to-modern (spec)
+  "Convert a legacy indent SPEC to modern tuple format.
+Returns SPEC unchanged if it is already in modern format or is a
+function.
+
+Integer N becomes ((:block N)).
+:defn becomes ((:inner 0)).
+A positional list is converted element by element.
+
+The legacy format will be removed in clojure-mode 6."
+  (cond
+   ((clojure--modern-indent-spec-p spec) spec)
+   ((functionp spec) spec)
+   ((integerp spec) (list (list :block spec)))
+   ((eq spec :defn) '((:inner 0)))
+   ((listp spec)
+    (let (rules)
+      (dolist (el spec)
+        (cond
+         ((integerp el) (push (list :block el) rules))
+         ((eq el :defn) (push (list :inner 0) rules))
+         ((consp el)
+          (let ((rule (clojure--unwrap-legacy-spec el 0)))
+            (when rule (push rule rules))))
+         ;; nil elements are positional padding — skip
+         (t nil)))
+      ;; Put :block rules first, matching clojure-ts-mode convention
+      (sort (nreverse rules)
+            (lambda (a _b) (eq (car a) :block)))))
+   (t spec)))
+
+(defun clojure--wrap-defn (depth)
+  "Wrap :defn in DEPTH layers of lists.
+Depth 0 produces :defn, depth 1 produces (:defn), depth 2
+produces ((:defn)), etc."
+  (let ((s :defn))
+    (dotimes (_ depth)
+      (setq s (list s)))
+    s))
+
+(defun clojure--indent-spec-to-legacy (spec)
+  "Convert a modern indent SPEC to legacy positional format.
+Returns SPEC unchanged if it is not in modern format.
+
+\((:block N)) becomes N.
+\((:inner 0)) becomes :defn.
+Complex multi-rule specs are converted to positional lists.
+
+The legacy format will be removed in clojure-mode 6."
+  (if (not (clojure--modern-indent-spec-p spec))
+      spec
+    ;; Extract components
+    (let ((block-n nil)
+          (inner-no-idx nil)   ; list of depths without position index
+          (inner-with-idx nil)) ; list of (depth . index) with position index
+      (dolist (rule spec)
+        (pcase rule
+          (`(:block ,n) (setq block-n n))
+          (`(:inner ,d) (push d inner-no-idx))
+          (`(:inner ,d ,i) (push (cons d i) inner-with-idx))))
+      (cond
+       ;; Simple: only (:block N)
+       ((and block-n (null inner-no-idx) (null inner-with-idx))
+        block-n)
+       ;; Simple: only (:inner 0)
+       ((and (null block-n) (null inner-with-idx)
+             (equal inner-no-idx '(0)))
+        :defn)
+       ;; Complex: build positional list
+       (t
+        (let ((result (list)))
+          ;; Position 0: block-n or first non-indexed inner
+          (when block-n
+            (setq result (list block-n)))
+          ;; Place indexed :inner rules at their positions
+          (dolist (ir inner-with-idx)
+            (let* ((depth (car ir))
+                   (idx (cdr ir))
+                   (pos (+ (if block-n 1 0) idx))
+                   (wrapped (clojure--wrap-defn depth)))
+              ;; Pad with nil to reach position
+              (while (<= (length result) pos)
+                (setq result (append result (list nil))))
+              (setf (nth pos result) wrapped)))
+          ;; Append non-indexed :inner rules as tail
+          ;; (applies to all remaining positions)
+          ;; Sort ascending so shallower depths come first.
+          (dolist (depth (sort inner-no-idx #'<))
+            (let ((wrapped (clojure--wrap-defn depth)))
+              (setq result (append result (list wrapped)))))
+          ;; Append trailing nil if there are indexed rules
+          ;; (so the backtracking engine sees the end of the spec)
+          (when inner-with-idx
+            (setq result (append result (list nil))))
+          result))))))
+
 ;;; Setting indentation
 (defun put-clojure-indent (sym indent)
   "Set the indentation spec of SYM to INDENT.
 
-INDENT can be:
+INDENT can be in either the modern or legacy format.
+
+Modern format (preferred, shared with clojure-ts-mode):
+- \\='((:block N)) — N special args, then body
+- \\='((:inner D)) — body-style at nesting depth D
+- \\='((:inner D I)) — depth D, only at position I
+- \\='((:block N) (:inner D)) — combination
+
+Legacy format (to be removed in clojure-mode 6):
 - `:defn' — indent like a function/macro body
 - an integer N — N special args, then body
-- a function — custom indentation function
-- a quoted list — positional backtracking spec (see
-  `clojure--find-indent-spec-backtracking')
+- a quoted positional list — see `clojure--find-indent-spec-backtracking'
+
+A function can also be used as a custom indentation function.
 
 Examples:
+  (put-clojure-indent \\='when \\='((:block 1)))
+  (put-clojure-indent \\='defn \\='((:inner 0)))
+  (put-clojure-indent \\='letfn \\='((:block 1) (:inner 2 0)))
+  ;; Legacy forms also accepted:
   (put-clojure-indent \\='when 1)
-  (put-clojure-indent \\='>defn :defn)
-  (put-clojure-indent \\='letfn \\='(1 ((:defn)) nil))"
-  (put sym 'clojure-indent-function indent))
+  (put-clojure-indent \\='>defn :defn)"
+  ;; Store the modern format canonically.
+  (put sym 'clojure-indent-spec
+       (clojure--indent-spec-to-modern indent))
+  ;; Store the legacy format for the backtracking engine.
+  (put sym 'clojure-indent-function
+       (if (clojure--modern-indent-spec-p indent)
+           (clojure--indent-spec-to-legacy indent)
+         indent)))
+
+(defun clojure-get-indent-spec (sym)
+  "Return the modern-format indent spec for the symbol SYM.
+SYM is a symbol or a string.  Returns nil if no spec is found.
+
+If only a legacy-format spec exists, it is converted to modern format."
+  (let* ((sym-name (if (stringp sym) sym (symbol-name sym)))
+         (sym-obj (intern-soft sym-name)))
+    (or (and sym-obj (get sym-obj 'clojure-indent-spec))
+        (let ((legacy (and sym-obj (get sym-obj 'clojure-indent-function))))
+          (when (and legacy (not (functionp legacy)))
+            (clojure--indent-spec-to-modern legacy))))))
 
 (defun clojure--maybe-quoted-symbol-p (x)
   "Check that X is either a symbol or a quoted symbol like :foo or \\='foo."
@@ -1950,14 +2122,26 @@ Examples:
            (eq 'quote (car x))
            (symbolp (cadr x)))))
 
+(defun clojure--valid-modern-indent-rule-p (rule)
+  "Check that RULE is a valid modern indent rule.
+A valid rule is (:block N), (:inner D), or (:inner D I) where
+N, D, and I are non-negative integers."
+  (pcase rule
+    (`(:block ,(pred integerp)) t)
+    (`(:inner ,(pred integerp)) t)
+    (`(:inner ,(pred integerp) ,(pred integerp)) t)
+    (_ nil)))
+
 (defun clojure--valid-unquoted-indent-spec-p (spec)
   "Check that the indentation SPEC is valid.
-Validate it with respect to
-https://docs.cider.mx/cider/indent_spec.html e.g. (2 :form
-:form (1)))."
+Accepts both modern tuple format and legacy positional format."
   (or (null spec)
       (integerp spec)
       (memq spec '(:form :defn))
+      ;; Modern tuple format
+      (and (clojure--modern-indent-spec-p spec)
+           (cl-every #'clojure--valid-modern-indent-rule-p spec))
+      ;; Legacy positional format
       (and (listp spec)
            (or (integerp (car spec))
                (memq (car spec) '(:form :defn))
@@ -1966,9 +2150,7 @@ https://docs.cider.mx/cider/indent_spec.html e.g. (2 :form
 
 (defun clojure--valid-indent-spec-p (spec)
   "Check that the indentation SPEC (quoted if a list) is valid.
-Validate it with respect to
-https://docs.cider.mx/cider/indent_spec.html e.g. (2 :form
-:form (1)))."
+Accepts both modern tuple format and legacy positional format."
   (or (integerp spec)
       (and (keywordp spec) (memq spec '(:form :defn)))
       (and (listp spec)
@@ -2019,81 +2201,81 @@ work).  To set it from Lisp code, use
 
 (define-clojure-indent
   ;; built-ins
-  (ns 1)
-  (fn :defn)
-  (def :defn)
-  (defn :defn)
-  (bound-fn :defn)
-  (if 1)
-  (if-not 1)
-  (case 1)
-  (cond 0)
-  (condp 2)
-  (cond-> 1)
-  (cond->> 1)
-  (when 1)
-  (while 1)
-  (when-not 1)
-  (when-first 1)
-  (do 0)
-  (delay 0)
-  (future 0)
-  (comment 0)
-  (doto 1)
-  (locking 1)
-  (proxy '(2 nil nil (:defn)))
-  (as-> 2)
-  (fdef 1)
+  (ns '((:block 1)))
+  (fn '((:inner 0)))
+  (def '((:inner 0)))
+  (defn '((:inner 0)))
+  (bound-fn '((:inner 0)))
+  (if '((:block 1)))
+  (if-not '((:block 1)))
+  (case '((:block 1)))
+  (cond '((:block 0)))
+  (condp '((:block 2)))
+  (cond-> '((:block 1)))
+  (cond->> '((:block 1)))
+  (when '((:block 1)))
+  (while '((:block 1)))
+  (when-not '((:block 1)))
+  (when-first '((:block 1)))
+  (do '((:block 0)))
+  (delay '((:block 0)))
+  (future '((:block 0)))
+  (comment '((:block 0)))
+  (doto '((:block 1)))
+  (locking '((:block 1)))
+  (proxy '((:block 2) (:inner 1)))
+  (as-> '((:block 2)))
+  (fdef '((:block 1)))
 
-  (reify '(:defn (1)))
-  (deftype '(2 nil nil (:defn)))
-  (defrecord '(2 nil nil (:defn)))
-  (defprotocol '(1 (:defn)))
-  (definterface '(1 (:defn)))
-  (extend 1)
-  (extend-protocol '(1 :defn))
-  (extend-type '(1 :defn))
+  (reify '((:inner 0) (:inner 1)))
+  (deftype '((:block 2) (:inner 1)))
+  (defrecord '((:block 2) (:inner 1)))
+  (defprotocol '((:block 1) (:inner 1)))
+  (definterface '((:block 1) (:inner 1)))
+  (extend '((:block 1)))
+  (extend-protocol '((:block 1) (:inner 0)))
+  (extend-type '((:block 1) (:inner 0)))
   ;; specify and specify! are from ClojureScript
-  (specify '(1 :defn))
-  (specify! '(1 :defn))
-  (try 0)
-  (catch 2)
-  (finally 0)
+  (specify '((:block 1) (:inner 0)))
+  (specify! '((:block 1) (:inner 0)))
+  (try '((:block 0)))
+  (catch '((:block 2)))
+  (finally '((:block 0)))
 
   ;; binding forms
-  (let 1)
-  (letfn '(1 ((:defn)) nil))
-  (binding 1)
-  (loop 1)
-  (for 1)
-  (doseq 1)
-  (dotimes 1)
-  (when-let 1)
-  (if-let 1)
-  (when-some 1)
-  (if-some 1)
-  (this-as 1) ; ClojureScript
+  (let '((:block 1)))
+  (letfn '((:block 1) (:inner 2 0)))
+  (binding '((:block 1)))
+  (loop '((:block 1)))
+  (for '((:block 1)))
+  (doseq '((:block 1)))
+  (dotimes '((:block 1)))
+  (when-let '((:block 1)))
+  (if-let '((:block 1)))
+  (when-some '((:block 1)))
+  (if-some '((:block 1)))
+  (this-as '((:block 1))) ; ClojureScript
 
-  (defmethod :defn)
+  (defmethod '((:inner 0)))
 
   ;; clojure.test
-  (testing 1)
-  (deftest :defn)
-  (are 2)
-  (use-fixtures :defn)
-  (async 1)
+  (testing '((:block 1)))
+  (deftest '((:inner 0)))
+  (are '((:block 2)))
+  (use-fixtures '((:inner 0)))
+  (async '((:block 1)))
 
   ;; core.logic
-  (run :defn)
-  (run* :defn)
-  (fresh :defn)
+  (run '((:inner 0)))
+  (run* '((:inner 0)))
+  (fresh '((:inner 0)))
 
   ;; core.async
-  (alt! 0)
-  (alt!! 0)
-  (go 0)
-  (go-loop 1)
-  (thread 0))
+  (alt! '((:block 0)))
+  (alt!! '((:block 0)))
+  (go '((:block 0)))
+  (go-loop '((:block 1)))
+  (thread '((:block 0))))
 
 
 
