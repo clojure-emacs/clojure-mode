@@ -7,16 +7,13 @@
 ### New features
 
 * Adopt the modern indent spec tuple format (`((:block N))`, `((:inner D))`, `((:inner D I))`) shared with `clojure-ts-mode` and `cljfmt`. The legacy format (integers, `:defn`, positional lists) is still accepted but will be removed in clojure-mode 6.
-* Add `clojure-get-indent-spec` public API for retrieving indent specs in the modern format.
-* `put-clojure-indent` and `define-clojure-indent` now accept both modern and legacy indent specs.
+  * Add `clojure-get-indent-spec` public API for retrieving indent specs in the modern format.
+  * `put-clojure-indent` and `define-clojure-indent` now accept both modern and legacy indent specs.
 
 ### Changes
 
 * Convert all built-in `define-clojure-indent` specs to the modern tuple format.
-* Improve documentation for the backtracking indentation mechanism in the README and docstrings.
-* Drop the `s.el` test dependency (replaced `s-index-of` with `cl-position`).
 * Migrate CI from CircleCI to GitHub Actions.
-* Test on Emacs 30.1 for macOS and Windows (previously 29.4).
 
 ### Bugs fixed
 
