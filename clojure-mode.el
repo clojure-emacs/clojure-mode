@@ -83,7 +83,7 @@
   :link '(url-link :tag "GitHub" "https://github.com/clojure-emacs/clojure-mode")
   :link '(emacs-commentary-link :tag "Commentary" "clojure-mode"))
 
-(defconst clojure-mode-version "5.22.0"
+(defconst clojure-mode-version "5.23.0"
   "The current version of `clojure-mode'.")
 
 (defface clojure-keyword-face
@@ -1293,9 +1293,9 @@ highlighted region)."
                          (and parent-beg
                               (goto-char parent-beg)
                               (looking-at "([ \t\n]*defprotocol\\>"))))))
-            font-lock-doc-face
-          font-lock-string-face))
-    font-lock-comment-face))
+            'font-lock-doc-face
+          'font-lock-string-face))
+    'font-lock-comment-face))
 
 (defun clojure-font-lock-setup ()
   "Configures font-lock for editing Clojure code."
@@ -2720,11 +2720,11 @@ many times."
                 (beginning-of-defun-raw)
                 (forward-char 1)              ;; skip paren so we start at comment
                 (clojure-forward-logical-sexp) ;; skip past the comment form itself
-                (if-let ((sexp-start (seq-find
-                                      (lambda (beg-pos)
-                                        (< beg-pos original-position))
-                                      (clojure-sexp-starts-until-position
-                                       clojure-comment-end))))
+                (if-let* ((sexp-start (seq-find
+                                       (lambda (beg-pos)
+                                         (< beg-pos original-position))
+                                       (clojure-sexp-starts-until-position
+                                        clojure-comment-end))))
                     (progn (goto-char sexp-start) t)
                   (beginning-of-defun-raw n))))
           (scan-error (beginning-of-defun-raw n)))
@@ -3372,7 +3372,7 @@ END marks the end of the fn expression"
 (defun clojure-promote-fn-literal ()
   "Convert a #(...) function into (fn [...] ...), prompting for the argument names."
   (interactive)
-  (when-let (beg (clojure-string-start))
+  (when-let* ((beg (clojure-string-start)))
     (goto-char beg))
   (if (or (looking-at-p "#(")
           (ignore-errors (forward-char 1))
