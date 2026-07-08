@@ -50,6 +50,41 @@ Assumes the current buffer is already fontified."
         start-face
       'various-faces)))
 
+(defun clojure-test--face-target (target)
+  "Resolve TARGET to a (START END DESCRIPTION) list in the current buffer.
+TARGET is a substring (searched for from point), a position, or a
+\(START END) range.  Return nil when a substring cannot be found."
+  (cond
+   ((stringp target)
+    (when (search-forward target nil t)
+      (list (- (point) (length target)) (1- (point)) (format "%S" target))))
+   ((integerp target)
+    (list target target (format "position %d" target)))
+   ((and (consp target) (integerp (car target)))
+    (list (nth 0 target) (nth 1 target)
+          (format "range %d-%d" (nth 0 target) (nth 1 target))))))
+
+(buttercup-define-matcher :to-have-face (target expected)
+  "Check that TARGET is fontified with face EXPECTED in the current buffer.
+TARGET is a substring (searched for from point), a position, or a
+\(START END) range.  Only meaningful after the buffer has been fontified.
+On failure the message names the text and the face that was found."
+  (let* ((target (funcall target))
+         (expected (funcall expected))
+         (resolved (clojure-test--face-target target)))
+    (if (not resolved)
+        (cons nil (format "Expected to find %S in the buffer to check its \
+face, but it was not present" target))
+      (let* ((start (nth 0 resolved))
+             (end (nth 1 resolved))
+             (desc (nth 2 resolved))
+             (actual (clojure-test--uniform-face start end)))
+        (cons (equal actual expected)
+              (if (equal actual expected)
+                  (format "Expected %s not to have face %S" desc expected)
+                (format "Expected %s to have face %S, but it had %S"
+                        desc expected actual)))))))
+
 (defun clojure-get-face-at (start end content)
   "Get the face between START and END in CONTENT."
   (with-fontified-clojure-buffer content
@@ -57,7 +92,8 @@ Assumes the current buffer is already fontified."
 
 (defun expect-face-at (content start end face)
   "Expect face in CONTENT between START and END to be equal to FACE."
-  (expect (clojure-get-face-at start end content) :to-equal face))
+  (with-fontified-clojure-buffer content
+    (expect (list start end) :to-have-face face)))
 
 (defun expect-face-of (content substring face &optional nth)
   "Expect FACE on the NTH occurrence of SUBSTRING in fontified CONTENT.
@@ -66,9 +102,9 @@ NTH defaults to 1."
     (goto-char (point-min))
     (dotimes (_ (or nth 1))
       (search-forward substring))
-    (let* ((end (1- (point)))
-           (start (- (point) (length substring))))
-      (expect (clojure-test--uniform-face start end) :to-equal face))))
+    (let ((start (- (point) (length substring)))
+          (end (1- (point))))
+      (expect (list start end) :to-have-face face))))
 
 (defun clojure-test--check-faces (content face-specs)
   "Fontify CONTENT and check all FACE-SPECS.
@@ -82,15 +118,9 @@ without any special annotation."
     (dolist (spec face-specs)
       (pcase spec
         (`(,(and (pred stringp) substr) ,face)
-         (let ((found (search-forward substr nil t)))
-           (expect found :not :to-be nil)
-           (when found
-             (let* ((end (1- (point)))
-                    (start (- (point) (length substr))))
-               (expect (clojure-test--uniform-face start end)
-                       :to-equal face)))))
+         (expect substr :to-have-face face))
         (`(,(and (pred numberp) start) ,end ,face)
-         (expect (clojure-test--uniform-face start end) :to-equal face))))))
+         (expect (list start end) :to-have-face face))))))
 
 (defconst clojure-test-syntax-classes
   [whitespace punctuation word symbol open-paren close-paren expression-prefix
