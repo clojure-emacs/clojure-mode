@@ -2,6 +2,10 @@
 
 ## master (unreleased)
 
+### Changes
+
+* [#705](https://github.com/clojure-emacs/clojure-mode/pull/705): Rename the `#_` toggle commands to `clojure-toggle-discard`, `clojure-toggle-discard-surrounding-form` and `clojure-toggle-discard-defun`, matching Clojure's "discard" terminology (the old `clojure-toggle-ignore*` names remain as obsolete aliases).
+
 ## 5.23.0 (2026-03-25)
 
 ### New features
