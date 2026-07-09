@@ -334,10 +334,10 @@ containing that specific file."
     (define-key map (kbd "s b") #'clojure-let-backward-slurp-sexp)
     (define-key map (kbd "C-a") #'clojure-add-arity)
     (define-key map (kbd "a") #'clojure-add-arity)
-    (define-key map (kbd "-") #'clojure-toggle-ignore)
-    (define-key map (kbd "C--") #'clojure-toggle-ignore)
-    (define-key map (kbd "_") #'clojure-toggle-ignore-surrounding-form)
-    (define-key map (kbd "C-_") #'clojure-toggle-ignore-surrounding-form)
+    (define-key map (kbd "-") #'clojure-toggle-discard)
+    (define-key map (kbd "C--") #'clojure-toggle-discard)
+    (define-key map (kbd "_") #'clojure-toggle-discard-surrounding-form)
+    (define-key map (kbd "C-_") #'clojure-toggle-discard-surrounding-form)
     (define-key map (kbd "P") #'clojure-promote-fn-literal)
     (define-key map (kbd "C-P") #'clojure-promote-fn-literal)
     map)
@@ -360,8 +360,8 @@ containing that specific file."
         ["Cycle if, if-not" clojure-cycle-if]
         ["Cycle when, when-not" clojure-cycle-when]
         ["Cycle not" clojure-cycle-not]
-        ["Toggle #_ ignore form" clojure-toggle-ignore]
-        ["Toggle #_ ignore of surrounding form" clojure-toggle-ignore-surrounding-form]
+        ["Toggle #_ discard form" clojure-toggle-discard]
+        ["Toggle #_ discard of surrounding form" clojure-toggle-discard-surrounding-form]
         ["Add function arity" clojure-add-arity]
         ["Promote #() fn literal" clojure-promote-fn-literal]
         ("ns forms"
@@ -3586,10 +3586,10 @@ Assumes cursor is at beginning of function."
       (indent-region beg end-marker))))
 
 
-;;; Toggle Ignore forms
+;;; Toggle Discard forms
 
-(defun clojure--toggle-ignore-next-sexp (&optional n)
-  "Insert or delete N `#_' ignore macros at the current point.
+(defun clojure--toggle-discard-next-sexp (&optional n)
+  "Insert or delete N `#_' discard reader macros at the current point.
 Point must be directly before a sexp or the #_ characters.
 When acting on a top level form, insert #_ on a new line
 preceding the form to prevent indentation changes."
@@ -3603,8 +3603,8 @@ preceding the form to prevent indentation changes."
       (when (zerop (car (syntax-ppss)))
         (insert-before-markers "\n")))))
 
-(defun clojure-toggle-ignore (&optional n)
-  "Toggle the #_ ignore reader form for the sexp at point.
+(defun clojure-toggle-discard (&optional n)
+  "Toggle the #_ discard reader form for the sexp at point.
 With numeric argument, toggle N number of #_ forms at the same point.
 
   e.g. with N = 2:
@@ -3614,27 +3614,34 @@ With numeric argument, toggle N number of #_ forms at the same point.
     (ignore-errors
       (goto-char (or (nth 8 (syntax-ppss)) ;; beginning of string
                      (beginning-of-thing 'sexp))))
-    (clojure--toggle-ignore-next-sexp n)))
+    (clojure--toggle-discard-next-sexp n)))
 
-(defun clojure-toggle-ignore-surrounding-form (&optional arg)
-  "Toggle the #_ ignore reader form for the surrounding form at point.
+(defun clojure-toggle-discard-surrounding-form (&optional arg)
+  "Toggle the #_ discard reader form for the surrounding form at point.
 With optional ARG, move up by ARG surrounding forms first.
 With universal argument \\[universal-argument], act on the \"top-level\" form."
   (interactive "P")
   (save-excursion
     (if (consp arg)
-        (clojure-toggle-ignore-defun)
+        (clojure-toggle-discard-defun)
       (condition-case nil
           (backward-up-list arg t t)
         (scan-error nil)))
-    (clojure--toggle-ignore-next-sexp)))
+    (clojure--toggle-discard-next-sexp)))
 
-(defun clojure-toggle-ignore-defun ()
-  "Toggle the #_ ignore reader form for the \"top-level\" form at point."
+(defun clojure-toggle-discard-defun ()
+  "Toggle the #_ discard reader form for the \"top-level\" form at point."
   (interactive)
   (save-excursion
     (beginning-of-defun-raw)
-    (clojure--toggle-ignore-next-sexp)))
+    (clojure--toggle-discard-next-sexp)))
+
+(define-obsolete-function-alias 'clojure-toggle-ignore
+  'clojure-toggle-discard "5.24.0")
+(define-obsolete-function-alias 'clojure-toggle-ignore-surrounding-form
+  'clojure-toggle-discard-surrounding-form "5.24.0")
+(define-obsolete-function-alias 'clojure-toggle-ignore-defun
+  'clojure-toggle-discard-defun "5.24.0")
 
 
 ;;; ClojureScript
@@ -3697,10 +3704,10 @@ With universal argument \\[universal-argument], act on the \"top-level\" form."
     (define-key prefix (kbd "[") #'clojure-convert-collection-to-vector)
     (define-key prefix (kbd "C-#") #'clojure-convert-collection-to-set)
     (define-key prefix (kbd "#") #'clojure-convert-collection-to-set)
-    (define-key prefix (kbd "-") #'clojure-toggle-ignore)
-    (define-key prefix (kbd "C--") #'clojure-toggle-ignore)
-    (define-key prefix (kbd "_") #'clojure-toggle-ignore-surrounding-form)
-    (define-key prefix (kbd "C-_") #'clojure-toggle-ignore-surrounding-form)
+    (define-key prefix (kbd "-") #'clojure-toggle-discard)
+    (define-key prefix (kbd "C--") #'clojure-toggle-discard)
+    (define-key prefix (kbd "_") #'clojure-toggle-discard-surrounding-form)
+    (define-key prefix (kbd "C-_") #'clojure-toggle-discard-surrounding-form)
     (define-key map clojure-refactor-map-prefix prefix)
     map)
   "Keymap for EDN mode.

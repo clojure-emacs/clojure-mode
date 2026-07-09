@@ -485,8 +485,8 @@ Here's a summary of the keybindings available in `clojure-mode`:
 | `C-c C-r i` | `clojure-cycle-if` |
 | `C-c C-r w` | `clojure-cycle-when` |
 | `C-c C-r o` | `clojure-cycle-not` |
-| `C-c C-r -` | `clojure-toggle-ignore` |
-| `C-c C-r _` | `clojure-toggle-ignore-surrounding-form` |
+| `C-c C-r -` | `clojure-toggle-discard` |
+| `C-c C-r _` | `clojure-toggle-discard-surrounding-form` |
 | `C-c C-r P` | `clojure-promote-fn-literal` |
 | `C-c C-r a` | `clojure-add-arity` |
 | `C-c C-r (` | `clojure-convert-collection-to-list` |
@@ -561,17 +561,17 @@ the same as before.
 
 <img width="512" src="/doc/clojure-cycle-if.gif">
 
-### Toggle ignore forms
+### Toggle discard forms
 
-`clojure-toggle-ignore`: Toggle `#_` on the form at point, commenting it out for
-the reader. With a numeric prefix argument, toggle N `#_` forms at the same
-point (e.g. `#_#_` to ignore two forms).
+`clojure-toggle-discard`: Toggle `#_` on the form at point, discarding it at the
+reader. With a numeric prefix argument, toggle N `#_` forms at the same point
+(e.g. `#_#_` to discard two forms).
 
-`clojure-toggle-ignore-surrounding-form`: Toggle `#_` on the surrounding form.
+`clojure-toggle-discard-surrounding-form`: Toggle `#_` on the surrounding form.
 With a numeric prefix argument, go up N levels first. With `C-u`, act on the
 top-level form.
 
-`clojure-toggle-ignore-defun`: Toggle `#_` on the top-level form at point.
+`clojure-toggle-discard-defun`: Toggle `#_` on the top-level form at point.
 
 ### Promote function literal
 

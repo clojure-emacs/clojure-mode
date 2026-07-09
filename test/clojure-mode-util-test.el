@@ -300,90 +300,99 @@
              [methodTwo [] String]]
    :init init))"))))
 
-(describe "clojure-toggle-ignore"
+(describe "clojure-toggle-discard"
   (when-refactoring-with-point-it "should add #_ to literals"
     "[1 |2 3]" "[1 #_|2 3]"
-    (clojure-toggle-ignore))
+    (clojure-toggle-discard))
   (when-refactoring-with-point-it "should work with point in middle of symbol"
     "[foo b|ar baz]" "[foo #_b|ar baz]"
-    (clojure-toggle-ignore))
+    (clojure-toggle-discard))
   (when-refactoring-with-point-it "should remove #_ after cursor"
     "[1 |#_2 3]" "[1 |2 3]"
-    (clojure-toggle-ignore))
+    (clojure-toggle-discard))
   (when-refactoring-with-point-it "should remove #_ before cursor"
     "[#_:fo|o :bar :baz]" "[:fo|o :bar :baz]"
-    (clojure-toggle-ignore))
+    (clojure-toggle-discard))
   (when-refactoring-with-point-it "should insert multiple #_"
     "{:foo| 1 :bar 2 :baz 3}"
     "{#_#_#_#_:foo| 1 :bar 2 :baz 3}"
-    (clojure-toggle-ignore 4))
+    (clojure-toggle-discard 4))
   (when-refactoring-with-point-it "should remove multiple #_"
     "{#_#_#_#_:foo| 1 :bar 2 :baz 3}"
     "{#_#_:foo| 1 :bar 2 :baz 3}"
-    (clojure-toggle-ignore 2))
+    (clojure-toggle-discard 2))
   (when-refactoring-with-point-it "should handle spaces and newlines"
     "[foo #_  \n #_ \r\n b|ar baz]" "[foo b|ar baz]"
-    (clojure-toggle-ignore 2))
+    (clojure-toggle-discard 2))
   (when-refactoring-with-point-it "should toggle entire string"
     "[:div \"lorem ips|um text\"]"
     "[:div #_\"lorem ips|um text\"]"
-    (clojure-toggle-ignore))
+    (clojure-toggle-discard))
   (when-refactoring-with-point-it "should toggle regexps"
     "[|#\".*\"]"
     "[#_|#\".*\"]"
-    (clojure-toggle-ignore))
+    (clojure-toggle-discard))
   (when-refactoring-with-point-it "should toggle collections"
     "[foo |[bar baz]]"
     "[foo #_|[bar baz]]"
-    (clojure-toggle-ignore))
+    (clojure-toggle-discard))
   (when-refactoring-with-point-it "should toggle hash sets"
     "[foo #|{bar baz}]"
     "[foo #_#|{bar baz}]"
-    (clojure-toggle-ignore))
+    (clojure-toggle-discard))
   (when-refactoring-with-point-it "should work on last-sexp"
     "[foo '(bar baz)| quux]"
     "[foo #_'(bar baz)| quux]"
-    (clojure-toggle-ignore))
+    (clojure-toggle-discard))
   (when-refactoring-with-point-it "should insert newline before top-level form"
     "|[foo bar baz]"
     "#_
 |[foo bar baz]"
-    (clojure-toggle-ignore)))
+    (clojure-toggle-discard)))
 
-(describe "clojure-toggle-ignore-surrounding-form"
+(describe "clojure-toggle-discard-surrounding-form"
   (when-refactoring-with-point-it "should toggle lists"
     "(li|st [vector {map #{set}}])"
     "#_\n(li|st [vector {map #{set}}])"
-    (clojure-toggle-ignore-surrounding-form))
+    (clojure-toggle-discard-surrounding-form))
   (when-refactoring-with-point-it "should toggle vectors"
     "(list #_[vector| {map #{set}}])"
     "(list [vector| {map #{set}}])"
-    (clojure-toggle-ignore-surrounding-form))
+    (clojure-toggle-discard-surrounding-form))
   (when-refactoring-with-point-it "should toggle maps"
     "(list [vector #_  \n {map #{set}|}])"
     "(list [vector {map #{set}|}])"
-    (clojure-toggle-ignore-surrounding-form))
+    (clojure-toggle-discard-surrounding-form))
   (when-refactoring-with-point-it "should toggle sets"
     "(list [vector {map #{set|}}])"
     "(list [vector {map #_#{set|}}])"
-    (clojure-toggle-ignore-surrounding-form))
+    (clojure-toggle-discard-surrounding-form))
   (when-refactoring-with-point-it "should work with numeric arg"
     "(four (three (two (on|e)))"
     "(four (three #_(two (on|e)))"
-    (clojure-toggle-ignore-surrounding-form 2))
+    (clojure-toggle-discard-surrounding-form 2))
   (when-refactoring-with-point-it "should remove #_ with numeric arg"
     "(four #_(three (two (on|e)))"
     "(four (three (two (on|e)))"
-    (clojure-toggle-ignore-surrounding-form 3)))
+    (clojure-toggle-discard-surrounding-form 3)))
 
-(describe "clojure-toggle-ignore-defun"
-  (when-refactoring-with-point-it "should ignore defun with newline"
+(describe "clojure-toggle-discard-defun"
+  (when-refactoring-with-point-it "should discard defun with newline"
     "(defn foo [x]
  {:nested (in|c x)})"
     "#_
 (defn foo [x]
  {:nested (in|c x)})"
-    (clojure-toggle-ignore-defun)))
+    (clojure-toggle-discard-defun)))
+
+(describe "clojure-toggle-ignore obsolete aliases"
+  (it "keeps the old command names working"
+    (expect (indirect-function 'clojure-toggle-ignore)
+            :to-equal (indirect-function 'clojure-toggle-discard))
+    (expect (indirect-function 'clojure-toggle-ignore-surrounding-form)
+            :to-equal (indirect-function 'clojure-toggle-discard-surrounding-form))
+    (expect (indirect-function 'clojure-toggle-ignore-defun)
+            :to-equal (indirect-function 'clojure-toggle-discard-defun))))
 
 (describe "clojure-find-def"
   (it "should recognize def and defn"
