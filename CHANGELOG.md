@@ -1,5 +1,9 @@
 # Changelog
 
+<!-- Entries are one line per item and section headings repeat for every release,
+     so the line-length and duplicate-heading rules don't fit this file. -->
+<!-- markdownlint-disable MD013 MD024 -->
+
 ## master (unreleased)
 
 ### New features
@@ -360,7 +364,6 @@
 * [#423](https://github.com/clojure-emacs/clojure-mode/issues/423): Make `clojure-match-next-def` more robust against zero-arity def-like forms.
 * [#451](https://github.com/clojure-emacs/clojure-mode/issues/451): Make project root directory calculation customized by `clojure-project-root-function`.
 * Fix namespace font-locking: namespaces may also contain non alphanumeric chars.
-
 
 ## 5.6.1 (2016-12-21)
 
