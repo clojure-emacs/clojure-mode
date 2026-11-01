@@ -6,6 +6,10 @@
 
 * [#705](https://github.com/clojure-emacs/clojure-mode/pull/705): Rename the `#_` toggle commands to `clojure-toggle-discard`, `clojure-toggle-discard-surrounding-form` and `clojure-toggle-discard-defun`, matching Clojure's "discard" terminology (the old `clojure-toggle-ignore*` names remain as obsolete aliases).
 
+### Bugs fixed
+
+* [#709](https://github.com/clojure-emacs/clojure-mode/pull/709): Fix `clojure-get-indent-spec` and `put-clojure-indent` converting legacy indent specs, like those of `letfn`, `reify` or `extend-protocol`, to the wrong modern rules.
+
 ## 5.23.0 (2026-03-25)
 
 ### New features

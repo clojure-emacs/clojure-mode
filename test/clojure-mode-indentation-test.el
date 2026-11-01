@@ -1358,32 +1358,28 @@ x
     (expect (clojure--indent-spec-to-modern :defn) :to-equal '((:inner 0))))
 
   (it "should convert letfn spec"
-    ;; '(1 ((:defn)) nil) → ((:block 1) (:inner 2 0))
-    ;; The nil is positional padding and gets skipped.
-    ;; ((:defn)) unwraps: depth 0 → cons, depth 1 → cons, depth 2 → :defn → (:inner 2)
-    ;; But the position index (0) is not preserved by the simple converter.
-    ;; The result should at minimum have (:block 1) and (:inner 2).
-    (let ((result (clojure--indent-spec-to-modern '(1 ((:defn)) nil))))
-      (expect (assq :block result) :to-equal '(:block 1))
-      (expect (cl-find-if (lambda (r) (eq (car r) :inner)) result) :not :to-be nil)
-      (expect (cadr (cl-find-if (lambda (r) (eq (car r) :inner)) result)) :to-equal 2)))
+    ;; The bindings vector is the first argument, and the functions in it
+    ;; are lists two levels down.
+    (expect (clojure--indent-spec-to-modern '(1 ((:defn)) nil))
+            :to-equal '((:block 1) (:inner 2 0))))
 
   (it "should convert deftype/defrecord spec"
-    ;; '(2 nil nil (:defn)) → ((:block 2) (:inner 1))
-    (let ((result (clojure--indent-spec-to-modern '(2 nil nil (:defn)))))
-      (expect (assq :block result) :to-equal '(:block 2))
-      (expect (cl-find-if (lambda (r) (eq (car r) :inner)) result)
-              :to-equal '(:inner 1))))
+    (expect (clojure--indent-spec-to-modern '(2 nil nil (:defn)))
+            :to-equal '((:block 2) (:inner 1))))
 
   (it "should convert reify spec"
-    ;; '(:defn (1)) → ((:inner 0) ...) — :defn becomes (:inner 0)
-    (let ((result (clojure--indent-spec-to-modern '(:defn (1)))))
-      (expect (member '(:inner 0) result) :not :to-be nil)))
+    ;; A nested integer means body indentation.
+    (expect (clojure--indent-spec-to-modern '(:defn (1)))
+            :to-equal '((:inner 0) (:inner 1))))
 
   (it "should convert extend-protocol spec"
-    ;; '(1 :defn) → ((:block 1) (:inner 0))
+    ;; :defn as the spec of the arguments indents them like defn.
     (expect (clojure--indent-spec-to-modern '(1 :defn))
-            :to-equal '((:block 1) (:inner 0))))
+            :to-equal '((:block 1) (:inner 1))))
+
+  (it "should apply a list holding just a list to every argument"
+    (expect (clojure--indent-spec-to-modern '((:defn)))
+            :to-equal '((:inner 1))))
 
   (it "should convert defprotocol spec"
     ;; '(1 (:defn)) → ((:block 1) (:inner 1))

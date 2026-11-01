@@ -1942,8 +1942,11 @@ This function also returns nil meaning don't specify the indentation."
 ;; Legacy format (to be removed in clojure-mode 6):
 ;;   - Integer N: N special args, then body
 ;;   - :defn: body-style indentation
-;;   - Quoted positional list: '(1 ((:defn)) nil) where each element
-;;     controls a specific argument position
+;;   - Quoted positional list: '(1 ((:defn)) nil), where the first
+;;     element is the spec of the form itself and the rest are the specs
+;;     of its arguments, the last one also covering the arguments after
+;;     it.  A list holding just another list applies that to every
+;;     argument.
 ;;
 ;; Modern format (shared with clojure-ts-mode):
 ;;   - ((:block N)): N special args, then body
@@ -1962,14 +1965,36 @@ A modern spec is a list of rules like ((:block N)) or
                         (memq (car rule) '(:block :inner))))
                  spec)))
 
-(defun clojure--unwrap-legacy-spec (spec depth)
-  "Recursively unwrap legacy SPEC at DEPTH to produce an :inner rule.
-For example, ((:defn)) at depth 0 produces (:inner 2),
-and (:defn) at depth 0 produces (:inner 1)."
-  (if (consp spec)
-      (clojure--unwrap-legacy-spec (car spec) (1+ depth))
-    (when (eq spec :defn)
-      (list :inner depth))))
+(defun clojure--legacy-spec-to-rules (spec depth idx)
+  "Return the modern rules for a form with the legacy indent SPEC.
+
+DEPTH is how many levels the form is below the form whose head has the
+spec, and IDX is the position of the argument of that form it is in, or
+nil for any argument.
+
+The rules can't express everything legacy specs can.  The spec of the
+last argument applies to all the arguments, a position inside an
+argument counts for nothing, and an integer below the form itself means
+body indentation."
+  (let ((inner (if idx (list :inner depth idx) (list :inner depth))))
+    (pcase spec
+      ((pred integerp)
+       (list (if (zerop depth) (list :block spec) inner)))
+      ((or :defn 'defun) (list inner))
+      (`(,(and arg-spec (pred consp)))
+       (clojure--legacy-spec-to-rules arg-spec (1+ depth) idx))
+      (`(,own-spec . ,arg-specs)
+       (let ((last-pos (1- (length arg-specs))))
+         (apply #'append
+                (unless (consp own-spec)
+                  (clojure--legacy-spec-to-rules own-spec depth idx))
+                (seq-map-indexed (lambda (arg-spec pos)
+                                   (clojure--legacy-spec-to-rules
+                                    arg-spec
+                                    (1+ depth)
+                                    (cond ((> depth 0) idx)
+                                          ((< pos last-pos) pos))))
+                                 arg-specs)))))))
 
 (defun clojure--indent-spec-to-modern (spec)
   "Convert a legacy indent SPEC to modern tuple format.
@@ -1978,29 +2003,13 @@ function.
 
 Integer N becomes ((:block N)).
 :defn becomes ((:inner 0)).
-A positional list is converted element by element.
+A positional list is converted with `clojure--legacy-spec-to-rules'.
 
 The legacy format will be removed in clojure-mode 6."
   (cond
    ((clojure--modern-indent-spec-p spec) spec)
    ((functionp spec) spec)
-   ((integerp spec) (list (list :block spec)))
-   ((eq spec :defn) '((:inner 0)))
-   ((listp spec)
-    (let (rules)
-      (dolist (el spec)
-        (cond
-         ((integerp el) (push (list :block el) rules))
-         ((eq el :defn) (push (list :inner 0) rules))
-         ((consp el)
-          (let ((rule (clojure--unwrap-legacy-spec el 0)))
-            (when rule (push rule rules))))
-         ;; nil elements are positional padding — skip
-         (t nil)))
-      ;; Put :block rules first, matching clojure-ts-mode convention
-      (sort (nreverse rules)
-            (lambda (a _b) (eq (car a) :block)))))
-   (t spec)))
+   (t (clojure--legacy-spec-to-rules spec 0 nil))))
 
 (defun clojure--wrap-defn (depth)
   "Wrap :defn in DEPTH layers of lists.
