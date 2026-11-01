@@ -334,6 +334,8 @@ containing that specific file."
     (define-key map (kbd "s b") #'clojure-let-backward-slurp-sexp)
     (define-key map (kbd "C-a") #'clojure-add-arity)
     (define-key map (kbd "a") #'clojure-add-arity)
+    (define-key map (kbd "C-k") #'clojure-remove-unused-keys)
+    (define-key map (kbd "k") #'clojure-remove-unused-keys)
     (define-key map (kbd "-") #'clojure-toggle-discard)
     (define-key map (kbd "C--") #'clojure-toggle-discard)
     (define-key map (kbd "_") #'clojure-toggle-discard-surrounding-form)
@@ -363,6 +365,7 @@ containing that specific file."
         ["Toggle #_ discard form" clojure-toggle-discard]
         ["Toggle #_ discard of surrounding form" clojure-toggle-discard-surrounding-form]
         ["Add function arity" clojure-add-arity]
+        ["Remove unused destructured keys" clojure-remove-unused-keys]
         ["Promote #() fn literal" clojure-promote-fn-literal]
         ("ns forms"
          ["Insert ns form at the top" clojure-insert-ns-form]
@@ -3641,6 +3644,525 @@ With universal argument \\[universal-argument], act on the \"top-level\" form."
   'clojure-toggle-discard-surrounding-form "5.24.0")
 (define-obsolete-function-alias 'clojure-toggle-ignore-defun
   'clojure-toggle-discard-defun "5.24.0")
+
+
+;;; Removing unused destructured keys
+
+(cl-defstruct (clojure--form (:constructor clojure--make-form)
+                             (:copier nil))
+  "A form `clojure--read-form' read.
+TYPE is `symbol', `keyword', `list', `vector', `map', `ns-map', `quote',
+`syntax-quote', `discard' (a form after #_), `splice' (a splicing reader
+conditional), `other' (anything else with forms in it), `atom' or
+`comment' (in a collection).  META-START is where the metadata in front
+of it starts."
+  type start end children name namespace meta-start)
+
+(defun clojure--skip-whitespace-and-comments ()
+  "Move past the whitespace and the comments after point."
+  (while (progn (skip-chars-forward " \t\n\r\f,")
+                (when (eq (char-after) ?\;)
+                  (forward-line 1)
+                  t))))
+
+(defun clojure--read-forms (end)
+  "Read the forms after point, up to a closing bracket or END.
+The comments among them count, as `comment' forms."
+  (let (forms form)
+    (while (setq form (if (progn (skip-chars-forward " \t\n\r\f," end)
+                                 (and (< (point) end) (eq (char-after) ?\;)))
+                          (let ((start (point)))
+                            (forward-line 1)
+                            (clojure--make-form :type 'comment :start start :end (point)))
+                        (clojure--read-form end)))
+      (push form forms))
+    (nreverse forms)))
+
+(defun clojure--read-coll (type start end &optional prefix-length)
+  "Read the collection of TYPE at START, after its PREFIX-LENGTH characters.
+Don't go past END."
+  (goto-char (+ start (or prefix-length 0)))
+  (skip-chars-forward "^([{" end)
+  (forward-char)
+  (let ((children (clojure--read-forms end)))
+    (when (< (point) end)
+      (forward-char))
+    (clojure--make-form :type type :start start :end (point) :children children)))
+
+(defun clojure--read-form (end)
+  "Read the form after point, move past it and return it.
+Return nil at a closing bracket or at END.  Discarded forms count, as
+`discard' forms, but comments and metadata don't."
+  (clojure--skip-whitespace-and-comments)
+  (let ((start (point)))
+    (when (and (< start end) (not (memq (char-after) '(?\) ?\] ?\}))))
+      (cond
+       ((looking-at-p "#_")
+        (forward-char 2)
+        (clojure--make-form :type 'discard :start start
+                            :children (delq nil (list (clojure--read-form end)))
+                            :end (point)))
+       ((looking-at "#?\\^")
+        (goto-char (match-end 0))
+        (clojure--read-form end)
+        (let ((form (clojure--read-form end)))
+          ;; Like comments, discarded forms between the metadata and its
+          ;; form go with the form.
+          (while (and form (eq (clojure--form-type form) 'discard))
+            (setq form (clojure--read-form end)))
+          (when form
+            (setf (clojure--form-meta-start form) start))
+          form))
+       ((looking-at "'\\|\\(`\\)\\|~@?\\|@\\|#'\\|#=")
+        (let ((type (cond ((match-beginning 1) 'syntax-quote)
+                          ((eq (char-after) ?') 'quote)
+                          (t 'other))))
+          (goto-char (match-end 0))
+          (clojure--make-form :type type :start start
+                              :children (delq nil (list (clojure--read-form end)))
+                              :end (point))))
+       ((looking-at-p "[([{]")
+        (clojure--read-coll (pcase (char-after) (?\( 'list) (?\[ 'vector) (_ 'map))
+                            start end))
+       ((looking-at-p "#:")
+        (clojure--read-coll 'ns-map start end 2))
+       ((looking-at-p "#\\?@")
+        (clojure--read-coll 'splice start end 1))
+       ((looking-at-p "#[({?]")
+        (clojure--read-coll 'other start end 1))
+       ((looking-at-p "#?\"")
+        (skip-chars-forward "#")
+        (forward-sexp)
+        (clojure--make-form :type 'atom :start start :end (point)))
+       ((looking-at "#[^#]")
+        ;; A tagged literal
+        (forward-char)
+        (clojure--read-form end)
+        (clojure--make-form :type 'other :start start
+                            :children (delq nil (list (clojure--read-form end)))
+                            :end (point)))
+       ((eq (char-after) ?\\)
+        (forward-char 2)
+        (when (memq (char-syntax (char-before)) '(?w ?_))
+          (skip-chars-forward "a-zA-Z0-9"))
+        (clojure--make-form :type 'atom :start start :end (point)))
+       (t
+        (skip-chars-forward "^ \t\n\r\f,\";@^`~()[]{}\\\\" end)
+        (when (= (point) start)
+          (forward-char))
+        (let ((token (buffer-substring-no-properties start (point))))
+          (cond
+           ((string-match-p "\\`[+-]?[0-9]" token)
+            (clojure--make-form :type 'atom :start start :end (point)))
+           (t
+            (let* ((keyword (string-match "\\`::?" token))
+                   (token (if keyword (substring token (match-end 0)) token))
+                   (qualified (string-match "\\`\\([^/]+\\)/\\(.+\\)\\'" token)))
+              (clojure--make-form :type (if keyword 'keyword 'symbol)
+                                  :start start :end (point)
+                                  :name (if qualified (match-string 2 token) token)
+                                  :namespace (and qualified (match-string 1 token))))))))))))
+
+(defun clojure--form-values (form)
+  "Return the forms in FORM, leaving out comments and discarded forms."
+  (seq-remove (lambda (child) (memq (clojure--form-type child) '(discard comment)))
+              (clojure--form-children form)))
+
+(defun clojure--form-pairs (form)
+  "Return the forms in FORM in pairs, or nil if it splices any in.
+A splicing reader conditional would throw the pairs off."
+  (let ((children (clojure--form-values form))
+        pairs)
+    (unless (seq-some (lambda (child) (eq (clojure--form-type child) 'splice))
+                      children)
+      (while children
+        (push (list (pop children) (pop children)) pairs))
+      (nreverse pairs))))
+
+(defun clojure--form-start-with-metadata (form)
+  "Return the start of FORM, including the metadata in front of it."
+  (or (clojure--form-meta-start form) (clojure--form-start form)))
+
+(defun clojure--form-descendants (form type &optional skip-quoted)
+  "Return the forms of TYPE in FORM, FORM included.
+With SKIP-QUOTED, leave out the ones in quoted and syntax-quoted forms."
+  (unless (and skip-quoted (memq (clojure--form-type form) '(quote syntax-quote)))
+    (let ((found (mapcan (lambda (child)
+                           (clojure--form-descendants child type skip-quoted))
+                         (clojure--form-children form))))
+      (if (eq (clojure--form-type form) type)
+          (cons form found)
+        found))))
+
+(defun clojure--core-form-name (form)
+  "Return the name of the clojure.core form FORM is, or nil."
+  (when-let* (((eq (clojure--form-type form) 'list))
+              (head (car (clojure--form-values form)))
+              ((eq (clojure--form-type head) 'symbol))
+              ((member (clojure--form-namespace head)
+                       '(nil "clojure.core" "cljs.core"))))
+    (clojure--form-name head)))
+
+(defun clojure--parse-pattern (form)
+  "Return the destructuring pattern FORM as a list, or nil.
+That's (sym FORM), (vec FORM PATTERN...) or (map FORM UNIT...), each
+UNIT being a key of the map and its value:
+
+  (keys KEY VEC ((NAME . FORM)...)) for :keys, :strs and :syms, NAME
+    being nil for what doesn't bind a name
+  (as KEY SYM NAME)
+  (or KEY MAP ((NAME KEY DEFAULT)...))
+  (pair KEY VAL NAME) for a symbol bound to the value of a key
+  (nested KEY VAL PATTERN) for a map or a vector bound to it
+  (other KEY VAL) for anything else."
+  (pcase (clojure--form-type form)
+    ('symbol (list 'sym form))
+    ('vector
+     (cons 'vec (cons form (delq nil (mapcar #'clojure--parse-pattern
+                                             (clojure--form-values form))))))
+    ((and (or 'map 'ns-map)
+          (let pairs (clojure--form-pairs form))
+          (guard pairs))
+     (cons 'map
+           (cons form
+                 (mapcar
+                  (pcase-lambda (`(,key ,val))
+                    (let* ((type (clojure--form-type key))
+                           (name (and (eq type 'keyword)
+                                      (not (clojure--form-namespace key))
+                                      (clojure--form-name key))))
+                      (cond
+                       ((null val) (list 'other key val))
+                       ((and (eq type 'keyword)
+                             (member (clojure--form-name key) '("keys" "strs" "syms"))
+                             (eq (clojure--form-type val) 'vector))
+                        (list 'keys key val
+                              (mapcar (lambda (elem)
+                                        (cons (and (memq (clojure--form-type elem)
+                                                         '(symbol keyword))
+                                                   (clojure--form-name elem))
+                                              elem))
+                                      (clojure--form-values val))))
+                       ((and (equal name "as") (eq (clojure--form-type val) 'symbol))
+                        (list 'as key val (clojure--form-name val)))
+                       ((and (equal name "or") (eq (clojure--form-type val) 'map))
+                        (list 'or key val
+                              (delq nil
+                                    (mapcar (pcase-lambda (`(,entry-key ,default))
+                                              (and default
+                                                   (eq (clojure--form-type entry-key) 'symbol)
+                                                   (list (clojure--form-name entry-key)
+                                                         entry-key default)))
+                                            (clojure--form-pairs val)))))
+                       ((eq type 'symbol)
+                        (list 'pair key val (clojure--form-name key)))
+                       ((memq type '(map ns-map vector))
+                        (list 'nested key val (clojure--parse-pattern key)))
+                       (t (list 'other key val)))))
+                  pairs))))))
+
+(defun clojure--pattern-declarations (pattern)
+  "Return the forms of the names PATTERN binds, and of its :or keys."
+  (pcase pattern
+    (`(sym ,form) (list form))
+    (`(vec ,_ . ,patterns) (mapcan #'clojure--pattern-declarations patterns))
+    (`(map ,_ . ,units)
+     (mapcan (lambda (unit)
+               (pcase unit
+                 (`(keys ,_ ,_ ,elems) (mapcar #'cdr (seq-filter #'car elems)))
+                 (`(as ,_ ,sym ,_) (list sym))
+                 (`(or ,_ ,_ ,entries) (mapcar #'cadr entries))
+                 (`(pair ,key ,_ ,_) (list key))
+                 (`(nested ,_ ,_ ,sub) (clojure--pattern-declarations sub))))
+             units))))
+
+(defun clojure--let-binding-forms (bindings)
+  "Return the binding forms of the BINDINGS vector of a let-like form.
+The bindings of a :let in a for or doseq count too."
+  (mapcan (pcase-lambda (`(,form ,init))
+            (if (eq (clojure--form-type form) 'keyword)
+                (and (equal (clojure--form-name form) "let")
+                     (not (clojure--form-namespace form))
+                     init
+                     (eq (clojure--form-type init) 'vector)
+                     (clojure--let-binding-forms init))
+              (list form)))
+          (clojure--form-pairs bindings)))
+
+(defun clojure--fn-tail-sites (children end)
+  "Return the binding sites of the arities of a fn.
+CHILDREN are the forms of the fn that come after its name, and END is
+the end of the fn."
+  (when-let* ((tail (seq-drop-while (lambda (child)
+                                      (not (memq (clojure--form-type child) '(vector list))))
+                                    children)))
+    (if (eq (clojure--form-type (car tail)) 'vector)
+        (list (list (car tail) (clojure--parse-pattern (car tail)) end))
+      (delq nil
+            (mapcar (lambda (arity)
+                      (when-let* (((eq (clojure--form-type arity) 'list))
+                                  (arglist (car (clojure--form-values arity)))
+                                  ((eq (clojure--form-type arglist) 'vector)))
+                        (list arglist (clojure--parse-pattern arglist)
+                              (clojure--form-end arity))))
+                    tail)))))
+
+(defun clojure--binding-sites (top-level)
+  "Return the places in the TOP-LEVEL form that bind names.
+Each is a list (VEC PATTERN END) of an arglist or the bindings of a
+let-like form, the vector pattern of what it binds, and the end of the
+form, the names being in scope from VEC to END.  Quoted and
+syntax-quoted forms don't count, as they're data or a macro's template."
+  (let ((methods (make-hash-table))
+        sites)
+    (dolist (form (clojure--form-descendants top-level 'list t))
+      (when-let* (((not (gethash (clojure--form-start form) methods)))
+                  (name (clojure--core-form-name form))
+                  (args (cdr (clojure--form-values form)))
+                  (end (clojure--form-end form)))
+        (pcase name
+          ((or "let" "loop" "if-let" "when-let" "if-some" "when-some" "when-first"
+               "for" "doseq")
+           (when (eq (clojure--form-type (car args)) 'vector)
+             (push (list (car args)
+                         `(vec ,(car args)
+                               ,@(delq nil (mapcar #'clojure--parse-pattern
+                                                   (clojure--let-binding-forms (car args)))))
+                         end)
+                   sites)))
+          ((or "letfn" "reify" "proxy" "deftype" "defrecord" "extend-type"
+               "extend-protocol" "defprotocol" "definterface")
+           ;; A method named like a core form, as in (letfn [(for [x] x)]),
+           ;; isn't one.
+           (dolist (method (if (equal name "letfn")
+                               (and (eq (clojure--form-type (car args)) 'vector)
+                                    (clojure--form-values (car args)))
+                             args))
+             (when-let* (((eq (clojure--form-type method) 'list))
+                         (children (clojure--form-values method))
+                         ((eq (clojure--form-type (car children)) 'symbol)))
+               (puthash (clojure--form-start method) t methods)
+               ;; Protocol and interface methods have no bodies.
+               (unless (member name '("defprotocol" "definterface"))
+                 (setq sites (append (clojure--fn-tail-sites
+                                      (cdr children) (clojure--form-end method))
+                                     sites))))))
+          ;; The dispatch value can be a vector too.
+          ("defmethod"
+           (setq sites (append (clojure--fn-tail-sites (nthcdr 2 args) end) sites)))
+          ((or "fn" "bound-fn" "defn" "defn-" "defmacro")
+           (setq sites (append (clojure--fn-tail-sites args end) sites))))))
+    sites))
+
+(defun clojure--symbol-names (top-level declared beg end)
+  "Return the names the symbols in the TOP-LEVEL form use from BEG to END.
+DECLARED is a hash table of the positions of the symbols that bind a
+name rather than use one."
+  (mapcan (lambda (sym)
+            (let ((name (clojure--form-name sym))
+                  (start (clojure--form-start sym)))
+              (unless (or (< start beg)
+                          (>= start end)
+                          (gethash start declared)
+                          (clojure--form-namespace sym))
+                ;; ClojureScript reads obj.prop as the prop of the local obj.
+                (if (string-match "\\`\\([^.]+\\)\\." name)
+                    (list name (match-string 1 name))
+                  (list name)))))
+          (clojure--form-descendants top-level 'symbol)))
+
+(defun clojure--unused-pattern-edits (pattern used-p)
+  "Return how to remove what PATTERN binds from maps but doesn't use.
+USED-P tells if a name is used.  The value is a list of (remove COLL
+FORM...) and (replace FORM TEXT) edits, or `empty' for a map with
+nothing left, which it's for the caller to replace or remove.  Comments
+and discarded forms count as something left, but an empty :keys and an
+:or with nothing but defaults don't, as they bind nothing."
+  (pcase pattern
+    (`(vec ,_ . ,subs)
+     (mapcan (lambda (sub)
+               (let ((edits (clojure--unused-pattern-edits sub used-p)))
+                 (if (eq edits 'empty) `((replace ,(cadr sub) "_")) edits)))
+             subs))
+    (`(map ,map . ,units)
+     (let ((droppable 0) removed edits)
+       (dolist (unit units)
+         (pcase unit
+           (`(keys ,key ,vec ,elems)
+            (let ((unused (seq-filter (lambda (elem)
+                                        (and (car elem) (not (funcall used-p (car elem)))))
+                                      elems))
+                  (children (clojure--form-children vec)))
+              (cond
+               ((null children) (setq droppable (+ droppable 2)))
+               ((null unused))
+               ((= (length unused) (length children))
+                (setq removed `(,key ,vec ,@removed)))
+               (t (push `(remove ,vec ,@(mapcar #'cdr unused)) edits)))))
+           ((or `(as ,key ,val ,name) `(pair ,key ,val ,name))
+            (unless (funcall used-p name)
+              (setq removed `(,key ,val ,@removed))))
+           (`(nested ,key ,val ,sub)
+            (let ((sub-edits (clojure--unused-pattern-edits sub used-p)))
+              (if (eq sub-edits 'empty)
+                  (setq removed `(,key ,val ,@removed))
+                (setq edits (append sub-edits edits)))))
+           ;; The :or defaults of the names removed go with them.
+           (`(or ,key ,val ,entries)
+            (let ((unused (seq-remove (lambda (entry) (funcall used-p (car entry)))
+                                      entries))
+                  (children (clojure--form-children val)))
+              (if (and unused (= (length children) (* 2 (length unused))))
+                  (setq removed `(,key ,val ,@removed))
+                (when unused
+                  (push `(remove ,val ,@(seq-mapcat #'cdr unused)) edits))
+                (when (= (length children) (length (clojure--form-values val)))
+                  (setq droppable (+ droppable 2))))))))
+       (cond
+        ((and removed
+              (= (length (clojure--form-children map)) (+ (length removed) droppable)))
+         'empty)
+        (removed (cons `(remove ,map ,@removed) edits))
+        (t edits))))))
+
+(defun clojure--removal-regions (coll forms)
+  "Return the regions to delete to remove FORMS from the collection COLL.
+The whitespace between them and the elements left goes too, but the
+comments and discarded forms among them stay, and the closing bracket
+never ends up on the line of a comment."
+  (let (regions run)
+    (dolist (child (append (clojure--form-children coll) (list nil)))
+      (if (and child (memq child forms))
+          (push child run)
+        (when run
+          (let ((beg (clojure--form-start-with-metadata (car (last run))))
+                (end (clojure--form-end (car run))))
+            (save-excursion
+              (if child
+                  (progn (goto-char end)
+                         (skip-chars-forward " \t\n,")
+                         (push (cons beg (point)) regions))
+                (goto-char beg)
+                (skip-chars-backward " \t\n,")
+                (when (nth 4 (syntax-ppss))
+                  (forward-line 1))
+                (push (cons (point) end) regions))))
+          (setq run nil))))
+    regions))
+
+(defun clojure--remove-unused-keys-once (top-level)
+  "Remove what the TOP-LEVEL form destructures from maps but doesn't use.
+Return the names removed."
+  (let ((sites (clojure--binding-sites top-level))
+        (declared (make-hash-table))
+        changes names vecs)
+    (pcase-dolist (`(,_ ,pattern ,_) sites)
+      (dolist (form (clojure--pattern-declarations pattern))
+        (puthash (clojure--form-start form) t declared)))
+    (pcase-dolist (`(,vec ,pattern ,end) sites)
+      (let* ((in-scope (clojure--symbol-names top-level declared
+                                              (clojure--form-start vec) end))
+             (edits (clojure--unused-pattern-edits
+                     pattern (lambda (name)
+                               ;; A leading _ marks a name unused on purpose.
+                               (or (string-prefix-p "_" name)
+                                   (member name in-scope)
+                                   (ignore (push name names)))))))
+        (when edits
+          (push (cons (copy-marker (clojure--form-start vec))
+                      (copy-marker (clojure--form-end vec)))
+                vecs))
+        (pcase-dolist (`(,kind ,form . ,args) edits)
+          (if (eq kind 'replace)
+              (push (list (clojure--form-start form) (clojure--form-end form) (car args))
+                    changes)
+            (pcase-dolist (`(,beg . ,end) (clojure--removal-regions form args))
+              (push (list beg end "") changes))))))
+    ;; A change inside another one, like in an :or default that goes,
+    ;; goes with it.
+    (let (kept)
+      (dolist (change (sort changes (lambda (a b)
+                                      (if (= (car a) (car b))
+                                          (> (cadr a) (cadr b))
+                                        (< (car a) (car b))))))
+        (cond
+         ((or (null kept) (>= (car change) (cadr (car kept))))
+          (push change kept))
+         ((> (cadr change) (cadr (car kept)))
+          (error "Overlapping edits at %d and %d" (caar kept) (car change)))))
+      (setq changes kept))
+    ;; From the end, so that the positions of the changes still to make
+    ;; don't move.
+    (pcase-dolist (`(,beg ,end ,text) changes)
+      (goto-char beg)
+      (delete-region beg end)
+      (insert text))
+    (pcase-dolist (`(,beg . ,end) vecs)
+      ;; The line the vector starts on is the form's, which wasn't edited.
+      (goto-char beg)
+      (forward-line 1)
+      (when (< (point) end)
+        (indent-region (point) (marker-position end)))
+      (set-marker beg nil)
+      (set-marker end nil))
+    (nreverse names)))
+
+(defun clojure--top-level-form-start ()
+  "Return the start of the top-level form at point, or nil.
+Point can be right after it too, or on the metadata in front of it,
+which is then where it starts."
+  (save-excursion
+    (let ((ppss (syntax-ppss)))
+      (when (cond
+             ((nth 9 ppss) (goto-char (car (nth 9 ppss))))
+             ((nth 3 ppss) (goto-char (nth 8 ppss)))
+             ((nth 4 ppss) nil)
+             ((looking-at-p "[([{\"]"))
+             ((memq (char-before) '(?\) ?\] ?\} ?\"))
+              (goto-char (or (ignore-errors (scan-sexps (point) -1))
+                             (user-error "The form at point doesn't parse"))))
+             ;; The ^ of metadata, or the keyword or the symbol after it
+             (t (skip-syntax-backward "w_")
+                (looking-at-p "\\s'\\|\\sw\\|\\s_")))
+        (backward-prefix-chars)
+        (point)))))
+
+(defun clojure-remove-unused-keys ()
+  "Remove what the top-level form at point destructures from maps but doesn't use.
+That's the names of :keys, :strs and :syms, :as names and names bound
+to keys, in the arglists of fn, defn, defmethod, letfn, reify and the
+like, and in the bindings of let, loop, for, doseq and the like.  The
+:or defaults of the names removed go too, and a map with nothing left
+becomes _.
+
+A name stays when a symbol with that name appears anywhere in its scope,
+even one that shadows it, and so does one starting with _, which marks
+it unused on purpose.  A macro that uses a local without its name
+appearing in the code, through &env, isn't something this can tell."
+  (interactive)
+  (let ((start (copy-marker (or (clojure--top-level-form-start)
+                                (user-error "No form at point"))))
+        (tick nil)
+        names)
+    (unless (save-excursion
+              (goto-char start)
+              (when-let* ((form (ignore-errors (clojure--read-form (point-max))))
+                          (state (parse-partial-sexp start (clojure--form-end form))))
+                (and (zerop (car state)) (not (nth 3 state)))))
+      (user-error "The form at point doesn't parse"))
+    (save-excursion
+      ;; Removing a name can leave another one unused, like one that only
+      ;; the :or default of the first used.
+      (while (not (eql tick (buffer-chars-modified-tick)))
+        (setq tick (buffer-chars-modified-tick))
+        (setq names (append names
+                            (clojure--remove-unused-keys-once
+                             (progn (goto-char start)
+                                    (clojure--read-form (point-max))))))))
+    (set-marker start nil)
+    (if names
+        (message "Removed %s" (string-join (delete-dups names) ", "))
+      (message "Nothing unused to remove"))))
 
 
 ;;; ClojureScript
