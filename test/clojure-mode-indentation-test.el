@@ -773,7 +773,12 @@ DESCRIPTION is a string with the description of the spec."
     "
 (fdef my-fn
   :args (s/cat :x int?)
-  :ret int?)")
+  :ret int?)"
+
+    "
+(fdef
+  my-fn
+  :args (s/cat :x int?))")
 
   (when-indenting-it "should handle this-as"
     "
