@@ -489,6 +489,7 @@ Here's a summary of the keybindings available in `clojure-mode`:
 | `C-c C-r _` | `clojure-toggle-discard-surrounding-form` |
 | `C-c C-r P` | `clojure-promote-fn-literal` |
 | `C-c C-r a` | `clojure-add-arity` |
+| `C-c C-r k` | `clojure-remove-unused-keys` |
 | `C-c C-r (` | `clojure-convert-collection-to-list` |
 | `C-c C-r '` | `clojure-convert-collection-to-quoted-list` |
 | `C-c C-r {` | `clojure-convert-collection-to-map` |
@@ -644,6 +645,30 @@ without affecting the namespace declaration.
 `clojure-add-arity`: Add a new arity to an existing single-arity or multi-arity function.
 
 <img width="512" src="/doc/clojure-add-arity.gif">
+
+### Remove unused destructured keys
+
+`clojure-remove-unused-keys`: Remove what the top-level form at point
+destructures from maps but doesn't use: names in `:keys`, `:strs` and `:syms`,
+`:as` names and names bound to keys, along with their `:or` defaults. That
+covers arglists (`defn`, `fn`, `defmethod`, `letfn`, `reify` and the like) and
+the bindings of `let`, `loop`, `for`, `doseq` and the like. A map with nothing
+left becomes `_`, and one with only its `:as` name left becomes that name.
+
+```clojure
+(defn handle [{:keys [id user] :or {user "anon"} :as req}]
+  (process id))
+
+;; becomes
+
+(defn handle [{:keys [id]}]
+  (process id))
+```
+
+A name stays when a symbol with that name appears anywhere in its scope, even
+if it's a local that shadows it, and so does one starting with `_`, which marks
+it unused on purpose. Positional args and vector destructuring are left alone,
+as removing one would change what the others bind.
 
 ## Related packages
 
