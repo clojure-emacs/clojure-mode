@@ -769,6 +769,24 @@ DESCRIPTION is a string with the description of the spec."
 (locking obj
   (alter-state! obj))")
 
+  (when-indenting-it "should handle match"
+    "
+(match x
+  1 :one
+  :else :other)")
+
+  (when-indenting-it "should handle struct-map"
+    "
+(struct-map person
+  :name \"Ann\"
+  :age 30)")
+
+  (when-indenting-it "should handle with-open with the bindings on their own line"
+    "
+(with-open
+    [r (reader f)]
+  (slurp r))")
+
   (when-indenting-it "should handle fdef"
     "
 (fdef my-fn
