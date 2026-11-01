@@ -2257,7 +2257,6 @@ work).  To set it from Lisp code, use
   (if-let '((:block 1)))
   (when-some '((:block 1)))
   (if-some '((:block 1)))
-  (this-as '((:block 1))) ; ClojureScript
 
   (defmethod '((:inner 0)))
 
@@ -2266,12 +2265,6 @@ work).  To set it from Lisp code, use
   (deftest '((:inner 0)))
   (are '((:block 2)))
   (use-fixtures '((:inner 0)))
-  (async '((:block 1)))
-
-  ;; core.logic
-  (run '((:inner 0)))
-  (run* '((:inner 0)))
-  (fresh '((:inner 0)))
 
   ;; core.match
   (match '((:block 1)))
