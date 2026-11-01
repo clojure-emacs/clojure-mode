@@ -2216,7 +2216,7 @@ work).  To set it from Lisp code, use
   (locking '((:block 1)))
   (proxy '((:block 2) (:inner 1)))
   (as-> '((:block 2)))
-  (fdef '((:block 1)))
+  (fdef '((:inner 0)))
 
   (reify '((:inner 0) (:inner 1)))
   (deftype '((:block 2) (:inner 1)))
@@ -2235,6 +2235,7 @@ work).  To set it from Lisp code, use
 
   ;; binding forms
   (let '((:block 1)))
+  (let* '((:block 1)))
   (letfn '((:block 1) (:inner 2 0)))
   (binding '((:block 1)))
   (loop '((:block 1)))
