@@ -1423,19 +1423,51 @@ x
     ;; defprotocol: ((:block 1) (:inner 1)) → (1 (:defn))
     (expect (clojure--indent-spec-to-legacy '((:block 1) (:inner 1)))
             :to-equal '(1 (:defn)))
-    ;; extend-protocol: ((:block 1) (:inner 0)) → (1 :defn)
-    (expect (clojure--indent-spec-to-legacy '((:block 1) (:inner 0)))
-            :to-equal '(1 :defn))
+    ;; extend-protocol: ((:block 1) (:inner 1)) → (1 (:defn))
+    (expect (clojure--indent-spec-to-legacy '((:block 1) (:inner 1)))
+            :to-equal '(1 (:defn)))
     ;; reify: ((:inner 0) (:inner 1)) → (:defn (:defn))
     (expect (clojure--indent-spec-to-legacy '((:inner 0) (:inner 1)))
             :to-equal '(:defn (:defn))))
+
+  (it "should leave the spec of the form itself empty without a :block or (:inner 0) rule"
+    (expect (clojure--indent-spec-to-legacy '((:inner 1 0)))
+            :to-equal '(nil (:defn) nil))
+    (expect (clojure--indent-spec-to-legacy '((:inner 2)))
+            :to-equal '(nil ((:defn)))))
+
+  (it "should ignore rules with negative numbers"
+    (expect (clojure--indent-spec-to-legacy '((:block 1) (:inner 1 -1)))
+            :to-equal 1)
+    (expect (clojure--indent-spec-to-legacy '((:block 1) (:inner -1)))
+            :to-equal 1)
+    (expect (clojure--indent-spec-to-legacy '((:block -1)))
+            :to-equal nil))
+
+  (it "should drop an (:inner 0) rule next to a :block rule, as it does nothing there"
+    (expect (clojure--indent-spec-to-legacy '((:block 1) (:inner 0)))
+            :to-equal 1))
+
+  (it "should round-trip the built-in specs with several rules"
+    (dolist (sym '(letfn reify deftype defrecord defprotocol definterface
+                   extend-protocol extend-type specify specify! proxy))
+      (expect (clojure--indent-spec-to-modern
+               (clojure--indent-spec-to-legacy (clojure-get-indent-spec sym)))
+              :to-equal (clojure-get-indent-spec sym))))
 
   (it "should produce working specs for put-clojure-indent with modern format"
     ;; Verify that a form set with modern format indents correctly.
     (put-clojure-indent 'test-modern-let '((:block 1)))
     (with-clojure-buffer "\n(test-modern-let [x 1]\nbody)"
       (indent-region (point-min) (point-max))
-      (expect (buffer-string) :to-equal "\n(test-modern-let [x 1]\n  body)"))))
+      (expect (buffer-string) :to-equal "\n(test-modern-let [x 1]\n  body)")))
+
+  (it "should indent with a modern spec whose :inner rule has a position"
+    (put-clojure-indent 'test-modern-impl '((:inner 1 0)))
+    (with-clojure-buffer "\n(test-modern-impl (foo [x]\nx)\n(bar [y]\ny))"
+      (indent-region (point-min) (point-max))
+      (expect (buffer-string)
+              :to-equal "\n(test-modern-impl (foo [x]\n                    x)\n                  (bar [y]\n                       y))"))))
 
 (provide 'clojure-mode-indentation-test)
 
