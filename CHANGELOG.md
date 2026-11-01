@@ -5,10 +5,12 @@
 ### Changes
 
 * [#705](https://github.com/clojure-emacs/clojure-mode/pull/705): Rename the `#_` toggle commands to `clojure-toggle-discard`, `clojure-toggle-discard-surrounding-form` and `clojure-toggle-discard-defun`, matching Clojure's "discard" terminology (the old `clojure-toggle-ignore*` names remain as obsolete aliases).
+* [#709](https://github.com/clojure-emacs/clojure-mode/pull/709): Give `extend-protocol`, `extend-type`, `specify` and `specify!` the `((:block 1) (:inner 1))` indent spec that `clojure-ts-mode` and cljfmt use, instead of an `(:inner 0)` rule that only worked because of how it was converted to the legacy format (specs copied from it need `(:inner 1)` too).
 
 ### Bugs fixed
 
 * [#709](https://github.com/clojure-emacs/clojure-mode/pull/709): Fix `clojure-get-indent-spec` and `put-clojure-indent` converting legacy indent specs, like those of `letfn`, `reify` or `extend-protocol`, to the wrong modern rules.
+* [#709](https://github.com/clojure-emacs/clojure-mode/pull/709): Fix indenting with a modern indent spec that has an `:inner` rule with a position but no `:block` rule, like `((:inner 1 0))`, which signaled an error.
 
 ## 5.23.0 (2026-03-25)
 

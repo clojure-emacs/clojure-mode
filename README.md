@@ -268,8 +268,8 @@ nested indentation. For example, `letfn` uses `'((:block 1) (:inner 2 0))`:
 
 ```clojure
 (letfn [(twice [x]        ;; (:block 1) → 1 special arg (the binding vector)
-          (* x 2))        ;; (:inner 2 0) → at depth 2, position 0 in the binding
-        (thrice [x]       ;;   vector, use body-style indentation
+          (* x 2))        ;; (:inner 2 0) → at depth 2, inside argument 0 (the
+        (thrice [x]       ;;   binding vector), use body-style indentation
           (* x 3))]
   (+ (twice 5)            ;; after the block arg → body indentation
      (thrice 5)))
@@ -296,10 +296,10 @@ Here are the built-in multi-rule specs:
   (definterface   '((:block 1) (:inner 1)))
   (reify          '((:inner 0) (:inner 1)))
   (proxy          '((:block 2) (:inner 1)))
-  (extend-protocol '((:block 1) (:inner 0)))
-  (extend-type    '((:block 1) (:inner 0)))
-  (specify        '((:block 1) (:inner 0)))
-  (specify!       '((:block 1) (:inner 0))))
+  (extend-protocol '((:block 1) (:inner 1)))
+  (extend-type    '((:block 1) (:inner 1)))
+  (specify        '((:block 1) (:inner 1)))
+  (specify!       '((:block 1) (:inner 1))))
 ```
 
 This format is shared with `clojure-ts-mode`. It also follows the same

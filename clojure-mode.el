@@ -1670,7 +1670,7 @@ a string.  This name will be exactly as it appears in the buffer,
 so it might start with a namespace alias.
 
 Return values can be in either the modern format (e.g.,
-\\='((:block 1) (:inner 0))) or the legacy format (e.g., 1 or
+\\='((:block 1) (:inner 1))) or the legacy format (e.g., 1 or
 :defn).  Modern-format specs are automatically converted to
 legacy format for the backtracking indent engine.
 
@@ -2026,55 +2026,37 @@ Returns SPEC unchanged if it is not in modern format.
 
 \((:block N)) becomes N.
 \((:inner 0)) becomes :defn.
-Complex multi-rule specs are converted to positional lists.
+Other specs become positional lists: an argument spec of
+\(:defn) is an (:inner 1) rule, ((:defn)) an (:inner 2) rule, and so
+on.
+
+The legacy format can't express everything the modern one can.  Only
+the shallowest of several :inner rules without a position is kept, and
+a rule with a position replaces the others for that argument.  Like in
+cljfmt, (:inner 0) does nothing next to a :block rule.  Rules with
+negative numbers are ignored.
 
 The legacy format will be removed in clojure-mode 6."
   (if (not (clojure--modern-indent-spec-p spec))
       spec
-    ;; Extract components
-    (let ((block-n nil)
-          (inner-no-idx nil)   ; list of depths without position index
-          (inner-with-idx nil)) ; list of (depth . index) with position index
-      (dolist (rule spec)
-        (pcase rule
-          (`(:block ,n) (setq block-n n))
-          (`(:inner ,d) (push d inner-no-idx))
-          (`(:inner ,d ,i) (push (cons d i) inner-with-idx))))
-      (cond
-       ;; Simple: only (:block N)
-       ((and block-n (null inner-no-idx) (null inner-with-idx))
-        block-n)
-       ;; Simple: only (:inner 0)
-       ((and (null block-n) (null inner-with-idx)
-             (equal inner-no-idx '(0)))
-        :defn)
-       ;; Complex: build positional list
-       (t
-        (let ((result (list)))
-          ;; Position 0: block-n or first non-indexed inner
-          (when block-n
-            (setq result (list block-n)))
-          ;; Place indexed :inner rules at their positions
-          (dolist (ir inner-with-idx)
-            (let* ((depth (car ir))
-                   (idx (cdr ir))
-                   (pos (+ (if block-n 1 0) idx))
-                   (wrapped (clojure--wrap-defn depth)))
-              ;; Pad with nil to reach position
-              (while (<= (length result) pos)
-                (setq result (append result (list nil))))
-              (setf (nth pos result) wrapped)))
-          ;; Append non-indexed :inner rules as tail
-          ;; (applies to all remaining positions)
-          ;; Sort ascending so shallower depths come first.
-          (dolist (depth (sort inner-no-idx #'<))
-            (let ((wrapped (clojure--wrap-defn depth)))
-              (setq result (append result (list wrapped)))))
-          ;; Append trailing nil if there are indexed rules
-          ;; (so the backtracking engine sees the end of the spec)
-          (when inner-with-idx
-            (setq result (append result (list nil))))
-          result))))))
+    (let* ((block (let ((n (cadr (assq :block spec)))) (and (natnump n) n)))
+           (inner (seq-filter (lambda (rule) (eq (car rule) :inner)) spec))
+           (own (or block (and (member '(:inner 0) inner) :defn)))
+           (depths (sort (seq-filter (lambda (depth) (> depth 0))
+                                     (mapcar #'cadr (seq-remove #'cddr inner)))
+                         #'<))
+           (tail (and depths (clojure--wrap-defn (car depths))))
+           (indexed (seq-filter (lambda (rule)
+                                  (and (natnump (caddr rule)) (> (cadr rule) 0)))
+                                inner)))
+      (if (not (or tail indexed))
+          own
+        ;; The spec of the form itself, then those of its arguments.
+        (let* ((args (if indexed (+ 2 (apply #'max (mapcar #'caddr indexed))) 1))
+               (result (cons own (make-list args tail))))
+          (pcase-dolist (`(:inner ,depth ,idx) indexed)
+            (setf (nth (1+ idx) result) (clojure--wrap-defn depth)))
+          result)))))
 
 ;;; Setting indentation
 (defun put-clojure-indent (sym indent)
@@ -2242,11 +2224,11 @@ work).  To set it from Lisp code, use
   (defprotocol '((:block 1) (:inner 1)))
   (definterface '((:block 1) (:inner 1)))
   (extend '((:block 1)))
-  (extend-protocol '((:block 1) (:inner 0)))
-  (extend-type '((:block 1) (:inner 0)))
+  (extend-protocol '((:block 1) (:inner 1)))
+  (extend-type '((:block 1) (:inner 1)))
   ;; specify and specify! are from ClojureScript
-  (specify '((:block 1) (:inner 0)))
-  (specify! '((:block 1) (:inner 0)))
+  (specify '((:block 1) (:inner 1)))
+  (specify! '((:block 1) (:inner 1)))
   (try '((:block 0)))
   (catch '((:block 2)))
   (finally '((:block 0)))
