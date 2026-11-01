@@ -2196,6 +2196,12 @@ work).  To set it from Lisp code, use
   (fn '((:inner 0)))
   (def '((:inner 0)))
   (defn '((:inner 0)))
+  (defn- '((:inner 0)))
+  (defmacro '((:inner 0)))
+  (defmulti '((:inner 0)))
+  (defonce '((:inner 0)))
+  (defstruct '((:block 1)))
+  (struct-map '((:block 1)))
   (bound-fn '((:inner 0)))
   (if '((:block 1)))
   (if-not '((:block 1)))
@@ -2214,6 +2220,11 @@ work).  To set it from Lisp code, use
   (comment '((:block 0)))
   (doto '((:block 1)))
   (locking '((:block 1)))
+  (with-open '((:block 1)))
+  (with-local-vars '((:block 1)))
+  (with-precision '((:block 1)))
+  (with-redefs '((:block 1)))
+  (with-out-str '((:block 0)))
   (proxy '((:block 2) (:inner 1)))
   (as-> '((:block 2)))
   (fdef '((:inner 0)))
@@ -2261,6 +2272,9 @@ work).  To set it from Lisp code, use
   (run '((:inner 0)))
   (run* '((:inner 0)))
   (fresh '((:inner 0)))
+
+  ;; core.match
+  (match '((:block 1)))
 
   ;; core.async
   (alt! '((:block 0)))
