@@ -798,11 +798,6 @@ DESCRIPTION is a string with the description of the spec."
   my-fn
   :args (s/cat :x int?))")
 
-  (when-indenting-it "should handle this-as"
-    "
-(this-as self
-  (.method self))")
-
   ;; clojure.test
   (when-indenting-it "should handle testing"
     "
@@ -825,28 +820,15 @@ DESCRIPTION is a string with the description of the spec."
 (use-fixtures :each
   my-fixture)")
 
-  (when-indenting-it "should handle async"
+  (when-indenting-it "should indent async and run* like function calls"
     "
 (async done
-  (do-stuff)
-  (done))")
+       (do-stuff)
+       (done))"
 
-  ;; core.logic
-  (when-indenting-it "should handle run"
-    "
-(run [q]
-  (== q 1))")
-
-  (when-indenting-it "should handle run*"
     "
 (run* [q]
-  (== q 1))")
-
-  (when-indenting-it "should handle fresh"
-    "
-(fresh [a b]
-  (== a 1)
-  (== b 2))")
+      (== q 1))")
 
   ;; core.async
   (when-indenting-it "should handle go"

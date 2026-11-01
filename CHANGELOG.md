@@ -8,6 +8,7 @@
 * [#709](https://github.com/clojure-emacs/clojure-mode/pull/709): Give `extend-protocol`, `extend-type`, `specify` and `specify!` the `((:block 1) (:inner 1))` indent spec that `clojure-ts-mode` and cljfmt use, instead of an `(:inner 0)` rule that only worked because of how it was converted to the legacy format (specs copied from it need `(:inner 1)` too).
 * [#709](https://github.com/clojure-emacs/clojure-mode/pull/709): Indent `fdef` like cljfmt does, as `((:inner 0))`, and list `let*` in the built-in indent specs, so that `clojure-get-indent-spec` returns its spec.
 * [#709](https://github.com/clojure-emacs/clojure-mode/pull/709): Add the indent specs that cljfmt and `clojure-ts-mode` have and `clojure-mode` lacked, which indents the bodies of `match` and `struct-map`, and the bindings of `with-open`, `with-redefs` and the like as special arguments.
+* [#710](https://github.com/clojure-emacs/clojure-mode/pull/710): Drop the indent specs of `async`, `this-as` and core.logic's `run`, `run*` and `fresh`, which cljfmt and `clojure-ts-mode` don't have, so they're indented like function calls now (`put-clojure-indent` brings them back).
 
 ### Bugs fixed
 
