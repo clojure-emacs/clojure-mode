@@ -1731,7 +1731,11 @@ holds a list of forms, each indented with :defn style\"."
       (while (ignore-errors (clojure-backward-logical-sexp 1)
                             (not (or (bobp)
                                      (eq (char-before) ?\n))))
-        (cl-incf pos))
+        ;; #_ discards the form after it, which was counted already,
+        ;; unless that's the form we started from.
+        (if (looking-at-p "#_")
+            (setq pos (max 0 (1- pos)))
+          (cl-incf pos)))
       (let* ((function (thing-at-point 'symbol))
              (method (or (when function ;; Is there a spec here?
                            (clojure--get-indent-method function))
