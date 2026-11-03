@@ -557,6 +557,17 @@ DESCRIPTION is a string with the description of the spec."
             (baz 1)))]
   (foo (bar 10)))")
 
+  (when-indenting-it "should not count discarded forms for the position of an inner rule"
+    "
+(letfn #_[(f [] 1)] [(g []
+                       2)]
+       (g))"
+
+    "
+(letfn #_ #_ [(f [] 1)] [(g [] 2)] [(h []
+                                      3)]
+       (h))")
+
   (when-indenting-it "should handle try/catch/finally"
     "
 (try
