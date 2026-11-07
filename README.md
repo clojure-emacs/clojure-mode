@@ -204,7 +204,7 @@ personal config.
 Indent specs use a **modern tuple format** shared with `clojure-ts-mode`:
 
 | Spec | Meaning |
-|------|---------|
+| ---- | ------- |
 | `'((:block N))` | First N args are special, rest indented as body |
 | `'((:inner 0))` | All args indented as body (like `defn`) |
 | `'((:inner D))` | Body-style indent at nesting depth D |
@@ -312,9 +312,11 @@ Backtracking is controlled by `clojure-use-backtracking-indent`
 (default 3).  Disabling backtracking will break indentation for
 all forms with multi-rule specs.
 
-The indentation of [special arguments](https://docs.cider.mx/cider/indent_spec.html#special-arguments) is controlled by
-`clojure-special-arg-indent-factor`, which by default indents special arguments
-a further `lisp-body-indent` when compared to ordinary arguments.
+The indentation of [special
+arguments](https://docs.cider.mx/cider/indent_spec.html#special-arguments) is
+controlled by `clojure-special-arg-indent-factor`, which by default indents
+special arguments a further `lisp-body-indent` when compared to ordinary
+arguments.
 
 An example of the default formatting is:
 
@@ -474,7 +476,7 @@ instructed how to handle the docstrings and highlighting. Here's an example:
 Here's a summary of the keybindings available in `clojure-mode`:
 
 | Keybinding | Command |
-|---|---|
+| --- | --- |
 | `C-c C-a` | `clojure-align` |
 | `C-:` | `clojure-toggle-keyword-string` |
 | `C-c C-r t` | `clojure-thread` |
@@ -518,26 +520,26 @@ to `clojure-mode`.
 `clojure-thread`: Thread another form into the surrounding thread. Both `->>`
 and `->` variants are supported.
 
-<img width="512" src="/doc/clojure-thread.gif">
+<img width="512" src="/doc/clojure-thread.gif" alt="Demo of clojure-thread">
 
 `clojure-unwind`: Unwind a threaded expression. Supports both `->>` and `->`.
 
-<img width="512" src="/doc/clojure-unwind.gif">
+<img width="512" src="/doc/clojure-unwind.gif" alt="Demo of clojure-unwind">
 
 `clojure-thread-first-all`: Introduce the thread first macro (`->`) and rewrite
 the entire form. With a prefix argument do not thread the last form.
 
-<img width="512" src="/doc/clojure-thread-first-all.gif">
+<img width="512" src="/doc/clojure-thread-first-all.gif" alt="Demo of clojure-thread-first-all">
 
 `clojure-thread-last-all`: Introduce the thread last macro and rewrite the
 entire form. With a prefix argument do not thread the last form.
 
-<img width="512" src="/doc/clojure-thread-last-all.gif">
+<img width="512" src="/doc/clojure-thread-last-all.gif" alt="Demo of clojure-thread-last-all">
 
 `clojure-unwind-all`: Fully unwind a threaded expression removing the threading
 macro.
 
-<img width="512" src="/doc/clojure-unwind-all.gif">
+<img width="512" src="/doc/clojure-unwind-all.gif" alt="Demo of clojure-unwind-all">
 
 ### Cycling things
 
@@ -545,22 +547,22 @@ macro.
 explicitly with setting `clojure-use-metadata-for-privacy` to `t` for `defn`s
 too.
 
-<img width="512" src="/doc/clojure-cycle-privacy.gif">
+<img width="512" src="/doc/clojure-cycle-privacy.gif" alt="Demo of clojure-cycle-privacy">
 
 `clojure-cycle-not`: Add or remove a `not` form around the current form.
 
-<img width="512" src="/doc/clojure-cycle-not.gif">
+<img width="512" src="/doc/clojure-cycle-not.gif" alt="Demo of clojure-cycle-not">
 
 `clojure-cycle-when`: Find the closest `when` or `when-not` up the syntax tree
 and toggle it.
 
-<img width="512" src="/doc/clojure-cycle-when.gif">
+<img width="512" src="/doc/clojure-cycle-when.gif" alt="Demo of clojure-cycle-when">
 
 `clojure-cycle-if`: Find the closest `if` or `if-not` up the syntax tree and
 toggle it. Also transpose the `else` and `then` branches, keeping the semantics
 the same as before.
 
-<img width="512" src="/doc/clojure-cycle-if.gif">
+<img width="512" src="/doc/clojure-cycle-if.gif" alt="Demo of clojure-cycle-if">
 
 ### Toggle discard forms
 
@@ -607,44 +609,45 @@ Convert any given collection at point to list, quoted list, map, vector or set.
 its binding form with a name provided by the user as a bound name. If called
 with a numeric prefix put the let form Nth level up in the form hierarchy.
 
-<img width="512" src="/doc/clojure-introduce-let.gif">
+<img width="512" src="/doc/clojure-introduce-let.gif" alt="Demo of clojure-introduce-let">
 
 `clojure-move-to-let`: Move the current form to the closest `let`'s binding
 form. Replace all occurrences of the form in the body of the let.
 
-<img width="512" src="/doc/clojure-move-to-let.gif">
+<img width="512" src="/doc/clojure-move-to-let.gif" alt="Demo of clojure-move-to-let">
 
 `clojure-let-forward-slurp-sexp`: Slurp the next form after the `let` into the
 `let`. Replace all occurrences of the bound forms in the form added to the `let`
 form. If called with a prefix argument slurp the next n forms.
 
-<img width="512" src="/doc/clojure-let-forward-slurp-sexp.gif">
+<img width="512" src="/doc/clojure-let-forward-slurp-sexp.gif" alt="Demo of clojure-let-forward-slurp-sexp">
 
 `clojure-let-backward-slurp-sexp`: Slurp the form before the `let` into the
 `let`. Replace all occurrences of the bound forms in the form added to the `let`
 form. If called with a prefix argument slurp the previous n forms.
 
-<img width="512" src="/doc/clojure-let-backward-slurp-sexp.gif">
+<img width="512" src="/doc/clojure-let-backward-slurp-sexp.gif" alt="Demo of clojure-let-backward-slurp-sexp">
 
-`paredit-convolute-sexp` is advised to replace occurrences of bound forms with their bound names when convolute is used on a let form.
+`paredit-convolute-sexp` is advised to replace occurrences of bound forms with
+their bound names when convolute is used on a let form.
 
 ### Rename ns alias
 
 `clojure-rename-ns-alias`: Rename an alias inside a namespace declaration,
 and all of its usages in the buffer
 
-<img width="512" src="/doc/clojure-rename-ns-alias.gif">
+<img width="512" src="/doc/clojure-rename-ns-alias.gif" alt="Demo of clojure-rename-ns-alias">
 
 If there is an active selected region, only rename usages of aliases within the region,
 without affecting the namespace declaration.
 
-<img width="512" src="/doc/clojure-rename-ns-alias-region.gif">
+<img width="512" src="/doc/clojure-rename-ns-alias-region.gif" alt="Demo of clojure-rename-ns-alias-region">
 
 ### Add arity to a function
 
 `clojure-add-arity`: Add a new arity to an existing single-arity or multi-arity function.
 
-<img width="512" src="/doc/clojure-add-arity.gif">
+<img width="512" src="/doc/clojure-add-arity.gif" alt="Demo of clojure-add-arity">
 
 ### Remove unused destructured keys
 
@@ -821,7 +824,7 @@ slow and inaccurate.
 
 ## Changelog
 
-An extensive changelog is available [here](CHANGELOG.md).
+An extensive changelog is available in [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 
