@@ -183,6 +183,16 @@ DESCRIPTION is the description of the spec."
      (4 11 (font-lock-constant-face font-lock-comment-face))
      (12 13 font-lock-comment-face)))
 
+  (when-fontifying-it "should leave double brackets and backticks alone in code"
+    ("(fn [[x]] x)"
+     (7 7 nil))
+
+    ("[(q '[:find (min ?d)] $) [[?d]]]"
+     (28 29 nil))
+
+    ("(list `a`b)"
+     (8 8 nil)))
+
   (when-fontifying-it "should fontify let, when, and while type forms"
     ("(when-alist [x 1]\n  ())"
      ("when-alist" font-lock-keyword-face))

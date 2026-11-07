@@ -1226,12 +1226,18 @@ whether the paren is a direct child of a letfn binding vector."
              'clojure-discard-face font-lock-comment-face)
        t)
       ;; Highlight `code` marks, just like `elisp'.
-      (,(rx "`" (group-n 1 (optional "#'")
-                         (+ (or (syntax symbol) (syntax word)))) "`")
+      (,(lambda (bound)
+          (clojure--search-in-string-or-comment
+           (rx "`" (group-n 1 (optional "#'")
+                            (+ (or (syntax symbol) (syntax word)))) "`")
+           bound))
        (1 'font-lock-constant-face prepend))
       ;; Highlight [[var]] comments
-      (,(rx "[[" (group-n 1 (optional "#'")
-                          (+ (or (syntax symbol) (syntax word)))) "]]")
+      (,(lambda (bound)
+          (clojure--search-in-string-or-comment
+           (rx "[[" (group-n 1 (optional "#'")
+                             (+ (or (syntax symbol) (syntax word)))) "]]")
+           bound))
        (1 'font-lock-constant-face prepend))
       ;; Highlight escaped characters in strings.
       (clojure-font-lock-escaped-chars 0 'bold prepend)
@@ -1373,6 +1379,19 @@ preceded by a #."
                 (1- string-beg))
             ;; When regexp is nil, match any string (both #"..." and "...").
             string-beg))))))
+
+(defun clojure--search-in-string-or-comment (regexp bound)
+  "Search forward for REGEXP in a string or a comment, up to BOUND.
+In code, the same text can be something else entirely, like the
+[[?x]] relation binding of a Datalog query."
+  (let ((found nil))
+    (while (and (not found)
+                (re-search-forward regexp bound t))
+      (setq found (save-match-data
+                    (save-excursion
+                      (ppss-comment-or-string-start
+                       (syntax-ppss (match-beginning 0)))))))
+    found))
 
 (defun clojure-font-lock-escaped-chars (bound)
   "Highlight \\escaped chars in strings.
