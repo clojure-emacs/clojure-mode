@@ -4,9 +4,9 @@
 ;;
 ;; Author: Bozhidar Batsov <bozhidar@batsov.dev>
 ;; URL: https://github.com/clojure-emacs/clojure-mode
-;; Version: 5.23.0
+;; Version: 5.24.0
 ;; Keywords: languages, lisp
-;; Package-Requires: ((clojure-mode "5.23.0"))
+;; Package-Requires: ((clojure-mode "5.24.0"))
 
 ;; This file is not part of GNU Emacs.
 

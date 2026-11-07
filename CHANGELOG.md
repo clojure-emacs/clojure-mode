@@ -6,6 +6,8 @@
 
 ## master (unreleased)
 
+## 5.24.0 (2026-11-07)
+
 ### New features
 
 * [#708](https://github.com/clojure-emacs/clojure-mode/pull/708): Add `clojure-remove-unused-keys` (`C-c C-r k`), which removes the names the top-level form at point destructures from maps but never uses, along with their `:or` defaults.
