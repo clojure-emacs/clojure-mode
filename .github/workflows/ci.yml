@@ -22,7 +22,7 @@ jobs:
             emacs-version: '30.1'
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - uses: jcs090218/setup-emacs@v3
         with:
@@ -43,7 +43,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - uses: DavidAnson/markdownlint-cli2-action@v24
         with:
