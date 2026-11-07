@@ -19,6 +19,7 @@
 * [#709](https://github.com/clojure-emacs/clojure-mode/pull/709): Fix `clojure-get-indent-spec` and `put-clojure-indent` converting legacy indent specs, like those of `letfn`, `reify` or `extend-protocol`, to the wrong modern rules.
 * [#709](https://github.com/clojure-emacs/clojure-mode/pull/709): Fix indenting with a modern indent spec that has an `:inner` rule with a position but no `:block` rule, like `((:inner 1 0))`, which signaled an error.
 * [#711](https://github.com/clojure-emacs/clojure-mode/pull/711): Fix the indentation of `letfn` functions, and of other forms an `:inner` rule with an index applies to, when a `#_` form comes before them, as the discarded form and its `#_` counted as two arguments.
+* [#707](https://github.com/clojure-emacs/clojure-mode/issues/707): Highlight `[[var]]` and `` `code` `` only in strings and comments, so Datalog relation bindings like `[[?x]]` and destructuring like `(fn [[x]] x)` aren't colored as constants in code.
 
 ## 5.23.0 (2026-03-25)
 
