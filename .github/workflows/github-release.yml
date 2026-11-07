@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       # The release notes are the version's section of the changelog. A
       # prerelease usually has no section of its own yet, so it gets the
